@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,40 +35,27 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     Style.JSON_PROPERTY_KEYWORDS,
     Style.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "Style")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Style")
 public final class Style extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private List<String> keywords = new ArrayList<>();
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
     public Style() {
     }
 
-    public Style id(@jakarta.annotation.Nonnull String id) {
+    public Style id(String id) {
         this.id = id;
         return this;
     }
@@ -80,22 +65,19 @@ public final class Style extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Style title(@jakarta.annotation.Nullable String title) {
+    public Style title(String title) {
         this.title = title;
         return this;
     }
@@ -105,22 +87,19 @@ public final class Style extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public Style description(@jakarta.annotation.Nullable String description) {
+    public Style description(String description) {
         this.description = description;
         return this;
     }
@@ -130,22 +109,19 @@ public final class Style extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Style keywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public Style keywords(List<String> keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -163,24 +139,19 @@ public final class Style extends DataTransferObject {
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setKeywords(@jakarta.annotation.Nullable List<String> keywords) {
+    public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
 
-    public Style links(@jakarta.annotation.Nullable List<Link> links) {
+    public Style links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -200,20 +171,15 @@ public final class Style extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

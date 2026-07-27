@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -39,95 +33,75 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Unit.JSON_PROPERTY_SYMBOL,
     Unit.JSON_PROPERTY_SYMBOL_TYPE
 })
-@XmlRootElement(name = "Unit")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Unit")
 public final class Unit extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nullable
     private String id;
 
     public static final String JSON_PROPERTY_LABEL = "label";
-    @XmlElement(name = "label")
-    @jakarta.annotation.Nullable
     private String label;
 
     public static final String JSON_PROPERTY_SYMBOL = "symbol";
-    @XmlElement(name = "symbol")
-    @jakarta.annotation.Nullable
     private String symbol;
 
     public static final String JSON_PROPERTY_SYMBOL_TYPE = "symbolType";
-    @XmlElement(name = "symbolType")
-    @jakarta.annotation.Nullable
     private String symbolType;
 
     public Unit() {
     }
 
-    public Unit id(@jakarta.annotation.Nullable String id) {
+    public Unit id(String id) {
         this.id = id;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nullable String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Unit label(@jakarta.annotation.Nullable String label) {
+    public Unit label(String label) {
         this.label = label;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LABEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "label")
     public String getLabel() {
         return label;
     }
 
     @JsonProperty(JSON_PROPERTY_LABEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "label")
-    public void setLabel(@jakarta.annotation.Nullable String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    public Unit symbol(@jakarta.annotation.Nullable String symbol) {
+    public Unit symbol(String symbol) {
         this.symbol = symbol;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SYMBOL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbol")
     public String getSymbol() {
         return symbol;
     }
 
     @JsonProperty(JSON_PROPERTY_SYMBOL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbol")
-    public void setSymbol(@jakarta.annotation.Nullable String symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 
-    public Unit symbolType(@jakarta.annotation.Nullable String symbolType) {
+    public Unit symbolType(String symbolType) {
         this.symbolType = symbolType;
         return this;
     }
@@ -137,18 +111,15 @@ public final class Unit extends DataTransferObject {
      *
      * @return symbolType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SYMBOL_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbolType")
     public String getSymbolType() {
         return symbolType;
     }
 
     @JsonProperty(JSON_PROPERTY_SYMBOL_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbolType")
-    public void setSymbolType(@jakarta.annotation.Nullable String symbolType) {
+    public void setSymbolType(String symbolType) {
         this.symbolType = symbolType;
     }
 

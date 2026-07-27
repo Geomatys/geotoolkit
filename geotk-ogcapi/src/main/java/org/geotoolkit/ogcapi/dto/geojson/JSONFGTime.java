@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 
@@ -35,25 +33,16 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     JSONFGTime.PROPERTY_TIMESTAMP,
     JSONFGTime.PROPERTY_INTERVAL
 })
-@XmlRootElement(name = "FeatureTime")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "FeatureTime")
 public class JSONFGTime extends DataTransferObject {
 
     public static final String PROPERTY_DATE = "date";
     public static final String PROPERTY_TIMESTAMP = "timestamp";
     public static final String PROPERTY_INTERVAL = "interval";
 
-    @XmlElement(name = PROPERTY_DATE)
-    @jakarta.annotation.Nullable
     private String date;
 
-    @XmlElement(name = "timestamp")
-    @jakarta.annotation.Nullable
     private String timestamp;
 
-    @XmlElement(name = "interval")
-    @jakarta.annotation.Nullable
     private List<String> interval = new ArrayList<>();
 
     public JSONFGTime() {
@@ -64,18 +53,15 @@ public class JSONFGTime extends DataTransferObject {
      *
      * @return date
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_DATE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_DATE)
     public String getDate() {
         return date;
     }
 
     @JsonProperty(PROPERTY_DATE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_DATE)
-    public void setDate(@jakarta.annotation.Nullable String date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -84,18 +70,15 @@ public class JSONFGTime extends DataTransferObject {
      *
      * @return timestamp
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_TIMESTAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_TIMESTAMP)
     public String getTimestamp() {
         return timestamp;
     }
 
     @JsonProperty(PROPERTY_TIMESTAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_TIMESTAMP)
-    public void setTimestamp(@jakarta.annotation.Nullable String timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -104,20 +87,15 @@ public class JSONFGTime extends DataTransferObject {
      *
      * @return interval
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_INTERVAL)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getInterval() {
         return interval;
     }
 
     @JsonProperty(PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_INTERVAL)
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setInterval(@jakarta.annotation.Nullable List<String> interval) {
+    public void setInterval(List<String> interval) {
         this.interval = interval;
     }
 

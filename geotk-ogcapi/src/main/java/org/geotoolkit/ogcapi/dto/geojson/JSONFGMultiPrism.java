@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 /**
  * JSONFGMultiPrism
@@ -33,14 +31,9 @@ import jakarta.xml.bind.annotation.*;
     JSONFGMultiPrism.PROPERTY_BBOX,
     JSONFGMultiPrism.PROPERTY_PRISMS
 })
-@XmlRootElement(name = "JSONFGMultiPrism")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "JSONFGMultiPrism")
 public class JSONFGMultiPrism extends GeoJSONGeometry {
 
     public static final String PROPERTY_PRISMS = "prisms";
-    @XmlElement(name = PROPERTY_PRISMS)
-    @jakarta.annotation.Nonnull
     private List<JSONFGPrism> prisms = new ArrayList<>();
 
     public JSONFGMultiPrism() {
@@ -56,20 +49,15 @@ public class JSONFGMultiPrism extends GeoJSONGeometry {
      *
      * @return prisms
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_PRISMS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_PRISMS)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<JSONFGPrism> getPrisms() {
         return prisms;
     }
 
     @JsonProperty(PROPERTY_PRISMS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_PRISMS)
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setPrisms(@jakarta.annotation.Nonnull List<JSONFGPrism> prisms) {
+    public void setPrisms(List<JSONFGPrism> prisms) {
         this.prisms = prisms;
     }
 

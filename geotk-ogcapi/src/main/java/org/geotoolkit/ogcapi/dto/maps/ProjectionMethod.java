@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.maps;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -38,30 +36,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ProjectionMethod.JSON_PROPERTY_DESCRIPTION,
     ProjectionMethod.JSON_PROPERTY_PARAMETERS
 })
-@XmlRootElement(name = "ProjectionMethod")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ProjectionMethod")
 public final class ProjectionMethod extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_PARAMETERS = "parameters";
-    @XmlElement(name = "parameters")
-    @jakarta.annotation.Nullable
     private Map<String, ProjectionParameter> parameters;
 
     public ProjectionMethod() {
     }
 
-    public ProjectionMethod title(@jakarta.annotation.Nullable String title) {
+    public ProjectionMethod title(String title) {
         this.title = title;
         return this;
     }
@@ -71,22 +60,19 @@ public final class ProjectionMethod extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public ProjectionMethod description(@jakarta.annotation.Nullable String description) {
+    public ProjectionMethod description(String description) {
         this.description = description;
         return this;
     }
@@ -96,22 +82,19 @@ public final class ProjectionMethod extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public ProjectionMethod parameters(@jakarta.annotation.Nullable Map<String, ProjectionParameter> parameters) {
+    public ProjectionMethod parameters(Map<String, ProjectionParameter> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -131,20 +114,15 @@ public final class ProjectionMethod extends DataTransferObject {
      *
      * @return parameters
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, ProjectionParameter> getParameters() {
         return parameters;
     }
 
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setParameters(@jakarta.annotation.Nullable Map<String, ProjectionParameter> parameters) {
+    public void setParameters(Map<String, ProjectionParameter> parameters) {
         this.parameters = parameters;
     }
 

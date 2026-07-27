@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
@@ -44,40 +38,27 @@ import java.util.Objects;
     License.JSON_PROPERTY_LOGO,
     License.JSON_PROPERTY_ATTRIBUTION_TEXT
 })
-@XmlRootElement(name = "License")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "License")
 public final class License extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DEFINITION = "definition";
-    @XmlElement(name = "definition")
-    @jakarta.annotation.Nonnull
     private String definition;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_LOGO = "logo";
-    @XmlElement(name = "logo")
-    @jakarta.annotation.Nullable
     private String logo;
 
     public static final String JSON_PROPERTY_ATTRIBUTION_TEXT = "attributionText";
-    @XmlElement(name = "attributionText")
-    @jakarta.annotation.Nullable
     private String attributionText;
 
     public License() {
     }
 
-    public License name(@jakarta.annotation.Nonnull String name) {
+    public License name(String name) {
         this.name = name;
         return this;
     }
@@ -87,22 +68,19 @@ public final class License extends SensorThingsEntity {
      *
      * @return the name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public License definition(@jakarta.annotation.Nonnull String definition) {
+    public License definition(String definition) {
         this.definition = definition;
         return this;
     }
@@ -112,22 +90,19 @@ public final class License extends SensorThingsEntity {
      *
      * @return the definition
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
     public String getDefinition() {
         return definition;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
-    public void setDefinition(@jakarta.annotation.Nonnull String definition) {
+    public void setDefinition(String definition) {
         this.definition = definition;
     }
 
-    public License description(@jakarta.annotation.Nullable String description) {
+    public License description(String description) {
         this.description = description;
         return this;
     }
@@ -137,22 +112,19 @@ public final class License extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public License logo(@jakarta.annotation.Nullable String logo) {
+    public License logo(String logo) {
         this.logo = logo;
         return this;
     }
@@ -162,22 +134,19 @@ public final class License extends SensorThingsEntity {
      *
      * @return the logo
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LOGO)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "logo")
     public String getLogo() {
         return logo;
     }
 
     @JsonProperty(JSON_PROPERTY_LOGO)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "logo")
-    public void setLogo(@jakarta.annotation.Nullable String logo) {
+    public void setLogo(String logo) {
         this.logo = logo;
     }
 
-    public License attributionText(@jakarta.annotation.Nullable String attributionText) {
+    public License attributionText(String attributionText) {
         this.attributionText = attributionText;
         return this;
     }
@@ -187,18 +156,15 @@ public final class License extends SensorThingsEntity {
      *
      * @return the attributionText
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION_TEXT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attributionText")
     public String getAttributionText() {
         return attributionText;
     }
 
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION_TEXT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attributionText")
-    public void setAttributionText(@jakarta.annotation.Nullable String attributionText) {
+    public void setAttributionText(String attributionText) {
         this.attributionText = attributionText;
     }
 

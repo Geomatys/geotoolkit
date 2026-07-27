@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.styles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,24 +46,15 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     Style.JSON_PROPERTY_VERSION,
     Style.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "StyleEntry")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "StyleEntry")
 public final class Style extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     /**
@@ -74,49 +63,33 @@ public final class Style extends DataTransferObject {
      * for the OGC API Tiles spec's own, different style schema). Modeled faithfully as declared.
      */
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private String keywords;
 
     public static final String JSON_PROPERTY_ATTRIBUTION = "attribution";
-    @XmlElement(name = "attribution")
-    @jakarta.annotation.Nullable
     private String attribution;
 
     public static final String JSON_PROPERTY_GEO_DATA_CLASSES = "geoDataClasses";
-    @XmlElement(name = "geoDataClasses")
-    @jakarta.annotation.Nullable
     private List<URI> geoDataClasses = new ArrayList<>();
 
     public static final String JSON_PROPERTY_POINT_OF_CONTACT = "pointOfContact";
-    @XmlElement(name = "pointOfContact")
-    @jakarta.annotation.Nullable
     private String pointOfContact;
 
     public static final String JSON_PROPERTY_AI_ASSISTANCE = "aiAssistance";
-    @XmlElement(name = "aiAssistance")
-    @jakarta.annotation.Nullable
     private String aiAssistance;
 
     public static final String JSON_PROPERTY_LICENSE = "license";
-    @XmlElement(name = "license")
-    @jakarta.annotation.Nullable
     private String license;
 
     public static final String JSON_PROPERTY_VERSION = "version";
-    @XmlElement(name = "version")
-    @jakarta.annotation.Nullable
     private String version;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public Style() {
     }
 
-    public Style id(@jakarta.annotation.Nonnull String id) {
+    public Style id(String id) {
         this.id = id;
         return this;
     }
@@ -126,22 +99,19 @@ public final class Style extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Style title(@jakarta.annotation.Nullable String title) {
+    public Style title(String title) {
         this.title = title;
         return this;
     }
@@ -151,22 +121,19 @@ public final class Style extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public Style description(@jakarta.annotation.Nullable String description) {
+    public Style description(String description) {
         this.description = description;
         return this;
     }
@@ -176,22 +143,19 @@ public final class Style extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Style keywords(@jakarta.annotation.Nullable String keywords) {
+    public Style keywords(String keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -201,22 +165,19 @@ public final class Style extends DataTransferObject {
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
     public String getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    public void setKeywords(@jakarta.annotation.Nullable String keywords) {
+    public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 
-    public Style attribution(@jakarta.annotation.Nullable String attribution) {
+    public Style attribution(String attribution) {
         this.attribution = attribution;
         return this;
     }
@@ -226,22 +187,19 @@ public final class Style extends DataTransferObject {
      *
      * @return attribution
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
     public String getAttribution() {
         return attribution;
     }
 
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
-    public void setAttribution(@jakarta.annotation.Nullable String attribution) {
+    public void setAttribution(String attribution) {
         this.attribution = attribution;
     }
 
-    public Style geoDataClasses(@jakarta.annotation.Nullable List<URI> geoDataClasses) {
+    public Style geoDataClasses(List<URI> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
         return this;
     }
@@ -261,24 +219,19 @@ public final class Style extends DataTransferObject {
      *
      * @return geoDataClasses
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<URI> getGeoDataClasses() {
         return geoDataClasses;
     }
 
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGeoDataClasses(@jakarta.annotation.Nullable List<URI> geoDataClasses) {
+    public void setGeoDataClasses(List<URI> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
     }
 
-    public Style pointOfContact(@jakarta.annotation.Nullable String pointOfContact) {
+    public Style pointOfContact(String pointOfContact) {
         this.pointOfContact = pointOfContact;
         return this;
     }
@@ -288,22 +241,19 @@ public final class Style extends DataTransferObject {
      *
      * @return pointOfContact
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_POINT_OF_CONTACT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "pointOfContact")
     public String getPointOfContact() {
         return pointOfContact;
     }
 
     @JsonProperty(JSON_PROPERTY_POINT_OF_CONTACT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "pointOfContact")
-    public void setPointOfContact(@jakarta.annotation.Nullable String pointOfContact) {
+    public void setPointOfContact(String pointOfContact) {
         this.pointOfContact = pointOfContact;
     }
 
-    public Style aiAssistance(@jakarta.annotation.Nullable String aiAssistance) {
+    public Style aiAssistance(String aiAssistance) {
         this.aiAssistance = aiAssistance;
         return this;
     }
@@ -313,22 +263,19 @@ public final class Style extends DataTransferObject {
      *
      * @return aiAssistance
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_AI_ASSISTANCE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "aiAssistance")
     public String getAiAssistance() {
         return aiAssistance;
     }
 
     @JsonProperty(JSON_PROPERTY_AI_ASSISTANCE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "aiAssistance")
-    public void setAiAssistance(@jakarta.annotation.Nullable String aiAssistance) {
+    public void setAiAssistance(String aiAssistance) {
         this.aiAssistance = aiAssistance;
     }
 
-    public Style license(@jakarta.annotation.Nullable String license) {
+    public Style license(String license) {
         this.license = license;
         return this;
     }
@@ -338,22 +285,19 @@ public final class Style extends DataTransferObject {
      *
      * @return license
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
     public String getLicense() {
         return license;
     }
 
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
-    public void setLicense(@jakarta.annotation.Nullable String license) {
+    public void setLicense(String license) {
         this.license = license;
     }
 
-    public Style version(@jakarta.annotation.Nullable String version) {
+    public Style version(String version) {
         this.version = version;
         return this;
     }
@@ -363,22 +307,19 @@ public final class Style extends DataTransferObject {
      *
      * @return version
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VERSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "version")
     public String getVersion() {
         return version;
     }
 
     @JsonProperty(JSON_PROPERTY_VERSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "version")
-    public void setVersion(@jakarta.annotation.Nullable String version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
-    public Style links(@jakarta.annotation.Nonnull List<Link> links) {
+    public Style links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -398,20 +339,15 @@ public final class Style extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

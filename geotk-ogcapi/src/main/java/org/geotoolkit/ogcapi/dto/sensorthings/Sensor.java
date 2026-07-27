@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,40 +40,27 @@ import java.util.Objects;
     Sensor.JSON_PROPERTY_METADATA,
     Sensor.JSON_PROPERTY_PROPERTIES
 })
-@XmlRootElement(name = "Sensor")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Sensor")
 public final class Sensor extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     public static final String JSON_PROPERTY_ENCODING_TYPE = "encodingType";
-    @XmlElement(name = "encodingType")
-    @jakarta.annotation.Nonnull
     private String encodingType;
 
     public static final String JSON_PROPERTY_METADATA = "metadata";
-    @XmlElement(name = "metadata")
-    @jakarta.annotation.Nonnull
     private Object metadata;
 
     public static final String JSON_PROPERTY_PROPERTIES = "properties";
-    @XmlElement(name = "properties")
-    @jakarta.annotation.Nullable
     private Map<String, Object> properties = new HashMap<>();
 
     public Sensor() {
     }
 
-    public Sensor name(@jakarta.annotation.Nonnull String name) {
+    public Sensor name(String name) {
         this.name = name;
         return this;
     }
@@ -89,22 +70,19 @@ public final class Sensor extends SensorThingsEntity {
      *
      * @return the name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Sensor description(@jakarta.annotation.Nonnull String description) {
+    public Sensor description(String description) {
         this.description = description;
         return this;
     }
@@ -114,22 +92,19 @@ public final class Sensor extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Sensor encodingType(@jakarta.annotation.Nonnull String encodingType) {
+    public Sensor encodingType(String encodingType) {
         this.encodingType = encodingType;
         return this;
     }
@@ -139,22 +114,19 @@ public final class Sensor extends SensorThingsEntity {
      *
      * @return the encodingType
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ENCODING_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "encodingType")
     public String getEncodingType() {
         return encodingType;
     }
 
     @JsonProperty(JSON_PROPERTY_ENCODING_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "encodingType")
-    public void setEncodingType(@jakarta.annotation.Nonnull String encodingType) {
+    public void setEncodingType(String encodingType) {
         this.encodingType = encodingType;
     }
 
-    public Sensor metadata(@jakarta.annotation.Nonnull Object metadata) {
+    public Sensor metadata(Object metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -165,22 +137,19 @@ public final class Sensor extends SensorThingsEntity {
      *
      * @return the metadata
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_METADATA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "metadata")
     public Object getMetadata() {
         return metadata;
     }
 
     @JsonProperty(JSON_PROPERTY_METADATA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "metadata")
-    public void setMetadata(@jakarta.annotation.Nonnull Object metadata) {
+    public void setMetadata(Object metadata) {
         this.metadata = metadata;
     }
 
-    public Sensor properties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public Sensor properties(Map<String, Object> properties) {
         this.properties = properties;
         return this;
     }
@@ -198,18 +167,15 @@ public final class Sensor extends SensorThingsEntity {
      *
      * @return the properties
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
     public Map<String, Object> getProperties() {
         return properties;
     }
 
     @JsonProperty(JSON_PROPERTY_PROPERTIES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "properties")
-    public void setProperties(@jakarta.annotation.Nullable Map<String, Object> properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 

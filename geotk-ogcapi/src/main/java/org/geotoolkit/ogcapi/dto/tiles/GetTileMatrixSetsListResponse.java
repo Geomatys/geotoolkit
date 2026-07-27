@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import org.geotoolkit.ogcapi.dto.common.Link;
 
 
@@ -33,25 +31,18 @@ import org.geotoolkit.ogcapi.dto.common.Link;
 @JsonPropertyOrder({
     GetTileMatrixSetsListResponse.JSON_PROPERTY_TILE_MATRIX_SETS
 })
-@XmlRootElement(name = "GetTileMatrixSetsList200Response")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GetTileMatrixSetsList200Response")
 public class GetTileMatrixSetsListResponse {
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_TILE_MATRIX_SETS = "tileMatrixSets";
-    @XmlElement(name = "tileMatrixSets")
-    @jakarta.annotation.Nullable
     private List<TileMatrixSetItem> tileMatrixSets = new ArrayList<>();
 
     public GetTileMatrixSetsListResponse() {
     }
 
-    public GetTileMatrixSetsListResponse links(@jakarta.annotation.Nullable List<Link> links) {
+    public GetTileMatrixSetsListResponse links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -69,24 +60,19 @@ public class GetTileMatrixSetsListResponse {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public GetTileMatrixSetsListResponse tileMatrixSets(@jakarta.annotation.Nullable List<TileMatrixSetItem> tileMatrixSets) {
+    public GetTileMatrixSetsListResponse tileMatrixSets(List<TileMatrixSetItem> tileMatrixSets) {
         this.tileMatrixSets = tileMatrixSets;
         return this;
     }
@@ -104,20 +90,15 @@ public class GetTileMatrixSetsListResponse {
      *
      * @return tileMatrixSets
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX_SETS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "tileMatrixSets")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<TileMatrixSetItem> getTileMatrixSets() {
         return tileMatrixSets;
     }
 
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX_SETS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "tileMatrixSets")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setTileMatrixSets(@jakarta.annotation.Nullable List<TileMatrixSetItem> tileMatrixSets) {
+    public void setTileMatrixSets(List<TileMatrixSetItem> tileMatrixSets) {
         this.tileMatrixSets = tileMatrixSets;
     }
 

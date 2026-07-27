@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,80 +48,51 @@ import org.geotoolkit.ogcapi.dto.geojson.GeoJSONFeature;
     ZoneInfo.JSON_PROPERTY_TEMPORAL_INTERVAL,
     ZoneInfo.JSON_PROPERTY_STATISTICS
 })
-@XmlRootElement(name = "ZoneInfo")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ZoneInfo")
 public final class ZoneInfo extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_SHAPE_TYPE = "shapeType";
-    @XmlElement(name = "shapeType")
-    @jakarta.annotation.Nullable
     private String shapeType;
 
     public static final String JSON_PROPERTY_LEVEL = "level";
-    @XmlElement(name = "level")
-    @jakarta.annotation.Nullable
     private Integer level;
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private URI crs;
 
     public static final String JSON_PROPERTY_CENTROID = "centroid";
-    @XmlElement(name = "centroid")
-    @jakarta.annotation.Nullable
     private List<Double> centroid = new ArrayList<>();
 
     public static final String JSON_PROPERTY_BBOX = "bbox";
-    @XmlElement(name = "bbox")
-    @jakarta.annotation.Nullable
     private List<Double> bbox = new ArrayList<>();
 
     public static final String JSON_PROPERTY_AREA_METERS_SQUARE = "areaMetersSquare";
-    @XmlElement(name = "areaMetersSquare")
-    @jakarta.annotation.Nullable
     private Double areaMetersSquare;
 
     public static final String JSON_PROPERTY_VOLUME_METERS_CUBE = "volumeMetersCube";
-    @XmlElement(name = "volumeMetersCube")
-    @jakarta.annotation.Nullable
     private Double volumeMetersCube;
 
     public static final String JSON_PROPERTY_TEMPORAL_DURATION_SECONDS = "temporalDurationSeconds";
-    @XmlElement(name = "temporalDurationSeconds")
-    @jakarta.annotation.Nullable
     private Double temporalDurationSeconds;
 
     public static final String JSON_PROPERTY_GEOMETRY = "geometry";
-    @XmlElement(name = "geometry")
-    @jakarta.annotation.Nullable
     private GeoJSONFeature geometry;
 
     public static final String JSON_PROPERTY_TEMPORAL_INTERVAL = "temporalInterval";
-    @XmlElement(name = "temporalInterval")
-    @jakarta.annotation.Nullable
     private List<String> temporalInterval = new ArrayList<>();
 
     public static final String JSON_PROPERTY_STATISTICS = "statistics";
-    @XmlElement(name = "statistics")
-    @jakarta.annotation.Nullable
     private Map<String, ZoneInfoStatisticsValue> statistics = new HashMap<>();
 
     public ZoneInfo() {
     }
 
-    public ZoneInfo id(@jakarta.annotation.Nonnull String id) {
+    public ZoneInfo id(String id) {
         this.id = id;
         return this;
     }
@@ -138,22 +102,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public ZoneInfo links(@jakarta.annotation.Nonnull List<Link> links) {
+    public ZoneInfo links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -172,24 +133,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public ZoneInfo shapeType(@jakarta.annotation.Nullable String shapeType) {
+    public ZoneInfo shapeType(String shapeType) {
         this.shapeType = shapeType;
         return this;
     }
@@ -199,22 +155,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return shapeType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SHAPE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shapeType")
     public String getShapeType() {
         return shapeType;
     }
 
     @JsonProperty(JSON_PROPERTY_SHAPE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shapeType")
-    public void setShapeType(@jakarta.annotation.Nullable String shapeType) {
+    public void setShapeType(String shapeType) {
         this.shapeType = shapeType;
     }
 
-    public ZoneInfo level(@jakarta.annotation.Nullable Integer level) {
+    public ZoneInfo level(Integer level) {
         this.level = level;
         return this;
     }
@@ -224,22 +177,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return level
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LEVEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "level")
     public Integer getLevel() {
         return level;
     }
 
     @JsonProperty(JSON_PROPERTY_LEVEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "level")
-    public void setLevel(@jakarta.annotation.Nullable Integer level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
-    public ZoneInfo crs(@jakarta.annotation.Nullable URI crs) {
+    public ZoneInfo crs(URI crs) {
         this.crs = crs;
         return this;
     }
@@ -249,22 +199,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public URI getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable URI crs) {
+    public void setCrs(URI crs) {
         this.crs = crs;
     }
 
-    public ZoneInfo centroid(@jakarta.annotation.Nullable List<Double> centroid) {
+    public ZoneInfo centroid(List<Double> centroid) {
         this.centroid = centroid;
         return this;
     }
@@ -282,24 +229,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return centroid
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CENTROID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "centroid")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getCentroid() {
         return centroid;
     }
 
     @JsonProperty(JSON_PROPERTY_CENTROID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "centroid")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCentroid(@jakarta.annotation.Nullable List<Double> centroid) {
+    public void setCentroid(List<Double> centroid) {
         this.centroid = centroid;
     }
 
-    public ZoneInfo bbox(@jakarta.annotation.Nullable List<Double> bbox) {
+    public ZoneInfo bbox(List<Double> bbox) {
         this.bbox = bbox;
         return this;
     }
@@ -317,24 +259,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return bbox
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getBbox() {
         return bbox;
     }
 
     @JsonProperty(JSON_PROPERTY_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable List<Double> bbox) {
+    public void setBbox(List<Double> bbox) {
         this.bbox = bbox;
     }
 
-    public ZoneInfo areaMetersSquare(@jakarta.annotation.Nullable Double areaMetersSquare) {
+    public ZoneInfo areaMetersSquare(Double areaMetersSquare) {
         this.areaMetersSquare = areaMetersSquare;
         return this;
     }
@@ -344,22 +281,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return areaMetersSquare
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "areaMetersSquare")
     public Double getAreaMetersSquare() {
         return areaMetersSquare;
     }
 
     @JsonProperty(JSON_PROPERTY_AREA_METERS_SQUARE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "areaMetersSquare")
-    public void setAreaMetersSquare(@jakarta.annotation.Nullable Double areaMetersSquare) {
+    public void setAreaMetersSquare(Double areaMetersSquare) {
         this.areaMetersSquare = areaMetersSquare;
     }
 
-    public ZoneInfo volumeMetersCube(@jakarta.annotation.Nullable Double volumeMetersCube) {
+    public ZoneInfo volumeMetersCube(Double volumeMetersCube) {
         this.volumeMetersCube = volumeMetersCube;
         return this;
     }
@@ -369,22 +303,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return volumeMetersCube
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "volumeMetersCube")
     public Double getVolumeMetersCube() {
         return volumeMetersCube;
     }
 
     @JsonProperty(JSON_PROPERTY_VOLUME_METERS_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "volumeMetersCube")
-    public void setVolumeMetersCube(@jakarta.annotation.Nullable Double volumeMetersCube) {
+    public void setVolumeMetersCube(Double volumeMetersCube) {
         this.volumeMetersCube = volumeMetersCube;
     }
 
-    public ZoneInfo temporalDurationSeconds(@jakarta.annotation.Nullable Double temporalDurationSeconds) {
+    public ZoneInfo temporalDurationSeconds(Double temporalDurationSeconds) {
         this.temporalDurationSeconds = temporalDurationSeconds;
         return this;
     }
@@ -394,22 +325,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return temporalDurationSeconds
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TEMPORAL_DURATION_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporalDurationSeconds")
     public Double getTemporalDurationSeconds() {
         return temporalDurationSeconds;
     }
 
     @JsonProperty(JSON_PROPERTY_TEMPORAL_DURATION_SECONDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporalDurationSeconds")
-    public void setTemporalDurationSeconds(@jakarta.annotation.Nullable Double temporalDurationSeconds) {
+    public void setTemporalDurationSeconds(Double temporalDurationSeconds) {
         this.temporalDurationSeconds = temporalDurationSeconds;
     }
 
-    public ZoneInfo geometry(@jakarta.annotation.Nullable GeoJSONFeature geometry) {
+    public ZoneInfo geometry(GeoJSONFeature geometry) {
         this.geometry = geometry;
         return this;
     }
@@ -419,22 +347,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return geometry
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEOMETRY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometry")
     public GeoJSONFeature getGeometry() {
         return geometry;
     }
 
     @JsonProperty(JSON_PROPERTY_GEOMETRY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometry")
-    public void setGeometry(@jakarta.annotation.Nullable GeoJSONFeature geometry) {
+    public void setGeometry(GeoJSONFeature geometry) {
         this.geometry = geometry;
     }
 
-    public ZoneInfo temporalInterval(@jakarta.annotation.Nullable List<String> temporalInterval) {
+    public ZoneInfo temporalInterval(List<String> temporalInterval) {
         this.temporalInterval = temporalInterval;
         return this;
     }
@@ -452,24 +377,19 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return temporalInterval
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TEMPORAL_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporalInterval")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getTemporalInterval() {
         return temporalInterval;
     }
 
     @JsonProperty(JSON_PROPERTY_TEMPORAL_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "temporalInterval")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setTemporalInterval(@jakarta.annotation.Nullable List<String> temporalInterval) {
+    public void setTemporalInterval(List<String> temporalInterval) {
         this.temporalInterval = temporalInterval;
     }
 
-    public ZoneInfo statistics(@jakarta.annotation.Nullable Map<String, ZoneInfoStatisticsValue> statistics) {
+    public ZoneInfo statistics(Map<String, ZoneInfoStatisticsValue> statistics) {
         this.statistics = statistics;
         return this;
     }
@@ -488,20 +408,15 @@ public final class ZoneInfo extends DataTransferObject {
      *
      * @return statistics
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_STATISTICS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "statistics")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, ZoneInfoStatisticsValue> getStatistics() {
         return statistics;
     }
 
     @JsonProperty(JSON_PROPERTY_STATISTICS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "statistics")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setStatistics(@jakarta.annotation.Nullable Map<String, ZoneInfoStatisticsValue> statistics) {
+    public void setStatistics(Map<String, ZoneInfoStatisticsValue> statistics) {
         this.statistics = statistics;
     }
 

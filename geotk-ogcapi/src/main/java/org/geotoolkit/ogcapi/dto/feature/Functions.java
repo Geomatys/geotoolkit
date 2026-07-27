@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -33,20 +31,15 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 @JsonPropertyOrder({
     Functions.JSON_PROPERTY_FUNCTIONS
 })
-@XmlRootElement(name = "Functions")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Functions")
 public class Functions extends DataTransferObject {
 
     public static final String JSON_PROPERTY_FUNCTIONS = "functions";
-    @XmlElement(name = "functions")
-    @jakarta.annotation.Nonnull
     private List<Function> functions = new ArrayList<>();
 
     public Functions() {
     }
 
-    public Functions functions(@jakarta.annotation.Nonnull List<Function> functions) {
+    public Functions functions(List<Function> functions) {
         this.functions = functions;
         return this;
     }
@@ -64,20 +57,15 @@ public class Functions extends DataTransferObject {
      *
      * @return functions
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_FUNCTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "functions")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Function> getFunctions() {
         return functions;
     }
 
     @JsonProperty(JSON_PROPERTY_FUNCTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "functions")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setFunctions(@jakarta.annotation.Nonnull List<Function> functions) {
+    public void setFunctions(List<Function> functions) {
         this.functions = functions;
     }
 

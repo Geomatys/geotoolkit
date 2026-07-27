@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.maps;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,25 +33,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ProjectionParameter.JSON_PROPERTY_TITLE,
     ProjectionParameter.JSON_PROPERTY_DESCRIPTION
 })
-@XmlRootElement(name = "ProjectionParameter")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ProjectionParameter")
 public final class ProjectionParameter extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public ProjectionParameter() {
     }
 
-    public ProjectionParameter title(@jakarta.annotation.Nullable String title) {
+    public ProjectionParameter title(String title) {
         this.title = title;
         return this;
     }
@@ -63,22 +54,19 @@ public final class ProjectionParameter extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public ProjectionParameter description(@jakarta.annotation.Nullable String description) {
+    public ProjectionParameter description(String description) {
         this.description = description;
         return this;
     }
@@ -88,18 +76,15 @@ public final class ProjectionParameter extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

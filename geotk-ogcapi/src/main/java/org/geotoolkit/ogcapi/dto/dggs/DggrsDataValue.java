@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,33 +32,24 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     DggrsDataValue.JSON_PROPERTY_SHAPE,
     DggrsDataValue.JSON_PROPERTY_DATA
 })
-@XmlRootElement(name = "DggsJsonValuesValueInner")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggsJsonValuesValueInner")
 public final class DggrsDataValue extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DEPTH = "depth";
-    @XmlElement(name = "depth")
-    @jakarta.annotation.Nullable
     private Integer depth;
 
     public static final String JSON_PROPERTY_SHAPE = "shape";
-    @XmlElement(name = "shape")
-    @jakarta.annotation.Nullable
     private DggrsDataValueShape shape;
 
     /**
      * Specification says it should be a Double, we extent that to support other types.
      */
     public static final String JSON_PROPERTY_DATA = "data";
-    @XmlElement(name = "data")
-    @jakarta.annotation.Nonnull
     private List<Object> data = new ArrayList<>();
 
     public DggrsDataValue() {
     }
 
-    public DggrsDataValue depth(@jakarta.annotation.Nullable Integer depth) {
+    public DggrsDataValue depth(Integer depth) {
         this.depth = depth;
         return this;
     }
@@ -75,22 +59,19 @@ public final class DggrsDataValue extends DataTransferObject {
      *
      * @return depth
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DEPTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "depth")
     public Integer getDepth() {
         return depth;
     }
 
     @JsonProperty(JSON_PROPERTY_DEPTH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "depth")
-    public void setDepth(@jakarta.annotation.Nullable Integer depth) {
+    public void setDepth(Integer depth) {
         this.depth = depth;
     }
 
-    public DggrsDataValue shape(@jakarta.annotation.Nullable DggrsDataValueShape shape) {
+    public DggrsDataValue shape(DggrsDataValueShape shape) {
         this.shape = shape;
         return this;
     }
@@ -100,22 +81,19 @@ public final class DggrsDataValue extends DataTransferObject {
      *
      * @return shape
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SHAPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shape")
     public DggrsDataValueShape getShape() {
         return shape;
     }
 
     @JsonProperty(JSON_PROPERTY_SHAPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shape")
-    public void setShape(@jakarta.annotation.Nullable DggrsDataValueShape shape) {
+    public void setShape(DggrsDataValueShape shape) {
         this.shape = shape;
     }
 
-    public DggrsDataValue data(@jakarta.annotation.Nonnull List<Object> data) {
+    public DggrsDataValue data(List<Object> data) {
         this.data = data;
         return this;
     }
@@ -133,20 +111,15 @@ public final class DggrsDataValue extends DataTransferObject {
      *
      * @return data
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DATA)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "data")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Object> getData() {
         return data;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "data")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setData(@jakarta.annotation.Nonnull List<Object> data) {
+    public void setData(List<Object> data) {
         this.data = data;
     }
 

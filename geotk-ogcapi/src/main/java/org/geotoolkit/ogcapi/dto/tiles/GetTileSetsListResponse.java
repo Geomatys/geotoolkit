@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,25 +32,18 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     GetTileSetsListResponse.JSON_PROPERTY_LINKS,
     GetTileSetsListResponse.JSON_PROPERTY_TILESETS
 })
-@XmlRootElement(name = "DatasetVectorGetTileSetsList200Response")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DatasetVectorGetTileSetsList200Response")
 public final class GetTileSetsListResponse extends DataTransferObject {
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_TILESETS = "tilesets";
-    @XmlElement(name = "tilesets")
-    @jakarta.annotation.Nonnull
     private List<TileSetItem> tilesets = new ArrayList<>();
 
     public GetTileSetsListResponse() {
     }
 
-    public GetTileSetsListResponse links(@jakarta.annotation.Nullable List<Link> links) {
+    public GetTileSetsListResponse links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -70,24 +61,19 @@ public final class GetTileSetsListResponse extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public GetTileSetsListResponse tilesets(@jakarta.annotation.Nonnull List<TileSetItem> tilesets) {
+    public GetTileSetsListResponse tilesets(List<TileSetItem> tilesets) {
         this.tilesets = tilesets;
         return this;
     }
@@ -105,20 +91,15 @@ public final class GetTileSetsListResponse extends DataTransferObject {
      *
      * @return tilesets
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TILESETS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tilesets")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<TileSetItem> getTilesets() {
         return tilesets;
     }
 
     @JsonProperty(JSON_PROPERTY_TILESETS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tilesets")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setTilesets(@jakarta.annotation.Nonnull List<TileSetItem> tilesets) {
+    public void setTilesets(List<TileSetItem> tilesets) {
         this.tilesets = tilesets;
     }
 

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -39,50 +33,38 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ReferenceSystem.JSON_PROPERTY_ID,
     ReferenceSystem.JSON_PROPERTY_CALENDAR
 })
-@XmlRootElement(name = "ReferenceSystem")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "ReferenceSystem")
 public final class ReferenceSystem extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nullable
     private String id;
 
     public static final String JSON_PROPERTY_CALENDAR = "calendar";
-    @XmlElement(name = "calendar")
-    @jakarta.annotation.Nullable
     private String calendar;
 
     public ReferenceSystem() {
     }
 
-    public ReferenceSystem type(@jakarta.annotation.Nullable String type) {
+    public ReferenceSystem type(String type) {
         this.type = type;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public ReferenceSystem id(@jakarta.annotation.Nullable String id) {
+    public ReferenceSystem id(String id) {
         this.id = id;
         return this;
     }
@@ -92,22 +74,19 @@ public final class ReferenceSystem extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nullable String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public ReferenceSystem calendar(@jakarta.annotation.Nullable String calendar) {
+    public ReferenceSystem calendar(String calendar) {
         this.calendar = calendar;
         return this;
     }
@@ -117,18 +96,15 @@ public final class ReferenceSystem extends DataTransferObject {
      *
      * @return calendar
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CALENDAR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "calendar")
     public String getCalendar() {
         return calendar;
     }
 
     @JsonProperty(JSON_PROPERTY_CALENDAR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "calendar")
-    public void setCalendar(@jakarta.annotation.Nullable String calendar) {
+    public void setCalendar(String calendar) {
         this.calendar = calendar;
     }
 

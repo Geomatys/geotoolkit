@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
@@ -42,30 +36,21 @@ import java.util.Objects;
     Task.JSON_PROPERTY_TASKING_PARAMETERS,
     Task.JSON_PROPERTY_TASKING_CAPABILITY
 })
-@XmlRootElement(name = "Task")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Task")
 public final class Task extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_CREATION_TIME = "creationTime";
-    @XmlElement(name = "creationTime")
-    @jakarta.annotation.Nullable
     private String creationTime;
 
     public static final String JSON_PROPERTY_TASKING_PARAMETERS = "taskingParameters";
-    @XmlElement(name = "taskingParameters")
-    @jakarta.annotation.Nonnull
     private Object taskingParameters;
 
     public static final String JSON_PROPERTY_TASKING_CAPABILITY = "TaskingCapability";
-    @XmlElement(name = "taskingCapability")
-    @jakarta.annotation.Nullable
     private TaskingCapability taskingCapability;
 
     public Task() {
     }
 
-    public Task creationTime(@jakarta.annotation.Nullable String creationTime) {
+    public Task creationTime(String creationTime) {
         this.creationTime = creationTime;
         return this;
     }
@@ -76,22 +61,19 @@ public final class Task extends SensorThingsEntity {
      *
      * @return the creationTime
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
     public String getCreationTime() {
         return creationTime;
     }
 
     @JsonProperty(JSON_PROPERTY_CREATION_TIME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "creationTime")
-    public void setCreationTime(@jakarta.annotation.Nullable String creationTime) {
+    public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
     }
 
-    public Task taskingParameters(@jakarta.annotation.Nonnull Object taskingParameters) {
+    public Task taskingParameters(Object taskingParameters) {
         this.taskingParameters = taskingParameters;
         return this;
     }
@@ -102,22 +84,19 @@ public final class Task extends SensorThingsEntity {
      *
      * @return the taskingParameters
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TASKING_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "taskingParameters")
     public Object getTaskingParameters() {
         return taskingParameters;
     }
 
     @JsonProperty(JSON_PROPERTY_TASKING_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "taskingParameters")
-    public void setTaskingParameters(@jakarta.annotation.Nonnull Object taskingParameters) {
+    public void setTaskingParameters(Object taskingParameters) {
         this.taskingParameters = taskingParameters;
     }
 
-    public Task taskingCapability(@jakarta.annotation.Nullable TaskingCapability taskingCapability) {
+    public Task taskingCapability(TaskingCapability taskingCapability) {
         this.taskingCapability = taskingCapability;
         return this;
     }
@@ -128,18 +107,15 @@ public final class Task extends SensorThingsEntity {
      *
      * @return the taskingCapability
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TASKING_CAPABILITY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "TaskingCapability")
     public TaskingCapability getTaskingCapability() {
         return taskingCapability;
     }
 
     @JsonProperty(JSON_PROPERTY_TASKING_CAPABILITY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "TaskingCapability")
-    public void setTaskingCapability(@jakarta.annotation.Nullable TaskingCapability taskingCapability) {
+    public void setTaskingCapability(TaskingCapability taskingCapability) {
         this.taskingCapability = taskingCapability;
     }
 

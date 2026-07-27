@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,40 +33,27 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     TileMatrixLimits.JSON_PROPERTY_MIN_TILE_COL,
     TileMatrixLimits.JSON_PROPERTY_MAX_TILE_COL
 })
-@XmlRootElement(name = "TileMatrixLimits")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TileMatrixLimits")
 public final class TileMatrixLimits extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TILE_MATRIX = "tileMatrix";
-    @XmlElement(name = "tileMatrix")
-    @jakarta.annotation.Nonnull
     private String tileMatrix;
 
     public static final String JSON_PROPERTY_MIN_TILE_ROW = "minTileRow";
-    @XmlElement(name = "minTileRow")
-    @jakarta.annotation.Nonnull
     private Integer minTileRow;
 
     public static final String JSON_PROPERTY_MAX_TILE_ROW = "maxTileRow";
-    @XmlElement(name = "maxTileRow")
-    @jakarta.annotation.Nonnull
     private Integer maxTileRow;
 
     public static final String JSON_PROPERTY_MIN_TILE_COL = "minTileCol";
-    @XmlElement(name = "minTileCol")
-    @jakarta.annotation.Nonnull
     private Integer minTileCol;
 
     public static final String JSON_PROPERTY_MAX_TILE_COL = "maxTileCol";
-    @XmlElement(name = "maxTileCol")
-    @jakarta.annotation.Nonnull
     private Integer maxTileCol;
 
     public TileMatrixLimits() {
     }
 
-    public TileMatrixLimits tileMatrix(@jakarta.annotation.Nonnull String tileMatrix) {
+    public TileMatrixLimits tileMatrix(String tileMatrix) {
         this.tileMatrix = tileMatrix;
         return this;
     }
@@ -78,22 +63,19 @@ public final class TileMatrixLimits extends DataTransferObject {
      *
      * @return tileMatrix
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileMatrix")
     public String getTileMatrix() {
         return tileMatrix;
     }
 
     @JsonProperty(JSON_PROPERTY_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "tileMatrix")
-    public void setTileMatrix(@jakarta.annotation.Nonnull String tileMatrix) {
+    public void setTileMatrix(String tileMatrix) {
         this.tileMatrix = tileMatrix;
     }
 
-    public TileMatrixLimits minTileRow(@jakarta.annotation.Nonnull Integer minTileRow) {
+    public TileMatrixLimits minTileRow(Integer minTileRow) {
         this.minTileRow = minTileRow;
         return this;
     }
@@ -103,22 +85,19 @@ public final class TileMatrixLimits extends DataTransferObject {
      *
      * @return minTileRow
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MIN_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileRow")
     public Integer getMinTileRow() {
         return minTileRow;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileRow")
-    public void setMinTileRow(@jakarta.annotation.Nonnull Integer minTileRow) {
+    public void setMinTileRow(Integer minTileRow) {
         this.minTileRow = minTileRow;
     }
 
-    public TileMatrixLimits maxTileRow(@jakarta.annotation.Nonnull Integer maxTileRow) {
+    public TileMatrixLimits maxTileRow(Integer maxTileRow) {
         this.maxTileRow = maxTileRow;
         return this;
     }
@@ -128,22 +107,19 @@ public final class TileMatrixLimits extends DataTransferObject {
      *
      * @return maxTileRow
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MAX_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileRow")
     public Integer getMaxTileRow() {
         return maxTileRow;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileRow")
-    public void setMaxTileRow(@jakarta.annotation.Nonnull Integer maxTileRow) {
+    public void setMaxTileRow(Integer maxTileRow) {
         this.maxTileRow = maxTileRow;
     }
 
-    public TileMatrixLimits minTileCol(@jakarta.annotation.Nonnull Integer minTileCol) {
+    public TileMatrixLimits minTileCol(Integer minTileCol) {
         this.minTileCol = minTileCol;
         return this;
     }
@@ -153,22 +129,19 @@ public final class TileMatrixLimits extends DataTransferObject {
      *
      * @return minTileCol
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MIN_TILE_COL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileCol")
     public Integer getMinTileCol() {
         return minTileCol;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_TILE_COL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileCol")
-    public void setMinTileCol(@jakarta.annotation.Nonnull Integer minTileCol) {
+    public void setMinTileCol(Integer minTileCol) {
         this.minTileCol = minTileCol;
     }
 
-    public TileMatrixLimits maxTileCol(@jakarta.annotation.Nonnull Integer maxTileCol) {
+    public TileMatrixLimits maxTileCol(Integer maxTileCol) {
         this.maxTileCol = maxTileCol;
         return this;
     }
@@ -178,18 +151,15 @@ public final class TileMatrixLimits extends DataTransferObject {
      *
      * @return maxTileCol
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MAX_TILE_COL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileCol")
     public Integer getMaxTileCol() {
         return maxTileCol;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_TILE_COL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileCol")
-    public void setMaxTileCol(@jakarta.annotation.Nonnull Integer maxTileCol) {
+    public void setMaxTileCol(Integer maxTileCol) {
         this.maxTileCol = maxTileCol;
     }
 

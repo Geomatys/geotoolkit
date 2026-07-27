@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,25 +31,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Theme.JSON_PROPERTY_CONCEPTS,
     Theme.JSON_PROPERTY_SCHEME
 })
-@XmlRootElement(name = "Theme")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Theme")
 public final class Theme extends DataTransferObject {
 
     public static final String JSON_PROPERTY_CONCEPTS = "concepts";
-    @XmlElement(name = "concepts")
-    @jakarta.annotation.Nonnull
     private List<Concepts> concepts = new ArrayList<>();
 
     public static final String JSON_PROPERTY_SCHEME = "scheme";
-    @XmlElement(name = "scheme")
-    @jakarta.annotation.Nonnull
     private String scheme;
 
     public Theme() {
     }
 
-    public Theme concepts(@jakarta.annotation.Nonnull List<Concepts> concepts) {
+    public Theme concepts(List<Concepts> concepts) {
         this.concepts = concepts;
         return this;
     }
@@ -76,24 +62,19 @@ public final class Theme extends DataTransferObject {
      *
      * @return concepts
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_CONCEPTS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "concepts")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Concepts> getConcepts() {
         return concepts;
     }
 
     @JsonProperty(JSON_PROPERTY_CONCEPTS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "concepts")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setConcepts(@jakarta.annotation.Nonnull List<Concepts> concepts) {
+    public void setConcepts(List<Concepts> concepts) {
         this.concepts = concepts;
     }
 
-    public Theme scheme(@jakarta.annotation.Nonnull String scheme) {
+    public Theme scheme(String scheme) {
         this.scheme = scheme;
         return this;
     }
@@ -108,18 +89,15 @@ public final class Theme extends DataTransferObject {
      *
      * @return scheme
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_SCHEME)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "scheme")
     public String getScheme() {
         return scheme;
     }
 
     @JsonProperty(JSON_PROPERTY_SCHEME)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "scheme")
-    public void setScheme(@jakarta.annotation.Nonnull String scheme) {
+    public void setScheme(String scheme) {
         this.scheme = scheme;
     }
 

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
@@ -44,35 +38,24 @@ import java.util.Objects;
     Party.JSON_PROPERTY_DESCRIPTION,
     Party.JSON_PROPERTY_AUTH_ID
 })
-@XmlRootElement(name = "Party")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Party")
 public final class Party extends SensorThingsEntity {
 
     public static final String JSON_PROPERTY_DISPLAY_NAME = "displayName";
-    @XmlElement(name = "displayName")
-    @jakarta.annotation.Nullable
     private String displayName;
 
     public static final String JSON_PROPERTY_ROLE = "role";
-    @XmlElement(name = "role")
-    @jakarta.annotation.Nonnull
     private String role;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_AUTH_ID = "authId";
-    @XmlElement(name = "authId")
-    @jakarta.annotation.Nullable
     private String authId;
 
     public Party() {
     }
 
-    public Party displayName(@jakarta.annotation.Nullable String displayName) {
+    public Party displayName(String displayName) {
         this.displayName = displayName;
         return this;
     }
@@ -82,22 +65,19 @@ public final class Party extends SensorThingsEntity {
      *
      * @return the displayName
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DISPLAY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "displayName")
     public String getDisplayName() {
         return displayName;
     }
 
     @JsonProperty(JSON_PROPERTY_DISPLAY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "displayName")
-    public void setDisplayName(@jakarta.annotation.Nullable String displayName) {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public Party role(@jakarta.annotation.Nonnull String role) {
+    public Party role(String role) {
         this.role = role;
         return this;
     }
@@ -107,22 +87,19 @@ public final class Party extends SensorThingsEntity {
      *
      * @return the role
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ROLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "role")
     public String getRole() {
         return role;
     }
 
     @JsonProperty(JSON_PROPERTY_ROLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "role")
-    public void setRole(@jakarta.annotation.Nonnull String role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
-    public Party description(@jakarta.annotation.Nullable String description) {
+    public Party description(String description) {
         this.description = description;
         return this;
     }
@@ -132,22 +109,19 @@ public final class Party extends SensorThingsEntity {
      *
      * @return the description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Party authId(@jakarta.annotation.Nullable String authId) {
+    public Party authId(String authId) {
         this.authId = authId;
         return this;
     }
@@ -157,18 +131,15 @@ public final class Party extends SensorThingsEntity {
      *
      * @return the authId
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_AUTH_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "authId")
     public String getAuthId() {
         return authId;
     }
 
     @JsonProperty(JSON_PROPERTY_AUTH_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "authId")
-    public void setAuthId(@jakarta.annotation.Nullable String authId) {
+    public void setAuthId(String authId) {
         this.authId = authId;
     }
 

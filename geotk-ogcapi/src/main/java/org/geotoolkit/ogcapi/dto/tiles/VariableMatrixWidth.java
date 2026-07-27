@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -33,30 +31,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     VariableMatrixWidth.JSON_PROPERTY_MIN_TILE_ROW,
     VariableMatrixWidth.JSON_PROPERTY_MAX_TILE_ROW
 })
-@XmlRootElement(name = "VariableMatrixWidth")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "VariableMatrixWidth")
 public final class VariableMatrixWidth extends DataTransferObject {
 
     public static final String JSON_PROPERTY_COALESCE = "coalesce";
-    @XmlElement(name = "coalesce")
-    @jakarta.annotation.Nonnull
     private BigDecimal coalesce;
 
     public static final String JSON_PROPERTY_MIN_TILE_ROW = "minTileRow";
-    @XmlElement(name = "minTileRow")
-    @jakarta.annotation.Nonnull
     private BigDecimal minTileRow;
 
     public static final String JSON_PROPERTY_MAX_TILE_ROW = "maxTileRow";
-    @XmlElement(name = "maxTileRow")
-    @jakarta.annotation.Nonnull
     private BigDecimal maxTileRow;
 
     public VariableMatrixWidth() {
     }
 
-    public VariableMatrixWidth coalesce(@jakarta.annotation.Nonnull BigDecimal coalesce) {
+    public VariableMatrixWidth coalesce(BigDecimal coalesce) {
         this.coalesce = coalesce;
         return this;
     }
@@ -66,22 +55,19 @@ public final class VariableMatrixWidth extends DataTransferObject {
      *
      * @return coalesce
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COALESCE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coalesce")
     public BigDecimal getCoalesce() {
         return coalesce;
     }
 
     @JsonProperty(JSON_PROPERTY_COALESCE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coalesce")
-    public void setCoalesce(@jakarta.annotation.Nonnull BigDecimal coalesce) {
+    public void setCoalesce(BigDecimal coalesce) {
         this.coalesce = coalesce;
     }
 
-    public VariableMatrixWidth minTileRow(@jakarta.annotation.Nonnull BigDecimal minTileRow) {
+    public VariableMatrixWidth minTileRow(BigDecimal minTileRow) {
         this.minTileRow = minTileRow;
         return this;
     }
@@ -91,22 +77,19 @@ public final class VariableMatrixWidth extends DataTransferObject {
      *
      * @return minTileRow
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MIN_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileRow")
     public BigDecimal getMinTileRow() {
         return minTileRow;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "minTileRow")
-    public void setMinTileRow(@jakarta.annotation.Nonnull BigDecimal minTileRow) {
+    public void setMinTileRow(BigDecimal minTileRow) {
         this.minTileRow = minTileRow;
     }
 
-    public VariableMatrixWidth maxTileRow(@jakarta.annotation.Nonnull BigDecimal maxTileRow) {
+    public VariableMatrixWidth maxTileRow(BigDecimal maxTileRow) {
         this.maxTileRow = maxTileRow;
         return this;
     }
@@ -116,18 +99,15 @@ public final class VariableMatrixWidth extends DataTransferObject {
      *
      * @return maxTileRow
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_MAX_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileRow")
     public BigDecimal getMaxTileRow() {
         return maxTileRow;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_TILE_ROW)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "maxTileRow")
-    public void setMaxTileRow(@jakarta.annotation.Nonnull BigDecimal maxTileRow) {
+    public void setMaxTileRow(BigDecimal maxTileRow) {
         this.maxTileRow = maxTileRow;
     }
 

@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.ogcapi.dto.coverage;
 
-import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * Object Factory for Coverage Response (OGC API Coverage)
  *
  * @author Quentin BIALOTA
  */
-@XmlRegistry
 public class ObjectFactory {
 
     /**

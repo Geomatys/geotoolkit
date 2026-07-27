@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -43,40 +36,27 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     NdArray.JSON_PROPERTY_SHAPE,
     NdArray.JSON_PROPERTY_VALUES
 })
-@XmlRootElement(name = "NdArray")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "NdArray")
 public final class NdArray extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_DATA_TYPE = "dataType";
-    @XmlElement(name = "dataType")
-    @jakarta.annotation.Nullable
     private String dataType;
 
     public static final String JSON_PROPERTY_AXIS_NAMES = "axisNames";
-    @XmlElement(name = "axisNames")
-    @jakarta.annotation.Nullable
     private List<String> axisNames;
 
     public static final String JSON_PROPERTY_SHAPE = "shape";
-    @XmlElement(name = "shape")
-    @jakarta.annotation.Nullable
     private List<Integer> shape;
 
     public static final String JSON_PROPERTY_VALUES = "values";
-    @XmlElement(name = "values")
-    @jakarta.annotation.Nullable
     private List<Object> values;
 
     public NdArray() {
     }
 
-    public NdArray type(@jakarta.annotation.Nullable String type) {
+    public NdArray type(String type) {
         this.type = type;
         return this;
     }
@@ -86,22 +66,19 @@ public final class NdArray extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public NdArray dataType(@jakarta.annotation.Nullable String dataType) {
+    public NdArray dataType(String dataType) {
         this.dataType = dataType;
         return this;
     }
@@ -111,22 +88,19 @@ public final class NdArray extends DataTransferObject {
      *
      * @return dataType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataType")
     public String getDataType() {
         return dataType;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "dataType")
-    public void setDataType(@jakarta.annotation.Nullable String dataType) {
+    public void setDataType(String dataType) {
         this.dataType = dataType;
     }
 
-    public NdArray axisNames(@jakarta.annotation.Nullable List<String> axisNames) {
+    public NdArray axisNames(List<String> axisNames) {
         this.axisNames = axisNames;
         return this;
     }
@@ -139,24 +113,19 @@ public final class NdArray extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_AXIS_NAMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "axisNames")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getAxisNames() {
         return axisNames;
     }
 
     @JsonProperty(JSON_PROPERTY_AXIS_NAMES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "axisNames")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setAxisNames(@jakarta.annotation.Nullable List<String> axisNames) {
+    public void setAxisNames(List<String> axisNames) {
         this.axisNames = axisNames;
     }
 
-    public NdArray shape(@jakarta.annotation.Nullable List<Integer> shape) {
+    public NdArray shape(List<Integer> shape) {
         this.shape = shape;
         return this;
     }
@@ -169,24 +138,19 @@ public final class NdArray extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SHAPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shape")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Integer> getShape() {
         return shape;
     }
 
     @JsonProperty(JSON_PROPERTY_SHAPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "shape")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setShape(@jakarta.annotation.Nullable List<Integer> shape) {
+    public void setShape(List<Integer> shape) {
         this.shape = shape;
     }
 
-    public NdArray values(@jakarta.annotation.Nullable List<Object> values) {
+    public NdArray values(List<Object> values) {
         this.values = values;
         return this;
     }
@@ -199,20 +163,15 @@ public final class NdArray extends DataTransferObject {
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VALUES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "values")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Object> getValues() {
         return values;
     }
 
     @JsonProperty(JSON_PROPERTY_VALUES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "values")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setValues(@jakarta.annotation.Nullable List<Object> values) {
+    public void setValues(List<Object> values) {
         this.values = values;
     }
 

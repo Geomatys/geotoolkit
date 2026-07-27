@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.ogcapi.dto.common;
 
-import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * Object Factory for Common Response (OGC API Common)
  *
  * @author Quentin BIALOTA
  */
-@XmlRegistry
 public class ObjectFactory {
 
     /**

@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,14 +29,9 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     ZirsText.JSON_PROPERTY_DESCRIPTION,
     ZirsText.JSON_PROPERTY_TYPE
 })
-@XmlRootElement(name = "DggrsDefinitionZirsTextZIRS")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinitionZirsTextZIRS")
 public final class ZirsText extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nonnull
     private String description;
 
     /**
@@ -50,14 +39,12 @@ public final class ZirsText extends DataTransferObject {
      * "hierarchicalConcatenation", "ogc2DTMSHexLevelRowCol", "levelRootFaceHexRowMajorSubZone"
      */
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public ZirsText() {
     }
 
-    public ZirsText description(@jakarta.annotation.Nonnull String description) {
+    public ZirsText description(String description) {
         this.description = description;
         return this;
     }
@@ -67,22 +54,19 @@ public final class ZirsText extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nonnull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public ZirsText type(@jakarta.annotation.Nullable String type) {
+    public ZirsText type(String type) {
         this.type = type;
         return this;
     }
@@ -92,18 +76,15 @@ public final class ZirsText extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 

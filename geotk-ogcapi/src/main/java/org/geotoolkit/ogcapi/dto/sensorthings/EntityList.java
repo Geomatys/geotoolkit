@@ -41,19 +41,16 @@ public final class EntityList<T> extends DataTransferObject {
     public static final String JSON_PROPERTY_COUNT = "@iot.count";
     public static final String JSON_PROPERTY_NEXT_LINK = "@iot.nextLink";
 
-    @jakarta.annotation.Nonnull
     private List<T> value = new ArrayList<>();
 
-    @jakarta.annotation.Nullable
     private Integer count;
 
-    @jakarta.annotation.Nullable
     private String nextLink;
 
     public EntityList() {
     }
 
-    public EntityList<T> value(@jakarta.annotation.Nonnull List<T> value) {
+    public EntityList<T> value(List<T> value) {
         this.value = value;
         return this;
     }
@@ -71,7 +68,6 @@ public final class EntityList<T> extends DataTransferObject {
      *
      * @return the value
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_VALUE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public List<T> getValue() {
@@ -80,11 +76,11 @@ public final class EntityList<T> extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_VALUE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setValue(@jakarta.annotation.Nonnull List<T> value) {
+    public void setValue(List<T> value) {
         this.value = value;
     }
 
-    public EntityList<T> count(@jakarta.annotation.Nullable Integer count) {
+    public EntityList<T> count(Integer count) {
         this.count = count;
         return this;
     }
@@ -95,7 +91,6 @@ public final class EntityList<T> extends DataTransferObject {
      *
      * @return the count
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_COUNT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public Integer getCount() {
@@ -104,11 +99,11 @@ public final class EntityList<T> extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_COUNT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setCount(@jakarta.annotation.Nullable Integer count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
-    public EntityList<T> nextLink(@jakarta.annotation.Nullable String nextLink) {
+    public EntityList<T> nextLink(String nextLink) {
         this.nextLink = nextLink;
         return this;
     }
@@ -119,7 +114,6 @@ public final class EntityList<T> extends DataTransferObject {
      *
      * @return the nextLink
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NEXT_LINK)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public String getNextLink() {
@@ -128,7 +122,7 @@ public final class EntityList<T> extends DataTransferObject {
 
     @JsonProperty(JSON_PROPERTY_NEXT_LINK)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setNextLink(@jakarta.annotation.Nullable String nextLink) {
+    public void setNextLink(String nextLink) {
         this.nextLink = nextLink;
     }
 

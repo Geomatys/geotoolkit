@@ -18,25 +18,15 @@ package org.geotoolkit.ogcapi.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The type of variable which may inform correct interpretation and interpolation methods
  */
-@XmlType(name = "VariableTypeEnum")
-@XmlEnum(value = String.class)
 public enum VariableType {
-    @XmlEnumValue(value = "continuous")
     CONTINUOUS(String.valueOf("continuous")),
-    @XmlEnumValue(value = "numericalOrdinal")
     NUMERICAL_ORDINAL(String.valueOf("numericalOrdinal")),
-    @XmlEnumValue(value = "numericalNominal")
     NUMERICAL_NOMINAL(String.valueOf("numericalNominal")),
-    @XmlEnumValue(value = "categoricalOrdinal")
     CATEGORICAL_ORDINAL(String.valueOf("categoricalOrdinal")),
-    @XmlEnumValue(value = "categoricalNominal")
     CATEGORICAL_NOMINAL(String.valueOf("categoricalNominal"));
     private String value;
 

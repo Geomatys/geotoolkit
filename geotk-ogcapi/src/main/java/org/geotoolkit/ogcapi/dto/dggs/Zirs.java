@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,25 +29,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Zirs.JSON_PROPERTY_TEXT_Z_I_R_S,
     Zirs.JSON_PROPERTY_UINT64_Z_I_R_S
 })
-@XmlRootElement(name = "DggrsDefinitionZirs")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinitionZirs")
 public final class Zirs extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TEXT_Z_I_R_S = "textZIRS";
-    @XmlElement(name = "textZIRS")
-    @jakarta.annotation.Nonnull
     private ZirsText textZIRS;
 
     public static final String JSON_PROPERTY_UINT64_Z_I_R_S = "uint64ZIRS";
-    @XmlElement(name = "uint64ZIRS")
-    @jakarta.annotation.Nullable
     private ZirsUInt64 uint64ZIRS;
 
     public Zirs() {
     }
 
-    public Zirs textZIRS(@jakarta.annotation.Nonnull ZirsText textZIRS) {
+    public Zirs textZIRS(ZirsText textZIRS) {
         this.textZIRS = textZIRS;
         return this;
     }
@@ -63,22 +50,19 @@ public final class Zirs extends DataTransferObject {
      *
      * @return textZIRS
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TEXT_Z_I_R_S)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "textZIRS")
     public ZirsText getTextZIRS() {
         return textZIRS;
     }
 
     @JsonProperty(JSON_PROPERTY_TEXT_Z_I_R_S)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "textZIRS")
-    public void setTextZIRS(@jakarta.annotation.Nonnull ZirsText textZIRS) {
+    public void setTextZIRS(ZirsText textZIRS) {
         this.textZIRS = textZIRS;
     }
 
-    public Zirs uint64ZIRS(@jakarta.annotation.Nullable ZirsUInt64 uint64ZIRS) {
+    public Zirs uint64ZIRS(ZirsUInt64 uint64ZIRS) {
         this.uint64ZIRS = uint64ZIRS;
         return this;
     }
@@ -88,18 +72,15 @@ public final class Zirs extends DataTransferObject {
      *
      * @return uint64ZIRS
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_UINT64_Z_I_R_S)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uint64ZIRS")
     public ZirsUInt64 getUint64ZIRS() {
         return uint64ZIRS;
     }
 
     @JsonProperty(JSON_PROPERTY_UINT64_Z_I_R_S)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uint64ZIRS")
-    public void setUint64ZIRS(@jakarta.annotation.Nullable ZirsUInt64 uint64ZIRS) {
+    public void setUint64ZIRS(ZirsUInt64 uint64ZIRS) {
         this.uint64ZIRS = uint64ZIRS;
     }
 

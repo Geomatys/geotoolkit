@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.dggs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -35,25 +29,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Dggs.JSON_PROPERTY_DEFINITION,
     Dggs.JSON_PROPERTY_PARAMETERS
 })
-@XmlRootElement(name = "DggrsDefinitionDggh")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DggrsDefinitionDggh")
 public final class Dggs extends DataTransferObject {
 
     public static final String JSON_PROPERTY_DEFINITION = "definition";
-    @XmlElement(name = "definition")
-    @jakarta.annotation.Nullable
     private DggsDefinition definition;
 
     public static final String JSON_PROPERTY_PARAMETERS = "parameters";
-    @XmlElement(name = "parameters")
-    @jakarta.annotation.Nullable
     private DggsParameters parameters;
 
     public Dggs() {
     }
 
-    public Dggs definition(@jakarta.annotation.Nullable DggsDefinition definition) {
+    public Dggs definition(DggsDefinition definition) {
         this.definition = definition;
         return this;
     }
@@ -63,22 +50,19 @@ public final class Dggs extends DataTransferObject {
      *
      * @return definition
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
     public DggsDefinition getDefinition() {
         return definition;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
-    public void setDefinition(@jakarta.annotation.Nullable DggsDefinition definition) {
+    public void setDefinition(DggsDefinition definition) {
         this.definition = definition;
     }
 
-    public Dggs parameters(@jakarta.annotation.Nullable DggsParameters parameters) {
+    public Dggs parameters(DggsParameters parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -88,18 +72,15 @@ public final class Dggs extends DataTransferObject {
      *
      * @return parameters
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
     public DggsParameters getParameters() {
         return parameters;
     }
 
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    public void setParameters(@jakarta.annotation.Nullable DggsParameters parameters) {
+    public void setParameters(DggsParameters parameters) {
         this.parameters = parameters;
     }
 

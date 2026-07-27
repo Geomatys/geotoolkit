@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,40 +37,27 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     TileMatrixSetItem.JSON_PROPERTY_CRS,
     TileMatrixSetItem.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "TileMatrixSetItem")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TileMatrixSetItem")
 public final class TileMatrixSetItem extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nullable
     private String id;
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_URI = "uri";
-    @XmlElement(name = "uri")
-    @jakarta.annotation.Nullable
     private URI uri;
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private Crs crs;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public TileMatrixSetItem() {
     }
 
-    public TileMatrixSetItem id(@jakarta.annotation.Nullable String id) {
+    public TileMatrixSetItem id(String id) {
         this.id = id;
         return this;
     }
@@ -83,22 +68,19 @@ public final class TileMatrixSetItem extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nullable String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public TileMatrixSetItem title(@jakarta.annotation.Nullable String title) {
+    public TileMatrixSetItem title(String title) {
         this.title = title;
         return this;
     }
@@ -108,22 +90,19 @@ public final class TileMatrixSetItem extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public TileMatrixSetItem uri(@jakarta.annotation.Nullable URI uri) {
+    public TileMatrixSetItem uri(URI uri) {
         this.uri = uri;
         return this;
     }
@@ -133,22 +112,19 @@ public final class TileMatrixSetItem extends DataTransferObject {
      *
      * @return uri
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
     public URI getUri() {
         return uri;
     }
 
     @JsonProperty(JSON_PROPERTY_URI)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "uri")
-    public void setUri(@jakarta.annotation.Nullable URI uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
-    public TileMatrixSetItem crs(@jakarta.annotation.Nullable Crs crs) {
+    public TileMatrixSetItem crs(Crs crs) {
         this.crs = crs;
         return this;
     }
@@ -158,22 +134,19 @@ public final class TileMatrixSetItem extends DataTransferObject {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public Crs getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable Crs crs) {
+    public void setCrs(Crs crs) {
         this.crs = crs;
     }
 
-    public TileMatrixSetItem links(@jakarta.annotation.Nonnull List<Link> links) {
+    public TileMatrixSetItem links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -191,20 +164,15 @@ public final class TileMatrixSetItem extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

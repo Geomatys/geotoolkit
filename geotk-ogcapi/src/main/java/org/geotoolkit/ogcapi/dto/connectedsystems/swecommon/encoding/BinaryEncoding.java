@@ -17,7 +17,6 @@
 package org.geotoolkit.ogcapi.dto.connectedsystems.swecommon.encoding;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import java.util.List;
 
 /**
@@ -83,13 +82,11 @@ public class BinaryEncoding extends AbstractEncoding {
      * Ordered description of the binary members (blocks/components). (required)
      */
     @JsonProperty(JSON_PROPERTY_MEMBERS)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<BinaryMember> getMembers() {
         return members;
     }
 
     @JsonProperty(JSON_PROPERTY_MEMBERS)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public void setMembers(List<BinaryMember> members) {
         this.members = members;
     }

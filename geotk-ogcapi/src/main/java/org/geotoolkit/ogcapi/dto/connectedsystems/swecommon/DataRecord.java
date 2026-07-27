@@ -17,7 +17,6 @@
 package org.geotoolkit.ogcapi.dto.connectedsystems.swecommon;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import java.util.List;
 
 /**
@@ -38,13 +37,11 @@ public class DataRecord extends AbstractDataComponent {
      * Ordered list of named fields. (required)
      */
     @JsonProperty(JSON_PROPERTY_FIELDS)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<AbstractDataComponent> getFields() {
         return fields;
     }
 
     @JsonProperty(JSON_PROPERTY_FIELDS)
-    @JacksonXmlElementWrapper(useWrapping = false)
     public void setFields(List<AbstractDataComponent> fields) {
         this.fields = fields;
     }

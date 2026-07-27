@@ -20,8 +20,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 /**
  * JSONFGPrism
@@ -33,24 +31,15 @@ import jakarta.xml.bind.annotation.*;
     JSONFGPrism.PROPERTY_LOWER,
     JSONFGPrism.PROPERTY_UPPER
 })
-@XmlRootElement(name = "JSONFGPrism")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "JSONFGPrism")
 public class JSONFGPrism extends GeoJSONGeometry {
 
     public static final String PROPERTY_BASE = "base";
-    @XmlElement(name = PROPERTY_BASE)
-    @jakarta.annotation.Nonnull
     private GeoJSONGeometry base;
 
     public static final String PROPERTY_LOWER = "lower";
-    @XmlElement(name = PROPERTY_LOWER)
-    @jakarta.annotation.Nullable
     private Double lower;
 
     public static final String PROPERTY_UPPER = "upper";
-    @XmlElement(name = PROPERTY_UPPER)
-    @jakarta.annotation.Nonnull
     private Double upper;
 
     public JSONFGPrism() {
@@ -66,18 +55,15 @@ public class JSONFGPrism extends GeoJSONGeometry {
      *
      * @return base
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_BASE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_BASE)
     public GeoJSONGeometry getBase() {
         return base;
     }
 
     @JsonProperty(PROPERTY_BASE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_BASE)
-    public void setBase(@jakarta.annotation.Nonnull GeoJSONGeometry base) {
+    public void setBase(GeoJSONGeometry base) {
         this.base = base;
     }
 
@@ -86,18 +72,15 @@ public class JSONFGPrism extends GeoJSONGeometry {
      *
      * @return lower
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(PROPERTY_LOWER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_LOWER)
     public Double getLower() {
         return lower;
     }
 
     @JsonProperty(PROPERTY_LOWER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = PROPERTY_LOWER)
-    public void setLower(@jakarta.annotation.Nullable Double lower) {
+    public void setLower(Double lower) {
         this.lower = lower;
     }
 
@@ -106,18 +89,15 @@ public class JSONFGPrism extends GeoJSONGeometry {
      *
      * @return upper
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(PROPERTY_UPPER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_UPPER)
     public Double getUpper() {
         return upper;
     }
 
     @JsonProperty(PROPERTY_UPPER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = PROPERTY_UPPER)
-    public void setUpper(@jakarta.annotation.Nonnull Double upper) {
+    public void setUpper(Double upper) {
         this.upper = upper;
     }
 

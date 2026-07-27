@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.geovolumes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,25 +36,18 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     GeoVolumes.JSON_PROPERTY_LINKS,
     GeoVolumes.JSON_PROPERTY_COLLECTIONS
 })
-@XmlRootElement(name = "GeoVolumes")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeoVolumes")
 public final class GeoVolumes extends DataTransferObject {
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public static final String JSON_PROPERTY_COLLECTIONS = "collections";
-    @XmlElement(name = "collections")
-    @jakarta.annotation.Nonnull
     private List<GeoVolume> collections = new ArrayList<>();
 
     public GeoVolumes() {
     }
 
-    public GeoVolumes links(@jakarta.annotation.Nonnull List<Link> links) {
+    public GeoVolumes links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -74,24 +65,19 @@ public final class GeoVolumes extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public GeoVolumes collections(@jakarta.annotation.Nonnull List<GeoVolume> collections) {
+    public GeoVolumes collections(List<GeoVolume> collections) {
         this.collections = collections;
         return this;
     }
@@ -109,20 +95,15 @@ public final class GeoVolumes extends DataTransferObject {
      *
      * @return collections
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COLLECTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "collections")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<GeoVolume> getCollections() {
         return collections;
     }
 
     @JsonProperty(JSON_PROPERTY_COLLECTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "collections")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCollections(@jakarta.annotation.Nonnull List<GeoVolume> collections) {
+    public void setCollections(List<GeoVolume> collections) {
         this.collections = collections;
     }
 

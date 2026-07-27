@@ -17,9 +17,6 @@
 package org.geotoolkit.ogcapi.dto.records;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
 /**
@@ -32,11 +29,9 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 public class FacetBucket extends DataTransferObject {
 
     public static final String JSON_PROPERTY_VALUE = "value";
-    @XmlElement(name = "value")
     private Object value;
 
     public static final String JSON_PROPERTY_COUNT = "count";
-    @XmlElement(name = "count")
     private Integer count;
 
     @JsonProperty(JSON_PROPERTY_VALUE)

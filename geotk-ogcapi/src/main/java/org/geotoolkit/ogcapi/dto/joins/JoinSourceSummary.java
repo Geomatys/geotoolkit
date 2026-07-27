@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.joins;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,30 +38,21 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     JoinSourceSummary.JSON_PROPERTY_TIME_STAMP,
     JoinSourceSummary.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "JoinSourceSummary")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "JoinSourceSummary")
 public final class JoinSourceSummary extends DataTransferObject {
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_TIME_STAMP = "timeStamp";
-    @XmlElement(name = "timeStamp")
-    @jakarta.annotation.Nonnull
     private OffsetDateTime timeStamp;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     public JoinSourceSummary() {
     }
 
-    public JoinSourceSummary id(@jakarta.annotation.Nonnull String id) {
+    public JoinSourceSummary id(String id) {
         this.id = id;
         return this;
     }
@@ -77,22 +61,19 @@ public final class JoinSourceSummary extends DataTransferObject {
      * Identifier of the join source.
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public JoinSourceSummary timeStamp(@jakarta.annotation.Nonnull OffsetDateTime timeStamp) {
+    public JoinSourceSummary timeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
@@ -101,22 +82,19 @@ public final class JoinSourceSummary extends DataTransferObject {
      * The time when the join source was generated.
      * @return timeStamp
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "timeStamp")
     public OffsetDateTime getTimeStamp() {
         return timeStamp;
     }
 
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "timeStamp")
-    public void setTimeStamp(@jakarta.annotation.Nonnull OffsetDateTime timeStamp) {
+    public void setTimeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
-    public JoinSourceSummary links(@jakarta.annotation.Nonnull List<Link> links) {
+    public JoinSourceSummary links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -134,20 +112,15 @@ public final class JoinSourceSummary extends DataTransferObject {
      * the join source resource (relation {@link org.geotoolkit.ogcapi.dto.LinkRelations#OGC_JOINS_JOIN_SOURCE}).
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

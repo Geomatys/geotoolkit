@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.coveragejson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -38,25 +32,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     MeasurementType.JSON_PROPERTY_TYPE,
     MeasurementType.JSON_PROPERTY_LABEL
 })
-@XmlRootElement(name = "MeasurementType")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "MeasurementType")
 public final class MeasurementType extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = "type")
-    @jakarta.annotation.Nullable
     private String type;
 
     public static final String JSON_PROPERTY_LABEL = "label";
-    @XmlElement(name = "label")
-    @jakarta.annotation.Nullable
     private String label;
 
     public MeasurementType() {
     }
 
-    public MeasurementType type(@jakarta.annotation.Nullable String type) {
+    public MeasurementType type(String type) {
         this.type = type;
         return this;
     }
@@ -66,38 +53,32 @@ public final class MeasurementType extends DataTransferObject {
      *
      * @return type
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nullable String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public MeasurementType label(@jakarta.annotation.Nullable String label) {
+    public MeasurementType label(String label) {
         this.label = label;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LABEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "label")
     public String getLabel() {
         return label;
     }
 
     @JsonProperty(JSON_PROPERTY_LABEL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "label")
-    public void setLabel(@jakarta.annotation.Nullable String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 

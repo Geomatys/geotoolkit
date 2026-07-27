@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,22 +32,15 @@ import java.util.Objects;
     SpatialExtent.JSON_PROPERTY_CRS,
     SpatialExtent.JSON_PROPERTY_GRID
 })
-@XmlRootElement(name = "SpatialExtent")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "SpatialExtent")
 public final class SpatialExtent {
 
     public static final String CRS84 = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
     public static final String CRS84H = "http://www.opengis.net/def/crs/OGC/1.3/CRS84h";
 
     public static final String JSON_PROPERTY_BBOX = "bbox";
-    @XmlElement(name = "bbox")
-    @jakarta.annotation.Nullable
     private double[][] bbox;
 
     public static final String JSON_PROPERTY_STORAGE_CRS_BBOX = "storageCrsBbox";
-    @XmlElement(name = "storageCrsBbox")
-    @jakarta.annotation.Nullable
     private double[][] storageCrsBbox;
 
     /**
@@ -65,19 +51,15 @@ public final class SpatialExtent {
      * specified.
      */
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private String crs = CRS84;
 
     public static final String JSON_PROPERTY_GRID = "grid";
-    @XmlElement(name = "grid")
-    @jakarta.annotation.Nullable
     private List<Grid> grid = new ArrayList<>();
 
     public SpatialExtent() {
     }
 
-    public SpatialExtent bbox(@jakarta.annotation.Nullable double[][] bbox) {
+    public SpatialExtent bbox(double[][] bbox) {
         this.bbox = bbox;
         return this;
     }
@@ -92,24 +74,19 @@ public final class SpatialExtent {
      *
      * @return bbox
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public double[][] getBbox() {
         return bbox;
     }
 
     @JsonProperty(JSON_PROPERTY_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "bbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBbox(@jakarta.annotation.Nullable double[][] bbox) {
+    public void setBbox(double[][] bbox) {
         this.bbox = bbox;
     }
 
-    public SpatialExtent storageCrsBbox(@jakarta.annotation.Nullable double[][] storageCrsBbox) {
+    public SpatialExtent storageCrsBbox(double[][] storageCrsBbox) {
         this.storageCrsBbox = storageCrsBbox;
         return this;
     }
@@ -124,24 +101,19 @@ public final class SpatialExtent {
      *
      * @return storageCrsBbox
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_STORAGE_CRS_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "storageCrsBbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public double[][]getStorageCrsBbox() {
         return storageCrsBbox;
     }
 
     @JsonProperty(JSON_PROPERTY_STORAGE_CRS_BBOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "storageCrsBbox")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setStorageCrsBbox(@jakarta.annotation.Nullable double[][] storageCrsBbox) {
+    public void setStorageCrsBbox(double[][] storageCrsBbox) {
         this.storageCrsBbox = storageCrsBbox;
     }
 
-    public SpatialExtent crs(@jakarta.annotation.Nullable String crs) {
+    public SpatialExtent crs(String crs) {
         this.crs = crs;
         return this;
     }
@@ -155,22 +127,19 @@ public final class SpatialExtent {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public String getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable String crs) {
+    public void setCrs(String crs) {
         this.crs = crs;
     }
 
-    public SpatialExtent grid(@jakarta.annotation.Nullable List<Grid> grid) {
+    public SpatialExtent grid(List<Grid> grid) {
         this.grid = grid;
         return this;
     }
@@ -190,20 +159,15 @@ public final class SpatialExtent {
      *
      * @return grid
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Grid> getGrid() {
         return grid;
     }
 
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGrid(@jakarta.annotation.Nullable List<Grid> grid) {
+    public void setGrid(List<Grid> grid) {
         this.grid = grid;
     }
 

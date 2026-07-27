@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.edr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.common.Link;
 
@@ -34,17 +28,12 @@ import org.geotoolkit.ogcapi.dto.common.Link;
  *
  * @author Quentin Bialota (Geomatys)
  */
-@XmlRootElement(name = "DataQueryLink")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "DataQueryLink")
 @JsonPropertyOrder({
     DataQueryLink.JSON_PROPERTY_VARIABLES
 })
 public final class DataQueryLink extends Link {
 
     public static final String JSON_PROPERTY_VARIABLES = "variables";
-    @XmlElement(name = "variables")
-    @jakarta.annotation.Nullable
     private DataQuery variables;
 
     public DataQueryLink() {
@@ -54,7 +43,7 @@ public final class DataQueryLink extends Link {
      * @param variables the variables to set
      * @see #getVariables()
      */
-    public DataQueryLink variables(@jakarta.annotation.Nullable DataQuery variables) {
+    public DataQueryLink variables(DataQuery variables) {
         setVariables(variables);
         return this;
     }
@@ -64,9 +53,7 @@ public final class DataQueryLink extends Link {
      *
      * @return the variables
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_VARIABLES)
-    @JacksonXmlProperty(localName = "variables")
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public DataQuery getVariables() {
         return variables;
@@ -77,9 +64,8 @@ public final class DataQueryLink extends Link {
      * @see #getVariables()
      */
     @JsonProperty(JSON_PROPERTY_VARIABLES)
-    @JacksonXmlProperty(localName = "variables")
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setVariables(@jakarta.annotation.Nullable DataQuery variables) {
+    public void setVariables(DataQuery variables) {
         this.variables = variables;
     }
 

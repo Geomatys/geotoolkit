@@ -18,25 +18,15 @@ package org.geotoolkit.ogcapi.dto.processes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Status of a job, as returned in {@link StatusInfo#getStatus()}.
  */
-@XmlType(name = "StatusCodeEnum")
-@XmlEnum(value = String.class)
 public enum StatusCode {
-    @XmlEnumValue("accepted")
     ACCEPTED("accepted"),
-    @XmlEnumValue("running")
     RUNNING("running"),
-    @XmlEnumValue("successful")
     SUCCESSFUL("successful"),
-    @XmlEnumValue("failed")
     FAILED("failed"),
-    @XmlEnumValue("dismissed")
     DISMISSED("dismissed");
 
     private final String value;

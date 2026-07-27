@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.movingfeatures;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -45,165 +38,128 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     TemporalGeometrySequence.JSON_PROPERTY_NUMBER_MATCHED,
     TemporalGeometrySequence.JSON_PROPERTY_NUMBER_RETURNED
 })
-@XmlRootElement(name = "TemporalGeometrySequence")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TemporalGeometrySequence")
 public final class TemporalGeometrySequence extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TYPE = "type";
-    @XmlElement(name = JSON_PROPERTY_TYPE)
-    @jakarta.annotation.Nonnull
     private String type;
 
     public static final String JSON_PROPERTY_GEOMETRY_SEQUENCE = "geometrySequence";
-    @XmlElement(name = JSON_PROPERTY_GEOMETRY_SEQUENCE)
-    @jakarta.annotation.Nonnull
     private List<TemporalPrimitiveGeometry> geometrySequence;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = JSON_PROPERTY_LINKS)
-    @jakarta.annotation.Nullable
     private List<Link> links;
 
     public static final String JSON_PROPERTY_TIME_STAMP = "timeStamp";
-    @XmlElement(name = JSON_PROPERTY_TIME_STAMP)
-    @jakarta.annotation.Nullable
     private OffsetDateTime timeStamp;
 
     public static final String JSON_PROPERTY_NUMBER_MATCHED = "numberMatched";
-    @XmlElement(name = JSON_PROPERTY_NUMBER_MATCHED)
-    @jakarta.annotation.Nullable
     private Integer numberMatched;
 
     public static final String JSON_PROPERTY_NUMBER_RETURNED = "numberReturned";
-    @XmlElement(name = JSON_PROPERTY_NUMBER_RETURNED)
-    @jakarta.annotation.Nullable
     private Integer numberReturned;
 
     public TemporalGeometrySequence() {
     }
 
-    public TemporalGeometrySequence type(@jakarta.annotation.Nonnull String type) {
+    public TemporalGeometrySequence type(String type) {
         this.type = type;
         return this;
     }
 
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
     public String getType() {
         return type;
     }
 
     @JsonProperty(JSON_PROPERTY_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "type")
-    public void setType(@jakarta.annotation.Nonnull String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public TemporalGeometrySequence geometrySequence(@jakarta.annotation.Nonnull List<TemporalPrimitiveGeometry> geometrySequence) {
+    public TemporalGeometrySequence geometrySequence(List<TemporalPrimitiveGeometry> geometrySequence) {
         this.geometrySequence = geometrySequence;
         return this;
     }
 
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_GEOMETRY_SEQUENCE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "geometrySequence")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<TemporalPrimitiveGeometry> getGeometrySequence() {
         return geometrySequence;
     }
 
     @JsonProperty(JSON_PROPERTY_GEOMETRY_SEQUENCE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "geometrySequence")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGeometrySequence(@jakarta.annotation.Nonnull List<TemporalPrimitiveGeometry> geometrySequence) {
+    public void setGeometrySequence(List<TemporalPrimitiveGeometry> geometrySequence) {
         this.geometrySequence = geometrySequence;
     }
 
-    public TemporalGeometrySequence links(@jakarta.annotation.Nullable List<Link> links) {
+    public TemporalGeometrySequence links(List<Link> links) {
         this.links = links;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public TemporalGeometrySequence timeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+    public TemporalGeometrySequence timeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
     public OffsetDateTime getTimeStamp() {
         return timeStamp;
     }
 
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
-    public void setTimeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+    public void setTimeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
-    public TemporalGeometrySequence numberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+    public TemporalGeometrySequence numberMatched(Integer numberMatched) {
         this.numberMatched = numberMatched;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
     public Integer getNumberMatched() {
         return numberMatched;
     }
 
     @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
-    public void setNumberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+    public void setNumberMatched(Integer numberMatched) {
         this.numberMatched = numberMatched;
     }
 
-    public TemporalGeometrySequence numberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+    public TemporalGeometrySequence numberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
         return this;
     }
 
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
     public Integer getNumberReturned() {
         return numberReturned;
     }
 
     @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
-    public void setNumberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+    public void setNumberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
     }
 

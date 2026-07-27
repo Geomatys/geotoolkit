@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.maps;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -37,30 +35,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Projections.JSON_PROPERTY_DATUMS,
     Projections.JSON_PROPERTY_PARAMETERS
 })
-@XmlRootElement(name = "Projections")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Projections")
 public final class Projections extends DataTransferObject {
 
     public static final String JSON_PROPERTY_METHODS = "methods";
-    @XmlElement(name = "methods")
-    @jakarta.annotation.Nonnull
     private Map<String, ProjectionMethod> methods = new HashMap<>();
 
     public static final String JSON_PROPERTY_DATUMS = "datums";
-    @XmlElement(name = "datums")
-    @jakarta.annotation.Nonnull
     private Map<String, ProjectionDatum> datums = new HashMap<>();
 
     public static final String JSON_PROPERTY_PARAMETERS = "parameters";
-    @XmlElement(name = "parameters")
-    @jakarta.annotation.Nullable
     private Map<String, ProjectionParameter> parameters;
 
     public Projections() {
     }
 
-    public Projections methods(@jakarta.annotation.Nonnull Map<String, ProjectionMethod> methods) {
+    public Projections methods(Map<String, ProjectionMethod> methods) {
         this.methods = methods;
         return this;
     }
@@ -80,24 +69,19 @@ public final class Projections extends DataTransferObject {
      *
      * @return methods
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_METHODS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "methods")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, ProjectionMethod> getMethods() {
         return methods;
     }
 
     @JsonProperty(JSON_PROPERTY_METHODS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "methods")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setMethods(@jakarta.annotation.Nonnull Map<String, ProjectionMethod> methods) {
+    public void setMethods(Map<String, ProjectionMethod> methods) {
         this.methods = methods;
     }
 
-    public Projections datums(@jakarta.annotation.Nonnull Map<String, ProjectionDatum> datums) {
+    public Projections datums(Map<String, ProjectionDatum> datums) {
         this.datums = datums;
         return this;
     }
@@ -117,24 +101,19 @@ public final class Projections extends DataTransferObject {
      *
      * @return datums
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DATUMS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "datums")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, ProjectionDatum> getDatums() {
         return datums;
     }
 
     @JsonProperty(JSON_PROPERTY_DATUMS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "datums")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setDatums(@jakarta.annotation.Nonnull Map<String, ProjectionDatum> datums) {
+    public void setDatums(Map<String, ProjectionDatum> datums) {
         this.datums = datums;
     }
 
-    public Projections parameters(@jakarta.annotation.Nullable Map<String, ProjectionParameter> parameters) {
+    public Projections parameters(Map<String, ProjectionParameter> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -153,20 +132,15 @@ public final class Projections extends DataTransferObject {
      *
      * @return parameters
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public Map<String, ProjectionParameter> getParameters() {
         return parameters;
     }
 
     @JsonProperty(JSON_PROPERTY_PARAMETERS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "parameters")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setParameters(@jakarta.annotation.Nullable Map<String, ProjectionParameter> parameters) {
+    public void setParameters(Map<String, ProjectionParameter> parameters) {
         this.parameters = parameters;
     }
 

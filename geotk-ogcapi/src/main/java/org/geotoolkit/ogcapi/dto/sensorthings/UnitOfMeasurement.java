@@ -19,12 +19,6 @@ package org.geotoolkit.ogcapi.dto.sensorthings;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -41,30 +35,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     UnitOfMeasurement.JSON_PROPERTY_SYMBOL,
     UnitOfMeasurement.JSON_PROPERTY_DEFINITION
 })
-@XmlRootElement(name = "UnitOfMeasurement")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "UnitOfMeasurement")
 public final class UnitOfMeasurement extends DataTransferObject {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nullable
     private String name;
 
     public static final String JSON_PROPERTY_SYMBOL = "symbol";
-    @XmlElement(name = "symbol")
-    @jakarta.annotation.Nullable
     private String symbol;
 
     public static final String JSON_PROPERTY_DEFINITION = "definition";
-    @XmlElement(name = "definition")
-    @jakarta.annotation.Nullable
     private String definition;
 
     public UnitOfMeasurement() {
     }
 
-    public UnitOfMeasurement name(@jakarta.annotation.Nullable String name) {
+    public UnitOfMeasurement name(String name) {
         this.name = name;
         return this;
     }
@@ -74,22 +59,19 @@ public final class UnitOfMeasurement extends DataTransferObject {
      *
      * @return the name
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nullable String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public UnitOfMeasurement symbol(@jakarta.annotation.Nullable String symbol) {
+    public UnitOfMeasurement symbol(String symbol) {
         this.symbol = symbol;
         return this;
     }
@@ -99,22 +81,19 @@ public final class UnitOfMeasurement extends DataTransferObject {
      *
      * @return the symbol
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SYMBOL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbol")
     public String getSymbol() {
         return symbol;
     }
 
     @JsonProperty(JSON_PROPERTY_SYMBOL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "symbol")
-    public void setSymbol(@jakarta.annotation.Nullable String symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 
-    public UnitOfMeasurement definition(@jakarta.annotation.Nullable String definition) {
+    public UnitOfMeasurement definition(String definition) {
         this.definition = definition;
         return this;
     }
@@ -124,18 +103,15 @@ public final class UnitOfMeasurement extends DataTransferObject {
      *
      * @return the definition
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
     public String getDefinition() {
         return definition;
     }
 
     @JsonProperty(JSON_PROPERTY_DEFINITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "definition")
-    public void setDefinition(@jakarta.annotation.Nullable String definition) {
+    public void setDefinition(String definition) {
         this.definition = definition;
     }
 

@@ -20,13 +20,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
@@ -40,17 +33,12 @@ import org.geotoolkit.ogcapi.dto.common.serializer.TemporalExtentIntervalSeriali
     TemporalExtent.JSON_PROPERTY_TRS,
     TemporalExtent.JSON_PROPERTY_GRID
 })
-@XmlRootElement(name = "TemporalExtent")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "TemporalExtent")
 public final class TemporalExtent extends DataTransferObject {
 
     public static final String TRS_GREGORIAN = "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
 
     public static final String JSON_PROPERTY_INTERVAL = "interval";
-    @XmlElement(name = "interval")
     @JsonSerialize(using = TemporalExtentIntervalSerializer.class)
-    @jakarta.annotation.Nullable
     private OffsetDateTime[][] interval;
 
     /**
@@ -61,19 +49,15 @@ public final class TemporalExtent extends DataTransferObject {
      * coordinate reference systems and add additional enum values.
      */
     public static final String JSON_PROPERTY_TRS = "trs";
-    @XmlElement(name = "trs")
-    @jakarta.annotation.Nullable
     private String trs = TRS_GREGORIAN;
 
     public static final String JSON_PROPERTY_GRID = "grid";
-    @XmlElement(name = "grid")
-    @jakarta.annotation.Nullable
     private Grid grid;
 
     public TemporalExtent() {
     }
 
-    public TemporalExtent interval(@jakarta.annotation.Nullable OffsetDateTime[][] interval) {
+    public TemporalExtent interval(OffsetDateTime[][] interval) {
         this.interval = interval;
         return this;
     }
@@ -89,24 +73,19 @@ public final class TemporalExtent extends DataTransferObject {
      *
      * @return interval
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public OffsetDateTime[][] getInterval() {
         return interval;
     }
 
     @JsonProperty(JSON_PROPERTY_INTERVAL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "interval")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setInterval(@jakarta.annotation.Nullable OffsetDateTime[][] interval) {
+    public void setInterval(OffsetDateTime[][] interval) {
         this.interval = interval;
     }
 
-    public TemporalExtent trs(@jakarta.annotation.Nullable String trs) {
+    public TemporalExtent trs(String trs) {
         this.trs = trs;
         return this;
     }
@@ -120,22 +99,19 @@ public final class TemporalExtent extends DataTransferObject {
      *
      * @return trs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "trs")
     public String getTrs() {
         return trs;
     }
 
     @JsonProperty(JSON_PROPERTY_TRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "trs")
-    public void setTrs(@jakarta.annotation.Nullable String trs) {
+    public void setTrs(String trs) {
         this.trs = trs;
     }
 
-    public TemporalExtent grid(@jakarta.annotation.Nullable Grid grid) {
+    public TemporalExtent grid(Grid grid) {
         this.grid = grid;
         return this;
     }
@@ -145,18 +121,15 @@ public final class TemporalExtent extends DataTransferObject {
      *
      * @return grid
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
     public Grid getGrid() {
         return grid;
     }
 
     @JsonProperty(JSON_PROPERTY_GRID)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "grid")
-    public void setGrid(@jakarta.annotation.Nullable Grid grid) {
+    public void setGrid(Grid grid) {
         this.grid = grid;
     }
 

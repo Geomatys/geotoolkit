@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -37,41 +35,28 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Function.JSON_PROPERTY_ARGUMENTS,
     Function.JSON_PROPERTY_RETURNS
 })
-@XmlRootElement(name = "FunctionsFunctionsInner")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "FunctionsFunctionsInner")
 public class Function extends DataTransferObject {
 
     public static final String JSON_PROPERTY_NAME = "name";
-    @XmlElement(name = "name")
-    @jakarta.annotation.Nonnull
     private String name;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_METADATA_URL = "metadataUrl";
-    @XmlElement(name = "metadataUrl")
-    @jakarta.annotation.Nullable
     private String metadataUrl;
 
     public static final String JSON_PROPERTY_ARGUMENTS = "arguments";
-    @XmlElement(name = "arguments")
-    @jakarta.annotation.Nullable
     private List<Argument> arguments = new ArrayList<>();
 
 
     public static final String JSON_PROPERTY_RETURNS = "returns";
-    @XmlElement(name = "returns")
-    @jakarta.annotation.Nonnull
     private List<ValueType> returns = new ArrayList<>();
 
     public Function() {
     }
 
-    public Function name(@jakarta.annotation.Nonnull String name) {
+    public Function name(String name) {
         this.name = name;
         return this;
     }
@@ -81,22 +66,19 @@ public class Function extends DataTransferObject {
      *
      * @return name
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "name")
     public String getName() {
         return name;
     }
 
     @JsonProperty(JSON_PROPERTY_NAME)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "name")
-    public void setName(@jakarta.annotation.Nonnull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Function description(@jakarta.annotation.Nullable String description) {
+    public Function description(String description) {
         this.description = description;
         return this;
     }
@@ -106,22 +88,19 @@ public class Function extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Function metadataUrl(@jakarta.annotation.Nullable String metadataUrl) {
+    public Function metadataUrl(String metadataUrl) {
         this.metadataUrl = metadataUrl;
         return this;
     }
@@ -131,22 +110,19 @@ public class Function extends DataTransferObject {
      *
      * @return metadataUrl
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_METADATA_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "metadataUrl")
     public String getMetadataUrl() {
         return metadataUrl;
     }
 
     @JsonProperty(JSON_PROPERTY_METADATA_URL)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "metadataUrl")
-    public void setMetadataUrl(@jakarta.annotation.Nullable String metadataUrl) {
+    public void setMetadataUrl(String metadataUrl) {
         this.metadataUrl = metadataUrl;
     }
 
-    public Function arguments(@jakarta.annotation.Nullable List<Argument> arguments) {
+    public Function arguments(List<Argument> arguments) {
         this.arguments = arguments;
         return this;
     }
@@ -164,24 +140,19 @@ public class Function extends DataTransferObject {
      *
      * @return arguments
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ARGUMENTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "arguments")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Argument> getArguments() {
         return arguments;
     }
 
     @JsonProperty(JSON_PROPERTY_ARGUMENTS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "arguments")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setArguments(@jakarta.annotation.Nullable List<Argument> arguments) {
+    public void setArguments(List<Argument> arguments) {
         this.arguments = arguments;
     }
 
-    public Function returns(@jakarta.annotation.Nonnull List<ValueType> returns) {
+    public Function returns(List<ValueType> returns) {
         this.returns = returns;
         return this;
     }
@@ -199,20 +170,15 @@ public class Function extends DataTransferObject {
      *
      * @return returns
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_RETURNS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "returns")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<ValueType> getReturns() {
         return returns;
     }
 
     @JsonProperty(JSON_PROPERTY_RETURNS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "returns")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setReturns(@jakarta.annotation.Nonnull List<ValueType> returns) {
+    public void setReturns(List<ValueType> returns) {
         this.returns = returns;
     }
 

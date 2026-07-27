@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.tiles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,150 +59,93 @@ import org.geotoolkit.ogcapi.dto.common.Link;
     GeospatialData.JSON_PROPERTY_PROPERTIES_SCHEMA,
     GeospatialData.JSON_PROPERTY_LINKS
 })
-@XmlRootElement(name = "GeospatialData")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "GeospatialData")
 public final class GeospatialData extends DataTransferObject {
 
     public static final String JSON_PROPERTY_TITLE = "title";
-    @XmlElement(name = "title")
-    @jakarta.annotation.Nullable
     private String title;
 
     public static final String JSON_PROPERTY_DESCRIPTION = "description";
-    @XmlElement(name = "description")
-    @jakarta.annotation.Nullable
     private String description;
 
     public static final String JSON_PROPERTY_KEYWORDS = "keywords";
-    @XmlElement(name = "keywords")
-    @jakarta.annotation.Nullable
     private String keywords;
 
     public static final String JSON_PROPERTY_ID = "id";
-    @XmlElement(name = "id")
-    @jakarta.annotation.Nonnull
     private String id;
 
     public static final String JSON_PROPERTY_DATA_TYPE = "dataType";
-    @XmlElement(name = "dataType")
-    @jakarta.annotation.Nonnull
     private String dataType;
 
     public static final String JSON_PROPERTY_GEOMETRY_DIMENSION = "geometryDimension";
-    @XmlElement(name = "geometryDimension")
-    @jakarta.annotation.Nullable
     private Integer geometryDimension;
 
     public static final String JSON_PROPERTY_FEATURE_TYPE = "featureType";
-    @XmlElement(name = "featureType")
-    @jakarta.annotation.Nullable
     private String featureType;
 
     public static final String JSON_PROPERTY_ATTRIBUTION = "attribution";
-    @XmlElement(name = "attribution")
-    @jakarta.annotation.Nullable
     private String attribution;
 
     public static final String JSON_PROPERTY_LICENSE = "license";
-    @XmlElement(name = "license")
-    @jakarta.annotation.Nullable
     private String license;
 
     public static final String JSON_PROPERTY_POINT_OF_CONTACT = "pointOfContact";
-    @XmlElement(name = "pointOfContact")
-    @jakarta.annotation.Nullable
     private String pointOfContact;
 
     public static final String JSON_PROPERTY_PUBLISHER = "publisher";
-    @XmlElement(name = "publisher")
-    @jakarta.annotation.Nullable
     private String publisher;
 
     public static final String JSON_PROPERTY_THEME = "theme";
-    @XmlElement(name = "theme")
-    @jakarta.annotation.Nullable
     private String theme;
 
     public static final String JSON_PROPERTY_CRS = "crs";
-    @XmlElement(name = "crs")
-    @jakarta.annotation.Nullable
     private Crs crs;
 
     public static final String JSON_PROPERTY_EPOCH = "epoch";
-    @XmlElement(name = "epoch")
-    @jakarta.annotation.Nullable
     private BigDecimal epoch;
 
     public static final String JSON_PROPERTY_MIN_SCALE_DENOMINATOR = "minScaleDenominator";
-    @XmlElement(name = "minScaleDenominator")
-    @jakarta.annotation.Nullable
     private BigDecimal minScaleDenominator;
 
     public static final String JSON_PROPERTY_MAX_SCALE_DENOMINATOR = "maxScaleDenominator";
-    @XmlElement(name = "maxScaleDenominator")
-    @jakarta.annotation.Nullable
     private BigDecimal maxScaleDenominator;
 
     public static final String JSON_PROPERTY_MIN_CELL_SIZE = "minCellSize";
-    @XmlElement(name = "minCellSize")
-    @jakarta.annotation.Nullable
     private BigDecimal minCellSize;
 
     public static final String JSON_PROPERTY_MAX_CELL_SIZE = "maxCellSize";
-    @XmlElement(name = "maxCellSize")
-    @jakarta.annotation.Nullable
     private BigDecimal maxCellSize;
 
     public static final String JSON_PROPERTY_MAX_TILE_MATRIX = "maxTileMatrix";
-    @XmlElement(name = "maxTileMatrix")
-    @jakarta.annotation.Nullable
     private String maxTileMatrix;
 
     public static final String JSON_PROPERTY_MIN_TILE_MATRIX = "minTileMatrix";
-    @XmlElement(name = "minTileMatrix")
-    @jakarta.annotation.Nullable
     private String minTileMatrix;
 
     public static final String JSON_PROPERTY_BOUNDING_BOX = "boundingBox";
-    @XmlElement(name = "boundingBox")
-    @jakarta.annotation.Nullable
     private BoundingBox2D boundingBox;
 
     public static final String JSON_PROPERTY_CREATED = "created";
-    @XmlElement(name = "created")
-    @jakarta.annotation.Nullable
     private Object created;
 
     public static final String JSON_PROPERTY_UPDATED = "updated";
-    @XmlElement(name = "updated")
-    @jakarta.annotation.Nullable
     private Object updated;
 
     public static final String JSON_PROPERTY_STYLE = "style";
-    @XmlElement(name = "style")
-    @jakarta.annotation.Nullable
     private Style style;
 
     public static final String JSON_PROPERTY_GEO_DATA_CLASSES = "geoDataClasses";
-    @XmlElement(name = "geoDataClasses")
-    @jakarta.annotation.Nullable
     private List<String> geoDataClasses = new ArrayList<>();
 
     public static final String JSON_PROPERTY_PROPERTIES_SCHEMA = "propertiesSchema";
-    @XmlElement(name = "propertiesSchema")
-    @jakarta.annotation.Nullable
     private PropertiesSchema propertiesSchema;
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nullable
     private List<Link> links = new ArrayList<>();
 
     public GeospatialData() {
     }
 
-    public GeospatialData title(@jakarta.annotation.Nullable String title) {
+    public GeospatialData title(String title) {
         this.title = title;
         return this;
     }
@@ -214,22 +155,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return title
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
     public String getTitle() {
         return title;
     }
 
     @JsonProperty(JSON_PROPERTY_TITLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "title")
-    public void setTitle(@jakarta.annotation.Nullable String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public GeospatialData description(@jakarta.annotation.Nullable String description) {
+    public GeospatialData description(String description) {
         this.description = description;
         return this;
     }
@@ -239,22 +177,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return description
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
     public String getDescription() {
         return description;
     }
 
     @JsonProperty(JSON_PROPERTY_DESCRIPTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "description")
-    public void setDescription(@jakarta.annotation.Nullable String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public GeospatialData keywords(@jakarta.annotation.Nullable String keywords) {
+    public GeospatialData keywords(String keywords) {
         this.keywords = keywords;
         return this;
     }
@@ -264,22 +199,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return keywords
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
     public String getKeywords() {
         return keywords;
     }
 
     @JsonProperty(JSON_PROPERTY_KEYWORDS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "keywords")
-    public void setKeywords(@jakarta.annotation.Nullable String keywords) {
+    public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 
-    public GeospatialData id(@jakarta.annotation.Nonnull String id) {
+    public GeospatialData id(String id) {
         this.id = id;
         return this;
     }
@@ -289,22 +221,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return id
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
     public String getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "id")
-    public void setId(@jakarta.annotation.Nonnull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public GeospatialData dataType(@jakarta.annotation.Nonnull String dataType) {
+    public GeospatialData dataType(String dataType) {
         this.dataType = dataType;
         return this;
     }
@@ -314,22 +243,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return dataType
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dataType")
     public String getDataType() {
         return dataType;
     }
 
     @JsonProperty(JSON_PROPERTY_DATA_TYPE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "dataType")
-    public void setDataType(@jakarta.annotation.Nonnull String dataType) {
+    public void setDataType(String dataType) {
         this.dataType = dataType;
     }
 
-    public GeospatialData geometryDimension(@jakarta.annotation.Nullable Integer geometryDimension) {
+    public GeospatialData geometryDimension(Integer geometryDimension) {
         this.geometryDimension = geometryDimension;
         return this;
     }
@@ -340,22 +266,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return geometryDimension
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometryDimension")
     public Integer getGeometryDimension() {
         return geometryDimension;
     }
 
     @JsonProperty(JSON_PROPERTY_GEOMETRY_DIMENSION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geometryDimension")
-    public void setGeometryDimension(@jakarta.annotation.Nullable Integer geometryDimension) {
+    public void setGeometryDimension(Integer geometryDimension) {
         this.geometryDimension = geometryDimension;
     }
 
-    public GeospatialData featureType(@jakarta.annotation.Nullable String featureType) {
+    public GeospatialData featureType(String featureType) {
         this.featureType = featureType;
         return this;
     }
@@ -365,22 +288,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return featureType
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_FEATURE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "featureType")
     public String getFeatureType() {
         return featureType;
     }
 
     @JsonProperty(JSON_PROPERTY_FEATURE_TYPE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "featureType")
-    public void setFeatureType(@jakarta.annotation.Nullable String featureType) {
+    public void setFeatureType(String featureType) {
         this.featureType = featureType;
     }
 
-    public GeospatialData attribution(@jakarta.annotation.Nullable String attribution) {
+    public GeospatialData attribution(String attribution) {
         this.attribution = attribution;
         return this;
     }
@@ -390,22 +310,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return attribution
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
     public String getAttribution() {
         return attribution;
     }
 
     @JsonProperty(JSON_PROPERTY_ATTRIBUTION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "attribution")
-    public void setAttribution(@jakarta.annotation.Nullable String attribution) {
+    public void setAttribution(String attribution) {
         this.attribution = attribution;
     }
 
-    public GeospatialData license(@jakarta.annotation.Nullable String license) {
+    public GeospatialData license(String license) {
         this.license = license;
         return this;
     }
@@ -415,22 +332,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return license
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
     public String getLicense() {
         return license;
     }
 
     @JsonProperty(JSON_PROPERTY_LICENSE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "license")
-    public void setLicense(@jakarta.annotation.Nullable String license) {
+    public void setLicense(String license) {
         this.license = license;
     }
 
-    public GeospatialData pointOfContact(@jakarta.annotation.Nullable String pointOfContact) {
+    public GeospatialData pointOfContact(String pointOfContact) {
         this.pointOfContact = pointOfContact;
         return this;
     }
@@ -441,22 +355,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return pointOfContact
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_POINT_OF_CONTACT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "pointOfContact")
     public String getPointOfContact() {
         return pointOfContact;
     }
 
     @JsonProperty(JSON_PROPERTY_POINT_OF_CONTACT)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "pointOfContact")
-    public void setPointOfContact(@jakarta.annotation.Nullable String pointOfContact) {
+    public void setPointOfContact(String pointOfContact) {
         this.pointOfContact = pointOfContact;
     }
 
-    public GeospatialData publisher(@jakarta.annotation.Nullable String publisher) {
+    public GeospatialData publisher(String publisher) {
         this.publisher = publisher;
         return this;
     }
@@ -466,22 +377,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return publisher
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PUBLISHER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "publisher")
     public String getPublisher() {
         return publisher;
     }
 
     @JsonProperty(JSON_PROPERTY_PUBLISHER)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "publisher")
-    public void setPublisher(@jakarta.annotation.Nullable String publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    public GeospatialData theme(@jakarta.annotation.Nullable String theme) {
+    public GeospatialData theme(String theme) {
         this.theme = theme;
         return this;
     }
@@ -491,22 +399,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return theme
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_THEME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "theme")
     public String getTheme() {
         return theme;
     }
 
     @JsonProperty(JSON_PROPERTY_THEME)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "theme")
-    public void setTheme(@jakarta.annotation.Nullable String theme) {
+    public void setTheme(String theme) {
         this.theme = theme;
     }
 
-    public GeospatialData crs(@jakarta.annotation.Nullable Crs crs) {
+    public GeospatialData crs(Crs crs) {
         this.crs = crs;
         return this;
     }
@@ -516,22 +421,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return crs
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
     public Crs getCrs() {
         return crs;
     }
 
     @JsonProperty(JSON_PROPERTY_CRS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "crs")
-    public void setCrs(@jakarta.annotation.Nullable Crs crs) {
+    public void setCrs(Crs crs) {
         this.crs = crs;
     }
 
-    public GeospatialData epoch(@jakarta.annotation.Nullable BigDecimal epoch) {
+    public GeospatialData epoch(BigDecimal epoch) {
         this.epoch = epoch;
         return this;
     }
@@ -541,22 +443,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return epoch
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_EPOCH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "epoch")
     public BigDecimal getEpoch() {
         return epoch;
     }
 
     @JsonProperty(JSON_PROPERTY_EPOCH)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "epoch")
-    public void setEpoch(@jakarta.annotation.Nullable BigDecimal epoch) {
+    public void setEpoch(BigDecimal epoch) {
         this.epoch = epoch;
     }
 
-    public GeospatialData minScaleDenominator(@jakarta.annotation.Nullable BigDecimal minScaleDenominator) {
+    public GeospatialData minScaleDenominator(BigDecimal minScaleDenominator) {
         this.minScaleDenominator = minScaleDenominator;
         return this;
     }
@@ -566,22 +465,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return minScaleDenominator
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minScaleDenominator")
     public BigDecimal getMinScaleDenominator() {
         return minScaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minScaleDenominator")
-    public void setMinScaleDenominator(@jakarta.annotation.Nullable BigDecimal minScaleDenominator) {
+    public void setMinScaleDenominator(BigDecimal minScaleDenominator) {
         this.minScaleDenominator = minScaleDenominator;
     }
 
-    public GeospatialData maxScaleDenominator(@jakarta.annotation.Nullable BigDecimal maxScaleDenominator) {
+    public GeospatialData maxScaleDenominator(BigDecimal maxScaleDenominator) {
         this.maxScaleDenominator = maxScaleDenominator;
         return this;
     }
@@ -591,22 +487,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return maxScaleDenominator
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxScaleDenominator")
     public BigDecimal getMaxScaleDenominator() {
         return maxScaleDenominator;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_SCALE_DENOMINATOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxScaleDenominator")
-    public void setMaxScaleDenominator(@jakarta.annotation.Nullable BigDecimal maxScaleDenominator) {
+    public void setMaxScaleDenominator(BigDecimal maxScaleDenominator) {
         this.maxScaleDenominator = maxScaleDenominator;
     }
 
-    public GeospatialData minCellSize(@jakarta.annotation.Nullable BigDecimal minCellSize) {
+    public GeospatialData minCellSize(BigDecimal minCellSize) {
         this.minCellSize = minCellSize;
         return this;
     }
@@ -616,22 +509,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return minCellSize
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minCellSize")
     public BigDecimal getMinCellSize() {
         return minCellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minCellSize")
-    public void setMinCellSize(@jakarta.annotation.Nullable BigDecimal minCellSize) {
+    public void setMinCellSize(BigDecimal minCellSize) {
         this.minCellSize = minCellSize;
     }
 
-    public GeospatialData maxCellSize(@jakarta.annotation.Nullable BigDecimal maxCellSize) {
+    public GeospatialData maxCellSize(BigDecimal maxCellSize) {
         this.maxCellSize = maxCellSize;
         return this;
     }
@@ -641,22 +531,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return maxCellSize
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxCellSize")
     public BigDecimal getMaxCellSize() {
         return maxCellSize;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_CELL_SIZE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxCellSize")
-    public void setMaxCellSize(@jakarta.annotation.Nullable BigDecimal maxCellSize) {
+    public void setMaxCellSize(BigDecimal maxCellSize) {
         this.maxCellSize = maxCellSize;
     }
 
-    public GeospatialData maxTileMatrix(@jakarta.annotation.Nullable String maxTileMatrix) {
+    public GeospatialData maxTileMatrix(String maxTileMatrix) {
         this.maxTileMatrix = maxTileMatrix;
         return this;
     }
@@ -666,22 +553,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return maxTileMatrix
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MAX_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxTileMatrix")
     public String getMaxTileMatrix() {
         return maxTileMatrix;
     }
 
     @JsonProperty(JSON_PROPERTY_MAX_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "maxTileMatrix")
-    public void setMaxTileMatrix(@jakarta.annotation.Nullable String maxTileMatrix) {
+    public void setMaxTileMatrix(String maxTileMatrix) {
         this.maxTileMatrix = maxTileMatrix;
     }
 
-    public GeospatialData minTileMatrix(@jakarta.annotation.Nullable String minTileMatrix) {
+    public GeospatialData minTileMatrix(String minTileMatrix) {
         this.minTileMatrix = minTileMatrix;
         return this;
     }
@@ -691,22 +575,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return minTileMatrix
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_MIN_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minTileMatrix")
     public String getMinTileMatrix() {
         return minTileMatrix;
     }
 
     @JsonProperty(JSON_PROPERTY_MIN_TILE_MATRIX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "minTileMatrix")
-    public void setMinTileMatrix(@jakarta.annotation.Nullable String minTileMatrix) {
+    public void setMinTileMatrix(String minTileMatrix) {
         this.minTileMatrix = minTileMatrix;
     }
 
-    public GeospatialData boundingBox(@jakarta.annotation.Nullable BoundingBox2D boundingBox) {
+    public GeospatialData boundingBox(BoundingBox2D boundingBox) {
         this.boundingBox = boundingBox;
         return this;
     }
@@ -716,22 +597,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return boundingBox
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_BOUNDING_BOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "boundingBox")
     public BoundingBox2D getBoundingBox() {
         return boundingBox;
     }
 
     @JsonProperty(JSON_PROPERTY_BOUNDING_BOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "boundingBox")
-    public void setBoundingBox(@jakarta.annotation.Nullable BoundingBox2D boundingBox) {
+    public void setBoundingBox(BoundingBox2D boundingBox) {
         this.boundingBox = boundingBox;
     }
 
-    public GeospatialData created(@jakarta.annotation.Nullable Object created) {
+    public GeospatialData created(Object created) {
         this.created = created;
         return this;
     }
@@ -741,22 +619,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return created
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_CREATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "created")
     public Object getCreated() {
         return created;
     }
 
     @JsonProperty(JSON_PROPERTY_CREATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "created")
-    public void setCreated(@jakarta.annotation.Nullable Object created) {
+    public void setCreated(Object created) {
         this.created = created;
     }
 
-    public GeospatialData updated(@jakarta.annotation.Nullable Object updated) {
+    public GeospatialData updated(Object updated) {
         this.updated = updated;
         return this;
     }
@@ -766,22 +641,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return updated
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_UPDATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "updated")
     public Object getUpdated() {
         return updated;
     }
 
     @JsonProperty(JSON_PROPERTY_UPDATED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "updated")
-    public void setUpdated(@jakarta.annotation.Nullable Object updated) {
+    public void setUpdated(Object updated) {
         this.updated = updated;
     }
 
-    public GeospatialData style(@jakarta.annotation.Nullable Style style) {
+    public GeospatialData style(Style style) {
         this.style = style;
         return this;
     }
@@ -791,22 +663,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return style
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_STYLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "style")
     public Style getStyle() {
         return style;
     }
 
     @JsonProperty(JSON_PROPERTY_STYLE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "style")
-    public void setStyle(@jakarta.annotation.Nullable Style style) {
+    public void setStyle(Style style) {
         this.style = style;
     }
 
-    public GeospatialData geoDataClasses(@jakarta.annotation.Nullable List<String> geoDataClasses) {
+    public GeospatialData geoDataClasses(List<String> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
         return this;
     }
@@ -825,24 +694,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return geoDataClasses
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<String> getGeoDataClasses() {
         return geoDataClasses;
     }
 
     @JsonProperty(JSON_PROPERTY_GEO_DATA_CLASSES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "geoDataClasses")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setGeoDataClasses(@jakarta.annotation.Nullable List<String> geoDataClasses) {
+    public void setGeoDataClasses(List<String> geoDataClasses) {
         this.geoDataClasses = geoDataClasses;
     }
 
-    public GeospatialData propertiesSchema(@jakarta.annotation.Nullable PropertiesSchema propertiesSchema) {
+    public GeospatialData propertiesSchema(PropertiesSchema propertiesSchema) {
         this.propertiesSchema = propertiesSchema;
         return this;
     }
@@ -852,22 +716,19 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return propertiesSchema
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_PROPERTIES_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "propertiesSchema")
     public PropertiesSchema getPropertiesSchema() {
         return propertiesSchema;
     }
 
     @JsonProperty(JSON_PROPERTY_PROPERTIES_SCHEMA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "propertiesSchema")
-    public void setPropertiesSchema(@jakarta.annotation.Nullable PropertiesSchema propertiesSchema) {
+    public void setPropertiesSchema(PropertiesSchema propertiesSchema) {
         this.propertiesSchema = propertiesSchema;
     }
 
-    public GeospatialData links(@jakarta.annotation.Nullable List<Link> links) {
+    public GeospatialData links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -886,20 +747,15 @@ public final class GeospatialData extends DataTransferObject {
      *
      * @return links
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nullable List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

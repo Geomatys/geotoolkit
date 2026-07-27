@@ -19,8 +19,6 @@ package org.geotoolkit.ogcapi.dto.geovolumes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,30 +37,21 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     BoundingVolume.JSON_PROPERTY_REGION,
     BoundingVolume.JSON_PROPERTY_SPHERE
 })
-@XmlRootElement(name = "BoundingVolume")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "BoundingVolume")
 public final class BoundingVolume extends DataTransferObject {
 
     public static final String JSON_PROPERTY_BOX = "box";
-    @XmlElement(name = "box")
-    @jakarta.annotation.Nullable
     private List<Double> box = new ArrayList<>();
 
     public static final String JSON_PROPERTY_REGION = "region";
-    @XmlElement(name = "region")
-    @jakarta.annotation.Nullable
     private List<Double> region = new ArrayList<>();
 
     public static final String JSON_PROPERTY_SPHERE = "sphere";
-    @XmlElement(name = "sphere")
-    @jakarta.annotation.Nullable
     private List<Double> sphere = new ArrayList<>();
 
     public BoundingVolume() {
     }
 
-    public BoundingVolume box(@jakarta.annotation.Nullable List<Double> box) {
+    public BoundingVolume box(List<Double> box) {
         this.box = box;
         return this;
     }
@@ -84,24 +73,19 @@ public final class BoundingVolume extends DataTransferObject {
      *
      * @return box
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_BOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "box")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getBox() {
         return box;
     }
 
     @JsonProperty(JSON_PROPERTY_BOX)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "box")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBox(@jakarta.annotation.Nullable List<Double> box) {
+    public void setBox(List<Double> box) {
         this.box = box;
     }
 
-    public BoundingVolume region(@jakarta.annotation.Nullable List<Double> region) {
+    public BoundingVolume region(List<Double> region) {
         this.region = region;
         return this;
     }
@@ -121,24 +105,19 @@ public final class BoundingVolume extends DataTransferObject {
      *
      * @return region
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_REGION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "region")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getRegion() {
         return region;
     }
 
     @JsonProperty(JSON_PROPERTY_REGION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "region")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setRegion(@jakarta.annotation.Nullable List<Double> region) {
+    public void setRegion(List<Double> region) {
         this.region = region;
     }
 
-    public BoundingVolume sphere(@jakarta.annotation.Nullable List<Double> sphere) {
+    public BoundingVolume sphere(List<Double> sphere) {
         this.sphere = sphere;
         return this;
     }
@@ -158,20 +137,15 @@ public final class BoundingVolume extends DataTransferObject {
      *
      * @return sphere
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_SPHERE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "sphere")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Double> getSphere() {
         return sphere;
     }
 
     @JsonProperty(JSON_PROPERTY_SPHERE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "sphere")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setSphere(@jakarta.annotation.Nullable List<Double> sphere) {
+    public void setSphere(List<Double> sphere) {
         this.sphere = sphere;
     }
 

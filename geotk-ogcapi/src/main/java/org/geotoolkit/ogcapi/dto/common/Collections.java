@@ -22,13 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.time.OffsetDateTime;
 import org.geotoolkit.ogcapi.dto.DataTransferObject;
 
@@ -42,41 +35,28 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     Collections.JSON_PROPERTY_NUMBER_RETURNED,
     Collections.JSON_PROPERTY_COLLECTIONS
 })
-@XmlRootElement(name = "Collections")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "Collections")
 public final class Collections extends DataTransferObject implements CommonResponse {
 
     public static final String JSON_PROPERTY_LINKS = "links";
-    @XmlElement(name = "links")
-    @jakarta.annotation.Nonnull
     private List<Link> links = new ArrayList<>();
 
     //Note: this attribute is present in OGCAPI Tiles
     public static final String JSON_PROPERTY_TIME_STAMP = "timeStamp";
-    @XmlElement(name = "timeStamp")
-    @jakarta.annotation.Nullable
     private OffsetDateTime timeStamp;
 
     public static final String JSON_PROPERTY_NUMBER_MATCHED = "numberMatched";
-    @XmlElement(name = "numberMatched")
-    @jakarta.annotation.Nullable
     private Integer numberMatched;
 
     public static final String JSON_PROPERTY_NUMBER_RETURNED = "numberReturned";
-    @XmlElement(name = "numberReturned")
-    @jakarta.annotation.Nullable
     private Integer numberReturned;
 
     public static final String JSON_PROPERTY_COLLECTIONS = "collections";
-    @XmlElement(name = "collections")
-    @jakarta.annotation.Nonnull
     private List<CollectionDescription> collections = new ArrayList<>();
 
     public Collections() {
     }
 
-    public Collections links(@jakarta.annotation.Nonnull List<Link> links) {
+    public Collections links(List<Link> links) {
         this.links = links;
         return this;
     }
@@ -94,24 +74,19 @@ public final class Collections extends DataTransferObject implements CommonRespo
      *
      * @return links
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Link> getLinks() {
         return links;
     }
 
     @JsonProperty(JSON_PROPERTY_LINKS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "links")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setLinks(@jakarta.annotation.Nonnull List<Link> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
-    public Collections timeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+    public Collections timeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
@@ -120,10 +95,8 @@ public final class Collections extends DataTransferObject implements CommonRespo
      * Get timeStamp
      * @return timeStamp
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
     public OffsetDateTime getTimeStamp() {
         return timeStamp;
     }
@@ -131,12 +104,11 @@ public final class Collections extends DataTransferObject implements CommonRespo
 
     @JsonProperty(JSON_PROPERTY_TIME_STAMP)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "timeStamp")
-    public void setTimeStamp(@jakarta.annotation.Nullable OffsetDateTime timeStamp) {
+    public void setTimeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
-    public Collections numberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+    public Collections numberMatched(Integer numberMatched) {
         this.numberMatched = numberMatched;
         return this;
     }
@@ -147,22 +119,19 @@ public final class Collections extends DataTransferObject implements CommonRespo
      *
      * @return numberMatched
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
     public Integer getNumberMatched() {
         return numberMatched;
     }
 
     @JsonProperty(JSON_PROPERTY_NUMBER_MATCHED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberMatched")
-    public void setNumberMatched(@jakarta.annotation.Nullable Integer numberMatched) {
+    public void setNumberMatched(Integer numberMatched) {
         this.numberMatched = numberMatched;
     }
 
-    public Collections numberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+    public Collections numberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
         return this;
     }
@@ -175,22 +144,19 @@ public final class Collections extends DataTransferObject implements CommonRespo
      *
      * @return numberReturned
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
     public Integer getNumberReturned() {
         return numberReturned;
     }
 
     @JsonProperty(JSON_PROPERTY_NUMBER_RETURNED)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "numberReturned")
-    public void setNumberReturned(@jakarta.annotation.Nullable Integer numberReturned) {
+    public void setNumberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
     }
 
-    public Collections collections(@jakarta.annotation.Nonnull List<CollectionDescription> collections) {
+    public Collections collections(List<CollectionDescription> collections) {
         this.collections = collections;
         return this;
     }
@@ -208,20 +174,15 @@ public final class Collections extends DataTransferObject implements CommonRespo
      *
      * @return collections
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COLLECTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "collections")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<CollectionDescription> getCollections() {
         return collections;
     }
 
     @JsonProperty(JSON_PROPERTY_COLLECTIONS)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "collections")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCollections(@jakarta.annotation.Nonnull List<CollectionDescription> collections) {
+    public void setCollections(List<CollectionDescription> collections) {
         this.collections = collections;
     }
 

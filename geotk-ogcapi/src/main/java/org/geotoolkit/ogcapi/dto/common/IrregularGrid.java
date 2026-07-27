@@ -19,13 +19,6 @@ package org.geotoolkit.ogcapi.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,25 +31,18 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
     IrregularGrid.JSON_PROPERTY_COORDINATES,
     IrregularGrid.JSON_PROPERTY_BOUNDS_COORDINATES
 })
-@XmlRootElement(name = "IrregularGrid")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "IrregularGrid")
 public final class IrregularGrid extends DataTransferObject{
 
     public static final String JSON_PROPERTY_COORDINATES = "coordinates";
-    @XmlElement(name = "coordinates")
-    @jakarta.annotation.Nonnull
     private List<Object> coordinates = new ArrayList<>();
 
     public static final String JSON_PROPERTY_BOUNDS_COORDINATES = "boundsCoordinates";
-    @XmlElement(name = "boundsCoordinates")
-    @jakarta.annotation.Nullable
     private List<List<Object>> boundsCoordinates = new ArrayList<>();
 
     public IrregularGrid() {
     }
 
-    public IrregularGrid coordinates(@jakarta.annotation.Nonnull List<Object> coordinates) {
+    public IrregularGrid coordinates(List<Object> coordinates) {
         this.coordinates = coordinates;
         return this;
     }
@@ -75,24 +61,19 @@ public final class IrregularGrid extends DataTransferObject{
      *
      * @return coordinates
      */
-    @jakarta.annotation.Nonnull
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<Object> getCoordinates() {
         return coordinates;
     }
 
     @JsonProperty(JSON_PROPERTY_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JacksonXmlProperty(localName = "coordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setCoordinates(@jakarta.annotation.Nonnull List<Object> coordinates) {
+    public void setCoordinates(List<Object> coordinates) {
         this.coordinates = coordinates;
     }
 
-    public IrregularGrid boundsCoordinates(@jakarta.annotation.Nullable List<List<Object>> boundsCoordinates) {
+    public IrregularGrid boundsCoordinates(List<List<Object>> boundsCoordinates) {
         this.boundsCoordinates = boundsCoordinates;
         return this;
     }
@@ -111,20 +92,15 @@ public final class IrregularGrid extends DataTransferObject{
      *
      * @return boundsCoordinates
      */
-    @jakarta.annotation.Nullable
     @JsonProperty(JSON_PROPERTY_BOUNDS_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "boundsCoordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
     public List<List<Object>> getBoundsCoordinates() {
         return boundsCoordinates;
     }
 
     @JsonProperty(JSON_PROPERTY_BOUNDS_COORDINATES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JacksonXmlProperty(localName = "boundsCoordinates")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    public void setBoundsCoordinates(@jakarta.annotation.Nullable List<List<Object>> boundsCoordinates) {
+    public void setBoundsCoordinates(List<List<Object>> boundsCoordinates) {
         this.boundsCoordinates = boundsCoordinates;
     }
 
