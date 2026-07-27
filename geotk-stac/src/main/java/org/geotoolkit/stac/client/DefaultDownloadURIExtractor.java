@@ -239,7 +239,7 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
         for (Asset asset : assets) {
             // Primary href
             String primary = asset.getHref();
-            if (primary != null && !primary.isBlank() && isHttpScheme(primary) && probeUri(primary)) {
+            if (primary != null && !primary.isBlank() && isReachable(primary)) {
                 if (collectionId != null) {
                     CollectionStrategy strategy = CollectionStrategy.primary(dataRole);
                     collectionStrategyCache.put(collectionId, strategy);
@@ -253,7 +253,7 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
             if (alternates != null) {
                 for (Map.Entry<String, Asset> alt : alternates.entrySet()) {
                     String altHref = alt.getValue() != null ? alt.getValue().getHref() : null;
-                    if (altHref != null && !altHref.isBlank() && isHttpScheme(altHref) && probeUri(altHref)) {
+                    if (altHref != null && !altHref.isBlank() && isReachable(altHref)) {
                         String altKey = alt.getKey();
                         if (collectionId != null) {
                             CollectionStrategy strategy = CollectionStrategy.alternate(dataRole, altKey);
@@ -376,11 +376,26 @@ public class DefaultDownloadURIExtractor implements DownloadURIExtractor {
 
     /**
      * Returns {@code true} if the href uses the {@code http} or {@code https} scheme.
-     * Non-HTTP hrefs (e.g. {@code s3://}, local paths) are skipped — they cannot be probed
-     * with the built-in {@link HttpClient}.
      */
     private static boolean isHttpScheme(String href) {
         String lower = href.toLowerCase();
         return lower.startsWith("http://") || lower.startsWith("https://");
+    }
+
+    /**
+     * Returns {@code true} if the candidate href should be selected: HTTP(S) hrefs are
+     * probed for reachability, other absolute-URI schemes (e.g. {@code s3://}) are trusted
+     * as-is since they cannot be probed with the built-in {@link HttpClient} — reachability
+     * (and any required credentials) is verified by the caller when it actually opens the URI.
+     */
+    private boolean isReachable(String href) {
+        if (isHttpScheme(href)) {
+            return probeUri(href);
+        }
+        try {
+            return URI.create(href).isAbsolute();
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

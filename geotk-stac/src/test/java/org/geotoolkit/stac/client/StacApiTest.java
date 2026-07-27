@@ -254,6 +254,21 @@ public class StacApiTest {
     }
 
     @Test
+    public void testDownloadFileNonHttpSchemeUsesNio() throws Exception {
+        // Non-HTTP schemes (e.g. s3://) route through NIO instead of the HTTP client.
+        // file:// exercises that branch without requiring a real S3 filesystem provider.
+        final Path sourceDir = Files.createTempDirectory("stac-nio-source");
+        final Path source = sourceDir.resolve("asset.bin");
+        Files.write(source, new byte[]{9, 8, 7});
+
+        final Path tmpDir = Files.createTempDirectory("stac-nio-dest");
+        final Path result = stacApi.downloadFile(source.toUri(), tmpDir);
+
+        assertNotNull(result);
+        assertArrayEquals(new byte[]{9, 8, 7}, Files.readAllBytes(result));
+    }
+
+    @Test
     public void testDetectStacTypeItem() throws Exception {
         assertEquals(StacResourceType.ITEM,
                 stacApi.detectStacType(serverUrl + "/stac/item-1"));
