@@ -60,12 +60,6 @@
       </dependency>
 
       <dependency>
-          <groupId>org.apache.groovy</groupId>
-          <artifactId>groovy-all</artifactId>
-          <type>pom</type>
-      </dependency>
-
-      <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <exclusions>

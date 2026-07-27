@@ -161,14 +161,8 @@ public class Bundle extends IndexedResourceBundle {
          */
         public static final short org_geotoolkit_filter_function_geometry_StartPointFunction_description = 23;
 
-        /**
-         * <String>, Groovy script to execute
-         */
         public static final short org_geotoolkit_filter_function_groovy_GroovyFunction_arg0 = 24;
 
-        /**
-         * Execute a groovy script, result is the returned value of the script.
-         */
         public static final short org_geotoolkit_filter_function_groovy_GroovyFunction_description = 25;
 
         /**

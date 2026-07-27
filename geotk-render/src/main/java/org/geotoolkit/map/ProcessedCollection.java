@@ -140,7 +140,7 @@ public class ProcessedCollection extends AbstractCollection{
                 result = process.call();
             }catch(Exception ex){
                 //we should not catch exception, but we don't want to break the stack because of a
-                //uncorrect process script (groovy, javascript,...)
+                //uncorrect process script (javascript,...)
                 LOGGER.log(Level.WARNING, "Processing failed : "+ex.getMessage(), ex);
             }
         }
