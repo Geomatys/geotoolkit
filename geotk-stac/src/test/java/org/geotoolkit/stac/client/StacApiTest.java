@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpServer;
 import org.geotoolkit.client.openapi.OpenApiConfiguration;
+import org.geotoolkit.ogcapi.dto.common.Link;
 import org.geotoolkit.stac.dto.Asset;
 import org.geotoolkit.stac.dto.Collection;
 import org.geotoolkit.stac.dto.Collections;
@@ -36,6 +37,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -194,6 +196,71 @@ public class StacApiTest {
                 new SearchItems().collections(List.of("test-collection")));
         assertEquals(1, items.size());
         assertEquals("test-item-1", items.get(0).getId());
+    }
+
+    /**
+     * A capped {@code searchItems(params, maxTotal)} call must stop paginating as soon as enough
+     * items were collected, never requesting pages beyond what's needed.
+     */
+    @Test
+    public void testSearchItemsWithCapStopsPagination() throws Exception {
+        final HttpServer capServer = HttpServer.create(new InetSocketAddress(0), 0);
+        final int capPort = capServer.getAddress().getPort();
+        final String capServerUrl = "http://localhost:" + capPort;
+        final AtomicInteger page3Hits = new AtomicInteger();
+        try {
+            capServer.createContext("/stac/search/page2", exchange -> {
+                writeItemPage(exchange, List.of(itemWithId("item-3"), itemWithId("item-4")),
+                        List.of(new Link().rel("next").href(capServerUrl + "/stac/search/page3")));
+            });
+            capServer.createContext("/stac/search/page3", exchange -> {
+                page3Hits.incrementAndGet();
+                writeItemPage(exchange, List.of(itemWithId("item-5"), itemWithId("item-6")), List.of());
+            });
+            capServer.createContext("/stac/search", exchange -> {
+                writeItemPage(exchange, List.of(itemWithId("item-1"), itemWithId("item-2")),
+                        List.of(new Link().rel("next").href(capServerUrl + "/stac/search/page2")));
+            });
+            capServer.start();
+
+            final OpenApiConfiguration config = new OpenApiConfiguration.Builder()
+                    .setScheme("http")
+                    .setHost("localhost")
+                    .setPort(capPort)
+                    .setBasePath("/stac")
+                    .build();
+            final StacApi cappedApi = new StacApi(config,
+                    new DefaultDownloadURIExtractor(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()));
+
+            final List<Item> items = cappedApi.searchItems(
+                    new SearchItems().collections(List.of("test-collection")), 3);
+
+            assertEquals(3, items.size());
+            assertEquals(0, page3Hits.get());
+        } finally {
+            capServer.stop(0);
+        }
+    }
+
+    private static Item itemWithId(String id) {
+        final Item item = new Item();
+        item.setId(id);
+        item.setCollection("test-collection");
+        return item;
+    }
+
+    private static void writeItemPage(com.sun.net.httpserver.HttpExchange exchange, List<Item> items, List<Link> links) throws java.io.IOException {
+        final ItemCollection ic = new ItemCollection();
+        ic.setFeatures(items);
+        ic.setLinks(links);
+        try (OutputStream os = exchange.getResponseBody()) {
+            final byte[] bytes = MAPPER.writeValueAsBytes(ic);
+            exchange.sendResponseHeaders(200, bytes.length);
+            os.write(bytes);
+        } catch (Exception e) {
+            exchange.sendResponseHeaders(500, 0);
+            exchange.getResponseBody().close();
+        }
     }
 
     @Test
