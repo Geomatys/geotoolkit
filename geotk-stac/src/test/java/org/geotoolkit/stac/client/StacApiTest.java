@@ -379,4 +379,112 @@ public class StacApiTest {
         final Item item = stacApi.loadItem(serverUrl + "/stac/collections/coll-1");
         assertNull(item);
     }
+
+    /**
+     * No {@code /stac/conformance} context is registered on the shared test server, so the
+     * request 404s — {@link StacApi#getConformance()} must swallow that and return an empty
+     * list rather than throw.
+     */
+    @Test
+    public void testGetConformanceReturnsEmptyListWhenEndpointMissing() {
+        assertTrue(stacApi.getConformance().isEmpty());
+        assertFalse(stacApi.supportsQueryExtension());
+    }
+
+    /**
+     * When the server advertises the STAC API Query Extension conformance class,
+     * {@link StacApi#supportsQueryExtension()} must report it as supported.
+     */
+    @Test
+    public void testSupportsQueryExtensionWhenAdvertised() throws Exception {
+        final HttpServer confServer = HttpServer.create(new InetSocketAddress(0), 0);
+        final int confPort = confServer.getAddress().getPort();
+        try {
+            confServer.createContext("/stac/conformance", exchange -> {
+                final ObjectNode node = MAPPER.createObjectNode();
+                node.putArray("conformsTo").add("https://api.stacspec.org/v1.0.0/item-search#query");
+                try (OutputStream os = exchange.getResponseBody()) {
+                    final byte[] bytes = MAPPER.writeValueAsBytes(node);
+                    exchange.sendResponseHeaders(200, bytes.length);
+                    os.write(bytes);
+                }
+            });
+            confServer.start();
+
+            final StacApi confApi = newApiFor(confPort);
+            final List<String> conformance = confApi.getConformance();
+            assertEquals(1, conformance.size());
+            assertTrue(confApi.supportsQueryExtension());
+        } finally {
+            confServer.stop(0);
+        }
+    }
+
+    /**
+     * When the server's conformance list does not mention the Query Extension,
+     * {@link StacApi#supportsQueryExtension()} must report it as unsupported.
+     */
+    @Test
+    public void testSupportsQueryExtensionFalseWhenNotAdvertised() throws Exception {
+        final HttpServer confServer = HttpServer.create(new InetSocketAddress(0), 0);
+        final int confPort = confServer.getAddress().getPort();
+        try {
+            confServer.createContext("/stac/conformance", exchange -> {
+                final ObjectNode node = MAPPER.createObjectNode();
+                node.putArray("conformsTo").add("https://api.stacspec.org/v1.0.0/core");
+                try (OutputStream os = exchange.getResponseBody()) {
+                    final byte[] bytes = MAPPER.writeValueAsBytes(node);
+                    exchange.sendResponseHeaders(200, bytes.length);
+                    os.write(bytes);
+                }
+            });
+            confServer.start();
+
+            assertFalse(newApiFor(confPort).supportsQueryExtension());
+        } finally {
+            confServer.stop(0);
+        }
+    }
+
+    /**
+     * {@link SearchItems#query(Map)} must be forwarded as-is (the STAC API Query Extension
+     * shape) in the {@code POST /search} JSON body.
+     */
+    @Test
+    public void testSearchItemsSendsQueryInRequestBody() throws Exception {
+        final HttpServer queryServer = HttpServer.create(new InetSocketAddress(0), 0);
+        final int queryPort = queryServer.getAddress().getPort();
+        final AtomicInteger receivedQueryNodes = new AtomicInteger();
+        try {
+            queryServer.createContext("/stac/search", exchange -> {
+                final com.fasterxml.jackson.databind.JsonNode body = MAPPER.readTree(exchange.getRequestBody());
+                if (body.has("query") && body.get("query").has("eo:cloud_cover")) {
+                    receivedQueryNodes.incrementAndGet();
+                }
+                writeItemPage(exchange, List.of(itemWithId("item-1")), List.of());
+            });
+            queryServer.start();
+
+            final StacApi queryApi = newApiFor(queryPort);
+            final Map<String, Object> lteCondition = Map.of("lte", 50);
+            queryApi.searchItems(new SearchItems()
+                    .collections(List.of("test-collection"))
+                    .query(Map.of("eo:cloud_cover", lteCondition)));
+
+            assertEquals(1, receivedQueryNodes.get());
+        } finally {
+            queryServer.stop(0);
+        }
+    }
+
+    private static StacApi newApiFor(int port) {
+        final OpenApiConfiguration config = new OpenApiConfiguration.Builder()
+                .setScheme("http")
+                .setHost("localhost")
+                .setPort(port)
+                .setBasePath("/stac")
+                .build();
+        return new StacApi(config,
+                new DefaultDownloadURIExtractor(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()));
+    }
 }
