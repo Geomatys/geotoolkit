@@ -55,6 +55,12 @@
             <artifactId>geotk-dggs</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>gov.nasa.gsfc.heasarc</groupId>
+            <artifactId>nom-tam-fits</artifactId>
+            <version>1.21.1</version>
+        </dependency>
     </dependencies>
 
 </project>

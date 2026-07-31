@@ -20,8 +20,8 @@ import java.net.URL;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.rs.CodedGeometry;
-import org.geotoolkit.storage.rs.CodedResource;
+import org.apache.sis.storage.rs.CodedGeometry;
+import org.apache.sis.storage.rs.CodedResource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

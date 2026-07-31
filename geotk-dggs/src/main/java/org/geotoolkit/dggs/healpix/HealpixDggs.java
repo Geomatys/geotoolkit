@@ -18,12 +18,12 @@ package org.geotoolkit.dggs.healpix;
 
 import java.util.List;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridHierarchy;
-import org.geotoolkit.referencing.dggs.GridConstraints;
-import org.geotoolkit.referencing.dggs.PolyhedronOrientation;
-import org.geotoolkit.referencing.dggs.RefinementStrategy;
-import org.geotoolkit.referencing.dggs.PolyhedronParameters;
-import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridSystem;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridHierarchy;
+import org.apache.sis.referencing.dggs.GridConstraints;
+import org.apache.sis.referencing.dggs.PolyhedronOrientation;
+import org.apache.sis.referencing.dggs.RefinementStrategy;
+import org.apache.sis.referencing.dggs.PolyhedronParameters;
+import org.apache.sis.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridSystem;
 
 /**
  *

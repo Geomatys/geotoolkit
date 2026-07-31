@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.dggs.h3;
 
-import org.geotoolkit.referencing.dggs.Zone;
+import org.apache.sis.referencing.dggs.Zone;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opengis.referencing.operation.TransformException;

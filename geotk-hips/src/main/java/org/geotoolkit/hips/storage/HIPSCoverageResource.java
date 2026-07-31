@@ -32,6 +32,9 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.base.StoreResource;
+import org.apache.sis.storage.dggs.DiscreteGlobalGridGeometry;
+import org.apache.sis.storage.dggs.internal.shared.RasterDiscreteGlobalGridCoverage;
+import org.apache.sis.storage.dggs.internal.shared.TiledDiscreteGlobalGridCoverageResource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.service.ServiceConfiguration;
@@ -41,9 +44,6 @@ import org.geotoolkit.dggs.healpix.HealpixZone;
 import org.geotoolkit.hips.dto.HIPSProperties;
 import org.geotoolkit.hips.client.HIPSApi;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.dggs.internal.shared.RasterDiscreteGlobalGridCoverage;
-import org.geotoolkit.storage.dggs.internal.shared.TiledDiscreteGlobalGridCoverageResource;
 import org.opengis.util.GenericName;
 
 /**

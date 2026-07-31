@@ -27,10 +27,10 @@ import java.util.List;
 import org.apache.sis.geometries.math.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.dggs.RefinementLevel;
-import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.referencing.dggs.internal.shared.AbstractZone;
-import org.geotoolkit.storage.rs.internal.shared.s2.S2;
+import org.apache.sis.referencing.dggs.RefinementLevel;
+import org.apache.sis.referencing.dggs.Zone;
+import org.apache.sis.referencing.dggs.internal.shared.AbstractZone;
+import org.apache.sis.storage.rs.internal.shared.s2.S2;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.extent.BoundingPolygon;
 

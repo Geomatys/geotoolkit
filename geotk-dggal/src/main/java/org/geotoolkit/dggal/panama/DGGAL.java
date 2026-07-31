@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.dggal.panama;
 
+import java.io.InputStream;
 import java.lang.foreign.AddressLayout;
 import java.lang.foreign.Arena;
 import static java.lang.foreign.FunctionDescriptor.of;
@@ -27,6 +28,7 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -34,7 +36,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Binding for library DGGAL.
@@ -51,7 +52,9 @@ public class DGGAL extends NativeFunctions {
         try {
             Path dir = Files.createTempDirectory("dggal");
             Path temp = dir.resolve("libdggal_c_fn.so");
-            IOUtilities.copyResource("lib/linux/x64/libdggal_c_fn.so", DGGAL.class.getClassLoader(), dir, false);
+            try (InputStream in = DGGAL.class.getResourceAsStream("/lib/linux/x64/libdggal_c_fn.so")) {
+                Files.copy(in, temp, StandardCopyOption.REPLACE_EXISTING);
+            }
             System.load(temp.toFile().getAbsolutePath());
         } catch (Exception | UnsatisfiedLinkError ex) {
             Logger.getLogger("org.geotoolkit.dggal").log(Level.SEVERE, "Failed to load dggal native library.\n"+ex.getMessage(), ex);

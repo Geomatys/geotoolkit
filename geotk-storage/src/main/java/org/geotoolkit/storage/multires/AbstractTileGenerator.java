@@ -149,7 +149,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                     continue;
                 }
 
-                final long nbTile = TileMatrices.countCells(rect);
+                final long nbTile = rect.getLatticePointCount();
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
                 Stream<Tile> stream = LongStream.range(0, nbTile).parallel()
                         .mapToObj(new LongFunction<Tile>() {

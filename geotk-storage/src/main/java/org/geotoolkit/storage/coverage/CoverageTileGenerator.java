@@ -303,7 +303,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 final GridCoverageResource sourceCenter = resourceCenter;
                 final GridCoverageResource sourceBorder = resourceBorder;
 
-                final long nbTile = TileMatrices.countCells(rect);
+                final long nbTile = rect.getLatticePointCount();
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
 
                 Stream<Tile> stream = rect.latticePointStream(true)

@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGrid;
-import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGrid;
+import org.apache.sis.referencing.dggs.Zone;
+import org.apache.sis.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
 
 /**
  *
