@@ -21,10 +21,10 @@ import org.geotoolkit.process.ProcessDescriptor;
 
 /**
  * Implemented by a {@link ProcessDescriptor} that wants to be exposed as an openEO process,
- * under an openEO process id that may differ from its Examind identifier.
+ * under an openEO process id that may differ from its own identifier.
  * <p>
  * {@link OpenEOUtils} discovers implementors generically through {@code ProcessFinder}, so
- * exposing a new Examind process through openEO only requires implementing this interface on
+ * exposing a new process through openEO only requires implementing this interface on
  * the descriptor itself, no edit to {@link OpenEOUtils} is needed.
  *
  * @author Quentin Bialota (Geomatys)

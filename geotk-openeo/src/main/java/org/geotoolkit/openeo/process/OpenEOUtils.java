@@ -37,7 +37,7 @@ import java.util.Objects;
  * <p>
  * Process-specific facts (the openEO id of a descriptor, and any parameter schema override) are
  * not hardcoded here: they are discovered generically through {@link ProcessFinder} on descriptors
- * implementing {@link OpenEOExposedProcess}. Exposing a new Examind process through openEO only
+ * implementing {@link OpenEOExposedProcess}. Exposing a new process through openEO only
  * requires implementing that interface on the descriptor itself.
  *
  * @author Quentin Bialota (Geomatys)
@@ -45,34 +45,34 @@ import java.util.Objects;
 public class OpenEOUtils {
 
     /**
-     * Convert an Examind process ID to its openEO process ID.
-     * Accepts both the full form ("&lt;registry&gt;.&lt;code&gt;", e.g. "examind.coverage.openeo.load")
+     * Convert a process descriptor ID to its openEO process ID.
+     * Accepts both the full form ("&lt;registry&gt;.&lt;code&gt;", e.g. "<registry>.coverage.openeo.load")
      * and the short form ("&lt;code&gt;", e.g. "coverage.openeo.load").
      * If the resolved descriptor does not implement {@link OpenEOExposedProcess}, or no descriptor
      * is found, the input is returned unchanged.
      *
-     * @param exaProcessId The Examind process ID.
+     * @param processDescriptorId The process descriptor ID.
      * @return The corresponding OpenEO process ID.
      */
-    public static String examindProcessIdToOpenEOProcessId(String exaProcessId) {
-        ProcessDescriptor descriptor = findDescriptor(exaProcessId);
+    public static String processDescriptorIdToOpenEOProcessId(String processDescriptorId) {
+        ProcessDescriptor descriptor = findDescriptor(processDescriptorId);
         if (descriptor instanceof OpenEOExposedProcess exposed) {
             return exposed.getOpenEOProcessId();
         }
-        return exaProcessId;
+        return processDescriptorId;
     }
 
-    private static ProcessDescriptor findDescriptor(String exaProcessId) {
+    private static ProcessDescriptor findDescriptor(String processDescriptorId) {
         // Short form: the whole string is the code, registry unknown -> let ProcessFinder scan all registries.
         try {
-            return ProcessFinder.getProcessDescriptor(null, exaProcessId);
+            return ProcessFinder.getProcessDescriptor(null, processDescriptorId);
         } catch (NoSuchIdentifierException ex) {
             // Full form: "<registry>.<code>".
         }
-        int dot = exaProcessId.indexOf('.');
+        int dot = processDescriptorId.indexOf('.');
         if (dot > 0) {
-            String registryName = exaProcessId.substring(0, dot);
-            String code = exaProcessId.substring(dot + 1);
+            String registryName = processDescriptorId.substring(0, dot);
+            String code = processDescriptorId.substring(dot + 1);
             try {
                 return ProcessFinder.getProcessDescriptor(registryName, code);
             } catch (NoSuchIdentifierException ex) {
@@ -83,16 +83,16 @@ public class OpenEOUtils {
     }
 
     /**
-     * Convert an openEO process ID to its Examind process ID, by scanning every registered process
+     * Convert an openEO process ID to its process descriptor ID, by scanning every registered process
      * descriptor for one implementing {@link OpenEOExposedProcess} whose openEO id matches.
      * If none is found, the input is returned unchanged.
      *
      * @param eoProcessId The OpenEO process ID.
-     * @param fullDescriptor If true, returns the full Examind process ID ("&lt;registry&gt;.&lt;code&gt;");
+     * @param fullDescriptor If true, returns the full process descriptor ID ("&lt;registry&gt;.&lt;code&gt;");
      *                       otherwise, returns the short form ("&lt;code&gt;").
-     * @return The corresponding Examind process ID.
+     * @return The corresponding process descriptor ID.
      */
-    public static String openEOProcessIdToExamindProcessId(String eoProcessId, boolean fullDescriptor) {
+    public static String openEOProcessIdToProcessDescriptorId(String eoProcessId, boolean fullDescriptor) {
         for (Iterator<ProcessingRegistry> it = ProcessFinder.getProcessFactories(); it.hasNext(); ) {
             final ProcessingRegistry processingRegistry = it.next();
             for (ProcessDescriptor descriptor : processingRegistry.getDescriptors()) {

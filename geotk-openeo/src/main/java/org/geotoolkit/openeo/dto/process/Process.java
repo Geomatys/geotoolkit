@@ -46,8 +46,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-import static org.geotoolkit.openeo.process.OpenEOUtils.examindProcessIdToOpenEOProcessId;
-import static org.geotoolkit.openeo.process.OpenEOUtils.openEOProcessIdToExamindProcessId;
+import static org.geotoolkit.openeo.process.OpenEOUtils.processDescriptorIdToOpenEOProcessId;
+import static org.geotoolkit.openeo.process.OpenEOUtils.openEOProcessIdToProcessDescriptorId;
 
 /**
  * @author Quentin BIALOTA (Geomatys)
@@ -459,7 +459,7 @@ public class Process extends DataTransferObject {
     }
 
     public CheckMessage isProcessGraphValid(List<ProcessDescriptor> descriptors) {
-        List<String> descriptorIds = descriptors.stream().map(d -> examindProcessIdToOpenEOProcessId(d.getIdentifier().getCode())).toList();
+        List<String> descriptorIds = descriptors.stream().map(d -> processDescriptorIdToOpenEOProcessId(d.getIdentifier().getCode())).toList();
 
         for (Map.Entry<String, ProcessDescription> entry : processGraph.entrySet()) {
             ProcessDescription process = entry.getValue();
@@ -482,7 +482,7 @@ public class Process extends DataTransferObject {
 
             //Checks between "real" process, and given process
             ProcessDescriptor processDescriptor = descriptors.stream()
-                    .filter(descriptor -> descriptor.getIdentifier().getCode().equals(openEOProcessIdToExamindProcessId(processId, false)))
+                    .filter(descriptor -> descriptor.getIdentifier().getCode().equals(openEOProcessIdToProcessDescriptorId(processId, false)))
                     .findFirst()
                     .orElse(null);
 
@@ -509,14 +509,14 @@ public class Process extends DataTransferObject {
                                 (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_url")) ||
                                 (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_custom_process"))
                         ) {
-                            //Special case for load_collection where the "serviceId" parameter is not mandatory in openEO, but is in examind
-                            //Special case for load_collection where the "external_stac_url" parameter is not mandatory in openEO, but is in examind
-                            //Special case for load_collection where the "external_stac_custom_process" parameter is not mandatory in openEO, but is in examind
+                            //Special case for load_collection where the "serviceId" parameter is not mandatory in openEO, but is required by the descriptor
+                            //Special case for load_collection where the "external_stac_url" parameter is not mandatory in openEO, but is required by the descriptor
+                            //Special case for load_collection where the "external_stac_custom_process" parameter is not mandatory in openEO, but is required by the descriptor
                             continue;
                         } else if (processId.equalsIgnoreCase("load_stac") &&
                                 (inputDescriptor.getName().getCode().equalsIgnoreCase("external_stac_custom_process"))
                         ) {
-                            //Special case for load_stac where the "external_stac_custom_process" parameter is not mandatory in openEO, but is in examind
+                            //Special case for load_stac where the "external_stac_custom_process" parameter is not mandatory in openEO, but is required by the descriptor
                             continue;
                         }
 
@@ -550,7 +550,7 @@ public class Process extends DataTransferObject {
                                         String referencedProcessId = referencedProcessIdSplitted.length == 2 ? referencedProcessIdSplitted[1] : referencedProcessIdSplitted[0];
 
                                         ProcessDescriptor referencedProcess = descriptors.stream()
-                                                .filter(descriptor -> descriptor.getIdentifier().getCode().equalsIgnoreCase(openEOProcessIdToExamindProcessId(referencedProcessId, false)))
+                                                .filter(descriptor -> descriptor.getIdentifier().getCode().equalsIgnoreCase(openEOProcessIdToProcessDescriptorId(referencedProcessId, false)))
                                                 .findFirst()
                                                 .orElse(null);
 
@@ -594,7 +594,7 @@ public class Process extends DataTransferObject {
 //                                        }
                                         break;
 
-                                    case ARRAY: //TODO: Be compatible when examind supports combination of outputs in an array
+                                    case ARRAY: //TODO: Be compatible when combination of outputs in an array is supported
                                         if(type.isArray()) {
                                             for(var nestedProcess : (List<ProcessDescriptionArgument>) processDescriptionArgument.getValue()) {
                                                 if (nestedProcess.getType() != ProcessDescriptionArgument.ArgumentType.VALUE) {
