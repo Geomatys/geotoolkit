@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.openeo.dto.process;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -304,6 +305,21 @@ public class DataTypeSchema extends DataTransferObject {
     @JacksonXmlProperty(localName = JSON_PROPERTY_TYPE)
     public void setType(@jakarta.annotation.Nonnull List<Type> type) {
         this.type = type;
+    }
+
+    /**
+     * Resolve the type to actually use when a Java class must be picked for this schema, in a
+     * multi-type-safe way: {@link Type#NULL} only means "this parameter may also be omitted", it
+     * never carries the real Java type, so it is skipped whenever another type is also present.
+     *
+     * @return the first non-{@link Type#NULL} type, or {@link Type#NULL} if that's the only type
+     * present, or {@link Type#OBJECT} if the type list is empty
+     */
+    @JsonIgnore
+    @jakarta.annotation.Nonnull
+    public Type getPrimaryType() {
+        return type.stream().filter(t -> t != Type.NULL).findFirst()
+                .orElseGet(() -> type.isEmpty() ? Type.OBJECT : type.get(0));
     }
 
     /**
