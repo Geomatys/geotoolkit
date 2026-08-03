@@ -85,8 +85,8 @@ public final class CollectionsApi extends AbstractOpenApi {
     private static List toList(Envelope env) {
         if (env == null) return null;
         final List lst = new ArrayList();
-        lst.addAll(Arrays.stream(env.getUpperCorner().getCoordinates()).boxed().toList());
         lst.addAll(Arrays.stream(env.getLowerCorner().getCoordinates()).boxed().toList());
+        lst.addAll(Arrays.stream(env.getUpperCorner().getCoordinates()).boxed().toList());
         return lst;
     }
 }

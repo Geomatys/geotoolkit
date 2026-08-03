@@ -173,7 +173,7 @@ public final class DggsApi extends AbstractOpenApi {
      * @return ServiceRequest&lt;Dggrs&gt;
      * @throws IllegalArgumentException if fails to make API call
      */
-    public ServiceRequest<Supplier<Dggrs>> collectionGetDGGRS(GetDggrs parameters) throws ServiceException {
+    public ServiceRequest<Supplier<Dggrs>> collectionGetDGGRS(GetDggrs parameters) throws IllegalArgumentException {
 
         if (parameters.getDggrsId() == null) {
             throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling collectionGetDGGRS");
@@ -468,8 +468,8 @@ public final class DggsApi extends AbstractOpenApi {
     private static List toList(Envelope env) {
         if (env == null) return null;
         final List lst = new ArrayList();
-        lst.addAll(Arrays.stream(env.getUpperCorner().getCoordinates()).boxed().toList());
         lst.addAll(Arrays.stream(env.getLowerCorner().getCoordinates()).boxed().toList());
+        lst.addAll(Arrays.stream(env.getUpperCorner().getCoordinates()).boxed().toList());
         return lst;
     }
 
