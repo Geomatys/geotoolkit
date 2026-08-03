@@ -93,6 +93,10 @@
       <version>${sis.version}</version>
     </dependency>
     <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.sis.non-free</groupId>
       <artifactId>sis-embedded-data</artifactId>
       <version>${sis.non-free.version}</version>
