@@ -19,57 +19,97 @@ package org.geotoolkit.openeo.process;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.openeo.dto.process.DataTypeSchema;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.ProcessingRegistry;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.NoSuchIdentifierException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * Utility class for OpenEO process ID conversions and data type schema building.
+ * <p>
+ * Process-specific facts (the openEO id of a descriptor, and any parameter schema override) are
+ * not hardcoded here: they are discovered generically through {@link ProcessFinder} on descriptors
+ * implementing {@link OpenEOExposedProcess}. Exposing a new process through openEO only
+ * requires implementing that interface on the descriptor itself.
  *
  * @author Quentin Bialota (Geomatys)
  */
 public class OpenEOUtils {
 
     /**
-     * Convert Examind process IDs to OpenEO process IDs.
-     * Examples:
-     * - "examind.coverage.openeo.load" or "coverage.openeo.load" -> "load_collection"
-     * - "examind.coverage.save_result" or "coverage.save_result" -> "save_result"
+     * Convert a process descriptor ID to its openEO process ID.
+     * Accepts both the full form ("&lt;registry&gt;.&lt;code&gt;", e.g. "<registry>.coverage.openeo.load")
+     * and the short form ("&lt;code&gt;", e.g. "coverage.openeo.load").
+     * If the resolved descriptor does not implement {@link OpenEOExposedProcess}, or no descriptor
+     * is found, the input is returned unchanged.
      *
-     * @param exaProcessId The Examind process ID.
+     * @param processDescriptorId The process descriptor ID.
      * @return The corresponding OpenEO process ID.
      */
-    public static String examindProcessIdToOpenEOProcessId(String exaProcessId) {
-        return switch (exaProcessId) {
-            case "examind.coverage.openeo.load", "coverage.openeo.load" -> "load_collection";
-            case "examind.coverage.openeo.load.stac", "coverage.openeo.load.stac" -> "load_stac";
-            case "examind.coverage.save_result", "coverage.save_result" -> "save_result";
-            default -> exaProcessId;
-        };
+    public static String processDescriptorIdToOpenEOProcessId(String processDescriptorId) {
+        ProcessDescriptor descriptor = findDescriptor(processDescriptorId);
+        if (descriptor instanceof OpenEOExposedProcess exposed) {
+            return exposed.getOpenEOProcessId();
+        }
+        return processDescriptorId;
+    }
+
+    private static ProcessDescriptor findDescriptor(String processDescriptorId) {
+        // Short form: the whole string is the code, registry unknown -> let ProcessFinder scan all registries.
+        try {
+            return ProcessFinder.getProcessDescriptor(null, processDescriptorId);
+        } catch (NoSuchIdentifierException ex) {
+            // Full form: "<registry>.<code>".
+        }
+        int dot = processDescriptorId.indexOf('.');
+        if (dot > 0) {
+            String registryName = processDescriptorId.substring(0, dot);
+            String code = processDescriptorId.substring(dot + 1);
+            try {
+                return ProcessFinder.getProcessDescriptor(registryName, code);
+            } catch (NoSuchIdentifierException ex) {
+                // fall through
+            }
+        }
+        return null;
     }
 
     /**
-     * Convert OpenEO process IDs to Examind process IDs.
-     * Examples:
-     * - "load_collection" -> "examind.coverage.openeo.load" or "coverage.openeo.load"
-     * - "save_result" -> "examind.coverage.save_result" or "coverage.save_result"
+     * Convert an openEO process ID to its process descriptor ID, by scanning every registered process
+     * descriptor for one implementing {@link OpenEOExposedProcess} whose openEO id matches.
+     * If none is found, the input is returned unchanged.
      *
      * @param eoProcessId The OpenEO process ID.
-     * @param fullDescriptor If true, returns the full Examind process ID; otherwise,
-     *                       returns the short form. (e.g., "examind.coverage.openeo.load" vs "coverage.openeo.load")
-     * @return The corresponding Examind process ID.
+     * @param fullDescriptor If true, returns the full process descriptor ID ("&lt;registry&gt;.&lt;code&gt;");
+     *                       otherwise, returns the short form ("&lt;code&gt;").
+     * @return The corresponding process descriptor ID.
      */
-    public static String openEOProcessIdToExamindProcessId(String eoProcessId, boolean fullDescriptor) {
-        return switch (eoProcessId) {
-            case "load_collection" -> fullDescriptor ? "examind.coverage.openeo.load" : "coverage.openeo.load";
-            case "load_stac" -> fullDescriptor ? "examind.coverage.openeo.load.stac" : "coverage.openeo.load.stac";
-            case "save_result" -> fullDescriptor ? "examind.coverage.save_result" : "coverage.save_result";
-            default -> eoProcessId;
-        };
+    public static String openEOProcessIdToProcessDescriptorId(String eoProcessId, boolean fullDescriptor) {
+        for (Iterator<ProcessingRegistry> it = ProcessFinder.getProcessFactories(); it.hasNext(); ) {
+            final ProcessingRegistry processingRegistry = it.next();
+            for (ProcessDescriptor descriptor : processingRegistry.getDescriptors()) {
+                if (descriptor instanceof OpenEOExposedProcess exposed
+                        && Objects.equals(exposed.getOpenEOProcessId(), eoProcessId)) {
+                    String code = descriptor.getIdentifier().getCode();
+                    if (!fullDescriptor) {
+                        return code;
+                    }
+                    Iterator<? extends Identifier> ids = processingRegistry.getIdentification()
+                            .getCitation().getIdentifiers().iterator();
+                    String registryName = ids.hasNext() ? ids.next().getCode() : processingRegistry.getIdentification().toString();
+                    return registryName + "." + code;
+                }
+            }
+        }
+        return eoProcessId;
     }
 
     /**
@@ -87,11 +127,14 @@ public class OpenEOUtils {
      */
     public static DataTypeSchema[] buildDataTypeSchema(ProcessDescriptor descriptor, String descriptorName,
                                                        String type, Class<?> clazz, boolean isArray, boolean mandatory) {
-        List<DataTypeSchema> dataTypeSchemas = new ArrayList<>();
-
-        if (Objects.equals(descriptor.getIdentifier().getCode(), "coverage.openeo.load") && descriptorName.equalsIgnoreCase("id")) {
-            return new DataTypeSchema[]{new DataTypeSchema(type == null ? List.of() : List.of(DataTypeSchema.Type.fromValue(type, isArray)), "collection-id")};
+        if (descriptor instanceof OpenEOExposedProcess exposed) {
+            DataTypeSchema[] override = exposed.getOpenEOSchemaOverride(descriptorName, type, clazz, isArray, mandatory);
+            if (override != null) {
+                return override;
+            }
         }
+
+        List<DataTypeSchema> dataTypeSchemas = new ArrayList<>();
 
         if (clazz == Envelope.class) {
             String title = "Bounding Box";
@@ -161,13 +204,6 @@ public class OpenEOUtils {
         if (!isArray && clazz != null && GridCoverage.class.isAssignableFrom(clazz)) {
             return new DataTypeSchema[]{
                     new DataTypeSchema(List.of(DataTypeSchema.Type.OBJECT), "raster-cube")
-            };
-        }
-
-        if (Objects.equals(descriptor.getIdentifier().getCode(), "coverage.save_result") &&
-                clazz == String.class && descriptorName.equalsIgnoreCase("format")) {
-            return new DataTypeSchema[]{
-                    new DataTypeSchema(List.of(DataTypeSchema.Type.STRING), "output-format")
             };
         }
 
