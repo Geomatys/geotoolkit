@@ -20,4 +20,4 @@
  * OGC-WXS processing service bindings.
  * @see https://www.ogc.org/standards/wps/
  */
-package org.geotoolkit.ogcwxs.client.process;
+package org.geotoolkit.ogcwxs.request.process;

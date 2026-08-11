@@ -29,6 +29,11 @@
             <artifactId>geotk-xml-wcs</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-xml-wps</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 </project>
