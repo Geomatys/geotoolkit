@@ -124,6 +124,10 @@ public final class GetCoverage extends RequestParameters {
     /**
      * Width and height in pixels of the returned coverage. Mutually exclusive with {@link #getResX()} /
      * {@link #getResY()}. (optional)
+     * <p>
+     * WCS 1.x only: the WCS 2.x core KVP binding has no Scaling-extension equivalent; setting this for
+     * a 2.x request makes {@code WCSApi.getCoverage} throw {@link IllegalArgumentException}.
+     * </p>
      *
      * @return the dimension
      */
@@ -150,7 +154,7 @@ public final class GetCoverage extends RequestParameters {
 
     /**
      * Requested resolution along the first grid axis. Mutually exclusive with {@link #getDimension()}.
-     * (optional)
+     * WCS 1.x only, see {@link #getDimension()}. (optional)
      *
      * @return the resX
      */
@@ -177,7 +181,7 @@ public final class GetCoverage extends RequestParameters {
 
     /**
      * Requested resolution along the second grid axis. Mutually exclusive with {@link #getDimension()}.
-     * (optional)
+     * WCS 1.x only, see {@link #getDimension()}. (optional)
      *
      * @return the resY
      */
@@ -203,7 +207,8 @@ public final class GetCoverage extends RequestParameters {
     }
 
     /**
-     * Requested resolution along the third (vertical) grid axis, for coverages having one. (optional)
+     * Requested resolution along the third (vertical) grid axis, for coverages having one. WCS 1.x
+     * only, see {@link #getDimension()}. (optional)
      *
      * @return the resZ
      */
@@ -229,7 +234,8 @@ public final class GetCoverage extends RequestParameters {
     }
 
     /**
-     * Number of slices to return along the vertical dimension, for coverages having one. (optional)
+     * Number of slices to return along the vertical dimension, for coverages having one. WCS 1.x
+     * only, see {@link #getDimension()}. (optional)
      *
      * @return the depth
      */
@@ -308,7 +314,8 @@ public final class GetCoverage extends RequestParameters {
     }
 
     /**
-     * Time value or period to request on coverages declaring a temporal dimension. (optional)
+     * Time value or period to request on coverages declaring a temporal dimension. WCS 1.x only,
+     * see {@link #getDimension()}. (optional)
      *
      * @return the time
      */

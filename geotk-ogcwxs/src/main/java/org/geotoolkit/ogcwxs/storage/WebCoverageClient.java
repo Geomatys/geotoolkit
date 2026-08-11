@@ -38,11 +38,9 @@ import org.geotoolkit.client.service.ServiceRequest;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.ogcwxs.client.coverage.WCSApi;
 import org.geotoolkit.ogcwxs.request.coverage.GetCapabilities;
+import org.geotoolkit.wcs.xml.CoverageInfo;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
 import org.geotoolkit.wcs.xml.WCSVersion;
-import org.geotoolkit.wcs.xml.v100.ContentMetadata;
-import org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType;
-import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -51,12 +49,13 @@ import org.opengis.util.GenericName;
  * Generates WCS requests objects on a WCS server.
  *
  * <p>
- * Only WCS 1.0.0 is supported : it is the only version for which coverage description and requesting
- * is exposed by {@link WCSApi}.
+ * WCS 1.0.0 and 2.0.0/2.0.1 are supported, as exposed by {@link WCSApi}. WCS 1.1.1 and 2.1 remain
+ * unsupported.
  * </p>
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Bialota (Geomatys)
  */
 public final class WebCoverageClient extends DataStore implements Aggregate {
 
@@ -111,6 +110,14 @@ public final class WebCoverageClient extends DataStore implements Aggregate {
     }
 
     /**
+     * Returns the WCS version negotiated with the server, i.e. the version declared by the last
+     * fetched {@linkplain #getServiceCapabilities() capabilities} document.
+     */
+    public WCSVersion getVersion() throws CapabilitiesException {
+        return WCSVersion.fromCode(getServiceCapabilities().getVersion());
+    }
+
+    /**
      * Returns the {@linkplain GetCapabilitiesResponse capabilities} response for this server.
      *
      * @return {@linkplain GetCapabilitiesResponse capabilities} response but never {@code null}.
@@ -149,13 +156,15 @@ public final class WebCoverageClient extends DataStore implements Aggregate {
     public boolean checkForUpdates() {
 
         String currentUpdateSequence = null;
+        WCSVersion currentVersion = WCSVersion.v100;
         GetCapabilitiesResponse capas = this.capabilities;
         if (capas != null) {
             currentUpdateSequence = capas.getUpdateSequence();
+            currentVersion = WCSVersion.fromCode(capas.getVersion());
         }
 
         final GetCapabilities getCaps = new GetCapabilities();
-        getCaps.setVersion(WCSVersion.v100);
+        getCaps.setVersion(currentVersion);
         getCaps.setUpdateSequence(currentUpdateSequence);
 
         String newUpdateSequence = null;
@@ -203,16 +212,11 @@ public final class WebCoverageClient extends DataStore implements Aggregate {
             throw new DataStoreException(ex);
         }
 
-        //only WCS 1.0.0 is supported : its content model is a flat list of coverage offerings,
-        //unlike WMS which exposes a layer tree.
+        //content model is a flat list of coverage offerings for both 1.0.0 and 2.x, unlike WMS
+        //which exposes a layer tree.
         final List<Resource> result = new ArrayList<>();
-        if (capa instanceof WCSCapabilitiesType) {
-            final ContentMetadata contentMetadata = ((WCSCapabilitiesType) capa).getContentMetadata();
-            if (contentMetadata != null) {
-                for (CoverageOfferingBriefType brief : contentMetadata.getCoverageOfferingBrief()) {
-                    result.add(new WCSResource(this, brief));
-                }
-            }
+        for (CoverageInfo info : capa.getContents().getCoverageInfos()) {
+            result.add(new WCSResource(this, info));
         }
         resources = result;
         return resources;

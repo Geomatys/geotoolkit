@@ -47,8 +47,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * OGC Web Coverage Service (WCS) client.
  *
  * <p>
- * Covers the operations defined by the WCS 1.0.0 specification (OGC 07-067): {@code GetCapabilities},
- * {@code DescribeCoverage} and {@code GetCoverage}.
+ * Covers the operations defined by the WCS 1.0.0 (OGC 07-067) and 2.0.0/2.0.1 (OGC 09-110r4) core
+ * specifications: {@code GetCapabilities}, {@code DescribeCoverage} and {@code GetCoverage}. For 2.x,
+ * only the core KVP binding is supported (identifier, spatial subset, format, CRS) — the Scaling and
+ * Interpolation extensions (size/resolution, time, interpolation) are not implemented and requesting
+ * them throws {@link IllegalArgumentException} rather than silently ignoring them.
  * </p>
  *
  * @see https://www.ogc.org/standards/wcs/
@@ -97,7 +100,11 @@ public final class WCSApi extends AbstractService {
         queryParams.addAll(toPairs("SERVICE", "WCS"));
         queryParams.addAll(toPairs("VERSION", version.getCode()));
         queryParams.addAll(toPairs("REQUEST", "DescribeCoverage"));
-        queryParams.addAll(toPairs("csv", "COVERAGE", parameters.getCoverages()));
+        if (isV2(version)) {
+            queryParams.addAll(toPairs("csv", "coverageid", parameters.getCoverages()));
+        } else {
+            queryParams.addAll(toPairs("csv", "COVERAGE", parameters.getCoverages()));
+        }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -125,27 +132,52 @@ public final class WCSApi extends AbstractService {
         queryParams.addAll(toPairs("SERVICE", "WCS"));
         queryParams.addAll(toPairs("VERSION", version.getCode()));
         queryParams.addAll(toPairs("REQUEST", "GetCoverage"));
-        queryParams.addAll(toPairs("COVERAGE", parameters.getCoverage()));
-        queryParams.addAll(toPairs("csv", "BBOX", toList(envelope)));
-        queryParams.addAll(toPairs("CRS", toCrs(envelope)));
-        queryParams.addAll(toPairs("FORMAT", parameters.getFormat()));
-        queryParams.addAll(toPairs("TIME", parameters.getTime()));
-        queryParams.addAll(toPairs("EXCEPTIONS", parameters.getExceptions()));
 
-        final Dimension dimension = parameters.getDimension();
-        if (dimension != null) {
-            queryParams.addAll(toPairs("WIDTH", dimension.width));
-            queryParams.addAll(toPairs("HEIGHT", dimension.height));
-            queryParams.addAll(toPairs("DEPTH", parameters.getDepth()));
-        } else if (parameters.getResX() != null && parameters.getResY() != null) {
-            queryParams.addAll(toPairs("RESX", parameters.getResX()));
-            queryParams.addAll(toPairs("RESY", parameters.getResY()));
-            queryParams.addAll(toPairs("RESZ", parameters.getResZ()));
-        }
+        if (isV2(version)) {
+            if (parameters.getDimension() != null || parameters.getResX() != null || parameters.getResY() != null
+                    || parameters.getResZ() != null || parameters.getDepth() != null || parameters.getTime() != null) {
+                throw new IllegalArgumentException(
+                        "dimension/resX/resY/resZ/depth/time are not supported by the WCS 2.x core KVP binding " +
+                        "(Scaling/Interpolation extensions are not implemented)");
+            }
+            queryParams.addAll(toPairs("coverageid", parameters.getCoverage()));
+            queryParams.addAll(toPairs("multi", "subset", toSubsets(envelope)));
+            queryParams.addAll(toPairs("format", parameters.getFormat()));
+            queryParams.addAll(toPairs("exceptions", parameters.getExceptions()));
+            final String subsettingCrs = toUrn(envelope.getCoordinateReferenceSystem());
+            if (subsettingCrs != null) {
+                queryParams.addAll(toPairs("subsettingCrs", subsettingCrs));
+            }
+            final CoordinateReferenceSystem responseCRS = parameters.getResponseCRS();
+            if (responseCRS != null) {
+                final String outputCrs = toUrn(responseCRS);
+                if (outputCrs != null) {
+                    queryParams.addAll(toPairs("outputCrs", outputCrs));
+                }
+            }
+        } else {
+            queryParams.addAll(toPairs("COVERAGE", parameters.getCoverage()));
+            queryParams.addAll(toPairs("csv", "BBOX", toList(envelope)));
+            queryParams.addAll(toPairs("CRS", toCrs(envelope)));
+            queryParams.addAll(toPairs("FORMAT", parameters.getFormat()));
+            queryParams.addAll(toPairs("TIME", parameters.getTime()));
+            queryParams.addAll(toPairs("EXCEPTIONS", parameters.getExceptions()));
 
-        final CoordinateReferenceSystem responseCRS = parameters.getResponseCRS();
-        if (responseCRS != null) {
-            queryParams.addAll(toPairs("RESPONSECRS", IdentifiedObjects.getIdentifierOrName(responseCRS)));
+            final Dimension dimension = parameters.getDimension();
+            if (dimension != null) {
+                queryParams.addAll(toPairs("WIDTH", dimension.width));
+                queryParams.addAll(toPairs("HEIGHT", dimension.height));
+                queryParams.addAll(toPairs("DEPTH", parameters.getDepth()));
+            } else if (parameters.getResX() != null && parameters.getResY() != null) {
+                queryParams.addAll(toPairs("RESX", parameters.getResX()));
+                queryParams.addAll(toPairs("RESY", parameters.getResY()));
+                queryParams.addAll(toPairs("RESZ", parameters.getResZ()));
+            }
+
+            final CoordinateReferenceSystem responseCRS = parameters.getResponseCRS();
+            if (responseCRS != null) {
+                queryParams.addAll(toPairs("RESPONSECRS", IdentifiedObjects.getIdentifierOrName(responseCRS)));
+            }
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -175,6 +207,33 @@ public final class WCSApi extends AbstractService {
 
     private static WCSVersion version(WCSVersion version) {
         return version == null ? WCSVersion.v100 : version;
+    }
+
+    private static boolean isV2(WCSVersion version) {
+        return version == WCSVersion.v200 || version == WCSVersion.v201;
+    }
+
+    /**
+     * WCS 2.x core {@code subset} KVP: one {@code <axisAbbrev>(<min>,<max>)} entry per axis of the
+     * envelope, e.g. {@code Long(10,20)}.
+     */
+    private static List<String> toSubsets(Envelope env) {
+        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+        final List<String> subsets = new ArrayList<>();
+        for (int i = 0; i < env.getDimension(); i++) {
+            final String axis = (crs != null) ? crs.getCoordinateSystem().getAxis(i).getAbbreviation() : "d" + i;
+            subsets.add(axis + "(" + env.getMinimum(i) + "," + env.getMaximum(i) + ")");
+        }
+        return subsets;
+    }
+
+    private static String toUrn(CoordinateReferenceSystem crs) {
+        if (crs == null) return null;
+        try {
+            return IdentifiedObjects.lookupURN(crs, null);
+        } catch (org.opengis.util.FactoryException ex) {
+            return null;
+        }
     }
 
     /**

@@ -24,7 +24,9 @@ package org.geotoolkit.wcs.xml;
  */
 public enum WCSVersion {
     v100("1.0.0"),
-    v111("1.1.1");
+    v111("1.1.1"),
+    v200("2.0.0"),
+    v201("2.0.1");
 
     private final String code;
 

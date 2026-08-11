@@ -41,7 +41,9 @@ import org.geotoolkit.client.service.ServiceException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.ogcwxs.request.coverage.GetCoverage;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.wcs.xml.CoverageInfo;
 import org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType;
+import org.geotoolkit.wcs.xml.v200.CoverageSummaryType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -52,34 +54,48 @@ import org.opengis.util.GenericName;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Bialota (Geomatys)
  */
 public final class WCSResource extends AbstractGridCoverageResource implements StoreResource {
 
     static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
 
     private final WebCoverageClient server;
-    private final CoverageOfferingBriefType brief;
+    private final CoverageInfo info;
     private final String format = "image/png";
 
-    //lazily probed, generic band count for this coverage : ponytail: WCS 1.0.0's DescribeCoverage
+    //lazily probed, generic band count for this coverage. WCS's DescribeCoverage
     //rangeSet is not parsed here, band names/units are unavailable ; upgrade when real band
     //semantics (name, unit) are needed by a caller.
     private List<SampleDimension> sampleDimensions;
 
-    WCSResource(WebCoverageClient server, CoverageOfferingBriefType brief) {
+    WCSResource(WebCoverageClient server, CoverageInfo info) {
         super(null, false);
         this.server = server;
-        this.brief = brief;
+        this.info = info;
+    }
+
+    /**
+     * Extracts the coverage identifier, whose accessor differs by WCS version : {@code CoverageInfo}
+     * itself exposes no identifier getter.
+     */
+    private static String identifierOf(CoverageInfo info) throws DataStoreException {
+        if (info instanceof CoverageOfferingBriefType) {
+            return ((CoverageOfferingBriefType) info).getName();
+        } else if (info instanceof CoverageSummaryType) {
+            return ((CoverageSummaryType) info).getCoverageId();
+        }
+        throw new DataStoreException("Unsupported WCS coverage info type: " + info.getClass());
     }
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.ofNullable(brief.getName()).map(org.geotoolkit.util.NamesExt::create);
+        return Optional.ofNullable(identifierOf(info)).map(org.geotoolkit.util.NamesExt::create);
     }
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new GridGeometry(null, brief.getLonLatEnvelope(), GridOrientation.HOMOTHETY);
+        return new GridGeometry(null, info.getLonLatEnvelope(), GridOrientation.HOMOTHETY);
     }
 
     @Override
@@ -168,8 +184,14 @@ public final class WCSResource extends AbstractGridCoverageResource implements S
     private java.awt.image.RenderedImage fetch(GridGeometry domain, Dimension dim) throws DataStoreException {
         final GeneralEnvelope env = new GeneralEnvelope(domain.getEnvelope());
 
+        final String identifier = identifierOf(info);
         final GetCoverage request = new GetCoverage();
-        request.setCoverage(brief.getName());
+        try {
+            request.setVersion(server.getVersion());
+        } catch (org.geotoolkit.client.CapabilitiesException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+        request.setCoverage(identifier);
         request.setEnvelope(env);
         request.setDimension(dim);
         request.setResponseCRS(env.getCoordinateReferenceSystem());
@@ -179,7 +201,7 @@ public final class WCSResource extends AbstractGridCoverageResource implements S
             final byte[] body = server.getApi().getCoverage(request).send().body();
             final java.awt.image.RenderedImage image = ImageIO.read(new java.io.ByteArrayInputStream(body));
             if (image == null) {
-                throw new DataStoreException("Server response for coverage " + brief.getName() + " could not be decoded as an image.");
+                throw new DataStoreException("Server response for coverage " + identifier + " could not be decoded as an image.");
             }
             return image;
         } catch (IOException | ServiceException ex) {
