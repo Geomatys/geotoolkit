@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
@@ -38,12 +39,10 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.feature.internal.shared.FeatureExpression;
 import org.apache.sis.feature.internal.shared.FeatureProjectionBuilder;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.CoordinateOperationContext;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
@@ -71,12 +70,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
+import org.opengis.feature.*;
 import org.opengis.filter.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Literal;
@@ -191,22 +185,31 @@ public final class RenderingRoutines {
          *   TODO: such cases are maybe manageable by replacing bbox filter by a distance filter based upon the buffer
          *   distance. But would it do more good than harm ?
          */
-        boolean isDefaultGeometryNeeded = rules == null || rules.isEmpty();
+        boolean foundComplexProperties = false;
         final Set<Expression> geomProperties = new HashSet<>();
-        final Set<Expression> complexProperties = new HashSet<>();
+        boolean isDefaultGeometryNeeded = false;
         if (rules != null) {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if (isNil(expGeom)) isDefaultGeometryNeeded = true;
-                    else if (expGeom instanceof ValueReference) {
-                        geomProperties.add((ValueReference)expGeom);
-                    }
-                    else complexProperties.add(expGeom);
+                    if (isNil(expGeom)) {
+                        // This specific symbolizer does not request any specific property, and requires default geometry
+                        isDefaultGeometryNeeded = true;
+                    } else {
+                         geomProperties.add(expGeom);
+                         if (!(expGeom instanceof ValueReference<?,?> || expGeom instanceof Literal<?,?>)) {
+                             foundComplexProperties = true;
+                         }
+                     }
                 }
             }
         }
 
+        if (foundComplexProperties) {
+            LOGGER.fine("A style rule uses complex geometric properties. It can severly affect performance");
+        }
+        // If no explicit geometry property is requested, fallback to default geometry
+        isDefaultGeometryNeeded |= geomProperties.isEmpty();
         if (isDefaultGeometryNeeded) {
             try {
                 final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(schema);
@@ -226,10 +229,6 @@ public final class RenderingRoutines {
                         .map(FILTER_FACTORY::property)
                         .forEach(geomProperties::add);
             }
-        }
-
-        if (!complexProperties.isEmpty()) {
-            LOGGER.fine("A style rule uses complex geometric properties. It can severly affect performance");
         }
 
         /*
@@ -256,11 +255,7 @@ public final class RenderingRoutines {
         });
 
 
-        final Optional<Filter> spatialFilter =
-                Stream.concat(
-                        geomStream,
-                        complexProperties.stream()
-                )
+        final Optional<Filter> spatialFilter = geomStream
                         .<Filter>map(expression -> FILTER_FACTORY.bbox(expression, bbox))
                         .reduce(FILTER_FACTORY::or);
 
@@ -268,8 +263,8 @@ public final class RenderingRoutines {
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
             Query query = layer.getQuery();
-            if (query instanceof FeatureQuery) {
-                userFilter = ((FeatureQuery) query).getSelection();
+            if (query instanceof FeatureQuery fq) {
+                userFilter = fq.getSelection();
             }
         }
 
@@ -288,18 +283,53 @@ public final class RenderingRoutines {
         }
 
 
+        //A geometry can be computed from an operation (ex: built from other attributes).
+        //In that case, restricting the query to only the geometry xpath would strip the
+        //attributes the operation reads, breaking its evaluation at render time.
+        boolean unresolvedGeometryDependencies = foundComplexProperties;
+        final Set<String> geometryDependencies = new HashSet<>();
+        if (!unresolvedGeometryDependencies) {
+            for (Expression exp : geomProperties) {
+                if (exp instanceof ValueReference<?, ?> ref) {
+                    final String xPath = ref.getXPath();
+                    final PropertyType pt;
+                    try {
+                        pt = schema.getProperty(xPath);
+                    } catch (PropertyNotFoundException ex) {
+                        unresolvedGeometryDependencies = true;
+                        break;
+                    }
+                    if (pt instanceof Operation) {
+                        final Set<String> deps = new HashSet<>(Features.getLinkTargets(pt));
+                        if (deps.isEmpty() && pt instanceof AbstractOperation op) {
+                            deps.addAll(op.getDependencies());
+                        }
+                        if (deps.isEmpty()) {
+                            //dependencies could not be determined (ex: an arbitrary function): play safe.
+                            unresolvedGeometryDependencies = true;
+                        } else {
+                            geometryDependencies.addAll(deps);
+                        }
+                    }
+                }
+            }
+        }
+
         final FeatureType expected;
         final String[] projection;
-        if (styleAttsXpath == null) {
-            //all properties are requiered
+        if (styleAttsXpath == null || unresolvedGeometryDependencies) {
+            //all properties are required (or we cannot safely determine the subset of required properties)
             expected = schema;
             projection = null;
         } else {
             final Set<String> attsXpath = styleAttsXpath;
             final Set<String> copyXPath = new HashSet<>(attsXpath);
+            copyXPath.addAll(geometryDependencies);
             for (Expression exp : geomProperties) {
-                String xPath = ((ValueReference)exp).getXPath();
-                copyXPath.add(xPath);
+                if (exp instanceof ValueReference<?,?> ref) {
+                    String xPath = ref.getXPath();
+                    copyXPath.add(xPath);
+                }
             }
 
             try {
