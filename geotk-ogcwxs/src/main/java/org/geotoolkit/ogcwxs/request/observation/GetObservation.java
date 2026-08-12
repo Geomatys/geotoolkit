@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.ogcwxs.request.observation;
 
+import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogcwxs.request.RequestParameters;
 import org.geotoolkit.sos.xml.ResponseModeType;
-import org.geotoolkit.sos.xml.v100.EventTime;
+import org.opengis.filter.Filter;
 
 /**
  * To retrieve observations matching an offering, a time period and a set of observed properties.
@@ -30,14 +31,16 @@ public final class GetObservation extends RequestParameters {
 
     private String srsName;
     private String offering;
-    private EventTime[] eventTimes;
+    private List<Filter> temporalFilters;
     private String[] procedures;
     private String[] observedProperties;
-    private org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest featureOfInterest;
-    private org.geotoolkit.sos.xml.v100.GetObservation.Result result;
+    private List<String> featureOfInterestIds;
+    private Filter spatialFilter;
+    private Filter resultFilter;
     private String responseFormat;
     private QName resultModel;
     private ResponseModeType responseMode;
+    private SOSVersion version;
 
     public String getSrsName() {
         return srsName;
@@ -70,16 +73,21 @@ public final class GetObservation extends RequestParameters {
         return this;
     }
 
-    public EventTime[] getEventTimes() {
-        return eventTimes;
+    /**
+     * Temporal filters restricting the observations to retrieve.
+     *
+     * @return the temporalFilters
+     */
+    public List<Filter> getTemporalFilters() {
+        return temporalFilters;
     }
 
-    public void setEventTimes(EventTime... eventTimes) {
-        this.eventTimes = eventTimes;
+    public void setTemporalFilters(List<Filter> temporalFilters) {
+        this.temporalFilters = temporalFilters;
     }
 
-    public GetObservation eventTimes(EventTime... eventTimes) {
-        setEventTimes(eventTimes);
+    public GetObservation temporalFilters(List<Filter> temporalFilters) {
+        setTemporalFilters(temporalFilters);
         return this;
     }
 
@@ -114,29 +122,57 @@ public final class GetObservation extends RequestParameters {
         return this;
     }
 
-    public org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest getFeatureOfInterest() {
-        return featureOfInterest;
+    /**
+     * Identifiers of the features-of-interest to restrict the observations to.
+     *
+     * @return the featureOfInterestIds
+     */
+    public List<String> getFeatureOfInterestIds() {
+        return featureOfInterestIds;
     }
 
-    public void setFeatureOfInterest(org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest featureOfInterest) {
-        this.featureOfInterest = featureOfInterest;
+    public void setFeatureOfInterestIds(List<String> featureOfInterestIds) {
+        this.featureOfInterestIds = featureOfInterestIds;
     }
 
-    public GetObservation featureOfInterest(org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest featureOfInterest) {
-        setFeatureOfInterest(featureOfInterest);
+    public GetObservation featureOfInterestIds(List<String> featureOfInterestIds) {
+        setFeatureOfInterestIds(featureOfInterestIds);
         return this;
     }
 
-    public org.geotoolkit.sos.xml.v100.GetObservation.Result getResult() {
-        return result;
+    /**
+     * Spatial filter on the feature-of-interest location.
+     *
+     * @return the spatialFilter
+     */
+    public Filter getSpatialFilter() {
+        return spatialFilter;
     }
 
-    public void setResult(org.geotoolkit.sos.xml.v100.GetObservation.Result result) {
-        this.result = result;
+    public void setSpatialFilter(Filter spatialFilter) {
+        this.spatialFilter = spatialFilter;
     }
 
-    public GetObservation result(org.geotoolkit.sos.xml.v100.GetObservation.Result result) {
-        setResult(result);
+    public GetObservation spatialFilter(Filter spatialFilter) {
+        setSpatialFilter(spatialFilter);
+        return this;
+    }
+
+    /**
+     * Filter on the observation result value.
+     *
+     * @return the resultFilter
+     */
+    public Filter getResultFilter() {
+        return resultFilter;
+    }
+
+    public void setResultFilter(Filter resultFilter) {
+        this.resultFilter = resultFilter;
+    }
+
+    public GetObservation resultFilter(Filter resultFilter) {
+        setResultFilter(resultFilter);
         return this;
     }
 
@@ -181,6 +217,19 @@ public final class GetObservation extends RequestParameters {
 
     public GetObservation responseMode(ResponseModeType responseMode) {
         setResponseMode(responseMode);
+        return this;
+    }
+
+    public SOSVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(SOSVersion version) {
+        this.version = version;
+    }
+
+    public GetObservation version(SOSVersion version) {
+        setVersion(version);
         return this;
     }
 

@@ -32,6 +32,7 @@ public final class GetObservationById extends RequestParameters {
     private String responseFormat;
     private QName resultModel;
     private ResponseModeType responseMode;
+    private SOSVersion version;
 
     /**
      * Identifier of the observation to retrieve. (required)
@@ -105,6 +106,19 @@ public final class GetObservationById extends RequestParameters {
 
     public GetObservationById responseMode(ResponseModeType responseMode) {
         setResponseMode(responseMode);
+        return this;
+    }
+
+    public SOSVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(SOSVersion version) {
+        this.version = version;
+    }
+
+    public GetObservationById version(SOSVersion version) {
+        setVersion(version);
         return this;
     }
 

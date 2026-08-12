@@ -27,6 +27,7 @@ public final class DescribeSensor extends RequestParameters {
 
     private String sensorId;
     private String outputFormat;
+    private SOSVersion version;
 
     /**
      * Identifier of the sensor to describe. (required)
@@ -61,6 +62,19 @@ public final class DescribeSensor extends RequestParameters {
 
     public DescribeSensor outputFormat(String outputFormat) {
         setOutputFormat(outputFormat);
+        return this;
+    }
+
+    public SOSVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(SOSVersion version) {
+        this.version = version;
+    }
+
+    public DescribeSensor version(SOSVersion version) {
+        setVersion(version);
         return this;
     }
 

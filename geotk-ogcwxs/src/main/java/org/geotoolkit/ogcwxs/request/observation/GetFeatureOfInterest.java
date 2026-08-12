@@ -28,6 +28,7 @@ public final class GetFeatureOfInterest extends RequestParameters {
 
     private String featureOfInterestId;
     private Filter location;
+    private SOSVersion version;
 
     /**
      * Identifier of the feature-of-interest to retrieve. (either this or {@link #getLocation()} is required)
@@ -62,6 +63,19 @@ public final class GetFeatureOfInterest extends RequestParameters {
 
     public GetFeatureOfInterest location(Filter location) {
         setLocation(location);
+        return this;
+    }
+
+    public SOSVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(SOSVersion version) {
+        this.version = version;
+    }
+
+    public GetFeatureOfInterest version(SOSVersion version) {
+        setVersion(version);
         return this;
     }
 

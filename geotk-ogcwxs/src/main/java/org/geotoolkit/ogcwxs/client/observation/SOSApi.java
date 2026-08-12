@@ -32,17 +32,23 @@ import org.geotoolkit.client.service.AbstractService;
 import org.geotoolkit.client.service.ServiceConfiguration;
 import org.geotoolkit.client.service.ServiceRequest;
 import org.geotoolkit.client.service.UncheckedServiceException;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogcwxs.request.observation.DescribeFeatureType;
 import org.geotoolkit.ogcwxs.request.observation.DescribeObservationType;
 import org.geotoolkit.ogcwxs.request.observation.DescribeResultModel;
 import org.geotoolkit.ogcwxs.request.observation.DescribeSensor;
+import org.geotoolkit.ogcwxs.request.observation.GetCapabilities;
 import org.geotoolkit.ogcwxs.request.observation.GetFeatureOfInterest;
 import org.geotoolkit.ogcwxs.request.observation.GetFeatureOfInterestTime;
 import org.geotoolkit.ogcwxs.request.observation.GetObservation;
 import org.geotoolkit.ogcwxs.request.observation.GetObservationById;
 import org.geotoolkit.ogcwxs.request.observation.GetResult;
+import org.geotoolkit.ogcwxs.request.observation.SOSVersion;
 import org.geotoolkit.sos.xml.Capabilities;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
+import org.geotoolkit.sos.xml.SOSXmlFactory;
+import org.opengis.filter.Filter;
 import org.opengis.observation.ObservationCollection;
 
 /**
@@ -52,13 +58,17 @@ import org.opengis.observation.ObservationCollection;
  * Covers {@code GetCapabilities}, {@code DescribeSensor}, {@code GetObservation},
  * {@code GetObservationById}, {@code GetResult}, {@code GetFeatureOfInterest},
  * {@code GetFeatureOfInterestTime}, {@code DescribeFeatureType}, {@code DescribeObservationType}
- * and {@code DescribeResultModel}. Only SOS 1.0.0 is supported, as it is the only version the
- * legacy {@code geotk-client-sos} module ever implemented.
+ * and {@code DescribeResultModel}. Both SOS 1.0.0 and SOS 2.0.0 are supported for these read
+ * operations; {@code DescribeFeatureType}, {@code DescribeObservationType},
+ * {@code DescribeResultModel} and {@code GetFeatureOfInterestTime} remain 1.0.0-only, since
+ * {@code geotk-xml-sos} has no 2.0.0 binding for them.
  * </p>
  *
  * <p>
- * Insert operations ({@code InsertObservation}, {@code InsertSensor}, ...) are not covered by
- * this client, mirroring the legacy module which never implemented them either.
+ * Insert operations ({@code InsertObservation}, {@code InsertResult}, {@code InsertResultTemplate},
+ * {@code InsertSensor}, ...) and {@code GetResultTemplate} are not covered by this client: it is
+ * read-only, mirroring the legacy {@code geotk-client-sos} module which never implemented any
+ * write operation either.
  * </p>
  *
  * @see https://www.ogc.org/standards/sos/
@@ -66,7 +76,6 @@ import org.opengis.observation.ObservationCollection;
  */
 public final class SOSApi extends AbstractService {
 
-    private static final String VERSION = "1.0.0";
     private static final String SERVICE = "SOS";
 
     public SOSApi(ServiceConfiguration config) {
@@ -76,10 +85,12 @@ public final class SOSApi extends AbstractService {
     /**
      * Retrieve the service metadata document describing this SOS instance.
      *
+     * @param parameters request parameters
      * @return ServiceRequest&lt;Supplier&lt;Capabilities&gt;&gt;
      */
-    public ServiceRequest<Supplier<Capabilities>> getCapabilities() {
-        final org.geotoolkit.sos.xml.v100.GetCapabilities request = new org.geotoolkit.sos.xml.v100.GetCapabilities();
+    public ServiceRequest<Supplier<Capabilities>> getCapabilities(GetCapabilities parameters) {
+        final SOSVersion version = version(parameters.getVersion());
+        final org.geotoolkit.sos.xml.GetCapabilities request = SOSXmlFactory.buildGetCapabilities(version.getCode(), SERVICE);
         return post(request, Capabilities.class);
     }
 
@@ -90,8 +101,9 @@ public final class SOSApi extends AbstractService {
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> describeSensor(DescribeSensor parameters) {
-        final org.geotoolkit.sos.xml.v100.DescribeSensor request = new org.geotoolkit.sos.xml.v100.DescribeSensor(
-                VERSION, SERVICE, parameters.getSensorId(), parameters.getOutputFormat());
+        final SOSVersion version = version(parameters.getVersion());
+        final org.geotoolkit.swes.xml.DescribeSensor request = SOSXmlFactory.buildDescribeSensor(
+                version.getCode(), SERVICE, parameters.getSensorId(), parameters.getOutputFormat());
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
@@ -102,15 +114,19 @@ public final class SOSApi extends AbstractService {
      * @return ServiceRequest&lt;Supplier&lt;ObservationCollection&gt;&gt;
      */
     public ServiceRequest<Supplier<ObservationCollection>> getObservation(GetObservation parameters) {
-        final List<org.geotoolkit.sos.xml.v100.EventTime> eventTimes = parameters.getEventTimes() == null
-                ? null : Arrays.asList(parameters.getEventTimes());
+        final SOSVersion version = version(parameters.getVersion());
         final List<String> procedures = parameters.getProcedures() == null
                 ? null : Arrays.asList(parameters.getProcedures());
         final List<String> observedProperties = parameters.getObservedProperties() == null
                 ? null : Arrays.asList(parameters.getObservedProperties());
-        final org.geotoolkit.sos.xml.v100.GetObservation request = new org.geotoolkit.sos.xml.v100.GetObservation(
-                VERSION, parameters.getOffering(), eventTimes, procedures, observedProperties,
-                parameters.getFeatureOfInterest(), parameters.getResult(), parameters.getResponseFormat(),
+        final List<String> offering = parameters.getOffering() == null
+                ? null : List.of(parameters.getOffering());
+        final List<Filter> temporalFilter = toXmlFilters(parameters.getTemporalFilters(), version);
+        final Filter spatialFilter = toXmlFilter(parameters.getSpatialFilter(), version);
+        final Filter resultFilter = toXmlFilter(parameters.getResultFilter(), version);
+        final org.geotoolkit.sos.xml.GetObservation request = SOSXmlFactory.buildGetObservation(
+                version.getCode(), SERVICE, offering, observedProperties, procedures, parameters.getFeatureOfInterestIds(),
+                parameters.getResponseFormat(), temporalFilter, spatialFilter, resultFilter,
                 parameters.getResultModel(), parameters.getResponseMode(), parameters.getSrsName());
         return post(request, ObservationCollection.class);
     }
@@ -122,23 +138,33 @@ public final class SOSApi extends AbstractService {
      * @return ServiceRequest&lt;Supplier&lt;ObservationCollection&gt;&gt;
      */
     public ServiceRequest<Supplier<ObservationCollection>> getObservationById(GetObservationById parameters) {
-        final org.geotoolkit.sos.xml.v100.GetObservationById request = new org.geotoolkit.sos.xml.v100.GetObservationById(
-                VERSION, SERVICE, parameters.getObservationId(), parameters.getResponseFormat(),
-                parameters.getResultModel(), parameters.getResponseMode(), parameters.getSrsName());
+        final SOSVersion version = version(parameters.getVersion());
+        final List<String> observations = parameters.getObservationId() == null
+                ? null : List.of(parameters.getObservationId());
+        final org.geotoolkit.sos.xml.GetObservationById request = SOSXmlFactory.buildGetObservationById(
+                version.getCode(), SERVICE, observations, parameters.getResultModel(), parameters.getResponseMode(),
+                parameters.getSrsName(), parameters.getResponseFormat(), null);
         return post(request, ObservationCollection.class);
     }
 
     /**
-     * Retrieve only the result data of observations matching an observation template.
+     * Retrieve only the result data of observations, either matching an observation template
+     * (SOS 1.0.0) or an offering/observedProperty/foid selection (SOS 2.0.0).
      *
      * @param parameters request parameters
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> getResult(GetResult parameters) {
-        final List<org.geotoolkit.sos.xml.v100.EventTime> eventTimes = parameters.getEventTimes() == null
-                ? null : Arrays.asList(parameters.getEventTimes());
-        final org.geotoolkit.sos.xml.v100.GetResult request = new org.geotoolkit.sos.xml.v100.GetResult(
-                parameters.getObservationTemplateId(), eventTimes, VERSION);
+        final SOSVersion version = version(parameters.getVersion());
+        final List<Filter> temporalFilter = toXmlFilters(parameters.getTemporalFilters(), version);
+        final org.geotoolkit.sos.xml.GetResult request;
+        if (version == SOSVersion.v200) {
+            final Filter spatialFilter = toXmlFilter(parameters.getSpatialFilter(), version);
+            request = SOSXmlFactory.buildGetResult(version.getCode(), SERVICE, parameters.getOffering(),
+                    parameters.getObservedProperty(), parameters.getFeatureOfInterestIds(), spatialFilter, temporalFilter, null);
+        } else {
+            request = SOSXmlFactory.buildGetResult(version.getCode(), parameters.getObservationTemplateId(), temporalFilter);
+        }
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
@@ -150,11 +176,15 @@ public final class SOSApi extends AbstractService {
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> getFeatureOfInterest(GetFeatureOfInterest parameters) {
-        final org.geotoolkit.sos.xml.v100.GetFeatureOfInterest request;
+        final SOSVersion version = version(parameters.getVersion());
+        final org.geotoolkit.sos.xml.GetFeatureOfInterest request;
         if (parameters.getLocation() != null) {
-            request = new org.geotoolkit.sos.xml.v100.GetFeatureOfInterest(VERSION, SERVICE, parameters.getLocation());
+            final Filter spatialFilter = toXmlFilter(parameters.getLocation(), version);
+            request = SOSXmlFactory.buildGetFeatureOfInterest(version.getCode(), SERVICE, null, null, null, spatialFilter, null);
         } else {
-            request = new org.geotoolkit.sos.xml.v100.GetFeatureOfInterest(VERSION, SERVICE, parameters.getFeatureOfInterestId());
+            final List<String> featureId = parameters.getFeatureOfInterestId() == null
+                    ? null : List.of(parameters.getFeatureOfInterestId());
+            request = SOSXmlFactory.buildGetFeatureOfInterest(version.getCode(), SERVICE, featureId);
         }
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
@@ -162,49 +192,75 @@ public final class SOSApi extends AbstractService {
     /**
      * Retrieve the time period during which a feature-of-interest has been observed.
      *
+     * <p>SOS 1.0.0 only: {@code geotk-xml-sos} has no 2.0.0 binding for this operation.</p>
+     *
      * @param parameters request parameters
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> getFeatureOfInterestTime(GetFeatureOfInterestTime parameters) {
         final org.geotoolkit.sos.xml.v100.GetFeatureOfInterestTime request = new org.geotoolkit.sos.xml.v100.GetFeatureOfInterestTime(
-                VERSION, parameters.getFeatureOfInterestId());
+                SOSVersion.v100.getCode(), parameters.getFeatureOfInterestId());
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
      * Retrieve a description of the feature-of-interest type used by a sensor.
      *
+     * <p>SOS 1.0.0 only: {@code geotk-xml-sos} has no 2.0.0 binding for this operation.</p>
+     *
      * @param parameters request parameters
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> describeFeatureType(DescribeFeatureType parameters) {
         final org.geotoolkit.sos.xml.v100.DescribeFeatureType request = new org.geotoolkit.sos.xml.v100.DescribeFeatureType(
-                VERSION, parameters.getFeatureId());
+                SOSVersion.v100.getCode(), parameters.getFeatureId());
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
      * Retrieve a description of the type of an observed property.
      *
+     * <p>SOS 1.0.0 only: {@code geotk-xml-sos} has no 2.0.0 binding for this operation.</p>
+     *
      * @param parameters request parameters
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> describeObservationType(DescribeObservationType parameters) {
         final org.geotoolkit.sos.xml.v100.DescribeObservationType request = new org.geotoolkit.sos.xml.v100.DescribeObservationType(
-                VERSION, parameters.getObservedProperty());
+                SOSVersion.v100.getCode(), parameters.getObservedProperty());
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
      * Retrieve a description of the model used for observation results of a given type.
      *
+     * <p>SOS 1.0.0 only: {@code geotk-xml-sos} has no 2.0.0 binding for this operation.</p>
+     *
      * @param parameters request parameters
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> describeResultModel(DescribeResultModel parameters) {
         final org.geotoolkit.sos.xml.v100.DescribeResultModel request = new org.geotoolkit.sos.xml.v100.DescribeResultModel(
-                VERSION, parameters.getResultName());
+                SOSVersion.v100.getCode(), parameters.getResultName());
         return post(request, HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    private static SOSVersion version(SOSVersion version) {
+        return version != null ? version : SOSVersion.v100;
+    }
+
+    private static Filter toXmlFilter(Filter filter, SOSVersion version) {
+        if (filter == null || Filter.include().equals(filter)) return null;
+        return (Filter) FilterMarshallerPool.transform(filter, filterVersion(version));
+    }
+
+    private static List<Filter> toXmlFilters(List<Filter> filters, SOSVersion version) {
+        if (filters == null) return null;
+        return filters.stream().map(f -> toXmlFilter(f, version)).toList();
+    }
+
+    private static FilterVersion filterVersion(SOSVersion version) {
+        return version == SOSVersion.v200 ? FilterVersion.V200 : FilterVersion.V110;
     }
 
     /**
