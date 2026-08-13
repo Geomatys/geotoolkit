@@ -23,6 +23,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.coverage.math.OutputSampleTypeParameter;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -63,7 +64,7 @@ public class CoverageMultiplyWithValueDescriptor extends AbstractProcessDescript
             .create(Double.class,null);
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder().addName("InputParameters").setRequired(true)
-            .createGroup(IN_COVERAGE, IN_VALUE);
+            .createGroup(IN_COVERAGE, IN_VALUE, OutputSampleTypeParameter.DESCRIPTOR);
 
     public static final String OUT_COVERAGE_NAME = "result";
     private static final String OUT_COVERAGE_REMARKS = "Result as a coverage";

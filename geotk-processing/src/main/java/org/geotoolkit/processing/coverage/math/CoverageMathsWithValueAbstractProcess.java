@@ -29,7 +29,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 
 public abstract class CoverageMathsWithValueAbstractProcess extends AbstractProcess {
 
@@ -59,11 +58,14 @@ public abstract class CoverageMathsWithValueAbstractProcess extends AbstractProc
             outputGeom = nextGeom;
         }
 
-        final SampleModel sm = inputImage.getSampleModel();
-        int sampleType = sm.getDataType();
         int width = inputImage.getWidth();
         int height = inputImage.getHeight();
 
+        // Output is computed as double (see performOperation); using the input's integer sample
+        // type here would silently clamp/truncate results (e.g. band-math ratios like NDVI/EVI
+        // on byte or integer imagery). outputSampleType lets callers opt back into that legacy
+        // behaviour (SOURCE) or pick another explicit type.
+        final int sampleType = OutputSampleTypeParameter.resolve(inputParameters, inputImage.getSampleModel().getDataType());
         final BufferedImage img = BufferedImages.createImage(width, height, 1, sampleType);
         final WritablePixelIterator out = WritablePixelIterator.create(img);
         final org.apache.sis.image.PixelIterator ins = org.apache.sis.image.PixelIterator.create(inputImage);
@@ -81,7 +83,12 @@ public abstract class CoverageMathsWithValueAbstractProcess extends AbstractProc
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(img);
         gcb.setDomain(outputGeom);
-        gcb.setRanges(inputCoverage.getSampleDimensions());
+        if (OutputSampleTypeParameter.isSource(inputParameters)) {
+            // legacy behaviour: keep the original (e.g. byte) sample dimensions too
+            gcb.setRanges(inputCoverage.getSampleDimensions());
+        }
+        // Otherwise, let the builder infer a sample dimension matching the actual output data:
+        // inputCoverage's sample dimensions describe its ORIGINAL range, not the computed one.
         final GridCoverage resultCoverage = gcb.build();
 
         return resultCoverage;

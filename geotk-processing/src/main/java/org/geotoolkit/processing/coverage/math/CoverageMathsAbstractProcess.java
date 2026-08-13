@@ -29,7 +29,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 
 public abstract class CoverageMathsAbstractProcess extends AbstractProcess {
 
@@ -70,18 +69,17 @@ public abstract class CoverageMathsAbstractProcess extends AbstractProcess {
             secondImage = secondCoverage.render(nextGeom.getExtent());
         }
 
-        final SampleModel firstSm = firstImage.getSampleModel();
-        final SampleModel secondSm = secondImage.getSampleModel();
-
-        int sampleType = firstSm.getDataType();
         int width = firstImage.getWidth();
         int height = firstImage.getHeight();
 
-        if (sampleType != secondSm.getDataType())
-            throw new ProcessException("Second Image do not have the same sample type", this, null);
         if (width != secondImage.getWidth() || height != secondImage.getHeight())
             throw new ProcessException("Second Image do not have the same size", this, null);
 
+        // Output is computed as double (see performOperation); using the first input's integer
+        // sample type here would silently clamp/truncate results (e.g. band-math ratios like NDVI/EVI
+        // on byte or integer imagery). outputSampleType lets callers opt back into that legacy
+        // behaviour (SOURCE) or pick another explicit type.
+        final int sampleType = OutputSampleTypeParameter.resolve(inputParameters, firstImage.getSampleModel().getDataType());
         final BufferedImage img = BufferedImages.createImage(width, height, 1, sampleType);
 
         final org.apache.sis.image.PixelIterator[] ins = new org.apache.sis.image.PixelIterator[2];
@@ -104,7 +102,12 @@ public abstract class CoverageMathsAbstractProcess extends AbstractProcess {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setValues(img);
         gcb.setDomain(outputGeom);
-        gcb.setRanges(firstCoverage.getSampleDimensions());
+        if (OutputSampleTypeParameter.isSource(inputParameters)) {
+            // legacy behaviour: keep the original (e.g. byte) sample dimensions too
+            gcb.setRanges(firstCoverage.getSampleDimensions());
+        }
+        // Otherwise, let the builder infer a sample dimension matching the actual output data:
+        // firstCoverage's sample dimensions describe its ORIGINAL range, not the computed one.
         final GridCoverage resultCoverage = gcb.build();
 
         return resultCoverage;
