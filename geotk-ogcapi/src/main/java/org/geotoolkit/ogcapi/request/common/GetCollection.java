@@ -19,6 +19,11 @@ package org.geotoolkit.ogcapi.request.common;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * <blockquote><q>
+ *     Each resource collection is described by a set of metadata. That metadata can be
+ *     accessed directly using the /collections/{collectionId} path and as an entry in the collections property of the /collections resource.
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-024.html#collection-description"> OGC API - Common - Part 2: Geospatial Data</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -28,21 +33,29 @@ public class GetCollection extends RequestParameters {
     private String format;
 
     /**
-     * Local identifier of a collection (required)
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetCollection collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -50,22 +63,31 @@ public class GetCollection extends RequestParameters {
     }
 
     /**
-     * The format of the response. If no value is provided, the accept header is used to determine the format.
-     * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetCollection format(String format) {
         setFormat(format);
