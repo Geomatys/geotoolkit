@@ -70,7 +70,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
 
         //redirect warning listener events to default logger
         listeners.addListener(WarningEvent.class, new StoreListener<WarningEvent>() {
-            @Override public void eventOccured(WarningEvent t) {
+            @Override public void eventOccurred(WarningEvent t) {
                 t.getDescription().setLoggerName("org.geotoolkit.storage.coverage");
             }
         });

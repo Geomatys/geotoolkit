@@ -108,10 +108,10 @@ public final class StorageListener {
         }
 
         @Override
-        public void eventOccured(final StoreEvent event) {
+        public void eventOccurred(final StoreEvent event) {
             final StoreListener listener = get();
             if (listener != null) {
-                listener.eventOccured(event);
+                listener.eventOccurred(event);
             }
         }
     }

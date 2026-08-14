@@ -53,7 +53,7 @@ public class WebMapTileClientTest {
         final AtomicBoolean updated = new AtomicBoolean(false);
         resource.addListener(StoreEvent.class, new StoreListener<StoreEvent>() {
             @Override
-            public void eventOccured(StoreEvent event) {
+            public void eventOccurred(StoreEvent event) {
                 updated.set(true);
             }
         });

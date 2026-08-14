@@ -181,7 +181,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
      * Forward event to listeners by changing source.
      */
     @Override
-    public void eventOccured(StoreEvent event) {
+    public void eventOccurred(StoreEvent event) {
 
         if (event instanceof FeatureStoreManagementEvent) {
             final FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;

@@ -60,7 +60,7 @@ public class WeakListenerTest {
 
         StoreListener listener = new StoreListener() {
             @Override
-            public void eventOccured(StoreEvent event) {
+            public void eventOccurred(StoreEvent event) {
                 count.incrementAndGet();
             }
         };

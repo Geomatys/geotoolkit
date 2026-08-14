@@ -64,7 +64,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore {
     private final StoreListener subListener = new StoreListener() {
 
         @Override
-        public void eventOccured(StoreEvent event) {
+        public void eventOccurred(StoreEvent event) {
             if (event instanceof StorageEvent) {
                 event = ((StorageEvent)event).copy(DefaultFolderFeatureStore.this);
             }

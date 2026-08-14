@@ -482,7 +482,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 
@@ -499,7 +499,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
      * Forward event to listeners by changing source.
      */
     @Override
-    public void eventOccured(StoreEvent event) {
+    public void eventOccurred(StoreEvent event) {
         if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
         sendEvent(event);
     }

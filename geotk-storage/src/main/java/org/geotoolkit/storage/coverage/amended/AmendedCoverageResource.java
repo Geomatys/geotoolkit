@@ -295,7 +295,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 

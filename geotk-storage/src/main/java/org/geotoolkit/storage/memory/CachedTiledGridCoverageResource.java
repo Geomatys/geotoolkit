@@ -103,7 +103,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      */
     private final StoreListener<StoreEvent> eventListener = new StoreListener<StoreEvent>() {
         @Override
-        public void eventOccured(StoreEvent event) {
+        public void eventOccurred(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
             listeners.fire(StoreEvent.class, new ModelEvent(CachedTiledGridCoverageResource.this));

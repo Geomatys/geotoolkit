@@ -316,7 +316,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void eventOccured(StoreEvent event) {
+    public void eventOccurred(StoreEvent event) {
         if (event instanceof FeatureStoreManagementEvent) {
             FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
             final FeatureType currentType = getType();
@@ -329,7 +329,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
                     lst = listeners.toArray(new StoreListener[listeners.size()]);
                 }
                 for (final StoreListener listener : lst) {
-                    listener.eventOccured(fevent);
+                    listener.eventOccurred(fevent);
                 }
             }
         } else if(event instanceof FeatureStoreContentEvent) {
@@ -403,7 +403,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 }
