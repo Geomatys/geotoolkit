@@ -20,6 +20,13 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 import java.util.List;
 
 /**
+ * Request parameters for retrieving data from a single DGGS zone:
+ * {@code GET /dggs/{dggrsId}/zones/{zoneId}/data}.
+ *
+ * <blockquote><q>
+ *     For retrieving data for a single DGGS zone.
+ *     </q><i><small><a href="https://docs.ogc.org/is/21-038r1/21-038r1.html#_f7ae3993-75c8-45db-9377-b41f91ab6097"> OGC API - Discrete Global Grid Systems - Retrieving data from a zone</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -41,31 +48,33 @@ public final class GetZoneData extends RequestParameters {
     private Double valuesOffset;
     private Double valuesScale;
     private boolean gzip;
-
     private String area; //experimental
     private String areaCrs; //experimental
     private String zoneAccuracy; //experimental
 
     /**
-     * Local identifier of a collection (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.util.List)
      */
     public List<String> getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.util.List)
      */
     public void setCollectionId(List<String> collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetZoneData collectionId(String collectionId) {
         setCollectionId(List.of(collectionId));
@@ -73,8 +82,7 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.util.List)
      */
     public GetZoneData collectionId(List<String> collectionId) {
         setCollectionId(collectionId);
@@ -82,25 +90,28 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Identifier for a supported Discrete Global Grid System (required)
-     *
-     * @return the dggrsId
+     * @see #dggrsId(java.lang.String)
      */
     public String getDggrsId() {
         return dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
-     * @see #getDggrsId()
+     * @see #dggrsId(java.lang.String)
      */
     public void setDggrsId(String dggrsId) {
         this.dggrsId = dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
-     * @see #getDggrsId()
+     * <blockquote><q>
+     *     Identifier for a supported Discrete Global Grid System
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/dggrsId.yaml"> OGC API - Discrete Global Grid Systems - dggrsId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetZoneData dggrsId(String dggrsId) {
         setDggrsId(dggrsId);
@@ -108,27 +119,31 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Identifier for a specific zone of a Discrete Global Grid Systems. This identifier usually includes
-     * a component corresponding to a hierarchy level / scale / resolution, components identifying a spatial region, and
-     * a optionally a temporal component. (required)
-     *
-     * @return the zoneId
+     * @see #zoneId(java.lang.String)
      */
     public String getZoneId() {
         return zoneId;
     }
 
     /**
-     * @param zoneId the zoneId to set
-     * @see #getZoneId()
+     * @see #zoneId(java.lang.String)
      */
     public void setZoneId(String zoneId) {
         this.zoneId = zoneId;
     }
 
     /**
-     * @param zoneId the zoneId to set
-     * @see #getZoneId()
+     * <blockquote><q>
+     *     Identifier for a specific zone of a Discrete Global Grid Systems. This identifier usually includes
+     *     a component corresponding to a hierarchy level / scale / resolution, components identifying a
+     *     spatial region, and a optionally a temporal component.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/zoneId.yaml"> OGC API - Discrete Global Grid Systems - zoneId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
+     * <pre>zoneId=B2-1-A</pre>
      */
     public GetZoneData zoneId(String zoneId) {
         setZoneId(zoneId);
@@ -136,25 +151,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * The format of the zone data response (e.g. GeoJSON, GeoTIFF). (optional)
-     *
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetZoneData format(String format) {
         setFormat(format);
@@ -162,28 +182,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Select specific data record fields (measured/observed properties) to be returned using a
-     * comma-separated list of field names. The field name must be one of the fields defined in the associated data
-     * resource&#39;s logical schema. Extensions may enable the use of complex expressions to support defining derived
-     * fields, potentially also including the possibility to use aggregation functons. (optional)
-     *
-     * @return the properties
+     * @see #properties(java.lang.String)
      */
     public String getProperties() {
         return properties;
     }
 
     /**
-     * @param properties the properties to set
-     * @see #getProperties()
+     * @see #properties(java.lang.String)
      */
     public void setProperties(String properties) {
         this.properties = properties;
     }
 
     /**
-     * @param properties the properties to set
-     * @see #getProperties()
+     * <blockquote><q>
+     *     Select specific data record fields (measured/observed properties) to be returned using
+     *     a comma-separated list of field names.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/properties.yaml"> OGC API - Discrete Global Grid Systems - properties parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The field name must be one of the fields defined in the resource's logical schema.</li>
+     * </ul>
      */
     public GetZoneData properties(String properties) {
         setProperties(properties);
@@ -191,27 +213,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Exclude specific data record fields (measured/observed properties) from being returned
-     * using a comma-separated list of field names. The field name must be one of the fields defined in the associated
-     * data resource&#39;s logical schema. (optional)
-     *
-     * @return the excludeProperties
+     * @see #excludeProperties(java.lang.String)
      */
     public String getExcludeProperties() {
         return excludeProperties;
     }
 
     /**
-     * @param excludeProperties the excludeProperties to set
-     * @see #getExcludeProperties()
+     * @see #excludeProperties(java.lang.String)
      */
     public void setExcludeProperties(String excludeProperties) {
         this.excludeProperties = excludeProperties;
     }
 
     /**
-     * @param excludeProperties the excludeProperties to set
-     * @see #getExcludeProperties()
+     * <blockquote><q>
+     *     Exclude specific data record fields (measured/observed properties) from being returned
+     *     using a comma-separated list of field names.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/exclude-properties.yaml"> OGC API - Discrete Global Grid Systems - exclude-properties parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The field name must be one of the fields defined in the resource's logical schema.</li>
+     * </ul>
      */
     public GetZoneData excludeProperties(String excludeProperties) {
         setExcludeProperties(excludeProperties);
@@ -219,29 +244,31 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Retrieve only part of the data by slicing or trimming along one or more axis For trimming:
-     * {axisAbbrev}({low}:{high}) (preserves dimensionality) For slicing: {axisAbbrev}({value}) (reduces dimensionality)
-     * An asterisk (&#x60;*&#x60;) can be used instead of {low} or {high} to indicate the minimum/maximum value. For a
-     * temporal dimension, a single asterisk can be used to indicate the high value. Support for &#x60;*&#x60; is
-     * required for time, but optional for spatial and other dimensions. (optional)
-     *
-     * @return the subset
+     * @see #subset(java.util.List)
      */
     public List<String> getSubset() {
         return subset;
     }
 
     /**
-     * @param subset the subset to set
-     * @see #getSubset()
+     * @see #subset(java.util.List)
      */
     public void setSubset(List<String> subset) {
         this.subset = subset;
     }
 
     /**
-     * @param subset the subset to set
-     * @see #getSubset()
+     * <blockquote><q>
+     *     Retrieve only part of the data by slicing or trimming along one or more axis
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/subset.yaml"> OGC API - Discrete Global Grid Systems - subset parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Trimming: {@code axisAbbrev(low:high)} (preserves dimensionality).</li>
+     *     <li>Slicing: {@code axisAbbrev(value)} (reduces dimensionality).</li>
+     *     <li>An asterisk ({@code *}) indicates the minimum/maximum value.</li>
+     * </ul>
      */
     public GetZoneData subset(List<String> subset) {
         setSubset(subset);
@@ -249,33 +276,35 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Either a date-time or an interval. Date and time expressions adhere to RFC 3339, section 5.6.
-     * Intervals may be bounded or half-bounded (double-dots at start or end). Server implementations may or may not
-     * support times expressed using time offsets from UTC, but need to support UTC time with the notation ending with a
-     * Z. Examples: * A date-time: \&quot;2018-02-12T23:20:50Z\&quot; * A bounded interval:
-     * \&quot;2018-02-12T00:00:00Z/2018-03-18T12:31:12Z\&quot; * Half-bounded intervals:
-     * \&quot;2018-02-12T00:00:00Z/..\&quot; or \&quot;../2018-03-18T12:31:12Z\&quot; Only resources that have a
-     * temporal property that intersects the value of &#x60;datetime&#x60; are selected. If a feature has multiple
-     * temporal properties, it is the decision of the server whether only a single temporal property is used to
-     * determine the extent or all relevant temporal properties. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval.
+     *     </q><i><small><a href="https://docs.ogc.org/is/21-038r1/21-038r1.html#_d848832e-add3-4f04-8b3c-c2cb57359cb7"> OGC API - Discrete Global Grid Systems - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Date and time expressions adhere to RFC 3339.</li>
+     *     <li>Intervals may be bounded or half-bounded (double-dots at start or end).</li>
+     * </ul>
+     * <pre>
+     * datetime=2018-02-12T23:20:50Z
+     * datetime=2018-02-12T00:00:00Z/2018-03-18T12:31:12Z
+     * datetime=../2018-03-18T12:31:12Z
+     * </pre>
      */
     public GetZoneData datetime(String datetime) {
         setDatetime(datetime);
@@ -283,27 +312,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * The filter parameter specifies an expression in a query language (e.g. CQL2) for which an entire
-     * feature will be returned if the filter predicate is matched. The language of the filter is specified by the
-     * &#x60;filter-lang&#x60; query parameter. (optional)
-     *
-     * @return the filter
+     * @see #filter(java.lang.String)
      */
     public String getFilter() {
         return filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * @see #filter(java.lang.String)
      */
     public void setFilter(String filter) {
         this.filter = filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * <blockquote><q>
+     *     The filter parameter specifies an expression in a query language (e.g. CQL2) for which
+     *     an entire feature will be returned if the filter predicate is matched.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/filter.yaml"> OGC API - Discrete Global Grid Systems - filter parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The query language is specified by {@code filter-lang}.</li>
+     * </ul>
      */
     public GetZoneData filter(String filter) {
         setFilter(filter);
@@ -311,25 +343,28 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * reproject the output to the given crs (optional)
-     *
-     * @return the crs
+     * @see #crs(java.lang.String)
      */
     public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * @see #crs(java.lang.String)
      */
     public void setCrs(String crs) {
         this.crs = crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * <blockquote><q>
+     *     reproject the output to the given crs
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/crs.yaml"> OGC API - Discrete Global Grid Systems - crs parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetZoneData crs(String crs) {
         setCrs(crs);
@@ -337,31 +372,33 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * For vector output formats, specify how to return the geometry and/or what the features of the
-     * response should represent. &#x60;vectorized&#x60;: return features with regular non-rasterized, non-quantized
-     * geometry &#x60;zone-centroid&#x60;: rasterize to zone features and use a Point geometry representing that zone
-     * centroid &#x60;zone-region&#x60;: rasterize to zone features and use a (Multi)Polygon/Polyhedron geometry
-     * representing that zone&#39;s region -- not supported for DGGS-JSON-FG profiles
-     * (&#x60;profile&#x3D;jsonfg-dggs*&#x60;) &#x60;none&#x60;: (for zone listing) omit zone geometry -- not supported
-     * for DGGS-JSON-FG profiles (&#x60;profile&#x3D;jsonfg-dggs*&#x60;) (optional)
-     *
-     * @return the geometry
+     * @see #geometry(java.lang.String)
      */
     public String getGeometry() {
         return geometry;
     }
 
     /**
-     * @param geometry the geometry to set
-     * @see #getGeometry()
+     * @see #geometry(java.lang.String)
      */
     public void setGeometry(String geometry) {
         this.geometry = geometry;
     }
 
     /**
-     * @param geometry the geometry to set
-     * @see #getGeometry()
+     * <blockquote><q>
+     *     For vector output formats, specify how to return the geometry and/or what the features
+     *     of the response should represent.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/geometry.yaml"> OGC API - Discrete Global Grid Systems - geometry parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>{@code vectorized}: non-rasterized, non-quantized geometry.</li>
+     *     <li>{@code zone-centroid}: rasterize to zone features, Point geometry at the zone centroid.</li>
+     *     <li>{@code zone-region}: rasterize to zone features, (Multi)Polygon/Polyhedron region geometry;
+     *     not supported for DGGS-JSON-FG profiles.</li>
+     * </ul>
      */
     public GetZoneData geometry(String geometry) {
         setGeometry(geometry);
@@ -369,52 +406,35 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Allows negotiating a particular profile of an output format, such as OGC Feature &amp; Geometry
-     * JSON (JSON-FG) or DGGS-JSON-FG output when requesting an &#x60;application/geo+json&#x60; media type for zone
-     * data or zone list requests. For both zone data and zone lists in GeoJSON (&#x60;application/geo+json&#x60;):
-     * &#x60;rfc7946&#x60;: return standard GeoJSON without using any extension &#x60;jsonfg&#x60;: return JSON-FG
-     * representation &#x60;jsonfg-plus&#x60;: return JSON-FG representation with GeoJSON compatibility For zone data in
-     * GeoJSON (&#x60;application/geo+json&#x60;): &#x60;jsonfg-dggs&#x60;: return DGGS-JSON-FG representation, using
-     * &#x60;dggsPlace&#x60; to encode geometry points quantized to sub-zone, represented as local indices from 1 to the
-     * number of sub-zones corresponding to the DGGRS deterministic sub-zone order, with a special value of 0
-     * representing an artificial node &#x60;jsonfg-dggs-plus&#x60;: return DGGS-JSON-FG representation, with GeoJSON
-     * compatibility &#x60;geometry&#x60; &#x60;jsonfg-dggs-zoneids&#x60;: return DGGS-JSON-FG representation, using
-     * &#x60;dggsPlace&#x60; to encode geometry points as textual global zone identifiers, with a special value of
-     * _null_ representing an artificial node &#x60;jsonfg-dggs-zoneids-plus&#x60;: return DGGS-JSON-FG representation,
-     * encoding geometry points as global zone IDs, with GeoJSON compatibility &#x60;geometry&#x60; For zone data in
-     * netCDF (&#x60;application/x-netcdf&#x60;): &#x60;netcdf3&#x60;: return NetCDF classic and 64-bit offset format
-     * (not quantized to DGGH) &#x60;netcdf3-dggs&#x60;: return NetCDF classic and 64-bit offset format where one axis
-     * corresponds to local sub-zone indices &#x60;netcdf3-dggs-zoneids&#x60;: return NetCDF classic and 64-bit offset
-     * format where one axis corresponds to the global identifiers of sub-zones (textual or 64-bit integer)
-     * &#x60;netcdf4&#x60;: return HFG5-based NetCDF 4 format (not quantized to DGGH) &#x60;netcdf4-dggs&#x60;: return
-     * HDF5-based NetCDF 4 format where one axis corresponds to local sub-zone indices &#x60;netcdf4-dggs-zoneids&#x60;:
-     * return HDF5-based NetCDF 4 format where one axis corresponds to the global identifiers of sub-zones (textual or
-     * 64-bit integer) For zone data in zipped Zarr 2.0 (&#x60;application/zarr+zip&#x60;): &#x60;zarr2&#x60;: return
-     * zipped Zarr 2.0 (not quantized to DGGH) &#x60;zarr2-dggs&#x60;: return zipped Zarr 2.0 where one axis corresponds
-     * to local sub-zone indices &#x60;zarr2-dggs-zoneids&#x60;: return zipped Zarr 2.0 where one axis corresponds to
-     * the global identifiers of sub-zones (textual or 64-bit integer) For zone data in CoverageJSON
-     * (&#x60;application/prs.coverage+json&#x60;): &#x60;covjson&#x60;: return CoverageJSON (not quantized to DGGH)
-     * &#x60;covjson-dggs&#x60;: return CoverageJSON where one axis corresponds to local sub-zone indices
-     * &#x60;covjson-dggs-zoneids&#x60;: return CoverageJSON where one axis corresponds to the global identifiers of
-     * sub-zones (textual or 64-bit integer) (optional)
-     *
-     * @return the profile
+     * @see #profile(java.lang.String)
      */
     public String getProfile() {
         return profile;
     }
 
     /**
-     * @param profile the profile to set
-     * @see #getProfile()
+     * @see #profile(java.lang.String)
      */
     public void setProfile(String profile) {
         this.profile = profile;
     }
 
     /**
-     * @param profile the profile to set
-     * @see #getProfile()
+     * <blockquote><q>
+     *     Allows negotiating a particular profile of an output format, such as OGC Feature &amp;
+     *     Geometry JSON (JSON-FG) or DGGS-JSON-FG output when requesting an {@code application/geo+json}
+     *     media type for zone data or zone list requests.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/profile.yaml"> OGC API - Discrete Global Grid Systems - profile parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>For GeoJSON zone data: {@code rfc7946}, {@code jsonfg}, {@code jsonfg-plus},
+     *     {@code jsonfg-dggs}, {@code jsonfg-dggs-plus}, {@code jsonfg-dggs-zoneids},
+     *     {@code jsonfg-dggs-zoneids-plus}.</li>
+     *     <li>For netCDF, Zarr and CoverageJSON zone data: {@code netcdf3(-dggs[-zoneids])},
+     *     {@code netcdf4(-dggs[-zoneids])}, {@code zarr2(-dggs[-zoneids])}, {@code covjson(-dggs[-zoneids])}.</li>
+     * </ul>
      */
     public GetZoneData profile(String profile) {
         setProfile(profile);
@@ -422,34 +442,33 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * The DGGS resolution levels beyond the requested DGGS zone’s hierarchy level to include in the
-     * response, when retrieving data for that zone. This can be either: • A single positive integer value —
-     * representing a specific zone depth to return (e.g., &#x60;zone-depth&#x3D;5&#x60;); • A range of positive integer
-     * values in the form “{low}-{high}” — representing a continuous range of zone depths to return (e.g.,
-     * &#x60;zone-depth&#x3D;1-8&#x60;); or, • A comma separated list of at least two (2) positive integer values —
-     * representing a set of specific zone depths to return (e.g., &#x60;zone-depth&#x3D;1,3,7&#x60;). Some or all of
-     * these forms of the zone-depth parameter may not be supported with particular data packet encodings (the data
-     * encoding may support a fixed depth, a range of depths, and/or an arbitrary selection of depths). When this
-     * parameter is omitted, the default value specified in the &#x60;defaultDepth&#x60; property of the
-     * &#x60;.../dggs/{dggrsId}&#x60; DGGRS description is used. (optional)
-     *
-     * @return the zoneDepth
+     * @see #zoneDepth(java.lang.String)
      */
     public String getZoneDepth() {
         return zoneDepth;
     }
 
     /**
-     * @param zoneDepth the zoneDepth to set
-     * @see #getZoneDepth()
+     * @see #zoneDepth(java.lang.String)
      */
     public void setZoneDepth(String zoneDepth) {
         this.zoneDepth = zoneDepth;
     }
 
     /**
-     * @param zoneDepth the zoneDepth to set
-     * @see #getZoneDepth()
+     * <blockquote><q>
+     *     The DGGS resolution levels beyond the requested DGGS zone's hierarchy level to include
+     *     in the response, when retrieving data for that zone.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/zone-depth.yaml"> OGC API - Discrete Global Grid Systems - zone-depth parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>A single positive integer (e.g. {@code zone-depth=5}).</li>
+     *     <li>A range "{low}-{high}" (e.g. {@code zone-depth=1-8}).</li>
+     *     <li>A comma-separated list of at least two values (e.g. {@code zone-depth=1,3,7}).</li>
+     *     <li>Default: the {@code defaultDepth} property of the {@code .../dggs/{dggrsId}} DGGRS description.</li>
+     * </ul>
      */
     public GetZoneData zoneDepth(String zoneDepth) {
         setZoneDepth(zoneDepth);
@@ -457,29 +476,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Specify the offset for a zone data output format such as PNG not supporting floating-point,
-     * to be applied after multiplying by the scale factor and resulting in the encoded integer values (e.g., 8-bit or
-     * 16-bit unsigned for PNG). (optional)
-     *
-     * @return the valuesOffset
+     * @see #valuesOffset(java.lang.Double)
      */
     public Double getValuesOffset() {
         return valuesOffset;
     }
 
     /**
-     *
-     * @param valuesOffset the valuesOffset to set
-     * @see #getValuesOffset()
+     * @see #valuesOffset(java.lang.Double)
      */
     public void setValuesOffset(Double valuesOffset) {
         this.valuesOffset = valuesOffset;
     }
 
     /**
-     *
-     * @param valuesOffset the valuesOffset to set
-     * @see #getValuesOffset()
+     * <blockquote><q>
+     *     Specify the offset for a zone data output format such as PNG not supporting
+     *     floating-point, to be applied after multiplying by the scale factor and resulting in
+     *     the encoded integer values (e.g., 8-bit or 16-bit unsigned for PNG).
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/values-offset.yaml"> OGC API - Discrete Global Grid Systems - values-offset parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetZoneData valuesOffset(Double valuesOffset) {
         setValuesOffset(valuesOffset);
@@ -487,27 +507,30 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * Specify the scale factor for a zone data output format such as PNG not supporting
-     * floating-point, to be applied before adding an offset and resulting in the encoded integer values (e.g., 8-bit or
-     * 16-bit unsigned for PNG). (optional)
-     *
-     * @return the valuesScale
+     * @see #valuesScale(java.lang.Double)
      */
     public Double getValuesScale() {
         return valuesScale;
     }
 
     /**
-     * @param valuesScale the valuesScale to set
-     * @see #getValuesScale()
+     * @see #valuesScale(java.lang.Double)
      */
     public void setValuesScale(Double valuesScale) {
         this.valuesScale = valuesScale;
     }
 
     /**
-     * @param valuesScale the valuesScale to set
-     * @see #getValuesScale()
+     * <blockquote><q>
+     *     Specify the scale factor for a zone data output format such as PNG not supporting
+     *     floating-point, to be applied before adding an offset and resulting in the encoded
+     *     integer values (e.g., 8-bit or 16-bit unsigned for PNG).
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/values-scale.yaml"> OGC API - Discrete Global Grid Systems - values-scale parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetZoneData valuesScale(Double valuesScale) {
         setValuesScale(valuesScale);
@@ -515,21 +538,26 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * @return the gzip
+     * @see #gzip(boolean)
      */
     public boolean isGzip() {
         return gzip;
     }
 
     /**
-     * @param gzip the gzip to set
+     * @see #gzip(boolean)
      */
     public void setGzip(boolean gzip) {
         this.gzip = gzip;
     }
 
     /**
-     * @param gzip the gzip to set
+     * Whether the response should be gzip-compressed.
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Not defined by OGC API - DGGS - Part 1 (no verbatim spec text available for this field).</li>
+     * </ul>
      */
     public GetZoneData gzip(boolean gzip) {
         setGzip(gzip);
@@ -537,21 +565,26 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * @return the area
+     * @see #area(java.lang.String)
      */
     public String getArea() {
         return area;
     }
 
     /**
-     * @param area the area to set
+     * @see #area(java.lang.String)
      */
     public void setArea(String area) {
         this.area = area;
     }
 
     /**
-     * @param area the area to set
+     * Experimental parameter, not defined by OGC API - DGGS - Part 1 (no verbatim spec text
+     * available for this field).
+     * <br>
+     * <ul>
+     *     <li>Optional, experimental.</li>
+     * </ul>
      */
     public GetZoneData area(String area) {
         setArea(area);
@@ -559,21 +592,26 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * @return the areaCrs
+     * @see #areaCrs(java.lang.String)
      */
     public String getAreaCrs() {
         return areaCrs;
     }
 
     /**
-     * @param areaCrs the areaCrs to set
+     * @see #areaCrs(java.lang.String)
      */
     public void setAreaCrs(String areaCrs) {
         this.areaCrs = areaCrs;
     }
 
     /**
-     * @param areaCrs the areaCrs to set
+     * Experimental parameter, not defined by OGC API - DGGS - Part 1 (no verbatim spec text
+     * available for this field).
+     * <br>
+     * <ul>
+     *     <li>Optional, experimental.</li>
+     * </ul>
      */
     public GetZoneData areaCrs(String areaCrs) {
         setAreaCrs(areaCrs);
@@ -581,21 +619,26 @@ public final class GetZoneData extends RequestParameters {
     }
 
     /**
-     * @return the zoneAccuracy
+     * @see #zoneAccuracy(java.lang.String)
      */
     public String getZoneAccuracy() {
         return zoneAccuracy;
     }
 
     /**
-     * @param zoneAccuracy the zoneAccuracy to set
+     * @see #zoneAccuracy(java.lang.String)
      */
     public void setZoneAccuracy(String zoneAccuracy) {
         this.zoneAccuracy = zoneAccuracy;
     }
 
     /**
-     * @param zoneAccuracy the zoneAccuracy to set
+     * Experimental parameter, not defined by OGC API - DGGS - Part 1 (no verbatim spec text
+     * available for this field).
+     * <br>
+     * <ul>
+     *     <li>Optional, experimental.</li>
+     * </ul>
      */
     public GetZoneData zoneAccuracy(String zoneAccuracy) {
         setZoneAccuracy(zoneAccuracy);

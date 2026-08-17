@@ -19,6 +19,14 @@ package org.geotoolkit.ogcapi.request.dggs;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * Request parameters for retrieving the description of a Discrete Global Grid Reference System
+ * (DGGRS): {@code GET /dggs/{dggrsId}}, or, when {@link #getCollectionId()} is set,
+ * {@code GET /collections/{collectionId}/dggs/{dggrsId}}.
+ *
+ * <blockquote><q>
+ *     For retrieving the description of a particular available discrete global grid reference system
+ *     </q><i><small><a href="https://docs.ogc.org/is/21-038r1/21-038r1.html#_d0363b84-b790-c745-d8ef-fc1693548296"> OGC API - Discrete Global Grid Systems - Discrete Global Grid Reference System (DGGRS) description</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -29,25 +37,28 @@ public final class GetDggrs extends RequestParameters {
     private String format;
 
     /**
-     * Local identifier of a collection (required if against a collection)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional: only set when requesting the DGGRS description for a specific collection.</li>
+     * </ul>
      */
     public GetDggrs collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -55,25 +66,28 @@ public final class GetDggrs extends RequestParameters {
     }
 
     /**
-     * Identifier for a supported Discrete Global Grid System (required)
-     *
-     * @return the dggrsId
+     * @see #dggrsId(java.lang.String)
      */
     public String getDggrsId() {
         return dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
-     * @see #getDggrsId()
+     * @see #dggrsId(java.lang.String)
      */
     public void setDggrsId(String dggrsId) {
         this.dggrsId = dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
-     * @see #getDggrsId()
+     * <blockquote><q>
+     *     Identifier for a supported Discrete Global Grid System
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/dggrsId.yaml"> OGC API - Discrete Global Grid Systems - dggrsId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetDggrs dggrsId(String dggrsId) {
         setDggrsId(dggrsId);
@@ -81,26 +95,31 @@ public final class GetDggrs extends RequestParameters {
     }
 
     /**
-     * The format of the response. If no value is provided, the accept header is used to determine the format.
-     * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     *
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetDggrs format(String format) {
         setFormat(format);
