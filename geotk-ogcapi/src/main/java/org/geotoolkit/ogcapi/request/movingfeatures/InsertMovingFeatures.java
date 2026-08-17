@@ -19,10 +19,15 @@ package org.geotoolkit.ogcapi.request.movingfeatures;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To insert one or more moving features into a collection. The body may be either a single
- * {@code movingFeature-mfjson} document or a {@code movingFeatureCollection} document.
+ * To insert one or more moving features into a collection:
+ * {@code POST /collections/{collectionId}/items}. On success, the URI of the new
+ * resource(s) is returned in the response's {@code Location} header.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code insertMovingFeatures}).</p>
+ * <blockquote><q>
+ *     The server SHALL support the HTTP POST operation at the resource
+ *     endpoint({root}/collections/{collectionId}/items).
+ *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf-features-op-post"> OGC API - Moving Features, Part 1: Core - Requirement 15 /req/movingfeatures/features-post</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -32,25 +37,28 @@ public final class InsertMovingFeatures extends RequestParameters {
     private byte[] content;
 
     /**
-     * Local identifier of the collection. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     An identifier for a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public InsertMovingFeatures collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,25 +66,31 @@ public final class InsertMovingFeatures extends RequestParameters {
     }
 
     /**
-     * The raw moving feature(s) document to publish. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     The content of the request body SHALL be based upon the MovingFeature object and
+     *     MovingFeatureCollection object in OGC Moving Features JSON Encoding Standard.
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf-features-op-post"> OGC API - Moving Features, Part 1: Core - Requirement 15 /req/movingfeatures/features-post</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>A single {@code movingFeature-mfjson} document, or a {@code movingFeatureCollection}
+     *     document to insert several moving features at once.</li>
+     * </ul>
      */
     public InsertMovingFeatures content(byte[] content) {
         setContent(content);

@@ -22,7 +22,10 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * The {@code velocity} query: the time-to-velocity curve of a temporal primitive geometry.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code getVelocityOfTemporalPrimitiveGeometry}).</p>
+ * <blockquote><q>The Velocity query returns a time-to-velocity curve of the
+ * TemporalPrimitiveGeometry object as a form of the TemporalProperty.</q>
+ * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+ * Features - Part 1: Core - 8.7.4. Velocity Query</a></small></i></blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -36,9 +39,8 @@ public final class GetVelocity extends RequestParameters {
     private Boolean subtemporalvalue;
 
     /**
-     * Local identifier of the collection. (required)
-     *
      * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
@@ -46,15 +48,22 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
+     * Local identifier of the collection to which the moving feature belongs.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code collectionId} path parameter in
+     *     {@code /collections/{collectionId}/items/{mFeatureId}/tgsequence/{tGeometryId}/velocity}.</li>
+     * </ul>
+     *
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @return this
      */
     public GetVelocity collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -62,9 +71,8 @@ public final class GetVelocity extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
      * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
@@ -72,15 +80,21 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
+     * Local identifier of the moving feature.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code mFeatureId} path parameter.</li>
+     * </ul>
+     *
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @return this
      */
     public GetVelocity mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -88,9 +102,8 @@ public final class GetVelocity extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal primitive geometry. (required)
-     *
      * @return the tGeometryId
+     * @see #tGeometryId(java.lang.String)
      */
     public String getTGeometryId() {
         return tGeometryId;
@@ -98,15 +111,22 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param tGeometryId the tGeometryId to set
-     * @see #getTGeometryId()
+     * @see #tGeometryId(java.lang.String)
      */
     public void setTGeometryId(String tGeometryId) {
         this.tGeometryId = tGeometryId;
     }
 
     /**
+     * Local identifier of the temporal primitive geometry on which the velocity curve is
+     * computed.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tGeometryId} path parameter.</li>
+     * </ul>
+     *
      * @param tGeometryId the tGeometryId to set
-     * @see #getTGeometryId()
+     * @return this
      */
     public GetVelocity tGeometryId(String tGeometryId) {
         setTGeometryId(tGeometryId);
@@ -114,9 +134,8 @@ public final class GetVelocity extends RequestParameters {
     }
 
     /**
-     * A date-time or a (possibly half-bounded) interval, per RFC 3339. (required)
-     *
      * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
@@ -124,15 +143,25 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
+     * A date-time or a (possibly half-bounded) interval, per RFC 3339, restricting the part of
+     * the velocity curve to be returned.
+     *
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>No verbatim quotable sentence isolating this parameter alone was found in the
+     *     shared query-parameters clause (8.7.2) of the spec; wording follows the RFC 3339
+     *     {@code datetime} convention used across the OGC API family.</li>
+     * </ul>
+     *
      * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @return this
      */
     public GetVelocity datetime(String datetime) {
         setDatetime(datetime);
@@ -140,11 +169,8 @@ public final class GetVelocity extends RequestParameters {
     }
 
     /**
-     * A sequence of monotonic increasing date-time instants at which to interpolate the
-     * time-to-velocity curve (the {@code pointAtTime} operation). Must not be combined with
-     * {@code subtemporalvalue}. (optional)
-     *
      * @return the leaf
+     * @see #leaf(java.util.List)
      */
     public List<String> getLeaf() {
         return leaf;
@@ -152,15 +178,25 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param leaf the leaf to set
-     * @see #getLeaf()
+     * @see #leaf(java.util.List)
      */
     public void setLeaf(List<String> leaf) {
         this.leaf = leaf;
     }
 
     /**
+     * <blockquote><q>geometry at a particular value of the parameter [source: ISO
+     * 19141]</q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API -
+     * Moving Features - Part 1: Core - 4.12. leaf</a></small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. A sequence of monotonic increasing date-time instants at which to
+     *     interpolate the time-to-velocity curve.</li>
+     *     <li>Must not be combined with {@code subtemporalvalue}.</li>
+     * </ul>
+     *
      * @param leaf the leaf to set
-     * @see #getLeaf()
+     * @return this
      */
     public GetVelocity leaf(List<String> leaf) {
         setLeaf(leaf);
@@ -168,11 +204,8 @@ public final class GetVelocity extends RequestParameters {
     }
 
     /**
-     * If {@code true}, {@code datetime} must be a bounded interval and only the subsequence of
-     * the time-to-velocity curve within that interval is returned. Must not be combined with
-     * {@code leaf}. (optional)
-     *
      * @return the subtemporalvalue
+     * @see #subtemporalvalue(java.lang.Boolean)
      */
     public Boolean getSubtemporalvalue() {
         return subtemporalvalue;
@@ -180,15 +213,26 @@ public final class GetVelocity extends RequestParameters {
 
     /**
      * @param subtemporalvalue the subtemporalvalue to set
-     * @see #getSubtemporalvalue()
+     * @see #subtemporalvalue(java.lang.Boolean)
      */
     public void setSubtemporalvalue(Boolean subtemporalvalue) {
         this.subtemporalvalue = subtemporalvalue;
     }
 
     /**
+     * <blockquote><q>The subTemporalValue query parameter is used to select a subset of
+     * TemporalProperty for the specified time interval.</q><i><small><a
+     * href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving Features - Part 1:
+     * Core - 8.9.2. Query Parameters</a></small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. If {@code true}, {@code datetime} must be a bounded interval and only
+     *     the subsequence of the time-to-velocity curve within that interval is returned.</li>
+     *     <li>Must not be combined with {@code leaf}.</li>
+     * </ul>
+     *
      * @param subtemporalvalue the subtemporalvalue to set
-     * @see #getSubtemporalvalue()
+     * @return this
      */
     public GetVelocity subtemporalvalue(Boolean subtemporalvalue) {
         setSubtemporalvalue(subtemporalvalue);

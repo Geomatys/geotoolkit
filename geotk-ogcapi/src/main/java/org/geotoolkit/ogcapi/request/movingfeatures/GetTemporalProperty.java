@@ -20,10 +20,16 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code tproperties/{tPropertyName}} query: the (subsequence of the) data of a single
- * named temporal property.
+ * The {@code tproperties/{tPropertyName}} query:
+ * {@code GET /collections/{collectionId}/items/{mFeatureId}/tproperties/{tPropertyName}},
+ * the (subsequence of the) data of a single named temporal property.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code retrieveTemporalProperty}).</p>
+ * <blockquote><q>
+ *     For every temporal property in a moving feature (path
+ *     {root}/collections/{collectionId}/items/{mFeatureId}/tproperties), the server SHALL
+ *     support the HTTP GET operation at the path
+ *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf-tproperty-op-get"> OGC API - Moving Features, Part 1: Core - Requirement 41 /req/movingfeatures/tproperty-get</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -37,25 +43,28 @@ public final class GetTemporalProperty extends RequestParameters {
     private Boolean subtemporalvalue;
 
     /**
-     * Local identifier of the collection. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     An identifier for a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetTemporalProperty collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -63,25 +72,28 @@ public final class GetTemporalProperty extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
-     * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
     }
 
     /**
-     * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
-     * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * <blockquote><q>
+     *     An identifier for a specific MovingFeature of a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetTemporalProperty mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -89,25 +101,28 @@ public final class GetTemporalProperty extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal property. (required)
-     *
-     * @return the tPropertyName
+     * @see #tPropertyName(java.lang.String)
      */
     public String getTPropertyName() {
         return tPropertyName;
     }
 
     /**
-     * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @see #tPropertyName(java.lang.String)
      */
     public void setTPropertyName(String tPropertyName) {
         this.tPropertyName = tPropertyName;
     }
 
     /**
-     * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * <blockquote><q>
+     *     An identifier for a specific TemporalProperty of a specific MovingFeatures of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetTemporalProperty tPropertyName(String tPropertyName) {
         setTPropertyName(tPropertyName);
@@ -115,25 +130,31 @@ public final class GetTemporalProperty extends RequestParameters {
     }
 
     /**
-     * A date-time or a (possibly half-bounded) interval, per RFC 3339. (required)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Only features that have a temporal primitive geometry (and temporal primitive
+     *     value) that intersects the temporal information in the datetime parameter SHALL
+     *     be part of the result set, if the parameter is provided.
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_core_param-datetime"> OGC API - Moving Features, Part 1: Core - Requirement 52 /req/common/param-datetime</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>A date-time, or a (possibly half-bounded) interval, per RFC 3339 section 5.6.</li>
+     * </ul>
      */
     public GetTemporalProperty datetime(String datetime) {
         setDatetime(datetime);
@@ -141,27 +162,44 @@ public final class GetTemporalProperty extends RequestParameters {
     }
 
     /**
-     * A sequence of monotonic increasing date-time instants at which to interpolate the
-     * temporal property's value curve (the {@code pointAtTime} operation). Must not be combined with
-     * {@code subtemporalvalue}. (optional)
-     *
-     * @return the leaf
+     * @see #leaf(java.util.List)
      */
     public List<String> getLeaf() {
         return leaf;
     }
 
     /**
-     * @param leaf the leaf to set
-     * @see #getLeaf()
+     * @see #leaf(java.util.List)
      */
     public void setLeaf(List<String> leaf) {
         this.leaf = leaf;
     }
 
     /**
-     * @param leaf the leaf to set
-     * @see #getLeaf()
+     * <blockquote><q>
+     *     The leaf parameter SHALL be a sequence of monotonic increasing instants with
+     *     date-time strings. The syntax of date-time is specified by RFC 3339, 5.6.
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf_leaf-parameter-definition"> OGC API - Moving Features, Part 1: Core - Requirement 23 /req/movingfeatures/param-leaf-definition</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>At least 1 unique date-time value, monotonically increasing.</li>
+     * </ul>
+     * <pre>
+     * name: leaf
+     * in: query
+     * required: false
+     * schema:
+     *   type: array
+     *   uniqueItems: true
+     *   minItems: 1
+     *   items:
+     *     type: string
+     *     format: date-time
+     * style: form
+     * explode: false
+     * </pre>
      */
     public GetTemporalProperty leaf(List<String> leaf) {
         setLeaf(leaf);
@@ -169,27 +207,31 @@ public final class GetTemporalProperty extends RequestParameters {
     }
 
     /**
-     * If {@code true}, {@code datetime} must be a bounded interval and only the subsequence of
-     * the temporal property's value curve within that interval is returned. Must not be combined with
-     * {@code leaf}. (optional)
-     *
-     * @return the subtemporalvalue
+     * @see #subtemporalvalue(java.lang.Boolean)
      */
     public Boolean getSubtemporalvalue() {
         return subtemporalvalue;
     }
 
     /**
-     * @param subtemporalvalue the subtemporalvalue to set
-     * @see #getSubtemporalvalue()
+     * @see #subtemporalvalue(java.lang.Boolean)
      */
     public void setSubtemporalvalue(Boolean subtemporalvalue) {
         this.subtemporalvalue = subtemporalvalue;
     }
 
     /**
-     * @param subtemporalvalue the subtemporalvalue to set
-     * @see #getSubtemporalvalue()
+     * <blockquote><q>
+     *     The subTemporalValue parameter SHALL be used with datetime parameter. If the
+     *     subTemporalValue parameter is "true", the datetime parameter SHALL be a bounded
+     *     interval, not half-bounded intervals or a date-time.
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf_subtemporalvalue-parameter-definition"> OGC API - Moving Features, Part 1: Core - Requirement 34 /req/movingfeatures/param-subtemporalvalue-definition</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Requires {@code datetime} to be set to a bounded interval when {@code true}.</li>
+     * </ul>
      */
     public GetTemporalProperty subtemporalvalue(Boolean subtemporalvalue) {
         setSubtemporalvalue(subtemporalvalue);

@@ -21,7 +21,10 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * To delete a single temporal primitive value from a named temporal property.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code deleteTemporalPrimitiveValue}).</p>
+ * <blockquote><q>The delete operation is defined in the DELETE section of the
+ * "Create/Replace/Delete" requirements class of OGC API — Features.</q>
+ * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+ * Features - Part 1: Core - 8.10.2.1. Delete</a></small></i></blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -33,9 +36,8 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
     private String tValueId;
 
     /**
-     * Local identifier of the collection. (required)
-     *
      * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
@@ -43,15 +45,21 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
+     * Local identifier of the collection to which the moving feature belongs.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code collectionId} path parameter.</li>
+     * </ul>
+     *
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @return this
      */
     public DeleteTemporalPrimitiveValue collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -59,9 +67,8 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
      * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
@@ -69,15 +76,21 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
+     * Local identifier of the moving feature.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code mFeatureId} path parameter.</li>
+     * </ul>
+     *
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @return this
      */
     public DeleteTemporalPrimitiveValue mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -85,9 +98,8 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal property. (required)
-     *
      * @return the tPropertyName
+     * @see #tPropertyName(java.lang.String)
      */
     public String getTPropertyName() {
         return tPropertyName;
@@ -95,15 +107,21 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @see #tPropertyName(java.lang.String)
      */
     public void setTPropertyName(String tPropertyName) {
         this.tPropertyName = tPropertyName;
     }
 
     /**
+     * Local identifier of the temporal property that owns the value to delete.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tPropertyName} path parameter.</li>
+     * </ul>
+     *
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @return this
      */
     public DeleteTemporalPrimitiveValue tPropertyName(String tPropertyName) {
         setTPropertyName(tPropertyName);
@@ -111,9 +129,8 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal primitive value. (required)
-     *
      * @return the tValueId
+     * @see #tValueId(java.lang.String)
      */
     public String getTValueId() {
         return tValueId;
@@ -121,15 +138,26 @@ public final class DeleteTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param tValueId the tValueId to set
-     * @see #getTValueId()
+     * @see #tValueId(java.lang.String)
      */
     public void setTValueId(String tValueId) {
         this.tValueId = tValueId;
     }
 
     /**
+     * <blockquote><q>The {tValueId} parameter is the unique identifier for a single temporal
+     * primitive value object offered by the API. The list of valid values for {tValueId} is
+     * provided in the
+     * {root}/collections/{collectionId}/items/{mFeatureId}/tproperties/{tPropertyName} GET
+     * response.</q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_operation_9">OGC
+     * API - Moving Features - Part 1: Core - 8.10.2.1. Delete</a></small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tValueId} path parameter.</li>
+     * </ul>
+     *
      * @param tValueId the tValueId to set
-     * @see #getTValueId()
+     * @return this
      */
     public DeleteTemporalPrimitiveValue tValueId(String tValueId) {
         setTValueId(tValueId);

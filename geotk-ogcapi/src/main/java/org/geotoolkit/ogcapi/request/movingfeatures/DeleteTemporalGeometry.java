@@ -21,7 +21,12 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * To delete a temporal primitive geometry from a moving feature's trajectory.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code deleteTemporalPrimitiveGeometry}).</p>
+ * <blockquote><q>For every temporal geometry in a moving feature (path
+ * {root}/collections/{collectionId}/items/{mFeatureId}), the server SHALL support the HTTP
+ * DELETE operation at the path
+ * {root}/collections/{collectionId}/items/{mFeatureId}/tgsequence/{tGeometryId}</q>
+ * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+ * Features - Part 1: Core - Requirement /req/movingfeatures/tpgeometry-delete</a></small></i></blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -32,9 +37,8 @@ public final class DeleteTemporalGeometry extends RequestParameters {
     private String tGeometryId;
 
     /**
-     * Local identifier of the collection. (required)
-     *
      * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
@@ -42,15 +46,21 @@ public final class DeleteTemporalGeometry extends RequestParameters {
 
     /**
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
+     * Local identifier of the collection to which the moving feature belongs.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code collectionId} path parameter.</li>
+     * </ul>
+     *
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @return this
      */
     public DeleteTemporalGeometry collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,9 +68,8 @@ public final class DeleteTemporalGeometry extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
      * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
@@ -68,15 +77,21 @@ public final class DeleteTemporalGeometry extends RequestParameters {
 
     /**
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
+     * Local identifier of the moving feature.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code mFeatureId} path parameter.</li>
+     * </ul>
+     *
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @return this
      */
     public DeleteTemporalGeometry mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -84,9 +99,8 @@ public final class DeleteTemporalGeometry extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal primitive geometry. (required)
-     *
      * @return the tGeometryId
+     * @see #tGeometryId(java.lang.String)
      */
     public String getTGeometryId() {
         return tGeometryId;
@@ -94,15 +108,24 @@ public final class DeleteTemporalGeometry extends RequestParameters {
 
     /**
      * @param tGeometryId the tGeometryId to set
-     * @see #getTGeometryId()
+     * @see #tGeometryId(java.lang.String)
      */
     public void setTGeometryId(String tGeometryId) {
         this.tGeometryId = tGeometryId;
     }
 
     /**
+     * <blockquote><q>The path parameter tGeometryId is an id property of the temporal
+     * geometry.</q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API
+     * - Moving Features - Part 1: Core - Requirement /req/movingfeatures/tpgeometry-delete</a>
+     * </small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tGeometryId} path parameter.</li>
+     * </ul>
+     *
      * @param tGeometryId the tGeometryId to set
-     * @see #getTGeometryId()
+     * @return this
      */
     public DeleteTemporalGeometry tGeometryId(String tGeometryId) {
         setTGeometryId(tGeometryId);

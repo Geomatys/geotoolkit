@@ -22,7 +22,10 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
  * To append a temporal primitive value to a named temporal property. On success, the URI of the
  * new resource is returned in the response's {@code Location} header.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code insertTemporalPrimitiveValue}).</p>
+ * <blockquote><q>A create operation posts a new TemporalPrimitiveValue resource to the
+ * TemporalProperties that is specified by {tPropertyName}.</q>
+ * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+ * Features - Part 1: Core - 8.9.1. Overview</a></small></i></blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -34,9 +37,8 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
     private byte[] content;
 
     /**
-     * Local identifier of the collection. (required)
-     *
      * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
@@ -44,15 +46,21 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
+     * Local identifier of the collection to which the moving feature belongs.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code collectionId} path parameter.</li>
+     * </ul>
+     *
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @return this
      */
     public InsertTemporalPrimitiveValue collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -60,9 +68,8 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
      * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
@@ -70,15 +77,21 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
+     * Local identifier of the moving feature.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code mFeatureId} path parameter.</li>
+     * </ul>
+     *
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @return this
      */
     public InsertTemporalPrimitiveValue mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -86,9 +99,8 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal property. (required)
-     *
      * @return the tPropertyName
+     * @see #tPropertyName(java.lang.String)
      */
     public String getTPropertyName() {
         return tPropertyName;
@@ -96,15 +108,23 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @see #tPropertyName(java.lang.String)
      */
     public void setTPropertyName(String tPropertyName) {
         this.tPropertyName = tPropertyName;
     }
 
     /**
+     * <blockquote><q>tPropertyName is a local identifier of the temporal property.</q>
+     * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+     * Features - Part 1: Core - 8.9.3.1. Retrieve</a></small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tPropertyName} path parameter.</li>
+     * </ul>
+     *
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @return this
      */
     public InsertTemporalPrimitiveValue tPropertyName(String tPropertyName) {
         setTPropertyName(tPropertyName);
@@ -112,9 +132,8 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
     }
 
     /**
-     * The raw {@code temporalPrimitiveValue} JSON document to publish. (required)
-     *
      * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
@@ -122,15 +141,23 @@ public final class InsertTemporalPrimitiveValue extends RequestParameters {
 
     /**
      * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
+     * The raw {@code temporalPrimitiveValue} JSON document to publish.
+     *
+     * <ul>
+     *     <li>Required. This is the HTTP POST request body; no isolated verbatim spec sentence
+     *     describes the body's bytes independently of the {@code TemporalPrimitiveValue}
+     *     schema referenced by the class-level quote (clause 8.9.3.2, {@code /req/movingfeatures/tproperty-post}).</li>
+     * </ul>
+     *
      * @param content the content to set
-     * @see #getContent()
+     * @return this
      */
     public InsertTemporalPrimitiveValue content(byte[] content) {
         setContent(content);
