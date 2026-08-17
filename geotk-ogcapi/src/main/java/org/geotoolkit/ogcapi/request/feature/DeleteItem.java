@@ -21,7 +21,11 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * To delete an existing feature.
  *
- * <p>OGC API - Features Part 4: Create, Replace, Update and Delete.</p>
+ * <blockquote><q>
+ *     For every resource in the collection, the server SHALL support the HTTP DELETE
+ *     operation.
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-002r1.html#delete"> OGC API - Features - Part 4: Create, Replace, Update and Delete (draft) - Removing a resource from a collection (DELETE)</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -31,25 +35,29 @@ public final class DeleteItem extends RequestParameters {
     private String itemId;
 
     /**
-     * Local identifier of the collection. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public DeleteItem collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -57,25 +65,29 @@ public final class DeleteItem extends RequestParameters {
     }
 
     /**
-     * Local identifier of the feature to delete. (required)
-     *
-     * @return the itemId
+     * @see #itemId(java.lang.String)
      */
     public String getItemId() {
         return itemId;
     }
 
     /**
-     * @param itemId the itemId to set
-     * @see #getItemId()
+     * @see #itemId(java.lang.String)
      */
     public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
     /**
-     * @param itemId the itemId to set
-     * @see #getItemId()
+     * <blockquote><q>
+     *     local identifier of a feature
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/featureId.yaml"> OGC API - Features - Part 1: Core - featureId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Local identifier of the feature to delete.</li>
+     * </ul>
      */
     public DeleteItem itemId(String itemId) {
         setItemId(itemId);

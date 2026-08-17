@@ -21,8 +21,15 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * The {@code items/{itemId}} query ({@code /collections/{collectionId}/items/{itemId}}).
  *
- * <p>OGC API - Features Part 1: Core. Also reused as-is by OGC API - EDR's {@code Locations}
- * query, which is defined in terms of this same resource.</p>
+ * <blockquote><q>
+ *     For every feature in a feature collection (path /collections/{collectionId}), the
+ *     server SHALL support the HTTP GET operation at the path
+ *     /collections/{collectionId}/items/{featureId}.
+ *     </q><i><small><a href="https://docs.ogc.org/is/17-069r4/17-069r4.html#_feature_"> OGC API - Features - Part 1: Core - Feature</a></small></i>
+ * </blockquote>
+ *
+ * <p>Also reused as-is by OGC API - EDR's {@code Locations} query, which is defined in terms of
+ * this same resource.</p>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -34,25 +41,29 @@ public final class GetItem extends RequestParameters {
     private String f;
 
     /**
-     * Local identifier of the collection.
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetItem collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -60,25 +71,28 @@ public final class GetItem extends RequestParameters {
     }
 
     /**
-     * Local identifier of the item.
-     *
-     * @return the itemId
+     * @see #itemId(java.lang.String)
      */
     public String getItemId() {
         return itemId;
     }
 
     /**
-     * @param itemId the itemId to set
-     * @see #getItemId()
+     * @see #itemId(java.lang.String)
      */
     public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
     /**
-     * @param itemId the itemId to set
-     * @see #getItemId()
+     * <blockquote><q>
+     *     local identifier of a feature
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/featureId.yaml"> OGC API - Features - Part 1: Core - featureId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetItem itemId(String itemId) {
         setItemId(itemId);
@@ -86,26 +100,31 @@ public final class GetItem extends RequestParameters {
     }
 
     /**
-     * OGC API - Features - Part 2: CRS by Reference. The coordinate reference system of the
-     * response geometry, as a URI. If not given, the default CRS (CRS84) is used. (optional)
-     *
-     * @return the crs
+     * @see #crs(java.lang.String)
      */
     public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * @see #crs(java.lang.String)
      */
     public void setCrs(String crs) {
         this.crs = crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * <blockquote><q>
+     *     Each GET request on a 'features' or 'feature' resource SHALL support a query parameter
+     *     named crs with the following characteristics:
+     *     </q><i><small><a href="https://docs.opengeospatial.org/is/18-058r1/18-058r1.html#_parameter_crs"> OGC API - Features - Part 2: CRS by Reference - Parameter crs</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The coordinate reference system of the response geometry, as a URI.</li>
+     *     <li>Default: CRS84 (or CRS84h) if not specified.</li>
+     * </ul>
      */
     public GetItem crs(String crs) {
         setCrs(crs);
@@ -113,26 +132,29 @@ public final class GetItem extends RequestParameters {
     }
 
     /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
+     * @see #f(java.lang.String)
      */
     public String getF() {
         return f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * @see #f(java.lang.String)
      */
     public void setF(String f) {
         this.f = f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; content negotiation from the {@code Accept} header is used when omitted.</li>
+     * </ul>
      */
     public GetItem f(String f) {
         setF(f);
