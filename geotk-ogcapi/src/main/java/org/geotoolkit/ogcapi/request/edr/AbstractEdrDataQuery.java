@@ -25,6 +25,9 @@ import java.util.List;
  * query type that does not extend this class, since it returns a feature collection of location
  * metadata rather than a coverage, and has no parameter/CRS selection.
  *
+ * <p>As in {@link AbstractEdrQuery}, only plain getters/setters are declared here; each subclass
+ * redeclares its own fluent method per inherited field and links back to the getter below.</p>
+ *
  * @author Quentin Bialota (Geomatys)
  */
 public abstract class AbstractEdrDataQuery extends AbstractEdrQuery {
@@ -34,6 +37,17 @@ public abstract class AbstractEdrDataQuery extends AbstractEdrQuery {
     private String crs;
 
     /**
+     * <blockquote><q>
+     *     Comma delimited list of parameter names (available options are listed in the
+     *     parameter_names section of the collections metadata response)
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-086r6/19-086r6.html#_bbda46d4-04c5-426b-bea3-230d592fe1c2"> OGC API - Environmental Data Retrieval (EDR) - Position query structure</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; all parameters are returned when omitted.</li>
+     * </ul>
+     * <pre>parameter-name=Visibility,Air%20Temperature</pre>
+     *
      * @return the requested parameter names, or {@code null} for all parameters.
      */
     public List<String> getParameterName() {
@@ -49,6 +63,20 @@ public abstract class AbstractEdrDataQuery extends AbstractEdrQuery {
     }
 
     /**
+     * <blockquote><q>
+     *     Coordinate reference system identifier for the coords values and output data
+     *     (available options are listed in the collections metadata response)
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-086r6/19-086r6.html#_bbda46d4-04c5-426b-bea3-230d592fe1c2"> OGC API - Environmental Data Retrieval (EDR) - Position query structure</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; the collection's default CRS is used when omitted.</li>
+     * </ul>
+     * <pre>
+     * crs=EPSG:4326
+     * crs=A_CUSTOM_LABEL
+     * </pre>
+     *
      * @return the coordinate reference system of the response, or {@code null} for the default.
      */
     public String getCrs() {
