@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.sensorthings;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * Delete an existing entity, e.g. {@code DELETE /v1.1/Things(1)}.
- *
- * <p>OGC SensorThings API Part 1: Sensing, section 10.5 (delete entity).</p>
+ * <blockquote><q>
+ *     A successful DELETE request to an entity’s edit URL deletes the entity. The request body
+ *     SHOULD be empty.
+ *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#_request_3"> OGC SensorThings API Part 1: Sensing - 10.4.1 Request</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -31,25 +33,30 @@ public final class DeleteEntity extends RequestParameters {
     private Object id;
 
     /**
-     * The OData entity-set name, e.g. {@code "Things"}. (required)
-     *
-     * @return the entitySet
+     * @see #entitySet(java.lang.String)
      */
     public String getEntitySet() {
         return entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * @see #entitySet(java.lang.String)
      */
     public void setEntitySet(String entitySet) {
         this.entitySet = entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * <blockquote><q>
+     *     To address to an entity set, users can simply put the entity set name after the
+     *     service root URI.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-collection-entities"> OGC SensorThings API Part 1: Sensing - Usage 2: address to a collection of entities</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>E.g. {@code "Things"}.</li>
+     * </ul>
      */
     public DeleteEntity entitySet(String entitySet) {
         setEntitySet(entitySet);
@@ -57,25 +64,31 @@ public final class DeleteEntity extends RequestParameters {
     }
 
     /**
-     * The {@code @iot.id} of the entity to delete. (required)
-     *
-     * @return the id
+     * @see #id(java.lang.Object)
      */
     public Object getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.lang.Object)
      */
     public void setId(Object id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     Users can address to a specific entity in an entity set by place the unique identifier
+     *     of the entity between brace symbol “()” and put after the entity set name.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-entity"> OGC SensorThings API Part 1: Sensing - Usage 3: address to an entity in a collection</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The {@code @iot.id} of the entity to delete.</li>
+     * </ul>
+     * <pre>http://example.org/v1.1/Things(1)</pre>
      */
     public DeleteEntity id(Object id) {
         setId(id);

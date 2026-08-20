@@ -19,11 +19,12 @@ package org.geotoolkit.ogcapi.request.sensorthings;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * List the entities of an entity set, e.g. {@code GET /v1.1/Things} or, nested under a parent
- * entity, {@code GET /v1.1/Things(1)/Datastreams}.
- *
- * <p>OGC SensorThings API Part 1: Sensing, section 9 (resource path) and section 10.2 (query
- * options).</p>
+ * <blockquote><q>
+ *     To address to an entity set, users can simply put the entity set name after the service
+ *     root URI. The value of the property SHALL be a list of the entities in the specified
+ *     entity set.
+ *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-collection-entities"> OGC SensorThings API Part 1: Sensing - Usage 2: address to a collection of entities</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -42,25 +43,31 @@ public final class GetEntities extends RequestParameters {
     private String resultFormat;
 
     /**
-     * The OData entity-set name to list, e.g. {@code "Things"}. (required)
-     *
-     * @return the entitySet
+     * @see #entitySet(java.lang.String)
      */
     public String getEntitySet() {
         return entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * @see #entitySet(java.lang.String)
      */
     public void setEntitySet(String entitySet) {
         this.entitySet = entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * <blockquote><q>
+     *     To address to an entity set, users can simply put the entity set name after the
+     *     service root URI.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-collection-entities"> OGC SensorThings API Part 1: Sensing - Usage 2: address to a collection of entities</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The OData entity-set name to list, e.g. {@code "Things"}.</li>
+     * </ul>
+     * <pre>http://example.org/v1.1/ObservedProperties</pre>
      */
     public GetEntities entitySet(String entitySet) {
         setEntitySet(entitySet);
@@ -68,26 +75,30 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The entity set of the parent entity, when listing a navigation property, e.g.
-     * {@code "Things"} for {@code Things(1)/Datastreams}. (optional)
-     *
-     * @return the parentEntitySet
+     * @see #parentEntitySet(java.lang.String)
      */
     public String getParentEntitySet() {
         return parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * @see #parentEntitySet(java.lang.String)
      */
     public void setParentEntitySet(String parentEntitySet) {
         this.parentEntitySet = parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * <blockquote><q>
+     *     As the entities in different entity sets may hold some relationships, users can
+     *     request the linked entities by addressing to a navigation property of an entity.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-navigation-property"> OGC SensorThings API Part 1: Sensing - Usage 6: address to a navigation property (navigationLink)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; set together with {@code parentId} to list a navigation property.</li>
+     *     <li>E.g. {@code "Things"} for {@code Things(1)/Datastreams}.</li>
+     * </ul>
      */
     public GetEntities parentEntitySet(String parentEntitySet) {
         setParentEntitySet(parentEntitySet);
@@ -95,25 +106,30 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The id of the parent entity, when listing a navigation property. (optional)
-     *
-     * @return the parentId
+     * @see #parentId(java.lang.Object)
      */
     public Object getParentId() {
         return parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * @see #parentId(java.lang.Object)
      */
     public void setParentId(Object parentId) {
         this.parentId = parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * <blockquote><q>
+     *     As the entities in different entity sets may hold some relationships, users can
+     *     request the linked entities by addressing to a navigation property of an entity.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-navigation-property"> OGC SensorThings API Part 1: Sensing - Usage 6: address to a navigation property (navigationLink)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; the {@code @iot.id} of the parent entity.</li>
+     * </ul>
+     * <pre>http://example.org/v1.1/Datastreams(1)/Observations</pre>
      */
     public GetEntities parentId(Object parentId) {
         setParentId(parentId);
@@ -121,26 +137,32 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $filter} OData query option. Sent as-is to the server, not parsed client-side.
-     * (optional)
-     *
-     * @return the filter
+     * @see #filter(java.lang.String)
      */
     public String getFilter() {
         return filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * @see #filter(java.lang.String)
      */
     public void setFilter(String filter) {
         this.filter = filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * <blockquote><q>
+     *     The $filter system query option allows clients to filter a collection of entities
+     *     that are addressed by a request URL. The expression specified with $filter is
+     *     evaluated for each entity in the collection, and only items where the expression
+     *     evaluates to true SHALL be included in the response.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#filter"> OGC SensorThings API Part 1: Sensing - 9.3.3.5 $filter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. Sent as-is to the server, not parsed client-side.</li>
+     * </ul>
+     * <pre>$filter=result lt 10.00</pre>
      */
     public GetEntities filter(String filter) {
         setFilter(filter);
@@ -148,26 +170,31 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $expand} OData query option, e.g. {@code "Datastreams($select=name)"}. Sent
-     * as-is to the server. (optional)
-     *
-     * @return the expand
+     * @see #expand(java.lang.String)
      */
     public String getExpand() {
         return expand;
     }
 
     /**
-     * @param expand the expand to set
-     * @see #getExpand()
+     * @see #expand(java.lang.String)
      */
     public void setExpand(String expand) {
         this.expand = expand;
     }
 
     /**
-     * @param expand the expand to set
-     * @see #getExpand()
+     * <blockquote><q>
+     *     The $expand system query option indicates the related entities to be represented
+     *     inline. The value of the $expand query option SHALL be a comma separated list of
+     *     navigation property names.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#expand"> OGC SensorThings API Part 1: Sensing - 9.3.2.1 $expand</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. Sent as-is to the server.</li>
+     * </ul>
+     * <pre>$expand=Datastreams</pre>
      */
     public GetEntities expand(String expand) {
         setExpand(expand);
@@ -175,26 +202,31 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $select} OData query option, a comma-separated list of property names.
-     * (optional)
-     *
-     * @return the select
+     * @see #select(java.lang.String)
      */
     public String getSelect() {
         return select;
     }
 
     /**
-     * @param select the select to set
-     * @see #getSelect()
+     * @see #select(java.lang.String)
      */
     public void setSelect(String select) {
         this.select = select;
     }
 
     /**
-     * @param select the select to set
-     * @see #getSelect()
+     * <blockquote><q>
+     *     The $select system query option requests the service to return only the properties
+     *     explicitly requested by the client. The value of a $select query option SHALL be a
+     *     comma-separated list of selection clauses.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#select4"> OGC SensorThings API Part 1: Sensing - 9.3.2.2 $select</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>$select=result,resultTime</pre>
      */
     public GetEntities select(String select) {
         setSelect(select);
@@ -202,26 +234,34 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $orderby} OData query option, e.g. {@code "phenomenonTime desc"}. Sent as-is to
-     * the server. (optional)
-     *
-     * @return the orderby
+     * @see #orderby(java.lang.String)
      */
     public String getOrderby() {
         return orderby;
     }
 
     /**
-     * @param orderby the orderby to set
-     * @see #getOrderby()
+     * @see #orderby(java.lang.String)
      */
     public void setOrderby(String orderby) {
         this.orderby = orderby;
     }
 
     /**
-     * @param orderby the orderby to set
-     * @see #getOrderby()
+     * <blockquote><q>
+     *     The $orderby system query option specifies the order in which items are returned
+     *     from the service. The value of the $orderby system query option SHALL contain a
+     *     comma-separated list of expressions whose primitive result values are used to sort
+     *     the items.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#orderby"> OGC SensorThings API Part 1: Sensing - 9.3.3.1 $orderby</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. Sent as-is to the server.</li>
+     *     <li>Default sort order is ascending; each expression may be suffixed with
+     *     {@code asc} or {@code desc}.</li>
+     * </ul>
+     * <pre>$orderby=result</pre>
      */
     public GetEntities orderby(String orderby) {
         setOrderby(orderby);
@@ -229,25 +269,32 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $top} OData query option: the maximum number of entities to return. (optional)
-     *
-     * @return the top
+     * @see #top(java.lang.Integer)
      */
     public Integer getTop() {
         return top;
     }
 
     /**
-     * @param top the top to set
-     * @see #getTop()
+     * @see #top(java.lang.Integer)
      */
     public void setTop(Integer top) {
         this.top = top;
     }
 
     /**
-     * @param top the top to set
-     * @see #getTop()
+     * <blockquote><q>
+     *     The $top system query option specifies the limit on the number of items returned
+     *     from a collection of entities. The value of the $top system query option SHALL be a
+     *     non-negative integer n.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#top"> OGC SensorThings API Part 1: Sensing - 9.3.3.2 $top</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Non-negative integer; the maximum number of entities to return.</li>
+     * </ul>
+     * <pre>$top=5</pre>
      */
     public GetEntities top(Integer top) {
         setTop(top);
@@ -255,25 +302,32 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $skip} OData query option: the number of entities to skip. (optional)
-     *
-     * @return the skip
+     * @see #skip(java.lang.Integer)
      */
     public Integer getSkip() {
         return skip;
     }
 
     /**
-     * @param skip the skip to set
-     * @see #getSkip()
+     * @see #skip(java.lang.Integer)
      */
     public void setSkip(Integer skip) {
         this.skip = skip;
     }
 
     /**
-     * @param skip the skip to set
-     * @see #getSkip()
+     * <blockquote><q>
+     *     The $skip system query option specifies the number for the items of the queried
+     *     collection that SHALL be excluded from the result. The value of $skip system query
+     *     option SHALL be a non-negative integer n.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#skip"> OGC SensorThings API Part 1: Sensing - 9.3.3.3 $skip</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Non-negative integer; the number of entities to skip.</li>
+     * </ul>
+     * <pre>$skip=5</pre>
      */
     public GetEntities skip(Integer skip) {
         setSkip(skip);
@@ -281,26 +335,33 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $count} OData query option: if {@code true}, the response includes the total
-     * number of matching entities as {@code @iot.count}. (optional)
-     *
-     * @return the count
+     * @see #count(java.lang.Boolean)
      */
     public Boolean getCount() {
         return count;
     }
 
     /**
-     * @param count the count to set
-     * @see #getCount()
+     * @see #count(java.lang.Boolean)
      */
     public void setCount(Boolean count) {
         this.count = count;
     }
 
     /**
-     * @param count the count to set
-     * @see #getCount()
+     * <blockquote><q>
+     *     The $count system query option with a value of true specifies that the total count
+     *     of items within a collection matching the request SHALL be returned along with the
+     *     result.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#count"> OGC SensorThings API Part 1: Sensing - 9.3.3.4 $count</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>If {@code true}, the response includes the total number of matching entities as
+     *     {@code @iot.count}.</li>
+     * </ul>
+     * <pre>$count=true</pre>
      */
     public GetEntities count(Boolean count) {
         setCount(count);
@@ -308,27 +369,32 @@ public final class GetEntities extends RequestParameters {
     }
 
     /**
-     * The {@code $resultFormat} OData query option, e.g. {@code "dataArray"} for the compact
-     * Observation array encoding. Passed through as-is; the compact response shape itself is not
-     * specially modeled by this client. (optional)
-     *
-     * @return the resultFormat
+     * @see #resultFormat(java.lang.String)
      */
     public String getResultFormat() {
         return resultFormat;
     }
 
     /**
-     * @param resultFormat the resultFormat to set
-     * @see #getResultFormat()
+     * @see #resultFormat(java.lang.String)
      */
     public void setResultFormat(String resultFormat) {
         this.resultFormat = resultFormat;
     }
 
     /**
-     * @param resultFormat the resultFormat to set
-     * @see #getResultFormat()
+     * <blockquote><q>
+     *     In order to request for dataArray, users must include the query option
+     *     $resultFormat=dataArray when requesting Observation entities.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#_request_4"> OGC SensorThings API Part 1: Sensing - 13.1.1 Request (dataArray extension)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Passed through as-is; the compact dataArray response shape itself is not
+     *     specially modeled by this client.</li>
+     * </ul>
+     * <pre>$resultFormat=dataArray</pre>
      */
     public GetEntities resultFormat(String resultFormat) {
         setResultFormat(resultFormat);

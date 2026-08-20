@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.sensorthings;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * Retrieve a single entity by id, e.g. {@code GET /v1.1/Things(1)}.
- *
- * <p>OGC SensorThings API Part 1: Sensing, section 9 (resource path).</p>
+ * <blockquote><q>
+ *     Users can address to a specific entity in an entity set by place the unique identifier of
+ *     the entity between brace symbol “()” and put after the entity set name.
+ *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-entity"> OGC SensorThings API Part 1: Sensing - Usage 3: address to an entity in a collection</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -35,25 +37,30 @@ public final class GetEntity extends RequestParameters {
     private String expand;
 
     /**
-     * The OData entity-set name, e.g. {@code "Things"}. (required)
-     *
-     * @return the entitySet
+     * @see #entitySet(java.lang.String)
      */
     public String getEntitySet() {
         return entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * @see #entitySet(java.lang.String)
      */
     public void setEntitySet(String entitySet) {
         this.entitySet = entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * <blockquote><q>
+     *     To address to an entity set, users can simply put the entity set name after the
+     *     service root URI.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-collection-entities"> OGC SensorThings API Part 1: Sensing - Usage 2: address to a collection of entities</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>E.g. {@code "Things"}.</li>
+     * </ul>
      */
     public GetEntity entitySet(String entitySet) {
         setEntitySet(entitySet);
@@ -61,25 +68,31 @@ public final class GetEntity extends RequestParameters {
     }
 
     /**
-     * The {@code @iot.id} of the entity to retrieve. (required)
-     *
-     * @return the id
+     * @see #id(java.lang.Object)
      */
     public Object getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.lang.Object)
      */
     public void setId(Object id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     Users can address to a specific entity in an entity set by place the unique identifier
+     *     of the entity between brace symbol “()” and put after the entity set name.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-entity"> OGC SensorThings API Part 1: Sensing - Usage 3: address to an entity in a collection</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The {@code @iot.id} of the entity to retrieve.</li>
+     * </ul>
+     * <pre>http://example.org/v1.1/Things(1)</pre>
      */
     public GetEntity id(Object id) {
         setId(id);
@@ -87,25 +100,30 @@ public final class GetEntity extends RequestParameters {
     }
 
     /**
-     * The entity set of the parent entity, when retrieving a navigation property. (optional)
-     *
-     * @return the parentEntitySet
+     * @see #parentEntitySet(java.lang.String)
      */
     public String getParentEntitySet() {
         return parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * @see #parentEntitySet(java.lang.String)
      */
     public void setParentEntitySet(String parentEntitySet) {
         this.parentEntitySet = parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * <blockquote><q>
+     *     As the entities in different entity sets may hold some relationships, users can
+     *     request the linked entities by addressing to a navigation property of an entity.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-navigation-property"> OGC SensorThings API Part 1: Sensing - Usage 6: address to a navigation property (navigationLink)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; set together with {@code parentId} to retrieve a navigation property.</li>
+     *     <li>E.g. {@code "Things"} for {@code Things(1)/Datastreams}.</li>
+     * </ul>
      */
     public GetEntity parentEntitySet(String parentEntitySet) {
         setParentEntitySet(parentEntitySet);
@@ -113,25 +131,30 @@ public final class GetEntity extends RequestParameters {
     }
 
     /**
-     * The id of the parent entity, when retrieving a navigation property. (optional)
-     *
-     * @return the parentId
+     * @see #parentId(java.lang.Object)
      */
     public Object getParentId() {
         return parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * @see #parentId(java.lang.Object)
      */
     public void setParentId(Object parentId) {
         this.parentId = parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * <blockquote><q>
+     *     As the entities in different entity sets may hold some relationships, users can
+     *     request the linked entities by addressing to a navigation property of an entity.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#usage-address-navigation-property"> OGC SensorThings API Part 1: Sensing - Usage 6: address to a navigation property (navigationLink)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; the {@code @iot.id} of the parent entity.</li>
+     * </ul>
+     * <pre>http://example.org/v1.1/Datastreams(1)/Observations</pre>
      */
     public GetEntity parentId(Object parentId) {
         setParentId(parentId);
@@ -139,26 +162,32 @@ public final class GetEntity extends RequestParameters {
     }
 
     /**
-     * The {@code $select} OData query option, a comma-separated list of property names.
-     * (optional)
-     *
-     * @return the select
+     * @see #select(java.lang.String)
      */
     public String getSelect() {
         return select;
     }
 
     /**
-     * @param select the select to set
-     * @see #getSelect()
+     * @see #select(java.lang.String)
      */
     public void setSelect(String select) {
         this.select = select;
     }
 
     /**
-     * @param select the select to set
-     * @see #getSelect()
+     * <blockquote><q>
+     *     The $select system query option requests the service to return only the properties
+     *     explicitly requested by the client. The value of a $select query option SHALL be a
+     *     comma-separated list of selection clauses.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#select4"> OGC SensorThings API Part 1: Sensing - 9.3.2.2 $select</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Comma-separated list of property names (including navigation property names).</li>
+     * </ul>
+     * <pre>$select=result,resultTime</pre>
      */
     public GetEntity select(String select) {
         setSelect(select);
@@ -166,25 +195,30 @@ public final class GetEntity extends RequestParameters {
     }
 
     /**
-     * The {@code $expand} OData query option. Sent as-is to the server. (optional)
-     *
-     * @return the expand
+     * @see #expand(java.lang.String)
      */
     public String getExpand() {
         return expand;
     }
 
     /**
-     * @param expand the expand to set
-     * @see #getExpand()
+     * @see #expand(java.lang.String)
      */
     public void setExpand(String expand) {
         this.expand = expand;
     }
 
     /**
-     * @param expand the expand to set
-     * @see #getExpand()
+     * <blockquote><q>
+     *     The $expand system query option indicates the related entities to be represented
+     *     inline.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#expand"> OGC SensorThings API Part 1: Sensing - 9.3.2.1 $expand</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional. Sent as-is to the server.</li>
+     * </ul>
+     * <pre>$expand=Datastreams</pre>
      */
     public GetEntity expand(String expand) {
         setExpand(expand);
