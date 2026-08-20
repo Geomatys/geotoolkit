@@ -14,4 +14,9 @@ sonar:
     - mvn install sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
 
 include:
-  - component: $CI_SERVER_FQDN/amanin/qodana-inspection/qodana-inspection@0.1.1
+  - component: $CI_SERVER_FQDN/amanin/qodana-inspection/qodana-inspection@0.1.2
+
+qodana-inspection:
+  image:
+    kubernetes:
+      user: 1001
