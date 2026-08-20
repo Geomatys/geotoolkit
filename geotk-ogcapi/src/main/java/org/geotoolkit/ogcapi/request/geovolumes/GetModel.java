@@ -19,8 +19,11 @@ package org.geotoolkit.ogcapi.request.geovolumes;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To retrieve a shared 3D model referenced by tiled point features, from the "Tiled points
- * instantiating 3D models" requirements class.
+ * <blockquote><q>
+ *     The server SHALL support retrieving a 3D model for a given model id as an HTTP GET
+ *     request using that link template, typically resolving to  to /collections/{collectionId}/models/{modelID}.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-3d-geovolumes/blob/master/standard/sections/clause_11_points.adoc"> OGC API - 3D GeoVolumes - Tiled points instantiating 3D models</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -29,26 +32,30 @@ public final class GetModel extends RequestParameters {
     private String modelId;
 
     /**
-     * The {@code modelID} property of a tiled point feature obtained by previously having queried the
-     * tile data. (required)
-     *
-     * @return the modelId
+     * @see #modelId(java.lang.String)
      */
     public String getModelId() {
         return modelId;
     }
 
     /**
-     * @param modelId the modelId to set
-     * @see #getModelId()
+     * @see #modelId(java.lang.String)
      */
     public void setModelId(String modelId) {
         this.modelId = modelId;
     }
 
     /**
-     * @param modelId the modelId to set
-     * @see #getModelId()
+     * <blockquote><q>
+     *     Each point tile feature SHALL contain a non-zero 64-bit integer model identifier
+     *     called modelID.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-3d-geovolumes/blob/master/standard/sections/clause_11_points.adoc"> OGC API - 3D GeoVolumes - Tiled points instantiating 3D models</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The model identifier of a tiled point feature obtained by previously having queried the tile data.</li>
+     * </ul>
      */
     public GetModel modelId(String modelId) {
         setModelId(modelId);
