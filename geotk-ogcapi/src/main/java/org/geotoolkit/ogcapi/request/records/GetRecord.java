@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.records;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code items/{recordId}} query ({@code /collections/{collectionId}/items/{recordId}}).
- *
- * <p>OGC API - Records Part 1: Core.</p>
+ * <blockquote><q>
+ *     For every record in a catalog the server SHALL support the HTTP GET operation at the
+ *     /collection/{collectionId}/items/{recordId} path.
+ *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#req_records-api_record-op"> OGC API - Records - Part 1: Core - Record</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -33,25 +35,29 @@ public final class GetRecord extends RequestParameters {
     private String f;
 
     /**
-     * Local identifier of the catalog. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetRecord collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -59,25 +65,29 @@ public final class GetRecord extends RequestParameters {
     }
 
     /**
-     * Local identifier of the record. (required)
-     *
-     * @return the recordId
+     * @see #recordId(java.lang.String)
      */
     public String getRecordId() {
         return recordId;
     }
 
     /**
-     * @param recordId the recordId to set
-     * @see #getRecordId()
+     * @see #recordId(java.lang.String)
      */
     public void setRecordId(String recordId) {
         this.recordId = recordId;
     }
 
     /**
-     * @param recordId the recordId to set
-     * @see #getRecordId()
+     * <blockquote><q>
+     *     A unique identifier of the catalog record.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#req_records-api_record-response"> OGC API - Records - Part 1: Core - record schema</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Local identifier of the record within the catalog.</li>
+     * </ul>
      */
     public GetRecord recordId(String recordId) {
         setRecordId(recordId);
@@ -85,26 +95,30 @@ public final class GetRecord extends RequestParameters {
     }
 
     /**
-     * The coordinate reference system of the response geometry, as a URI. If not given, the
-     * default CRS (CRS84) is used. (optional)
-     *
-     * @return the crs
+     * @see #crs(java.lang.String)
      */
     public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * @see #crs(java.lang.String)
      */
     public void setCrs(String crs) {
         this.crs = crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * <blockquote><q>
+     *     Each GET request on a 'features' or 'feature' resource SHALL support a query
+     *     parameter named crs with the following characteristics:
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-058r1/18-058r1.html#req_crs_fc-crs-definition"> OGC API - Features - Part 2: Coordinate Reference Systems by Reference</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Default: {@code http://www.opengis.net/def/crs/OGC/1.3/CRS84} (CRS84) if not specified.</li>
+     * </ul>
      */
     public GetRecord crs(String crs) {
         setCrs(crs);
@@ -112,26 +126,31 @@ public final class GetRecord extends RequestParameters {
     }
 
     /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
+     * @see #f(java.lang.String)
      */
     public String getF() {
         return f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * @see #f(java.lang.String)
      */
     public void setF(String f) {
         this.f = f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetRecord f(String f) {
         setF(f);
