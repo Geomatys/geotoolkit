@@ -19,7 +19,10 @@ package org.geotoolkit.ogcapi.request.styles;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To retrieve the stylesheet of a style.
+ * <blockquote><q>
+ *     This operation returns the stylesheet of a style.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_7_core.adoc"> OGC API - Styles - Fetch style</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -30,27 +33,30 @@ public final class GetStyle extends RequestParameters {
     private String format;
 
     /**
-     * Local identifier of a collection. Set to retrieve a style of a single collection
-     * ({@code /collections/{collectionId}/styles/{styleId}}). Leave {@code null} to retrieve a style
-     * of the whole dataset ({@code /styles/{styleId}}). (optional)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Set to retrieve a style of a single collection ({@code /collections/{collectionId}/styles/{styleId}});
+     *     leave {@code null} to retrieve a style of the whole dataset ({@code /styles/{styleId}}).</li>
+     * </ul>
      */
     public GetStyle collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,26 +64,29 @@ public final class GetStyle extends RequestParameters {
     }
 
     /**
-     * The {@code id} property of a style obtained by previously having queried the Styles resource.
-     * (required)
-     *
-     * @return the styleId
+     * @see #styleId(java.lang.String)
      */
     public String getStyleId() {
         return styleId;
     }
 
     /**
-     * @param styleId the styleId to set
-     * @see #getStyleId()
+     * @see #styleId(java.lang.String)
      */
     public void setStyleId(String styleId) {
         this.styleId = styleId;
     }
 
     /**
-     * @param styleId the styleId to set
-     * @see #getStyleId()
+     * <blockquote><q>
+     *     The parameter styleId SHALL be the id property of a style obtained by previously
+     *     having queried the Styles resource (i.e., responses to GET requests to {baseResource}/styles).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_8_manage_styles.adoc"> OGC API - Styles - Style resource endpoints</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetStyle styleId(String styleId) {
         setStyleId(styleId);
@@ -85,27 +94,30 @@ public final class GetStyle extends RequestParameters {
     }
 
     /**
-     * The style encoding to retrieve when several are available for the style (e.g. {@code mapbox},
-     * {@code sld10}, {@code sld11}). If no value is provided, the accept header is used to determine
-     * the encoding. (optional)
-     *
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The format of the style response (e.g. CartoSym-CSS). Accepted values are 'sld',
+     *     'mbgl', 'cscss' or 'csjson'
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/openapi/parameters/unspecified/f-style.yaml"> OGC API - Styles - f parameter (style encoding)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; if not provided, the accept header is used to determine the encoding.</li>
+     *     <li>Allowed values: {@code sld}, {@code mbgl}, {@code cscss}, {@code csjson}.</li>
+     * </ul>
      */
     public GetStyle format(String format) {
         setFormat(format);

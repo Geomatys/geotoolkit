@@ -19,8 +19,11 @@ package org.geotoolkit.ogcapi.request.styles;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To retrieve the list of styles currently available for a base resource (the dataset, or a
- * collection).
+ * <blockquote><q>
+ *     This operation returns a list of styles that are currently available for the base
+ *     resource.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_7_core.adoc"> OGC API - Styles - Fetch styles</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -30,27 +33,30 @@ public final class GetStylesList extends RequestParameters {
     private String format;
 
     /**
-     * Local identifier of a collection. Set to retrieve the styles of a single collection
-     * ({@code /collections/{collectionId}/styles}). Leave {@code null} to retrieve the styles of the
-     * whole dataset ({@code /styles}). (optional)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Set to retrieve the styles of a single collection ({@code /collections/{collectionId}/styles});
+     *     leave {@code null} to retrieve the styles of the whole dataset ({@code /styles}).</li>
+     * </ul>
      */
     public GetStylesList collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,26 +64,30 @@ public final class GetStylesList extends RequestParameters {
     }
 
     /**
-     * The format of the response. If no value is provided, the accept header is used to determine the
-     * format. (optional)
-     *
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @param format the format to set
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The format of the response. If no value is provided, the accept header is used to
+     *     determine the format. Accepted values are 'json' or 'html'.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/openapi/parameters/unspecified/f-metadata.yaml"> OGC API - Styles - f parameter (styles list format)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     * </ul>
      */
     public GetStylesList format(String format) {
         setFormat(format);
