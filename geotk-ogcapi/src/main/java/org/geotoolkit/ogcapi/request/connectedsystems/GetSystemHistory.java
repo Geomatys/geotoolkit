@@ -20,10 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /systems/{systemId}/history}: lists the historical revisions
- * of a System.
+ * <blockquote><q>
+ *     List or search historized descriptions of the parent system.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/systemHistory.yaml"> OGC API - Connected Systems - Part 2 (draft) - List system description history</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetSystemHistory extends RequestParameters {
@@ -34,25 +35,29 @@ public final class GetSystemHistory extends RequestParameters {
     private Integer limit;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetSystemHistory systemId(String systemId) {
         setSystemId(systemId);
@@ -60,25 +65,30 @@ public final class GetSystemHistory extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the validity time. (optional)
-     *
-     * @return the validTime
+     * @see #validTime(java.lang.String)
      */
     public String getValidTime() {
         return validTime;
     }
 
     /**
-     * @param validTime the validTime to set
-     * @see #getValidTime()
+     * @see #validTime(java.lang.String)
      */
     public void setValidTime(String validTime) {
         this.validTime = validTime;
     }
 
     /**
-     * @param validTime the validTime to set
-     * @see #getValidTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/validTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - validTime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code validTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetSystemHistory validTime(String validTime) {
         setValidTime(validTime);
@@ -86,25 +96,30 @@ public final class GetSystemHistory extends RequestParameters {
     }
 
     /**
-     * Free-text search on the resource's textual properties. (optional)
-     *
-     * @return the q
+     * @see #q(java.util.List)
      */
     public List<String> getQ() {
         return q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * @see #q(java.util.List)
      */
     public void setQ(List<String> q) {
         this.q = q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 (draft) - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetSystemHistory q(List<String> q) {
         setQ(q);
@@ -112,25 +127,31 @@ public final class GetSystemHistory extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 (draft) - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetSystemHistory limit(Integer limit) {
         setLimit(limit);

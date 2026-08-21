@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /observations/{obsId}}: retrieves a single Observation
- * resource.
+ * <blockquote><q>
+ *     Get an observation by ID
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/observationById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Get an observation</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetObservation extends RequestParameters {
@@ -30,25 +31,28 @@ public final class GetObservation extends RequestParameters {
     private String obsId;
 
     /**
-     * Local identifier of the observation. (required)
-     *
-     * @return the obsId
+     * @see #obsId(java.lang.String)
      */
     public String getObsId() {
         return obsId;
     }
 
     /**
-     * @param obsId the obsId to set
-     * @see #getObsId()
+     * @see #obsId(java.lang.String)
      */
     public void setObsId(String obsId) {
         this.obsId = obsId;
     }
 
     /**
-     * @param obsId the obsId to set
-     * @see #getObsId()
+     * <blockquote><q>
+     *     Local identifier of an Observation
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/obsId.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - obsId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetObservation obsId(String obsId) {
         setObsId(obsId);

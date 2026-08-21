@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /systems/{systemId}}: deletes a System feature resource.
+ * <blockquote><q>
+ *     This will delete the system and remove it from all collections it is associated to.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/systemById.yaml"> OGC API - Connected Systems - Part 1 (draft) - Delete a system</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteSystem extends RequestParameters {
@@ -30,25 +32,29 @@ public final class DeleteSystem extends RequestParameters {
     private Boolean cascade;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public DeleteSystem systemId(String systemId) {
         setSystemId(systemId);
@@ -56,25 +62,31 @@ public final class DeleteSystem extends RequestParameters {
     }
 
     /**
-     * If {@code true}, related resources are deleted as well. (optional)
-     *
-     * @return the cascade
+     * @see #cascade(java.lang.Boolean)
      */
     public Boolean getCascade() {
         return cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * @see #cascade(java.lang.Boolean)
      */
     public void setCascade(Boolean cascade) {
         this.cascade = cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * <blockquote><q>
+     *     If set to true, dependent resources are also deleted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/cascade.yaml"> OGC API - Connected Systems - Part 1 (draft) - cascade parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>By default, the server rejects deletion of a System resource that has nested
+     *     resources (subsystems, sampling features, datastreams, control streams) or is
+     *     associated with a deployment.</li>
+     * </ul>
      */
     public DeleteSystem cascade(Boolean cascade) {
         setCascade(cascade);

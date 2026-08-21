@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /systems/{systemId}/history/{revId}}: retrieves a single
- * historical revision of a System.
+ * <blockquote><q>
+ *     This will return a specific revision of a system description, given its ID.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/systemHistoryById.yaml"> OGC API - Connected Systems - Part 2 (draft) - Get a system description revision by ID</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetSystemHistoryRevision extends RequestParameters {
@@ -31,25 +32,29 @@ public final class GetSystemHistoryRevision extends RequestParameters {
     private String revId;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetSystemHistoryRevision systemId(String systemId) {
         setSystemId(systemId);
@@ -57,25 +62,29 @@ public final class GetSystemHistoryRevision extends RequestParameters {
     }
 
     /**
-     * Identifier of the historical revision. (required)
-     *
-     * @return the revId
+     * @see #revId(java.lang.String)
      */
     public String getRevId() {
         return revId;
     }
 
     /**
-     * @param revId the revId to set
-     * @see #getRevId()
+     * @see #revId(java.lang.String)
      */
     public void setRevId(String revId) {
         this.revId = revId;
     }
 
     /**
-     * @param revId the revId to set
-     * @see #getRevId()
+     * <blockquote><q>
+     *     Local identifier of a historical revision
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/revId.yaml"> OGC API - Connected Systems - Part 2 (draft) - revId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetSystemHistoryRevision revId(String revId) {
         setRevId(revId);

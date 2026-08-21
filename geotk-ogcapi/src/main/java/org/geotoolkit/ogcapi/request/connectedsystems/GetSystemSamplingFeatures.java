@@ -21,10 +21,11 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 import org.opengis.geometry.Envelope;
 
 /**
- * The {@code GET} operation on {@code /systems/{systemId}/samplingFeatures}: lists the Sampling
- * Features associated with a System.
+ * <blockquote><q>
+ *     List or search all `Sampling Feature` resources associated to a specific system.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/systemSamplingFeatures.yaml"> OGC API - Connected Systems - Part 1 (draft) - List sampling features of a specific system</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetSystemSamplingFeatures extends RequestParameters {
@@ -41,25 +42,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     private Integer limit;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures systemId(String systemId) {
         setSystemId(systemId);
@@ -67,25 +72,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources with one of the given identifiers are selected. (optional)
-     *
-     * @return the id
+     * @see #id(java.util.List)
      */
     public List<String> getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.util.List)
      */
     public void setId(List<String> id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have an identifier that matches one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/idList.yaml"> OGC API - Connected Systems - Part 1 (draft) - id parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures id(List<String> id) {
         setId(id);
@@ -93,27 +102,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources that have a geometry that intersects the bounding box are selected. The bounding
-     * box coordinate reference system is derived from this envelope's own coordinate reference system.
-     * (optional)
-     *
-     * @return the bbox
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public Envelope getBbox() {
         return bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public void setBbox(Envelope bbox) {
         this.bbox = bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * <blockquote><q>
+     *     Only features that have a geometry that intersects the bounding box are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/bbox.yaml"> OGC API - Connected Systems - Part 1 (draft) - bbox parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The coordinate reference system is derived from this envelope's own CRS.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures bbox(Envelope bbox) {
         setBbox(bbox);
@@ -121,25 +132,30 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/datetime.yaml"> OGC API - Connected Systems - Part 1 (draft) - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a temporal property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures datetime(String datetime) {
         setDatetime(datetime);
@@ -147,25 +163,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * A WKT geometry used to spatially filter the selected resources. (optional)
-     *
-     * @return the geom
+     * @see #geom(java.lang.String)
      */
     public String getGeom() {
         return geom;
     }
 
     /**
-     * @param geom the geom to set
-     * @see #getGeom()
+     * @see #geom(java.lang.String)
      */
     public void setGeom(String geom) {
         this.geom = geom;
     }
 
     /**
-     * @param geom the geom to set
-     * @see #getGeom()
+     * <blockquote><q>
+     *     Only resources that have a geometry that matches the spatial predicate are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/geom.yaml"> OGC API - Connected Systems - Part 1 (draft) - geom parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>A WKT geometry.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures geom(String geom) {
         setGeom(geom);
@@ -173,25 +193,30 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources that match one of the given keywords are selected. (optional)
-     *
-     * @return the keyword
+     * @see #keyword(java.util.List)
      */
     public List<String> getKeyword() {
         return keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * @see #keyword(java.util.List)
      */
     public void setKeyword(List<String> keyword) {
         this.keyword = keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 (draft) - keyword parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetSystemSamplingFeatures keyword(List<String> keyword) {
         setKeyword(keyword);
@@ -199,25 +224,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given features of interest are selected. (optional)
-     *
-     * @return the foi
+     * @see #foi(java.util.List)
      */
     public List<String> getFoi() {
         return foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * @see #foi(java.util.List)
      */
     public void setFoi(List<String> foi) {
         this.foi = foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * <blockquote><q>
+     *     List of feature of interest local IDs or unique IDs (URI).
+     *     Only resources associated to a Feature of Interest that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/foiIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - foi parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures foi(List<String> foi) {
         setFoi(foi);
@@ -225,25 +254,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources that observe one of the given properties are selected. (optional)
-     *
-     * @return the observedProperty
+     * @see #observedProperty(java.util.List)
      */
     public List<String> getObservedProperty() {
         return observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * @see #observedProperty(java.util.List)
      */
     public void setObservedProperty(List<String> observedProperty) {
         this.observedProperty = observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * <blockquote><q>
+     *     List of observed property local IDs or unique IDs (URI).
+     *     Only resources that are associated to an observed property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/obsPropIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - observedProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures observedProperty(List<String> observedProperty) {
         setObservedProperty(observedProperty);
@@ -251,25 +284,29 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * Only resources that control one of the given properties are selected. (optional)
-     *
-     * @return the controlledProperty
+     * @see #controlledProperty(java.util.List)
      */
     public List<String> getControlledProperty() {
         return controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * @see #controlledProperty(java.util.List)
      */
     public void setControlledProperty(List<String> controlledProperty) {
         this.controlledProperty = controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * <blockquote><q>
+     *     List of controlled property local IDs or unique IDs (URI).
+     *     Only resources that are associated to a controlled property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/controlPropIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - controlledProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures controlledProperty(List<String> controlledProperty) {
         setControlledProperty(controlledProperty);
@@ -277,25 +314,31 @@ public final class GetSystemSamplingFeatures extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 (draft) - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetSystemSamplingFeatures limit(Integer limit) {
         setLimit(limit);

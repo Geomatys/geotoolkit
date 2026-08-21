@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /procedures/{procedureId}}: deletes a Procedure resource.
+ * <blockquote><q>
+ *     This will delete the procedure and remove it from all collections it is associated to.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/procedureById.yaml"> OGC API - Connected Systems - Part 1: Feature Resources - Procedure by ID (DELETE)</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteProcedure extends RequestParameters {
@@ -29,25 +31,28 @@ public final class DeleteProcedure extends RequestParameters {
     private String procedureId;
 
     /**
-     * Local identifier of the procedure. (required)
-     *
-     * @return the procedureId
+     * @see #procedureId(java.lang.String)
      */
     public String getProcedureId() {
         return procedureId;
     }
 
     /**
-     * @param procedureId the procedureId to set
-     * @see #getProcedureId()
+     * @see #procedureId(java.lang.String)
      */
     public void setProcedureId(String procedureId) {
         this.procedureId = procedureId;
     }
 
     /**
-     * @param procedureId the procedureId to set
-     * @see #getProcedureId()
+     * <blockquote><q>
+     *     Local identifier of a Procedure
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/procedureId.yaml"> OGC API - Connected Systems - Part 1 - procedureId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public DeleteProcedure procedureId(String procedureId) {
         setProcedureId(procedureId);

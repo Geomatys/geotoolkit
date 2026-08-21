@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /datastreams/{dataStreamId}}: retrieves a single DataStream
- * resource.
+ * <blockquote><q>
+ *     Get a datastream by ID
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/dataStreamById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Get a datastream by ID</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetDataStream extends RequestParameters {
@@ -30,25 +31,29 @@ public final class GetDataStream extends RequestParameters {
     private String dataStreamId;
 
     /**
-     * Local identifier of the data stream. (required)
-     *
-     * @return the dataStreamId
+     * @see #dataStreamId(java.lang.String)
      */
     public String getDataStreamId() {
         return dataStreamId;
     }
 
     /**
-     * @param dataStreamId the dataStreamId to set
-     * @see #getDataStreamId()
+     * @see #dataStreamId(java.lang.String)
      */
     public void setDataStreamId(String dataStreamId) {
         this.dataStreamId = dataStreamId;
     }
 
     /**
-     * @param dataStreamId the dataStreamId to set
-     * @see #getDataStreamId()
+     * <blockquote><q>
+     *     Local identifier of a Datastream
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/dataStreamId.yaml"> OGC API - Connected Systems - Part 2 (draft) - dataStreamId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetDataStream dataStreamId(String dataStreamId) {
         setDataStreamId(dataStreamId);

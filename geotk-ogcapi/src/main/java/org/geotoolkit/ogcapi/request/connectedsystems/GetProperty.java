@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /properties/{propId}}: retrieves a single Property
- * definition resource.
+ * <blockquote><q>
+ *     Get a property by ID
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/propertyById.yaml"> OGC API - Connected Systems - Part 1 (draft) - Get a property by ID</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetProperty extends RequestParameters {
@@ -30,25 +31,28 @@ public final class GetProperty extends RequestParameters {
     private String propId;
 
     /**
-     * Local identifier of the property definition. (required)
-     *
-     * @return the propId
+     * @see #propId(java.lang.String)
      */
     public String getPropId() {
         return propId;
     }
 
     /**
-     * @param propId the propId to set
-     * @see #getPropId()
+     * @see #propId(java.lang.String)
      */
     public void setPropId(String propId) {
         this.propId = propId;
     }
 
     /**
-     * @param propId the propId to set
-     * @see #getPropId()
+     * <blockquote><q>
+     *     Local identifier of a Property
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/propId.yaml"> OGC API - Connected Systems - Part 1 (draft) - propId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetProperty propId(String propId) {
         setPropId(propId);

@@ -20,10 +20,11 @@ import org.geotoolkit.ogcapi.request.PreferHandling;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code PUT} operation on {@code /properties/{propId}}: replaces an existing Property
- * definition resource.
+ * <blockquote><q>
+ *     This will completely replace the existing definition of the property with the provided content.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/propertyById.yaml"> OGC API - Connected Systems - Part 1 (draft) - Update a property</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ReplaceProperty extends RequestParameters {
@@ -35,25 +36,28 @@ public final class ReplaceProperty extends RequestParameters {
     private PreferHandling handling;
 
     /**
-     * Local identifier of the property definition. (required)
-     *
-     * @return the propId
+     * @see #propId(java.lang.String)
      */
     public String getPropId() {
         return propId;
     }
 
     /**
-     * @param propId the propId to set
-     * @see #getPropId()
+     * @see #propId(java.lang.String)
      */
     public void setPropId(String propId) {
         this.propId = propId;
     }
 
     /**
-     * @param propId the propId to set
-     * @see #getPropId()
+     * <blockquote><q>
+     *     Local identifier of a Property
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/propId.yaml"> OGC API - Connected Systems - Part 1 (draft) - propId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public ReplaceProperty propId(String propId) {
         setPropId(propId);
@@ -61,25 +65,29 @@ public final class ReplaceProperty extends RequestParameters {
     }
 
     /**
-     * The raw resource document that replaces the existing one. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     The body of the PUT request SHALL contain a representation of the new resource content.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-002r1.html#replace"> OGC API - Features - Part 4: Create, Replace, Update and Delete (draft) - Replacing an existing resource (REPLACE)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The raw resource document that replaces the existing one (e.g. SensorML-JSON).</li>
+     * </ul>
      */
     public ReplaceProperty content(byte[] content) {
         setContent(content);
@@ -87,26 +95,30 @@ public final class ReplaceProperty extends RequestParameters {
     }
 
     /**
-     * The media type of the document encoding, sent as the {@code Content-Type} header (e.g. {@code
-     * application/geo+json}). (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * <blockquote><q>
+     *     The Implementation SHALL infer the media type of the request body containing a
+     *     representation of the new resource content from the Content-Type header.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-002r1.html#replace"> OGC API - Features - Part 4: Create, Replace, Update and Delete (draft) - Replacing an existing resource (REPLACE)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; a {@code 400} error is returned if not provided.</li>
+     *     <li>E.g. {@code application/sml+json}.</li>
+     * </ul>
      */
     public ReplaceProperty contentType(String contentType) {
         setContentType(contentType);
@@ -114,27 +126,29 @@ public final class ReplaceProperty extends RequestParameters {
     }
 
     /**
-     * If {@code true}, the server validates and otherwise processes the request except that no
-     * resource is actually replaced, returning a {@code 204} response on success. (optional, default
-     * to false)
-     *
-     * @return the dryRun
+     * @see #dryRun(java.lang.Boolean)
      */
     public Boolean getDryRun() {
         return dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * @see #dryRun(java.lang.Boolean)
      */
     public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * If {@code true}, the server validates and otherwise processes the request except that no
+     * resource is actually replaced, returning a {@code 204} response on success.
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>Not defined by OGC API - Connected Systems - Part 1 (draft), which has no dry-run
+     *     requirement at the time of writing; this is a server-specific extension (no verbatim
+     *     spec text available for this field).</li>
+     * </ul>
      */
     public ReplaceProperty dryRun(Boolean dryRun) {
         setDryRun(dryRun);
@@ -142,26 +156,28 @@ public final class ReplaceProperty extends RequestParameters {
     }
 
     /**
-     * The {@code Prefer} header preference (RFC 7240 section 4.4) for document validation. Leave
-     * {@code null} to omit the {@code Prefer} header entirely. (optional)
-     *
-     * @return the handling
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public PreferHandling getHandling() {
         return handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public void setHandling(PreferHandling handling) {
         this.handling = handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * The {@code Prefer} header preference (RFC 7240 section 4.4) for document validation.
+     * <br>
+     * <ul>
+     *     <li>Optional; leave {@code null} to omit the {@code Prefer} header entirely.</li>
+     *     <li>Not defined by OGC API - Connected Systems - Part 1 (draft), which does not mention
+     *     the {@code Prefer} header at the time of writing; this is a server-specific extension
+     *     (no verbatim spec text available for this field).</li>
+     * </ul>
      */
     public ReplaceProperty handling(PreferHandling handling) {
         setHandling(handling);

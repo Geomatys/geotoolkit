@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /samplingFeatures/{featureId}}: deletes a Sampling
- * Feature resource.
+ * <blockquote><q>
+ *     This will delete the sampling feature and remove it from all collections it is associated to.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/samplingFeatureById.yaml"> OGC API - Connected Systems - Part 1 (draft) - Delete a sampling feature</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteSamplingFeature extends RequestParameters {
@@ -30,25 +31,28 @@ public final class DeleteSamplingFeature extends RequestParameters {
     private String featureId;
 
     /**
-     * Local identifier of the sampling feature. (required)
-     *
-     * @return the featureId
+     * @see #featureId(java.lang.String)
      */
     public String getFeatureId() {
         return featureId;
     }
 
     /**
-     * @param featureId the featureId to set
-     * @see #getFeatureId()
+     * @see #featureId(java.lang.String)
      */
     public void setFeatureId(String featureId) {
         this.featureId = featureId;
     }
 
     /**
-     * @param featureId the featureId to set
-     * @see #getFeatureId()
+     * <blockquote><q>
+     *     Local identifier of a Feature
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/featureId.yaml"> OGC API - Connected Systems - Part 1 (draft) - featureId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public DeleteSamplingFeature featureId(String featureId) {
         setFeatureId(featureId);

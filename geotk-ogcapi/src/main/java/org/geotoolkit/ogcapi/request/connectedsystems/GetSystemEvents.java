@@ -20,10 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /systems/{systemId}/events}: lists the SystemEvents of a
- * System.
+ * <blockquote><q>
+ *     List or search events about the parent system.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/systemEvents.yaml"> OGC API - Connected Systems - Part 2 (draft) - List events of a specific system</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetSystemEvents extends RequestParameters {
@@ -36,25 +37,29 @@ public final class GetSystemEvents extends RequestParameters {
     private Integer limit;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetSystemEvents systemId(String systemId) {
         setSystemId(systemId);
@@ -62,25 +67,30 @@ public final class GetSystemEvents extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the event time. (optional)
-     *
-     * @return the eventTime
+     * @see #eventTime(java.lang.String)
      */
     public String getEventTime() {
         return eventTime;
     }
 
     /**
-     * @param eventTime the eventTime to set
-     * @see #getEventTime()
+     * @see #eventTime(java.lang.String)
      */
     public void setEventTime(String eventTime) {
         this.eventTime = eventTime;
     }
 
     /**
-     * @param eventTime the eventTime to set
-     * @see #getEventTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/eventTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - eventTime (datetime) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code time} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetSystemEvents eventTime(String eventTime) {
         setEventTime(eventTime);
@@ -88,25 +98,29 @@ public final class GetSystemEvents extends RequestParameters {
     }
 
     /**
-     * Only events of one of the given types are selected. (optional)
-     *
-     * @return the eventType
+     * @see #eventType(java.util.List)
      */
     public List<String> getEventType() {
         return eventType;
     }
 
     /**
-     * @param eventType the eventType to set
-     * @see #getEventType()
+     * @see #eventType(java.util.List)
      */
     public void setEventType(List<String> eventType) {
         this.eventType = eventType;
     }
 
     /**
-     * @param eventType the eventType to set
-     * @see #getEventType()
+     * <blockquote><q>
+     *     List of event types.
+     *     Only event resources with a type that matches one of the provided types are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/eventTypeList.yaml"> OGC API - Connected Systems - Part 2 (draft) - eventType parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemEvents eventType(List<String> eventType) {
         setEventType(eventType);
@@ -114,25 +128,30 @@ public final class GetSystemEvents extends RequestParameters {
     }
 
     /**
-     * Free-text search on the resource's textual properties. (optional)
-     *
-     * @return the q
+     * @see #q(java.util.List)
      */
     public List<String> getQ() {
         return q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * @see #q(java.util.List)
      */
     public void setQ(List<String> q) {
         this.q = q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 (draft) - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetSystemEvents q(List<String> q) {
         setQ(q);
@@ -140,25 +159,29 @@ public final class GetSystemEvents extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given system identifiers are selected. (optional)
-     *
-     * @return the system
+     * @see #system(java.util.List)
      */
     public List<String> getSystem() {
         return system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * @see #system(java.util.List)
      */
     public void setSystem(List<String> system) {
         this.system = system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * <blockquote><q>
+     *     List of system local IDs or unique IDs (URI).
+     *     Only resources that are associated to a System that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - system parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSystemEvents system(List<String> system) {
         setSystem(system);
@@ -166,25 +189,31 @@ public final class GetSystemEvents extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 (draft) - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetSystemEvents limit(Integer limit) {
         setLimit(limit);

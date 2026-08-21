@@ -19,10 +19,13 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code PUT} operation on {@code /controlstreams/{controlStreamId}/schema}: replaces the
- * command/parameter schema of a ControlStream.
+ * <blockquote><q>
+ *     After a control stream has been created and commands have been issued through it, the server may
+ *     reject certain updates to the schema (e.g., adding or removing parameters, changing UoM, etc.).
+ *     In this case, the `409` response code is used.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/controlStreamSchemas.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Update the command schema</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ReplaceControlStreamSchema extends RequestParameters {
@@ -32,25 +35,29 @@ public final class ReplaceControlStreamSchema extends RequestParameters {
     private String contentType;
 
     /**
-     * Local identifier of the control stream. (required)
-     *
-     * @return the controlStreamId
+     * @see #controlStreamId(java.lang.String)
      */
     public String getControlStreamId() {
         return controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * @see #controlStreamId(java.lang.String)
      */
     public void setControlStreamId(String controlStreamId) {
         this.controlStreamId = controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * <blockquote><q>
+     *     Local identifier of a Control Stream
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/controlStreamId.yaml"> OGC API - Connected Systems - Part 2 (draft) - controlStreamId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public ReplaceControlStreamSchema controlStreamId(String controlStreamId) {
         setControlStreamId(controlStreamId);
@@ -58,25 +65,28 @@ public final class ReplaceControlStreamSchema extends RequestParameters {
     }
 
     /**
-     * The raw document that replaces the existing one. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * The raw command schema document that replaces the existing one.
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Not defined by OGC API - Connected Systems - Part 2 (draft) with a dedicated verbatim
+     *     requirement for this field's encoding beyond the request body reference; content is the raw
+     *     schema document.</li>
+     * </ul>
      */
     public ReplaceControlStreamSchema content(byte[] content) {
         setContent(content);
@@ -84,25 +94,28 @@ public final class ReplaceControlStreamSchema extends RequestParameters {
     }
 
     /**
-     * The media type of the document encoding, sent as the {@code Content-Type} header. (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * The media type of the schema document encoding, sent as the {@code Content-Type} header.
+     * <br>
+     * <ul>
+     *     <li>Required; a {@code 400} error is returned if not provided.</li>
+     *     <li>Not defined by OGC API - Connected Systems - Part 2 (draft) with a dedicated verbatim
+     *     requirement for this field beyond the request body reference (no verbatim spec text
+     *     available for this field).</li>
+     * </ul>
      */
     public ReplaceControlStreamSchema contentType(String contentType) {
         setContentType(contentType);

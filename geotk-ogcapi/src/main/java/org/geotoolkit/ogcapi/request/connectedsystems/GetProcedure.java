@@ -19,10 +19,13 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /procedures/{procedureId}}: retrieves a single Procedure
- * resource.
+ * <blockquote><q>
+ *     Every `Procedure` resource exposed by the server SHALL be accessible through its
+ *     canonical URL of the form `{api_root}/procedures/{id}` where `id` is the local
+ *     identifier of the `Procedure` resource.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/standard/requirements/procedure/req_canonical_url.adoc"> OGC API - Connected Systems - Part 1 - Requirement /req/procedure/canonical-url</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetProcedure extends RequestParameters {
@@ -30,25 +33,28 @@ public final class GetProcedure extends RequestParameters {
     private String procedureId;
 
     /**
-     * Local identifier of the procedure. (required)
-     *
-     * @return the procedureId
+     * @see #procedureId(java.lang.String)
      */
     public String getProcedureId() {
         return procedureId;
     }
 
     /**
-     * @param procedureId the procedureId to set
-     * @see #getProcedureId()
+     * @see #procedureId(java.lang.String)
      */
     public void setProcedureId(String procedureId) {
         this.procedureId = procedureId;
     }
 
     /**
-     * @param procedureId the procedureId to set
-     * @see #getProcedureId()
+     * <blockquote><q>
+     *     Local identifier of a Procedure
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/procedureId.yaml"> OGC API - Connected Systems - Part 1 - procedureId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetProcedure procedureId(String procedureId) {
         setProcedureId(procedureId);

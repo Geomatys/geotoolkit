@@ -19,9 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /commands/{cmdId}/result}: lists the results of a Command.
+ * <blockquote><q>
+ *     List or search all result items associated to a given command.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/commandResults.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - List command results</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetCommandResults extends RequestParameters {
@@ -29,25 +31,28 @@ public final class GetCommandResults extends RequestParameters {
     private String cmdId;
 
     /**
-     * Local identifier of the command. (required)
-     *
-     * @return the cmdId
+     * @see #cmdId(java.lang.String)
      */
     public String getCmdId() {
         return cmdId;
     }
 
     /**
-     * @param cmdId the cmdId to set
-     * @see #getCmdId()
+     * @see #cmdId(java.lang.String)
      */
     public void setCmdId(String cmdId) {
         this.cmdId = cmdId;
     }
 
     /**
-     * @param cmdId the cmdId to set
-     * @see #getCmdId()
+     * <blockquote><q>
+     *     Local identifier of a Command
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/cmdId.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - cmdId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetCommandResults cmdId(String cmdId) {
         setCmdId(cmdId);

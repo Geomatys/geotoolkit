@@ -19,10 +19,14 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /systems/{systemId}/events/{eventId}}: deletes a
- * SystemEvent of a System.
+ * <blockquote><q>
+ *     Delete a system event
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/systemEventById.yaml"> OGC API - Connected Systems - Part 2 (draft) - Delete a system event</a></small></i>
+ * </blockquote>
+ * <p>
+ * No verbatim spec description text is provided for this operation at the time of writing
+ * (the specification only gives its one-line summary, quoted above).
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteSystemEvent extends RequestParameters {
@@ -31,25 +35,29 @@ public final class DeleteSystemEvent extends RequestParameters {
     private String eventId;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public DeleteSystemEvent systemId(String systemId) {
         setSystemId(systemId);
@@ -57,25 +65,29 @@ public final class DeleteSystemEvent extends RequestParameters {
     }
 
     /**
-     * Local identifier of the system event. (required)
-     *
-     * @return the eventId
+     * @see #eventId(java.lang.String)
      */
     public String getEventId() {
         return eventId;
     }
 
     /**
-     * @param eventId the eventId to set
-     * @see #getEventId()
+     * @see #eventId(java.lang.String)
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
     /**
-     * @param eventId the eventId to set
-     * @see #getEventId()
+     * <blockquote><q>
+     *     Local identifier of a System Event
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/eventId.yaml"> OGC API - Connected Systems - Part 2 (draft) - eventId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public DeleteSystemEvent eventId(String eventId) {
         setEventId(eventId);
