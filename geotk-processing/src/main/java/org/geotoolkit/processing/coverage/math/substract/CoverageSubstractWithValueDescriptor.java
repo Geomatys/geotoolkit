@@ -23,6 +23,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.coverage.math.OutputSampleTypeParameter;
 import org.geotoolkit.processing.coverage.math.sum.CoverageSumWithValueProcess;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -64,7 +65,7 @@ public class CoverageSubstractWithValueDescriptor extends AbstractProcessDescrip
             .create(Double.class,null);
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder().addName("InputParameters").setRequired(true)
-            .createGroup(IN_COVERAGE, IN_VALUE);
+            .createGroup(IN_COVERAGE, IN_VALUE, OutputSampleTypeParameter.DESCRIPTOR);
 
     public static final String OUT_COVERAGE_NAME = "result";
     private static final String OUT_COVERAGE_REMARKS = "Result as a coverage";
