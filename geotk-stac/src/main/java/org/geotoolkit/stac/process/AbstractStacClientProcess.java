@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -54,6 +55,8 @@ public abstract class AbstractStacClientProcess<T> extends AbstractProcess {
             final Envelope spatialExtent = (Envelope) inputParameters.parameter("spatial_extent").getValue();
             final String[] temporalExtentArray = (String[]) inputParameters.parameter("temporal_extent").getValue();
             final String extractorClassName = (String) inputParameters.parameter("extractor_class").getValue();
+            @SuppressWarnings("unchecked")
+            final Map<String, Map<String, Object>> query = (Map<String, Map<String, Object>>) inputParameters.parameter("query").getValue();
 
             if (stacUrl == null) {
                 throw new ProcessException("Missing mandatory parameter: stac_url", this);
@@ -95,19 +98,25 @@ public abstract class AbstractStacClientProcess<T> extends AbstractProcess {
                 double[] bbox = StacApiProcessingUtils.getBbox(spatialExtent);
                 String temporalExtent = StacApiProcessingUtils.getTemporalExtent(temporalExtentArray);
 
+                final boolean hasQuery = query != null && !query.isEmpty();
+                final boolean queryPushedToServer = hasQuery && client.supportsQueryExtension();
+
                 final List<Item> items = client.searchItems(new SearchItems()
                         .collections(List.of(effectiveCollection))
                         .bbox(bbox)
-                        .datetime(temporalExtent));
+                        .datetime(temporalExtent)
+                        .query(queryPushedToServer ? query : null));
                 LOGGER.info("Found " + items.size() + " items.");
 
                 for (final Item item : items) {
-                    processItem(client, item, results);
+                    if (queryPushedToServer || StacQueryFilter.matches(item.getProperties(), query)) {
+                        processItem(client, item, results);
+                    }
                 }
             } else if (client.isItem(stacUrl)) {
                 // stacUrl is an individual Item
                 Item item = client.loadItem(stacUrl);
-                if (item != null) {
+                if (item != null && StacQueryFilter.matches(item.getProperties(), query)) {
                     processItem(client, item, results);
                 }
             } else {

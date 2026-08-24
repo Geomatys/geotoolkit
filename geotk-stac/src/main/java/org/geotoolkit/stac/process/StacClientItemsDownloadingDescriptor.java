@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Descriptor for the STAC Client Downloading process.
@@ -153,10 +154,26 @@ public class StacClientItemsDownloadingDescriptor extends AbstractProcessDescrip
             .create(String.class, null);
 
     /**
+     * Name for the QUERY parameter.
+     */
+    public static final String QUERY_NAME = "query";
+    private static final String QUERY_REMARKS = "Item property filter following the STAC API Query Extension shape "
+            + "({property: {operator: value}}, e.g. eq/neq/lt/lte/gt/gte), evaluated client-side.";
+
+    /**
+     * QUERY parameter descriptor.
+     */
+    public static final ParameterDescriptor<Map> QUERY = new ParameterBuilder()
+            .addName(QUERY_NAME)
+            .setRemarks(QUERY_REMARKS)
+            .setRequired(false)
+            .create(Map.class, null);
+
+    /**
      * Input parameters group.
      */
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder().addName("InputParameters").setRequired(true)
-            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, OUTPUT_DIRECTORY, EXTRACTOR_CLASS);
+            .createGroup(STAC_URL, COLLECTION, SPATIAL_EXTENT, TEMPORAL_EXTENT, BANDS, QUERY, OUTPUT_DIRECTORY, EXTRACTOR_CLASS);
 
     /**
      * Name for the OUTPUT parameter.

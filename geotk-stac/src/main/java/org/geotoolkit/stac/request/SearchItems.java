@@ -19,6 +19,7 @@ package org.geotoolkit.stac.request;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
@@ -48,6 +49,13 @@ public class SearchItems extends RequestParameters {
 
     @JsonProperty("limit")
     private Integer limit;
+
+    /**
+     * STAC API Query Extension filter: {@code {property: {operator: value}}}. Only sent to
+     * servers that advertise support for it (see {@link org.geotoolkit.stac.client.StacApi#supportsQueryExtension()}).
+     */
+    @JsonProperty("query")
+    private Map<String, Map<String, Object>> query;
 
     /**
      * Collection IDs to search within; null or empty means all collections. (optional)
@@ -130,5 +138,26 @@ public class SearchItems extends RequestParameters {
     /** @see #getLimit() */
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    /**
+     * STAC API Query Extension filter: {@code {property: {operator: value}}}. Only sent to
+     * servers that advertise support for it (see {@link org.geotoolkit.stac.client.StacApi#supportsQueryExtension()}).
+     */
+    public Map<String, Map<String, Object>> getQuery() {
+        return query;
+    }
+
+    /**
+     * @see #getQuery()
+     */
+    public SearchItems query(Map<String, Map<String, Object>> query) {
+        this.query = query;
+        return this;
+    }
+
+    /** @see #getQuery() */
+    public void setQuery(Map<String, Map<String, Object>> query) {
+        this.query = query;
     }
 }

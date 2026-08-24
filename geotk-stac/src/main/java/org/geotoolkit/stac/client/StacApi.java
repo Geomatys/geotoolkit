@@ -43,6 +43,7 @@ import org.geotoolkit.stac.dto.Collection;
 import org.geotoolkit.stac.dto.Collections;
 import org.geotoolkit.stac.dto.Item;
 import org.geotoolkit.stac.dto.ItemCollection;
+import org.geotoolkit.ogcapi.dto.common.ConfClasses;
 import org.geotoolkit.stac.request.GetCollection;
 import org.geotoolkit.stac.request.GetCollections;
 import org.geotoolkit.stac.request.GetItem;
@@ -224,6 +225,7 @@ public class StacApi extends AbstractOpenApi {
                         .collections(params.getCollections())
                         .bbox(params.getBbox())
                         .datetime(params.getDatetime())
+                        .query(params.getQuery())
                         .limit(effectiveLimit);
 
         final List<Item> allItems = new ArrayList<>();
@@ -307,6 +309,35 @@ public class StacApi extends AbstractOpenApi {
      * @return the collection, or null if HTTP 404
      * @throws ServiceException on HTTP or network error other than 404
      */
+    private static final String QUERY_EXTENSION_CONFORMANCE_HINT = "item-search#query";
+
+    /**
+     * @return the service's advertised conformance classes ({@code GET /conformance}),
+     * or an empty list if the endpoint is unreachable or returns an error.
+     */
+    public List<String> getConformance() {
+        try {
+            final HttpRequest.Builder request = HttpRequest.newBuilder();
+            request.uri(toUri("/conformance", List.of()));
+            request.header("Accept", "application/json");
+            request.method("GET", HttpRequest.BodyPublishers.noBody());
+            setConfig(request);
+            final ConfClasses conf = requestAsJson(request, ConfClasses.class).send().body().get();
+            return conf != null && conf.getConformsTo() != null ? conf.getConformsTo() : List.of();
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, "Conformance check failed, assuming no extensions supported", e);
+            return List.of();
+        }
+    }
+
+    /**
+     * @return true if the service advertises support for the STAC API Query Extension
+     * (server-side item property filtering via {@code SearchItems.query(...)}).
+     */
+    public boolean supportsQueryExtension() {
+        return getConformance().stream().anyMatch(c -> c != null && c.contains(QUERY_EXTENSION_CONFORMANCE_HINT));
+    }
+
     public Collection getCollection(String collectionId) throws ServiceException {
         try {
             return getCollection(new GetCollection().collectionId(collectionId)).send().body().get();
