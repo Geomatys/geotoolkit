@@ -19,8 +19,11 @@ package org.geotoolkit.ogcapi.request.styles;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To update the default style of a base resource's style collection, via a
- * {@code application/merge-patch+json} PATCH request (RFC 7396).
+ * <blockquote><q>
+ *     The PATCH operation on {baseResource}/styles updates the default style of the style
+ *     collection.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_8_manage_styles.adoc"> OGC API - Styles - Update the default style</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -30,27 +33,30 @@ public final class UpdateDefaultStyle extends RequestParameters {
     private String defaultStyleId;
 
     /**
-     * Local identifier of a collection. Set to update the default style of a single collection
-     * ({@code /collections/{collectionId}/styles}). Leave {@code null} to update the default style of
-     * the whole dataset ({@code /styles}). (optional)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Set to update the default style of a single collection ({@code /collections/{collectionId}/styles});
+     *     leave {@code null} to update the default style of the whole dataset ({@code /styles}).</li>
+     * </ul>
      */
     public UpdateDefaultStyle collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,26 +64,31 @@ public final class UpdateDefaultStyle extends RequestParameters {
     }
 
     /**
-     * The {@code id} of the style to set as the default. Set to {@code null} to clear the default
-     * style (there will be no default style in the style collection).
-     *
-     * @return the defaultStyleId
+     * @see #defaultStyleId(java.lang.String)
      */
     public String getDefaultStyleId() {
         return defaultStyleId;
     }
 
     /**
-     * @param defaultStyleId the defaultStyleId to set
-     * @see #getDefaultStyleId()
+     * @see #defaultStyleId(java.lang.String)
      */
     public void setDefaultStyleId(String defaultStyleId) {
         this.defaultStyleId = defaultStyleId;
     }
 
     /**
-     * @param defaultStyleId the defaultStyleId to set
-     * @see #getDefaultStyleId()
+     * <blockquote><q>
+     *     A value null will remove the default member, i.e., there is no default style in
+     *     the style collection. A value that is a valid style identifier in the collection
+     *     will set that style as the default style.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_8_manage_styles.adoc"> OGC API - Styles - Update the default style</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; set to {@code null} to clear the default style (no default style in the collection).</li>
+     *     <li>Otherwise must be the {@code id} of an existing style in the collection.</li>
+     * </ul>
      */
     public UpdateDefaultStyle defaultStyleId(String defaultStyleId) {
         setDefaultStyleId(defaultStyleId);

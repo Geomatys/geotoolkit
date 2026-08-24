@@ -20,6 +20,11 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 import org.opengis.geometry.Envelope;
 
 /**
+ * <blockquote><q>
+ *     Implementations of OGC API Standards typically enable deployers to organize their
+ *     geospatial data into collections.
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-024.html#collections-list"> OGC API - Common - Part 2: Geospatial Data</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -31,29 +36,39 @@ public final class GetCollectionList extends RequestParameters {
     private String format;
 
     /**
-     * Either a date-time or an interval. Date and time expressions adhere to RFC 3339, section 5.6.
-     * Intervals may be bounded or half-bounded (double-dots at start or end). Server implementations may or may not
-     * support times expressed using time offsets from UTC, but need to support UTC time with the notation ending with a
-     * Z. Examples: * A date-time: \&quot;2018-02-12T23:20:50Z\&quot; * A bounded interval:
-     * \&quot;2018-02-12T00:00:00Z/2018-03-18T12:31:12Z\&quot; * Half-bounded intervals:
-     * \&quot;2018-02-12T00:00:00Z/..\&quot; or \&quot;../2018-03-18T12:31:12Z\&quot; Only resources that have a
-     * temporal property that intersects the value of &#x60;datetime&#x60; are selected. If a feature has multiple
-     * temporal properties, it is the decision of the server whether only a single temporal property is used to
-     * determine the extent or all relevant temporal properties. (optional)
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/datetime.yaml"> OGC API - Features - Part 1: Core - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Either a single date-time or an interval.</li>
+     *     <li>Values conform to RFC 3339.</li>
+     *     <li>Intervals may be bounded or half-bounded using {@code ..}.</li>
+     * </ul>
+     * <pre>
+     * Examples:
+     *
+     * * A date-time: "2018-02-12T23:20:50Z"
+     * * A bounded interval: "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
+     * * Half-bounded intervals: "2018-02-12T00:00:00Z/.." or "../2018-03-18T12:31:12Z"
+     * </pre>
      */
     public GetCollectionList datetime(String datetime) {
         setDatetime(datetime);
@@ -61,35 +76,33 @@ public final class GetCollectionList extends RequestParameters {
     }
 
     /**
-     * Only resources that have a geometry that intersects the bounding box are selected. The bounding box
-     * is provided as four or six numbers, depending on whether the coordinate reference system includes a vertical axis
-     * (elevation or depth): * Lower left corner, coordinate axis 1 * Lower left corner, coordinate axis 2 * Minimum
-     * value, coordinate axis 3 (optional) * Upper right corner, coordinate axis 1 * Upper right corner, coordinate axis
-     * 2 * Maximum value, coordinate axis 3 (optional) If the value consists of four numbers, the coordinate reference
-     * system is WGS84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84) unless a different coordinate
-     * reference system is specified in the parameter &#x60;bbox-crs&#x60;. If the value consists of six numbers, the
-     * coordinate reference system is WGS 84 longitude/latitude/ellipsoidal height
-     * (http://www.opengis.net/def/crs/OGC/0/CRS84h) unless a different coordinate reference system is specified in a
-     * parameter &#x60;bbox-crs&#x60;. For WGS84 longitude/latitude the values are in most cases the sequence of minimum
-     * longitude, minimum latitude, maximum longitude and maximum latitude. However, in cases where the box spans the
-     * antimeridian the first value (west-most box edge) is larger than the third value (east-most box edge). If the
-     * vertical axis is included, the third and the sixth number are the bottom and the top of the 3-dimensional
-     * bounding box. If a resource has multiple spatial geometry properties, it is the decision of the server whether
-     * only a single spatial geometry property is used to determine the extent or all relevant geometries. (optional)
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public Envelope getBbox() {
         return bbox;
     }
 
     /**
-     * @see #getBbox()
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public void setBbox(Envelope bbox) {
         this.bbox = bbox;
     }
 
     /**
-     * @see #getBbox()
+     * <blockquote><q>
+     *     Only features that have a geometry that intersects the bounding box are selected.
+     *     The bounding box is provided as four or six numbers, depending on whether the
+     *     coordinate reference system includes a vertical axis (height or depth):
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/bbox.yaml"> OGC API - Features - Part 1: Core - bbox parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Four numbers (2D) or six numbers (3D).</li>
+     *     <li>Default CRS: CRS84 (4 numbers) or CRS84h (6 numbers), unless {@code bbox-crs} is specified.</li>
+     *     <li>A first longitude greater than the second indicates a box crossing the antimeridian.</li>
+     * </ul>
      */
     public GetCollectionList bbox(Envelope bbox) {
         setBbox(bbox);
@@ -97,24 +110,31 @@ public final class GetCollectionList extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of collections that are presented in the response
-     * document. Only items are counted that are on the first level of the collection in the response document. Nested
-     * objects contained within the explicitly requested items shall not be counted. * Minimum &#x3D; 1 * Maximum &#x3D;
-     * 10000 * Default &#x3D; 10 (optional, default to 10)
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @see #getLimit()
+     * <blockquote><q>
+     *     The optional limit parameter limits the number of items that are presented in the response document.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/limit.yaml"> OGC API - Features - Part 1: Core - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Minimum: 1.</li>
+     *     <li>Maximum: 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetCollectionList limit(Integer limit) {
         setLimit(limit);
@@ -122,22 +142,31 @@ public final class GetCollectionList extends RequestParameters {
     }
 
     /**
-     * The format of the response. If no value is provided, the accept header is used to determine the format.
-     * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetCollectionList format(String format) {
         setFormat(format);

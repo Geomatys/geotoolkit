@@ -20,6 +20,13 @@ package org.geotoolkit.ogcapi.request.joins;
  * A file to be uploaded as a {@code multipart/form-data} part, for the Joins operations that
  * support the "Input File Upload" requirements class (spec section 11).
  *
+ * <blockquote><q>
+ *     If the input data file is uploaded with the query, it SHALL contain the header:
+ *     Content-Disposition: form-data; filename="[right dataset file's name]";
+ *     name="right-dataset-file";
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_5c23e155-e422-4efe-a597-6da449a6f81b"> OGC API - Joins - Part 1: Core - 8.6. Join Source Creation</a></small></i>
+ * </blockquote>
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class UploadFile {
@@ -38,21 +45,30 @@ public final class UploadFile {
     }
 
     /**
-     * Name of the uploaded file, sent in the part's {@code Content-Disposition} header.
+     * @see #fileName(java.lang.String)
      */
     public String getFileName() {
         return fileName;
     }
 
     /**
-     * @see #getFileName()
+     * @see #fileName(java.lang.String)
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
     /**
-     * @see #getFileName()
+     * <blockquote><q>
+     *     If the input data file is uploaded with the query, it SHALL contain the header:
+     *     Content-Disposition: form-data; filename="[right dataset file's name]";
+     *     name="right-dataset-file";
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_5c23e155-e422-4efe-a597-6da449a6f81b"> OGC API - Joins - Part 1: Core - 8.6. Join Source Creation</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; sent as the part's {@code Content-Disposition} {@code filename} parameter.</li>
+     * </ul>
      */
     public UploadFile fileName(String fileName) {
         setFileName(fileName);
@@ -60,21 +76,28 @@ public final class UploadFile {
     }
 
     /**
-     * Media type of the uploaded file, sent as the part's {@code Content-Type} header. (optional)
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @see #getContentType()
+     * Media type of the uploaded file, sent as the part's {@code Content-Type} header.
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Not defined by OGC API - Joins - Part 1: Core (draft), which does not mandate a
+     *     per-part {@code Content-Type} header for the uploaded file at the time of writing;
+     *     this is a server-specific extension (no verbatim spec text available for this field).</li>
+     * </ul>
      */
     public UploadFile contentType(String contentType) {
         setContentType(contentType);
@@ -82,21 +105,29 @@ public final class UploadFile {
     }
 
     /**
-     * Content of the uploaded file, encoded with UTF-8 as required by the specification.
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @see #getContent()
+     * <blockquote><q>
+     *     The input data file SHALL be encoded with the UTF-8 encoding.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_5c23e155-e422-4efe-a597-6da449a6f81b"> OGC API - Joins - Part 1: Core - 8.6. Join Source Creation</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; the uploaded file's raw bytes.</li>
+     *     <li>Must be UTF-8 encoded.</li>
+     * </ul>
      */
     public UploadFile content(byte[] content) {
         setContent(content);

@@ -20,9 +20,11 @@ import org.geotoolkit.ogcapi.request.PreferHandling;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To replace an existing record. All properties and the geometry of the record are replaced.
- *
- * <p>OGC API - Records Part 3: Create, Replace, Update, Delete, Harvest (draft).</p>
+ * <blockquote><q>
+ *     For records, the resource endpoints SHALL be URIs specified by the URI template
+ *     {landingPageUri}/collections/{catalogId}/items/{recordId}.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-records/blob/master/extensions/transactions/create-replace-update-delete-harvest/standard/requirements/records/REQ_resource-endpoint.adoc"> OGC API - Records - Part 3: Create, Replace, Update, Delete, Harvest (draft) - Resource endpoint</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -36,25 +38,29 @@ public final class ReplaceRecord extends RequestParameters {
     private PreferHandling handling;
 
     /**
-     * Local identifier of the catalog. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public ReplaceRecord collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -62,25 +68,29 @@ public final class ReplaceRecord extends RequestParameters {
     }
 
     /**
-     * Local identifier of the record to replace. (required)
-     *
-     * @return the recordId
+     * @see #recordId(java.lang.String)
      */
     public String getRecordId() {
         return recordId;
     }
 
     /**
-     * @param recordId the recordId to set
-     * @see #getRecordId()
+     * @see #recordId(java.lang.String)
      */
     public void setRecordId(String recordId) {
         this.recordId = recordId;
     }
 
     /**
-     * @param recordId the recordId to set
-     * @see #getRecordId()
+     * <blockquote><q>
+     *     The parameter record SHALL be the id property of a record obtained by
+     *     previously having queried the Records resource of the collection.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-records/blob/master/extensions/transactions/create-replace-update-delete-harvest/standard/requirements/records/REQ_resource-endpoint.adoc"> OGC API - Records - Part 3: Create, Replace, Update, Delete, Harvest (draft) - Resource endpoint</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public ReplaceRecord recordId(String recordId) {
         setRecordId(recordId);
@@ -88,25 +98,31 @@ public final class ReplaceRecord extends RequestParameters {
     }
 
     /**
-     * The raw record document to replace the record with (e.g. a GeoJSON Feature). (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     In a REPLACE operation, the server SHALL ignore an "id" member in the
+     *     request or, alternatively, reject the request, if the "id" value differs from the recordId of the resource.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-records/blob/master/extensions/transactions/create-replace-update-delete-harvest/standard/requirements/records/REQ_geojson-create-replace.adoc"> OGC API - Records - Part 3: Create, Replace, Update, Delete, Harvest (draft) - GeoJSON create/replace</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The raw record document to replace the record with (e.g. a GeoJSON Feature).</li>
+     *     <li>All properties and the geometry of the record are replaced.</li>
+     * </ul>
      */
     public ReplaceRecord content(byte[] content) {
         setContent(content);
@@ -114,26 +130,30 @@ public final class ReplaceRecord extends RequestParameters {
     }
 
     /**
-     * The media type of the record encoding, sent as the {@code Content-Type} header (e.g.
-     * {@code application/geo+json}). (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * <blockquote><q>
+     *     Server advertises support for media types application/geo+json with the
+     *     profile ogc-record in the API definition for CREATE or REPLACE operation for a catalog with identifier collectionId.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-records/blob/master/extensions/transactions/create-replace-update-delete-harvest/standard/requirements/records/REQ_geojson-create-replace.adoc"> OGC API - Records - Part 3: Create, Replace, Update, Delete, Harvest (draft) - GeoJSON create/replace</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; a {@code 400} error is returned if not provided.</li>
+     *     <li>E.g. {@code application/geo+json} with the {@code ogc-record} profile.</li>
+     * </ul>
      */
     public ReplaceRecord contentType(String contentType) {
         setContentType(contentType);
@@ -141,27 +161,29 @@ public final class ReplaceRecord extends RequestParameters {
     }
 
     /**
-     * If {@code true}, the server validates and otherwise processes the request except that the
-     * record is not actually replaced, returning a {@code 204} response on success. (optional,
-     * default to false)
-     *
-     * @return the dryRun
+     * @see #dryRun(java.lang.Boolean)
      */
     public Boolean getDryRun() {
         return dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * @see #dryRun(java.lang.Boolean)
      */
     public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * If {@code true}, the server validates and otherwise processes the request except that the
+     * record is not actually replaced, returning a {@code 204} response on success.
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>Not defined by OGC API - Records - Part 3 (draft), which has no dry-run
+     *     requirement at the time of writing; this is a server-specific extension (no verbatim
+     *     spec text available for this field).</li>
+     * </ul>
      */
     public ReplaceRecord dryRun(Boolean dryRun) {
         setDryRun(dryRun);
@@ -169,26 +191,28 @@ public final class ReplaceRecord extends RequestParameters {
     }
 
     /**
-     * The {@code Prefer} header preference (RFC 7240 section 4.4) for record validation. Leave
-     * {@code null} to omit the {@code Prefer} header entirely. (optional)
-     *
-     * @return the handling
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public PreferHandling getHandling() {
         return handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public void setHandling(PreferHandling handling) {
         this.handling = handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * The {@code Prefer} header preference (RFC 7240 section 4.4) for record validation.
+     * <br>
+     * <ul>
+     *     <li>Optional; leave {@code null} to omit the {@code Prefer} header entirely.</li>
+     *     <li>Not defined by OGC API - Records - Part 3 (draft), which does not mention the
+     *     {@code Prefer} header at the time of writing; this is a server-specific extension
+     *     (no verbatim spec text available for this field).</li>
+     * </ul>
      */
     public ReplaceRecord handling(PreferHandling handling) {
         setHandling(handling);

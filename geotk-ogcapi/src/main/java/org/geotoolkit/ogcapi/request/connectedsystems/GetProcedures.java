@@ -20,9 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /procedures}: lists Procedure resources.
+ * <blockquote><q>
+ *     List or search all `Procedure` resources available from this server endpoint.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/procedures.yaml"> OGC API - Connected Systems - Part 1: Feature Resources - Procedures collection (GET)</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetProcedures extends RequestParameters {
@@ -35,25 +37,30 @@ public final class GetProcedures extends RequestParameters {
     private Integer limit;
 
     /**
-     * Only resources with one of the given identifiers are selected. (optional)
-     *
-     * @return the id
+     * @see #id(java.util.List)
      */
     public List<String> getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.util.List)
      */
     public void setId(List<String> id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/idList.yaml"> OGC API - Connected Systems - Part 1 - id parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>RES_ID1,RES_ID2,RES_ID63</pre>
      */
     public GetProcedures id(List<String> id) {
         setId(id);
@@ -61,25 +68,30 @@ public final class GetProcedures extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/datetime.yaml"> OGC API - Connected Systems - Part 1 - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code validTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetProcedures datetime(String datetime) {
         setDatetime(datetime);
@@ -87,25 +99,31 @@ public final class GetProcedures extends RequestParameters {
     }
 
     /**
-     * Only resources that match one of the given keywords are selected. (optional)
-     *
-     * @return the keyword
+     * @see #keyword(java.util.List)
      */
     public List<String> getKeyword() {
         return keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * @see #keyword(java.util.List)
      */
     public void setKeyword(List<String> keyword) {
         this.keyword = keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The resource {@code name} and {@code description} properties are always searched.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetProcedures keyword(List<String> keyword) {
         setKeyword(keyword);
@@ -113,25 +131,29 @@ public final class GetProcedures extends RequestParameters {
     }
 
     /**
-     * Only resources that observe one of the given properties are selected. (optional)
-     *
-     * @return the observedProperty
+     * @see #observedProperty(java.util.List)
      */
     public List<String> getObservedProperty() {
         return observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * @see #observedProperty(java.util.List)
      */
     public void setObservedProperty(List<String> observedProperty) {
         this.observedProperty = observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to an observable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/obsPropIdList.yaml"> OGC API - Connected Systems - Part 1 - observedProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetProcedures observedProperty(List<String> observedProperty) {
         setObservedProperty(observedProperty);
@@ -139,25 +161,29 @@ public final class GetProcedures extends RequestParameters {
     }
 
     /**
-     * Only resources that control one of the given properties are selected. (optional)
-     *
-     * @return the controlledProperty
+     * @see #controlledProperty(java.util.List)
      */
     public List<String> getControlledProperty() {
         return controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * @see #controlledProperty(java.util.List)
      */
     public void setControlledProperty(List<String> controlledProperty) {
         this.controlledProperty = controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to a controllable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/controlPropIdList.yaml"> OGC API - Connected Systems - Part 1 - controlledProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetProcedures controlledProperty(List<String> controlledProperty) {
         setControlledProperty(controlledProperty);
@@ -165,25 +191,31 @@ public final class GetProcedures extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetProcedures limit(Integer limit) {
         setLimit(limit);

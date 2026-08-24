@@ -23,6 +23,12 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
  * Parameters for {@code POST /filejoin}, sent as a {@code multipart/form-data} request (spec
  * section 10.2.1, Table 6).
  *
+ * <blockquote><q>
+ *     The HTTP POST operation at path {root}/filejoin joins data from an input data file
+ *     directly with another input data file.
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+ * </blockquote>
+ *
  * <p>
  * For each dataset, exactly one of the {@code *File} or {@code *Url} fields must be set; the
  * server responds with HTTP 400 if both or neither are provided for a given dataset. This class
@@ -46,22 +52,30 @@ public final class JoinFiles extends RequestParameters {
     private Integer csvFileDataStartRowNumber;
 
     /**
-     * Form field {@code left-dataset-format}. The format of the left dataset, e.g.
-     * {@code http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-geojson}. (required)
+     * @see #leftDatasetFormat(java.lang.String)
      */
     public String getLeftDatasetFormat() {
         return leftDatasetFormat;
     }
 
     /**
-     * @see #getLeftDatasetFormat()
+     * @see #leftDatasetFormat(java.lang.String)
      */
     public void setLeftDatasetFormat(String leftDatasetFormat) {
         this.leftDatasetFormat = leftDatasetFormat;
     }
 
     /**
-     * @see #getLeftDatasetFormat()
+     * <blockquote><q>
+     *     The format of the left dataset.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; form field {@code left-dataset-format}.</li>
+     *     <li>The core module contains support for the format
+     *     {@code http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-geojson}.</li>
+     * </ul>
      */
     public JoinFiles leftDatasetFormat(String leftDatasetFormat) {
         setLeftDatasetFormat(leftDatasetFormat);
@@ -69,22 +83,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code left-dataset-file}. The left dataset file, uploaded to the server. One of
-     * this field or {@link #getLeftDatasetUrl()} is mandatory. (optional)
+     * @see #leftDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)
      */
     public UploadFile getLeftDatasetFile() {
         return leftDatasetFile;
     }
 
     /**
-     * @see #getLeftDatasetFile()
+     * @see #leftDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)
      */
     public void setLeftDatasetFile(UploadFile leftDatasetFile) {
         this.leftDatasetFile = leftDatasetFile;
     }
 
     /**
-     * @see #getLeftDatasetFile()
+     * <blockquote><q>
+     *     The left dataset file (uploaded file)
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code left-dataset-file}.</li>
+     *     <li>One of this field or {@link #leftDatasetUrl(java.lang.String)} is mandatory; the
+     *     server responds with HTTP 400 if both or neither are provided.</li>
+     * </ul>
      */
     public JoinFiles leftDatasetFile(UploadFile leftDatasetFile) {
         setLeftDatasetFile(leftDatasetFile);
@@ -92,22 +114,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code left-dataset-url}. A URL link to the left dataset file. One of this field
-     * or {@link #getLeftDatasetFile()} is mandatory. (optional)
+     * @see #leftDatasetUrl(java.lang.String)
      */
     public String getLeftDatasetUrl() {
         return leftDatasetUrl;
     }
 
     /**
-     * @see #getLeftDatasetUrl()
+     * @see #leftDatasetUrl(java.lang.String)
      */
     public void setLeftDatasetUrl(String leftDatasetUrl) {
         this.leftDatasetUrl = leftDatasetUrl;
     }
 
     /**
-     * @see #getLeftDatasetUrl()
+     * <blockquote><q>
+     *     A URL link to the left dataset file
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code left-dataset-url}.</li>
+     *     <li>One of this field or {@link #leftDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)}
+     *     is mandatory; the server responds with HTTP 400 if both or neither are provided.</li>
+     * </ul>
      */
     public JoinFiles leftDatasetUrl(String leftDatasetUrl) {
         setLeftDatasetUrl(leftDatasetUrl);
@@ -115,23 +145,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code left-dataset-key}. The key field in the left dataset that contains the key
-     * values. For GeoJSON format, this is the JSONPath string to the field containing the key
-     * values. (required)
+     * @see #leftDatasetKey(java.lang.String)
      */
     public String getLeftDatasetKey() {
         return leftDatasetKey;
     }
 
     /**
-     * @see #getLeftDatasetKey()
+     * @see #leftDatasetKey(java.lang.String)
      */
     public void setLeftDatasetKey(String leftDatasetKey) {
         this.leftDatasetKey = leftDatasetKey;
     }
 
     /**
-     * @see #getLeftDatasetKey()
+     * <blockquote><q>
+     *     The key field in the left dataset file that contains the key values.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; form field {@code left-dataset-key}.</li>
+     *     <li>For GeoJSON format, this is the JSONPath string to the field containing the key
+     *     values.</li>
+     * </ul>
      */
     public JoinFiles leftDatasetKey(String leftDatasetKey) {
         setLeftDatasetKey(leftDatasetKey);
@@ -139,22 +176,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code right-dataset-format}. The format of the right dataset, e.g.
-     * {@code http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-csv}. (required)
+     * @see #rightDatasetFormat(java.lang.String)
      */
     public String getRightDatasetFormat() {
         return rightDatasetFormat;
     }
 
     /**
-     * @see #getRightDatasetFormat()
+     * @see #rightDatasetFormat(java.lang.String)
      */
     public void setRightDatasetFormat(String rightDatasetFormat) {
         this.rightDatasetFormat = rightDatasetFormat;
     }
 
     /**
-     * @see #getRightDatasetFormat()
+     * <blockquote><q>
+     *     The format of the right dataset.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; form field {@code right-dataset-format}.</li>
+     *     <li>The core module contains support for the format
+     *     {@code http://www.opengis.net/spec/ogcapi-joins-1/1.0/conf/input-csv}.</li>
+     * </ul>
      */
     public JoinFiles rightDatasetFormat(String rightDatasetFormat) {
         setRightDatasetFormat(rightDatasetFormat);
@@ -162,22 +207,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code right-dataset-file}. The right dataset file, uploaded to the server. One
-     * of this field or {@link #getRightDatasetUrl()} is mandatory. (optional)
+     * @see #rightDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)
      */
     public UploadFile getRightDatasetFile() {
         return rightDatasetFile;
     }
 
     /**
-     * @see #getRightDatasetFile()
+     * @see #rightDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)
      */
     public void setRightDatasetFile(UploadFile rightDatasetFile) {
         this.rightDatasetFile = rightDatasetFile;
     }
 
     /**
-     * @see #getRightDatasetFile()
+     * <blockquote><q>
+     *     The right dataset file (uploaded file).
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code right-dataset-file}.</li>
+     *     <li>One of this field or {@link #rightDatasetUrl(java.lang.String)} is mandatory; the
+     *     server responds with HTTP 400 if both or neither are provided.</li>
+     * </ul>
      */
     public JoinFiles rightDatasetFile(UploadFile rightDatasetFile) {
         setRightDatasetFile(rightDatasetFile);
@@ -185,22 +238,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code right-dataset-url}. A URL link to the right dataset file. One of this
-     * field or {@link #getRightDatasetFile()} is mandatory. (optional)
+     * @see #rightDatasetUrl(java.lang.String)
      */
     public String getRightDatasetUrl() {
         return rightDatasetUrl;
     }
 
     /**
-     * @see #getRightDatasetUrl()
+     * @see #rightDatasetUrl(java.lang.String)
      */
     public void setRightDatasetUrl(String rightDatasetUrl) {
         this.rightDatasetUrl = rightDatasetUrl;
     }
 
     /**
-     * @see #getRightDatasetUrl()
+     * <blockquote><q>
+     *     The right dataset URL.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code right-dataset-url}.</li>
+     *     <li>One of this field or {@link #rightDatasetFile(org.geotoolkit.ogcapi.request.joins.UploadFile)}
+     *     is mandatory; the server responds with HTTP 400 if both or neither are provided.</li>
+     * </ul>
      */
     public JoinFiles rightDatasetUrl(String rightDatasetUrl) {
         setRightDatasetUrl(rightDatasetUrl);
@@ -208,23 +269,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code right-dataset-key}. The key field in the right dataset that contains the
-     * key values. For CSV format, this is the column number containing the key values (counting
-     * starts from 0). (required)
+     * @see #rightDatasetKey(java.lang.String)
      */
     public String getRightDatasetKey() {
         return rightDatasetKey;
     }
 
     /**
-     * @see #getRightDatasetKey()
+     * @see #rightDatasetKey(java.lang.String)
      */
     public void setRightDatasetKey(String rightDatasetKey) {
         this.rightDatasetKey = rightDatasetKey;
     }
 
     /**
-     * @see #getRightDatasetKey()
+     * <blockquote><q>
+     *     The key field in the right dataset that contains the key values.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; form field {@code right-dataset-key}.</li>
+     *     <li>For CSV format, this is the column number containing the key values (counting
+     *     starts from 0).</li>
+     * </ul>
      */
     public JoinFiles rightDatasetKey(String rightDatasetKey) {
         setRightDatasetKey(rightDatasetKey);
@@ -232,24 +300,31 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code right-dataset-data-value-list}. Fields in the right dataset that contain
-     * the attribute values to be joined with the left dataset. For CSV format, the values are the
-     * column numbers to join (counting starts from 0). Sent as a comma-separated string.
-     * (required)
+     * @see #rightDatasetDataValueList(java.util.List)
      */
     public List<String> getRightDatasetDataValueList() {
         return rightDatasetDataValueList;
     }
 
     /**
-     * @see #getRightDatasetDataValueList()
+     * @see #rightDatasetDataValueList(java.util.List)
      */
     public void setRightDatasetDataValueList(List<String> rightDatasetDataValueList) {
         this.rightDatasetDataValueList = rightDatasetDataValueList;
     }
 
     /**
-     * @see #getRightDatasetDataValueList()
+     * <blockquote><q>
+     *     Fields in the right dataset that contain the attribute values that will be joined with
+     *     the left dataset.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; form field {@code right-dataset-data-value-list}, sent as a
+     *     comma-separated string.</li>
+     *     <li>For CSV format, the values are the column numbers to join (counting starts from 0).</li>
+     * </ul>
      */
     public JoinFiles rightDatasetDataValueList(List<String> rightDatasetDataValueList) {
         setRightDatasetDataValueList(rightDatasetDataValueList);
@@ -257,23 +332,30 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code csv-file-delimiter}. The delimiter character used in the CSV file.
-     * Mandatory when {@link #getRightDatasetFormat()} is the CSV input format conformance class.
-     * (optional)
+     * @see #csvFileDelimiter(java.lang.String)
      */
     public String getCsvFileDelimiter() {
         return csvFileDelimiter;
     }
 
     /**
-     * @see #getCsvFileDelimiter()
+     * @see #csvFileDelimiter(java.lang.String)
      */
     public void setCsvFileDelimiter(String csvFileDelimiter) {
         this.csvFileDelimiter = csvFileDelimiter;
     }
 
     /**
-     * @see #getCsvFileDelimiter()
+     * <blockquote><q>
+     *     The delimiter character used in the CSV file.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code csv-file-delimiter}.</li>
+     *     <li>Mandatory when {@link #rightDatasetFormat(java.lang.String)} is the CSV input
+     *     format conformance class; not required for other formats.</li>
+     * </ul>
      */
     public JoinFiles csvFileDelimiter(String csvFileDelimiter) {
         setCsvFileDelimiter(csvFileDelimiter);
@@ -281,22 +363,31 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code csv-file-header-row-number}. The row number of the CSV file's header row
-     * (counting starts from 1). If omitted, the header row is expected at the first row. (optional)
+     * @see #csvFileHeaderRowNumber(java.lang.Integer)
      */
     public Integer getCsvFileHeaderRowNumber() {
         return csvFileHeaderRowNumber;
     }
 
     /**
-     * @see #getCsvFileHeaderRowNumber()
+     * @see #csvFileHeaderRowNumber(java.lang.Integer)
      */
     public void setCsvFileHeaderRowNumber(Integer csvFileHeaderRowNumber) {
         this.csvFileHeaderRowNumber = csvFileHeaderRowNumber;
     }
 
     /**
-     * @see #getCsvFileHeaderRowNumber()
+     * <blockquote><q>
+     *     If omitted, the header row is expected to be at the first row of the CSV file. The
+     *     names of the joined attributes in the result dataset are the names of the columns from
+     *     the CSV file header row.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code csv-file-header-row-number}.</li>
+     *     <li>Row number of the CSV file's header row (counting starts from 1).</li>
+     * </ul>
      */
     public JoinFiles csvFileHeaderRowNumber(Integer csvFileHeaderRowNumber) {
         setCsvFileHeaderRowNumber(csvFileHeaderRowNumber);
@@ -304,23 +395,29 @@ public final class JoinFiles extends RequestParameters {
     }
 
     /**
-     * Form field {@code csv-file-data-start-row-number}. The row number where data values start in
-     * the CSV file (counting starts from 1). If omitted, the data start row is expected at the
-     * second row. (optional)
+     * @see #csvFileDataStartRowNumber(java.lang.Integer)
      */
     public Integer getCsvFileDataStartRowNumber() {
         return csvFileDataStartRowNumber;
     }
 
     /**
-     * @see #getCsvFileDataStartRowNumber()
+     * @see #csvFileDataStartRowNumber(java.lang.Integer)
      */
     public void setCsvFileDataStartRowNumber(Integer csvFileDataStartRowNumber) {
         this.csvFileDataStartRowNumber = csvFileDataStartRowNumber;
     }
 
     /**
-     * @see #getCsvFileDataStartRowNumber()
+     * <blockquote><q>
+     *     If omitted, the data start row is expected to be at the second row of the CSV file.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/22-026.html#_c5166ebc-28d0-4ab2-95cc-ed875abe9daf"> OGC API - Joins - Part 1: Core - 10.2. File Joining</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; form field {@code csv-file-data-start-row-number}.</li>
+     *     <li>Row number where data values start in the CSV file (counting starts from 1).</li>
+     * </ul>
      */
     public JoinFiles csvFileDataStartRowNumber(Integer csvFileDataStartRowNumber) {
         setCsvFileDataStartRowNumber(csvFileDataStartRowNumber);

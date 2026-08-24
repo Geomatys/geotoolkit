@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /datastreams/{dataStreamId}}: deletes a DataStream
- * resource.
+ * <blockquote><q>
+ *     This will delete the datastream and remove it from all collections it is associated to.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/dataStreamById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Delete a datastream</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteDataStream extends RequestParameters {
@@ -31,25 +32,29 @@ public final class DeleteDataStream extends RequestParameters {
     private Boolean cascade;
 
     /**
-     * Local identifier of the data stream. (required)
-     *
-     * @return the dataStreamId
+     * @see #dataStreamId(java.lang.String)
      */
     public String getDataStreamId() {
         return dataStreamId;
     }
 
     /**
-     * @param dataStreamId the dataStreamId to set
-     * @see #getDataStreamId()
+     * @see #dataStreamId(java.lang.String)
      */
     public void setDataStreamId(String dataStreamId) {
         this.dataStreamId = dataStreamId;
     }
 
     /**
-     * @param dataStreamId the dataStreamId to set
-     * @see #getDataStreamId()
+     * <blockquote><q>
+     *     Local identifier of a Datastream
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/dataStreamId.yaml"> OGC API - Connected Systems - Part 2 (draft) - dataStreamId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public DeleteDataStream dataStreamId(String dataStreamId) {
         setDataStreamId(dataStreamId);
@@ -57,25 +62,29 @@ public final class DeleteDataStream extends RequestParameters {
     }
 
     /**
-     * If {@code true}, related resources are deleted as well. (optional)
-     *
-     * @return the cascade
+     * @see #cascade(java.lang.Boolean)
      */
     public Boolean getCascade() {
         return cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * @see #cascade(java.lang.Boolean)
      */
     public void setCascade(Boolean cascade) {
         this.cascade = cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * <blockquote><q>
+     *     If set to true, dependent resources are also deleted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/cascade.yaml"> OGC API - Connected Systems - Part 1 (draft) - cascade parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>If used, all observations associated with the datastream are also deleted.</li>
+     * </ul>
      */
     public DeleteDataStream cascade(Boolean cascade) {
         setCascade(cascade);

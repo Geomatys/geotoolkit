@@ -19,6 +19,11 @@ package org.geotoolkit.ogcapi.request.coverage;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * <blockquote><q>
+ *     The CIS Standard defines four aspects of a coverage which are described in separate
+ *     properties: the domain set, the range type, the rangeset, and the domain-specific metadata.
+ *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/19-087.html#rc_encoding-cisjson"> OGC API - Coverages - Part 1: Core</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -28,25 +33,29 @@ public final class GetCoverageDomainSet extends RequestParameters {
     private String format;
 
     /**
-     * Local identifier of a collection (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetCoverageDomainSet collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -54,21 +63,31 @@ public final class GetCoverageDomainSet extends RequestParameters {
     }
 
     /**
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @param format the format to set
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetCoverageDomainSet format(String format) {
         setFormat(format);

@@ -21,6 +21,12 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * To retrieve the list of instances of a collection ({@code /collections/{collectionId}/instances}).
  *
+ * <blockquote><q>
+ *     Having multiple versions or instances of the same collection, where the same information
+ *     is reprocessed or regenerated is not unusal.
+ *     </q><i><small><a href="https://docs.ogc.org/is/19-086r6/19-086r6.html#_5bd2378d-8c59-4516-949e-22db29b30170"> OGC API - Environmental Data Retrieval (EDR) - Instances query</a></small></i>
+ * </blockquote>
+ *
  * @author Quentin Bialota (Geomatys)
  */
 public final class GetEdrInstances extends RequestParameters {
@@ -29,25 +35,28 @@ public final class GetEdrInstances extends RequestParameters {
     private String f;
 
     /**
-     * Local identifier of the collection.
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetEdrInstances collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -55,30 +64,27 @@ public final class GetEdrInstances extends RequestParameters {
     }
 
     /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
+     * @see #f(java.lang.String)
      */
     public String getF() {
         return f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * @see #f(java.lang.String)
      */
     public void setF(String f) {
         this.f = f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * The output format of the response. If not given, the content type is negotiated from the
+     * {@code Accept} header.
+     *
+     * @param f the requested response format, or {@code null} for content negotiation.
      */
     public GetEdrInstances f(String f) {
         setF(f);
         return this;
     }
-
 }

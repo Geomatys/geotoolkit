@@ -19,6 +19,16 @@ package org.geotoolkit.ogcapi.request.dggs;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * Request parameters for retrieving the JSON definition of a Discrete Global Grid Reference
+ * System (DGGRS), as linked from the DGGRS description by an
+ * {@code http://www.opengis.net/def/rel/ogc/1.0/dggrs-definition} relation.
+ *
+ * <blockquote><q>
+ *     A JSON DGGRS definition is intended to provide a complete and unambiguous definition
+ *     of a DGGRS, including the topology of the grids hierarchy, the mapping to a particular
+ *     underlying Earth model, the zone identifier reference system and the deterministic sub-zone order...
+ *     </q><i><small><a href="https://docs.ogc.org/is/21-038r1/21-038r1.html#_7ebfa115-515e-4b2c-45c0-bddba8606f56"> OGC API - Discrete Global Grid Systems - Annex B.1: JSON Schema for defining a DGGRS</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -28,21 +38,28 @@ public final class GetDggrsDefinition extends RequestParameters {
     private String dggrsId;
 
     /**
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional: only set when requesting the DGGRS definition for a specific collection.</li>
+     * </ul>
      */
     public GetDggrsDefinition collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -50,21 +67,28 @@ public final class GetDggrsDefinition extends RequestParameters {
     }
 
     /**
-     * @return the dggrsId
+     * @see #dggrsId(java.lang.String)
      */
     public String getDggrsId() {
         return dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
+     * @see #dggrsId(java.lang.String)
      */
     public void setDggrsId(String dggrsId) {
         this.dggrsId = dggrsId;
     }
 
     /**
-     * @param dggrsId the dggrsId to set
+     * <blockquote><q>
+     *     Identifier for a supported Discrete Global Grid System
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/dggs/1.0/openapi/parameters/dggs-core/dggrsId.yaml"> OGC API - Discrete Global Grid Systems - dggrsId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetDggrsDefinition dggrsId(String dggrsId) {
         setDggrsId(dggrsId);

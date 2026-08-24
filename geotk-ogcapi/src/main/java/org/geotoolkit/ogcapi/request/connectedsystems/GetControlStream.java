@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /controlstreams/{controlStreamId}}: retrieves a single
- * ControlStream resource.
+ * <blockquote><q>
+ *     Get a control stream by ID
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/controlStreamById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Get a control stream by ID</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetControlStream extends RequestParameters {
@@ -30,25 +31,29 @@ public final class GetControlStream extends RequestParameters {
     private String controlStreamId;
 
     /**
-     * Local identifier of the control stream. (required)
-     *
-     * @return the controlStreamId
+     * @see #controlStreamId(java.lang.String)
      */
     public String getControlStreamId() {
         return controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * @see #controlStreamId(java.lang.String)
      */
     public void setControlStreamId(String controlStreamId) {
         this.controlStreamId = controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * <blockquote><q>
+     *     Local identifier of a Control Stream
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/controlStreamId.yaml"> OGC API - Connected Systems - Part 2 (draft) - controlStreamId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public GetControlStream controlStreamId(String controlStreamId) {
         setControlStreamId(controlStreamId);

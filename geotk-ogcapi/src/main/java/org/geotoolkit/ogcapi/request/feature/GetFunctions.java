@@ -19,6 +19,15 @@ package org.geotoolkit.ogcapi.request.feature;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * The {@code functions} resource ({@code /functions}), listing the CQL2 functions a server
+ * supports.
+ *
+ * <blockquote><q>
+ *     If the server supports CQL2 and the requirements class "Functions", a resource,
+ *     /functions is published that allows clients to discover the list of functions
+ *     that a server offers.
+ *     </q><i><small><a href="https://docs.ogc.org/is/19-079r2/19-079r2.html#_cql2_functions"> OGC API - Features - Part 3: Filtering - CQL2 functions</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -26,19 +35,32 @@ public final class GetFunctions extends RequestParameters {
 
     private String format;
 
+    /**
+     * @see #format(java.lang.String)
+     */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetFunctions format(String format) {
         setFormat(format);

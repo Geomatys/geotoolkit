@@ -20,8 +20,11 @@ import org.geotoolkit.ogcapi.request.PreferHandling;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To publish a new style. On success, the URI of the new style is returned in the response's
- * {@code Location} header.
+ * <blockquote><q>
+ *     For styles, the resources endpoints to create a new style (using a POST method) SHALL
+ *     be URIs specified by the URI template {baseResource}/styles.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_8_manage_styles.adoc"> OGC API - Styles - Publishing a new style</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -34,27 +37,30 @@ public final class CreateStyle extends RequestParameters {
     private PreferHandling handling;
 
     /**
-     * Local identifier of a collection. Set to publish a style for a single collection
-     * ({@code /collections/{collectionId}/styles}). Leave {@code null} to publish a style for the
-     * whole dataset ({@code /styles}). (optional)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Set to publish a style for a single collection ({@code /collections/{collectionId}/styles});
+     *     leave {@code null} to publish a style for the whole dataset ({@code /styles}).</li>
+     * </ul>
      */
     public CreateStyle collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -62,25 +68,30 @@ public final class CreateStyle extends RequestParameters {
     }
 
     /**
-     * The raw stylesheet document to publish. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     Every POST or PUT operation of the server that accepts a stylesheet document as
+     *     content SHALL support the media type application/vnd.mapbox.style+json.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_10_style_encodings.adoc"> OGC API - Styles - Mapbox Styles encoding</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The raw stylesheet document to publish, encoded as declared by {@code contentType}.</li>
+     * </ul>
      */
     public CreateStyle content(byte[] content) {
         setContent(content);
@@ -88,27 +99,30 @@ public final class CreateStyle extends RequestParameters {
     }
 
     /**
-     * The media type of the stylesheet encoding, sent as the {@code Content-Type} header (e.g.
-     * {@code application/vnd.mapbox.style+json}, {@code application/vnd.ogc.sld+xml;version=1.0}).
-     * (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * <blockquote><q>
+     *     Every POST or PUT operation of the server that accepts a stylesheet document as
+     *     content SHALL support the media type application/vnd.ogc.sld+xml.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-styles/blob/master/standard/clause_10_style_encodings.adoc"> OGC API - Styles - SLD/SE encoding</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; sent as the {@code Content-Type} header.</li>
+     *     <li>E.g. {@code application/vnd.mapbox.style+json}, {@code application/vnd.ogc.sld+xml;version=1.0}.</li>
+     * </ul>
      */
     public CreateStyle contentType(String contentType) {
         setContentType(contentType);
@@ -116,26 +130,29 @@ public final class CreateStyle extends RequestParameters {
     }
 
     /**
-     * If {@code true}, the server validates and otherwise processes the request except that no style
-     * is actually created, returning a {@code 204} response on success. (optional, default to false)
-     *
-     * @return the dryRun
+     * @see #dryRun(java.lang.Boolean)
      */
     public Boolean getDryRun() {
         return dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * @see #dryRun(java.lang.Boolean)
      */
     public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
     }
 
     /**
-     * @param dryRun the dryRun to set
-     * @see #getDryRun()
+     * If {@code true}, the server validates and otherwise processes the request except that no
+     * style is actually created, returning a {@code 204} response on success.
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>Not defined by OGC API - Styles (draft), which has no dry-run
+     *     requirement at the time of writing; this is a server-specific extension (no verbatim
+     *     spec text available for this field).</li>
+     * </ul>
      */
     public CreateStyle dryRun(Boolean dryRun) {
         setDryRun(dryRun);
@@ -143,26 +160,28 @@ public final class CreateStyle extends RequestParameters {
     }
 
     /**
-     * The {@code Prefer} header preference (RFC 7240 section 4.4) for stylesheet validation. Leave
-     * {@code null} to omit the {@code Prefer} header entirely. (optional)
-     *
-     * @return the handling
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public PreferHandling getHandling() {
         return handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * @see #handling(org.geotoolkit.ogcapi.request.PreferHandling)
      */
     public void setHandling(PreferHandling handling) {
         this.handling = handling;
     }
 
     /**
-     * @param handling the handling to set
-     * @see #getHandling()
+     * The {@code Prefer} header preference (RFC 7240 section 4.4) for stylesheet validation.
+     * <br>
+     * <ul>
+     *     <li>Optional; leave {@code null} to omit the {@code Prefer} header entirely.</li>
+     *     <li>Not defined by OGC API - Styles (draft), which does not mention the
+     *     {@code Prefer} header at the time of writing; this is a server-specific extension
+     *     (no verbatim spec text available for this field).</li>
+     * </ul>
      */
     public CreateStyle handling(PreferHandling handling) {
         setHandling(handling);

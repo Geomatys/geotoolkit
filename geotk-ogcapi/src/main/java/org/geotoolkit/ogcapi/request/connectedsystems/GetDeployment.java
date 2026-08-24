@@ -19,36 +19,42 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /deployments/{deploymentId}}: retrieves a single Deployment
- * resource.
+ * <blockquote><q>
+ *     Every `Deployment` resource exposed by the server SHALL be accessible through its
+ *     canonical URL of the form `{api_root}/deployments/{id}` where `id` is the local
+ *     identifier of the `Deployment` resource.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/standard/requirements/deployment/req_canonical_url.adoc"> OGC API - Connected Systems - Part 1 - Requirement /req/deployment/canonical-url</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
- * @author Johann Sorel (Geomatys)
+ * @author Quentin Bialota (Geomatys)
  */
 public final class GetDeployment extends RequestParameters {
 
     private String deploymentId;
 
     /**
-     * Local identifier of the deployment. (required)
-     *
-     * @return the deploymentId
+     * @see #deploymentId(java.lang.String)
      */
     public String getDeploymentId() {
         return deploymentId;
     }
 
     /**
-     * @param deploymentId the deploymentId to set
-     * @see #getDeploymentId()
+     * @see #deploymentId(java.lang.String)
      */
     public void setDeploymentId(String deploymentId) {
         this.deploymentId = deploymentId;
     }
 
     /**
-     * @param deploymentId the deploymentId to set
-     * @see #getDeploymentId()
+     * <blockquote><q>
+     *     Local identifier of a Deployment
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/deploymentId.yaml"> OGC API - Connected Systems - Part 1 - deploymentId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetDeployment deploymentId(String deploymentId) {
         setDeploymentId(deploymentId);

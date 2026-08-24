@@ -20,9 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /observations}: lists Observation resources.
+ * <blockquote><q>
+ *     List or search all observations available from this server endpoint.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/observations.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - List all available observations</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetObservations extends RequestParameters {

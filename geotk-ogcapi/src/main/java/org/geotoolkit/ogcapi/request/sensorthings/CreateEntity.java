@@ -19,15 +19,19 @@ package org.geotoolkit.ogcapi.request.sensorthings;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * Create a new entity, e.g. {@code POST /v1.1/Things}, or {@code POST /v1.1/TaskingCapabilities(1)/Tasks}
- * for the one documented nested-create case (creating a Task under its TaskingCapability).
+ * <blockquote><q>
+ *     To create an entity in a collection, the client SHALL send a HTTP POST request to that
+ *     collection’s URL. The POST body SHALL contain a single valid entity representation.
+ *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#create-entity"> OGC SensorThings API Part 1: Sensing - 10.2 Create an entity</a></small></i>
+ * </blockquote>
  *
  * <p>The request body may use deep insert: nested entities with every field populated are created
  * along with the top-level entity; nested entities with only {@code @iot.id} populated are linked
  * to an existing entity instead.</p>
  *
- * <p>OGC SensorThings API Part 1: Sensing, section 10.3 (create entity); OGC SensorThings API
- * Part 2: Tasking Core, section 4 (Task creation).</p>
+ * <p>This request also covers the one nested-create case documented by OGC SensorThings API
+ * Part 2: Tasking Core, section 4: creating a Task under its TaskingCapability
+ * ({@code POST /v1.1/TaskingCapabilities(1)/Tasks}).</p>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -40,25 +44,30 @@ public final class CreateEntity extends RequestParameters {
     private String contentType;
 
     /**
-     * The OData entity-set name to create the entity in, e.g. {@code "Things"}. (required)
-     *
-     * @return the entitySet
+     * @see #entitySet(java.lang.String)
      */
     public String getEntitySet() {
         return entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * @see #entitySet(java.lang.String)
      */
     public void setEntitySet(String entitySet) {
         this.entitySet = entitySet;
     }
 
     /**
-     * @param entitySet the entitySet to set
-     * @see #getEntitySet()
+     * <blockquote><q>
+     *     To create an entity in a collection, the client SHALL send a HTTP POST request to
+     *     that collection’s URL.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#create-entity"> OGC SensorThings API Part 1: Sensing - 10.2 Create an entity</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The OData entity-set name to create the entity in, e.g. {@code "Things"}.</li>
+     * </ul>
      */
     public CreateEntity entitySet(String entitySet) {
         setEntitySet(entitySet);
@@ -66,26 +75,30 @@ public final class CreateEntity extends RequestParameters {
     }
 
     /**
-     * The entity set of the parent entity, for the nested-create case (e.g. {@code "TaskingCapabilities"}
-     * when creating a {@code Task}). (optional)
-     *
-     * @return the parentEntitySet
+     * @see #parentEntitySet(java.lang.String)
      */
     public String getParentEntitySet() {
         return parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * @see #parentEntitySet(java.lang.String)
      */
     public void setParentEntitySet(String parentEntitySet) {
         this.parentEntitySet = parentEntitySet;
     }
 
     /**
-     * @param parentEntitySet the parentEntitySet to set
-     * @see #getParentEntitySet()
+     * <blockquote><q>
+     *     If the target URL for the collection is a navigationLink, the new entity is
+     *     automatically linked to the entity containing the navigationLink.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#create-entity"> OGC SensorThings API Part 1: Sensing - 10.2 Create an entity</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; set together with {@code parentId} for the nested-create case.</li>
+     *     <li>E.g. {@code "TaskingCapabilities"} when creating a {@code Task}.</li>
+     * </ul>
      */
     public CreateEntity parentEntitySet(String parentEntitySet) {
         setParentEntitySet(parentEntitySet);
@@ -93,25 +106,29 @@ public final class CreateEntity extends RequestParameters {
     }
 
     /**
-     * The id of the parent entity, for the nested-create case. (optional)
-     *
-     * @return the parentId
+     * @see #parentId(java.lang.Object)
      */
     public Object getParentId() {
         return parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * @see #parentId(java.lang.Object)
      */
     public void setParentId(Object parentId) {
         this.parentId = parentId;
     }
 
     /**
-     * @param parentId the parentId to set
-     * @see #getParentId()
+     * <blockquote><q>
+     *     If the target URL for the collection is a navigationLink, the new entity is
+     *     automatically linked to the entity containing the navigationLink.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#create-entity"> OGC SensorThings API Part 1: Sensing - 10.2 Create an entity</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; the {@code @iot.id} of the parent entity, for the nested-create case.</li>
+     * </ul>
      */
     public CreateEntity parentId(Object parentId) {
         setParentId(parentId);
@@ -119,25 +136,29 @@ public final class CreateEntity extends RequestParameters {
     }
 
     /**
-     * The raw entity document to publish. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     The POST body SHALL contain a single valid entity representation.
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-088/18-088.html#create-entity"> OGC SensorThings API Part 1: Sensing - 10.2 Create an entity</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The raw entity document, encoded as declared by {@code contentType}.</li>
+     * </ul>
      */
     public CreateEntity content(byte[] content) {
         setContent(content);
@@ -145,26 +166,28 @@ public final class CreateEntity extends RequestParameters {
     }
 
     /**
-     * The media type of the entity encoding, sent as the {@code Content-Type} header (e.g.
-     * {@code application/json}). (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * The media type of the entity encoding, sent as the {@code Content-Type} header (e.g.
+     * {@code application/json}).
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>OGC SensorThings API Part 1: Sensing represents entities as JSON throughout (no
+     *     verbatim spec text mandates a specific {@code Content-Type} value for this field).</li>
+     * </ul>
      */
     public CreateEntity contentType(String contentType) {
         setContentType(contentType);

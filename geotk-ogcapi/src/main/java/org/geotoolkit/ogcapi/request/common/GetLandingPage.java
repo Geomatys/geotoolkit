@@ -19,6 +19,11 @@ package org.geotoolkit.ogcapi.request.common;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
+ * <blockquote><q>
+ *     The purpose of the landing page is to provide clients with a starting point for using
+ *     the API. Any resource exposed through an API can be accessed by following paths or links starting from the landing page.
+ *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#landing-page"> OGC API - Common - Part 1: Core</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -27,25 +32,31 @@ public final class GetLandingPage extends RequestParameters {
     private String format;
 
     /**
-     * The optional f parameter indicates the output format that the
-     * server shall provide as part of the response document. The default format
-     * is JSON. (optional, default to json)
-     *
-     * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * @param format the format to set
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * @see #getFormat()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetLandingPage format(String format) {
         setFormat(format);

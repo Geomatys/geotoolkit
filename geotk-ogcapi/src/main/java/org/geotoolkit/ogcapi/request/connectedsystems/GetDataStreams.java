@@ -20,9 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /datastreams}: lists DataStream resources.
+ * <blockquote><q>
+ *     List or search all datastreams available from this server endpoint.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/dataStreams.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Datastreams collection (GET)</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetDataStreams extends RequestParameters {
@@ -37,25 +39,30 @@ public final class GetDataStreams extends RequestParameters {
     private Integer limit;
 
     /**
-     * Only resources with one of the given identifiers are selected. (optional)
-     *
-     * @return the id
+     * @see #id(java.util.List)
      */
     public List<String> getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.util.List)
      */
     public void setId(List<String> id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/idList.yaml"> OGC API - Connected Systems - Part 1 (draft) - id parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>RES_ID1,RES_ID2,RES_ID63</pre>
      */
     public GetDataStreams id(List<String> id) {
         setId(id);
@@ -63,25 +70,31 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * Free-text search on the resource's textual properties. (optional)
-     *
-     * @return the q
+     * @see #q(java.util.List)
      */
     public List<String> getQ() {
         return q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * @see #q(java.util.List)
      */
     public void setQ(List<String> q) {
         this.q = q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 (draft) - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The resource {@code name} and {@code description} properties are always searched.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetDataStreams q(List<String> q) {
         setQ(q);
@@ -89,25 +102,30 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the phenomenon time. (optional)
-     *
-     * @return the phenomenonTime
+     * @see #phenomenonTime(java.lang.String)
      */
     public String getPhenomenonTime() {
         return phenomenonTime;
     }
 
     /**
-     * @param phenomenonTime the phenomenonTime to set
-     * @see #getPhenomenonTime()
+     * @see #phenomenonTime(java.lang.String)
      */
     public void setPhenomenonTime(String phenomenonTime) {
         this.phenomenonTime = phenomenonTime;
     }
 
     /**
-     * @param phenomenonTime the phenomenonTime to set
-     * @see #getPhenomenonTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/phenomenonTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - phenomenonTime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code phenomenonTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetDataStreams phenomenonTime(String phenomenonTime) {
         setPhenomenonTime(phenomenonTime);
@@ -115,25 +133,30 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the result time. (optional)
-     *
-     * @return the resultTime
+     * @see #resultTime(java.lang.String)
      */
     public String getResultTime() {
         return resultTime;
     }
 
     /**
-     * @param resultTime the resultTime to set
-     * @see #getResultTime()
+     * @see #resultTime(java.lang.String)
      */
     public void setResultTime(String resultTime) {
         this.resultTime = resultTime;
     }
 
     /**
-     * @param resultTime the resultTime to set
-     * @see #getResultTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/resultTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - resultTime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code resultTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetDataStreams resultTime(String resultTime) {
         setResultTime(resultTime);
@@ -141,25 +164,29 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given system identifiers are selected. (optional)
-     *
-     * @return the system
+     * @see #system(java.util.List)
      */
     public List<String> getSystem() {
         return system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * @see #system(java.util.List)
      */
     public void setSystem(List<String> system) {
         this.system = system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * <blockquote><q>
+     *     List of system local IDs or unique IDs (URI).
+     *     Only resources that are associated to a System that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - system parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetDataStreams system(List<String> system) {
         setSystem(system);
@@ -167,25 +194,29 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given features of interest are selected. (optional)
-     *
-     * @return the foi
+     * @see #foi(java.util.List)
      */
     public List<String> getFoi() {
         return foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * @see #foi(java.util.List)
      */
     public void setFoi(List<String> foi) {
         this.foi = foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * <blockquote><q>
+     *     List of feature local IDs or unique IDs (URI).
+     *     Only resources that are associated to a feature of interest that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/foiIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - foi parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetDataStreams foi(List<String> foi) {
         setFoi(foi);
@@ -193,25 +224,29 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * Only resources that observe one of the given properties are selected. (optional)
-     *
-     * @return the observedProperty
+     * @see #observedProperty(java.util.List)
      */
     public List<String> getObservedProperty() {
         return observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * @see #observedProperty(java.util.List)
      */
     public void setObservedProperty(List<String> observedProperty) {
         this.observedProperty = observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to an observable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/obsPropIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - observedProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetDataStreams observedProperty(List<String> observedProperty) {
         setObservedProperty(observedProperty);
@@ -219,25 +254,31 @@ public final class GetDataStreams extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 (draft) - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetDataStreams limit(Integer limit) {
         setLimit(limit);

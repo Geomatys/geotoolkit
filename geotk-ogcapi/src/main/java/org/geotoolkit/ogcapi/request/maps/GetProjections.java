@@ -22,6 +22,13 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
  * To retrieve the list of custom CRS projection operation methods and datums supported for map
  * retrieval operations.
  *
+ * <blockquote><q>
+ *     The resource at /projectionsAndDatums supports a GET operation, with JSON as an available
+ *     representation, returning a list of the supported projection operation methods and their
+ *     associated parameters, as well as a list of available datums.
+ *     </q><i><small><a href="https://docs.ogc.org/is/20-058/20-058.html#_b8f30122-e54f-4bd7-9916-788100c8c88d"> OGC API - Maps - Part 1: Core - 18.3.1. Available projections operation</a></small></i>
+ * </blockquote>
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class GetProjections extends RequestParameters {
@@ -29,10 +36,8 @@ public final class GetProjections extends RequestParameters {
     private String format;
 
     /**
-     * The format of the response. If no value is provided, the accept header is used to determine the
-     * format. Accepted values are 'json' or 'html'. (optional)
-     *
      * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
@@ -40,15 +45,22 @@ public final class GetProjections extends RequestParameters {
 
     /**
      * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>If no value is provided, the accept header is used to determine the format.</li>
+     *     <li>A GET operation at {@code /projectionsAndDatums} providing at minimum a JSON
+     *     representation is required by the spec (Requirement 44.A); an {@code html} alternate
+     *     representation, if offered, is not itself defined by a verbatim spec sentence.</li>
+     * </ul>
+     *
      * @param format the format to set
-     * @see #getFormat()
      */
     public GetProjections format(String format) {
         setFormat(format);

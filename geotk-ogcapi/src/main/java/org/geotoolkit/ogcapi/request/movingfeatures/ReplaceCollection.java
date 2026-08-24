@@ -19,11 +19,14 @@ package org.geotoolkit.ogcapi.request.movingfeatures;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To replace the metadata ({@code collection-body} JSON document) of an existing moving feature
- * collection. Per the specification, the collection's {@code updateFrequency} property is not
- * updated by this operation.
+ * To replace the metadata of an existing moving feature collection:
+ * {@code PUT /collections/{collectionId}}.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code replaceMetadata}).</p>
+ * <blockquote><q>
+ *     For every resource in the collection, the server SHALL support the HTTP PUT
+ *     operation.
+ *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mfc-collection-op-put"> OGC API - Moving Features, Part 1: Core - Requirement 7 /req/mf-collection/collection-put</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -33,25 +36,29 @@ public final class ReplaceCollection extends RequestParameters {
     private byte[] content;
 
     /**
-     * Local identifier of the collection. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     An identifier for a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection.</li>
+     * </ul>
      */
     public ReplaceCollection collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -59,25 +66,32 @@ public final class ReplaceCollection extends RequestParameters {
     }
 
     /**
-     * The raw {@code collection-body} JSON document to publish. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     The content of the request body SHALL be based upon the Collection request body
+     *     schema, except updateFrequency. If the updateFrequency is included in the request
+     *     body, the server SHALL ignore it.
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mfc-collection-op-put"> OGC API - Moving Features, Part 1: Core - Requirement 7 /req/mf-collection/collection-put</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Raw {@code collection-body} JSON document to publish; the {@code updateFrequency}
+     *     property, if present, is ignored by the server.</li>
+     * </ul>
      */
     public ReplaceCollection content(byte[] content) {
         setContent(content);

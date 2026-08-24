@@ -20,9 +20,11 @@ import java.util.List;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /controlstreams}: lists ControlStream resources.
+ * <blockquote><q>
+ *     List or search all control streams available from this server endpoint.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/controlStreams.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Control streams collection (GET)</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetControlStreams extends RequestParameters {
@@ -39,25 +41,30 @@ public final class GetControlStreams extends RequestParameters {
     private Integer limit;
 
     /**
-     * Only resources with one of the given identifiers are selected. (optional)
-     *
-     * @return the id
+     * @see #id(java.util.List)
      */
     public List<String> getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.util.List)
      */
     public void setId(List<String> id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/idList.yaml"> OGC API - Connected Systems - Part 1 (draft) - id parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>RES_ID1,RES_ID2,RES_ID63</pre>
      */
     public GetControlStreams id(List<String> id) {
         setId(id);
@@ -65,25 +72,31 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Free-text search on the resource's textual properties. (optional)
-     *
-     * @return the q
+     * @see #q(java.util.List)
      */
     public List<String> getQ() {
         return q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * @see #q(java.util.List)
      */
     public void setQ(List<String> q) {
         this.q = q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 (draft) - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The resource {@code name} and {@code description} properties are always searched.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetControlStreams q(List<String> q) {
         setQ(q);
@@ -91,25 +104,30 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the command issue time. (optional)
-     *
-     * @return the issueTime
+     * @see #issueTime(java.lang.String)
      */
     public String getIssueTime() {
         return issueTime;
     }
 
     /**
-     * @param issueTime the issueTime to set
-     * @see #getIssueTime()
+     * @see #issueTime(java.lang.String)
      */
     public void setIssueTime(String issueTime) {
         this.issueTime = issueTime;
     }
 
     /**
-     * @param issueTime the issueTime to set
-     * @see #getIssueTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/issueTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - issueTime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have an {@code issueTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetControlStreams issueTime(String issueTime) {
         setIssueTime(issueTime);
@@ -117,25 +135,30 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339, filtering on the command execution time. (optional)
-     *
-     * @return the executionTime
+     * @see #executionTime(java.lang.String)
      */
     public String getExecutionTime() {
         return executionTime;
     }
 
     /**
-     * @param executionTime the executionTime to set
-     * @see #getExecutionTime()
+     * @see #executionTime(java.lang.String)
      */
     public void setExecutionTime(String executionTime) {
         this.executionTime = executionTime;
     }
 
     /**
-     * @param executionTime the executionTime to set
-     * @see #getExecutionTime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/executionTime.yaml"> OGC API - Connected Systems - Part 2 (draft) - executionTime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have an {@code executionTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetControlStreams executionTime(String executionTime) {
         setExecutionTime(executionTime);
@@ -143,25 +166,31 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Only commands or control streams with one of the given status codes are selected. (optional)
-     *
-     * @return the statusCode
+     * @see #statusCode(java.util.List)
      */
     public List<String> getStatusCode() {
         return statusCode;
     }
 
     /**
-     * @param statusCode the statusCode to set
-     * @see #getStatusCode()
+     * @see #statusCode(java.util.List)
      */
     public void setStatusCode(List<String> statusCode) {
         this.statusCode = statusCode;
     }
 
     /**
-     * @param statusCode the statusCode to set
-     * @see #getStatusCode()
+     * <blockquote><q>
+     *     List of command status codes.
+     *     Only command resources whose current status matches one of the provided status codes are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/statusCodeList.yaml"> OGC API - Connected Systems - Part 2 (draft) - statusCode parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>One of {@code PENDING}, {@code ACCEPTED}, {@code REJECTED}, {@code SCHEDULED},
+     *     {@code UPDATED}, {@code CANCELED}, {@code EXECUTING}, {@code FAILED}, {@code COMPLETED}.</li>
+     * </ul>
      */
     public GetControlStreams statusCode(List<String> statusCode) {
         setStatusCode(statusCode);
@@ -169,25 +198,29 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Only resources sent by one of the given senders are selected. (optional)
-     *
-     * @return the sender
+     * @see #sender(java.util.List)
      */
     public List<String> getSender() {
         return sender;
     }
 
     /**
-     * @param sender the sender to set
-     * @see #getSender()
+     * @see #sender(java.util.List)
      */
     public void setSender(List<String> sender) {
         this.sender = sender;
     }
 
     /**
-     * @param sender the sender to set
-     * @see #getSender()
+     * <blockquote><q>
+     *     List of sender IDs.
+     *     Only command resources issued by one of the specified senders are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/senderList.yaml"> OGC API - Connected Systems - Part 2 (draft) - sender parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetControlStreams sender(List<String> sender) {
         setSender(sender);
@@ -195,25 +228,29 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given system identifiers are selected. (optional)
-     *
-     * @return the system
+     * @see #system(java.util.List)
      */
     public List<String> getSystem() {
         return system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * @see #system(java.util.List)
      */
     public void setSystem(List<String> system) {
         this.system = system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * <blockquote><q>
+     *     List of system local IDs or unique IDs (URI).
+     *     Only resources that are associated to a System that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - system parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetControlStreams system(List<String> system) {
         setSystem(system);
@@ -221,25 +258,29 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given features of interest are selected. (optional)
-     *
-     * @return the foi
+     * @see #foi(java.util.List)
      */
     public List<String> getFoi() {
         return foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * @see #foi(java.util.List)
      */
     public void setFoi(List<String> foi) {
         this.foi = foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * <blockquote><q>
+     *     List of feature local IDs or unique IDs (URI).
+     *     Only resources that are associated to a feature of interest that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/foiIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - foi parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetControlStreams foi(List<String> foi) {
         setFoi(foi);
@@ -247,25 +288,29 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * Only resources that control one of the given properties are selected. (optional)
-     *
-     * @return the controlledProperty
+     * @see #controlledProperty(java.util.List)
      */
     public List<String> getControlledProperty() {
         return controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * @see #controlledProperty(java.util.List)
      */
     public void setControlledProperty(List<String> controlledProperty) {
         this.controlledProperty = controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to a controllable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/controlPropIdList.yaml"> OGC API - Connected Systems - Part 1 (draft) - controlledProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetControlStreams controlledProperty(List<String> controlledProperty) {
         setControlledProperty(controlledProperty);
@@ -273,25 +318,31 @@ public final class GetControlStreams extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 (draft) - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetControlStreams limit(Integer limit) {
         setLimit(limit);

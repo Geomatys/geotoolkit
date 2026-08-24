@@ -19,9 +19,15 @@ package org.geotoolkit.ogcapi.request.movingfeatures;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To delete a single moving feature.
+ * To delete a single moving feature:
+ * {@code DELETE /collections/{collectionId}/items/{mFeatureId}}.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code deleteMovingFeature}).</p>
+ * <blockquote><q>
+ *     For every moving feature in a moving feature collection (path
+ *     {root}/collections/{collectionId}), the server SHALL support the HTTP DELETE
+ *     operation at the path {root}/collections/{collectionId}/items/{mFeatureId}
+ *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#req_mf_mf-op-delete"> OGC API - Moving Features, Part 1: Core - Requirement 20 /req/movingfeatures/mf-delete</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -31,25 +37,28 @@ public final class DeleteMovingFeature extends RequestParameters {
     private String mFeatureId;
 
     /**
-     * Local identifier of the collection. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     An identifier for a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public DeleteMovingFeature collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -57,25 +66,28 @@ public final class DeleteMovingFeature extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
-     * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
     }
 
     /**
-     * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
-     * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * <blockquote><q>
+     *     An identifier for a specific MovingFeature of a specific Collection of data
+     *     </q><i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html#_6a53f5bb-7088-4fef-b4c3-ab65f8d40189"> OGC API - Moving Features, Part 1: Core - 6.1. General</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public DeleteMovingFeature mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);

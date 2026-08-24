@@ -20,9 +20,11 @@ import org.opengis.geometry.Envelope;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code items} query ({@code /collections/{collectionId}/items}) on a records catalog.
- *
- * <p>OGC API - Records Part 1: Core.</p>
+ * <blockquote><q>
+ *     For every catalog identified in the collections response (path: /collections), the
+ *     server SHALL support the HTTP GET operation at the path /collections/{collectionId}/items.
+ *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#req_records-api_records-op"> OGC API - Records - Part 1: Core - Records</a></small></i>
+ * </blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -43,25 +45,29 @@ public final class GetRecords extends RequestParameters {
     private String f;
 
     /**
-     * Local identifier of the catalog. (required)
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetRecords collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -69,27 +75,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * Only records that have a geometry that intersects the bounding box are selected. The
-     * bounding box CRS (query parameter {@code bbox-crs}) is derived from this envelope's own
-     * coordinate reference system. (optional)
-     *
-     * @return the bbox
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public Envelope getBbox() {
         return bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public void setBbox(Envelope bbox) {
         this.bbox = bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * <blockquote><q>
+     *     A searchable endpoint SHALL support the Bounding Box Search (bbox) parameter as
+     *     defined in the OGC API — Features — Part 1: Core Standard.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-bbox"> OGC API - Records - Part 1: Core - bbox parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The bounding box CRS is derived from this envelope's own coordinate reference system.</li>
+     * </ul>
      */
     public GetRecords bbox(Envelope bbox) {
         setBbox(bbox);
@@ -97,25 +106,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     A searchable endpoint SHALL support a Temporal Searching (datetime) parameter as
+     *     defined in the OGC API — Features — Part 1: Core Standard.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-datetime"> OGC API - Records - Part 1: Core - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>A date-time or an interval, per RFC 3339 (as defined by OGC API - Features - Part 1: Core).</li>
+     * </ul>
      */
     public GetRecords datetime(String datetime) {
         setDatetime(datetime);
@@ -123,26 +137,32 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * Free-text search on the record's textual properties (e.g. title, description, keywords).
-     * (optional)
-     *
-     * @return the q
+     * @see #q(java.lang.String)
      */
     public String getQ() {
         return q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * @see #q(java.lang.String)
      */
     public void setQ(String q) {
         this.q = q;
     }
 
     /**
-     * @param q the q to set
-     * @see #getQ()
+     * <blockquote><q>
+     *     The optional q parameter supports keyword searching. Only records
+     *     whose text fields contain one or more of the specified search terms are selected.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-q"> OGC API - Records - Part 1: Core - q parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Search terms separated by commas are combined with a logical OR.</li>
+     *     <li>Search terms separated by white space must all appear, in the order specified.</li>
+     *     <li>Keyword searches are case insensitive.</li>
+     * </ul>
      */
     public GetRecords q(String q) {
         setQ(q);
@@ -150,26 +170,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * Only records of the given resource type are selected (e.g. {@code dataset},
-     * {@code series}). (optional)
-     *
-     * @return the type
+     * @see #type(java.lang.String)
      */
     public String getType() {
         return type;
     }
 
     /**
-     * @param type the type to set
-     * @see #getType()
+     * @see #type(java.lang.String)
      */
     public void setType(String type) {
         this.type = type;
     }
 
     /**
-     * @param type the type to set
-     * @see #getType()
+     * <blockquote><q>
+     *     The optional type parameter allows a specific list of records, identified
+     *     by their resource type, to be fetched from a catalog. Only records whose
+     *     resource type matches one of the values listed for this parameter shall appear in the response.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-type"> OGC API - Records - Part 1: Core - type parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetRecords type(String type) {
         setType(type);
@@ -177,25 +201,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * Only the record with the given external identifier (e.g. a DOI) is selected. (optional)
-     *
-     * @return the externalId
+     * @see #externalId(java.lang.String)
      */
     public String getExternalId() {
         return externalId;
     }
 
     /**
-     * @param externalId the externalId to set
-     * @see #getExternalId()
+     * @see #externalId(java.lang.String)
      */
     public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 
     /**
-     * @param externalId the externalId to set
-     * @see #getExternalId()
+     * <blockquote><q>
+     *     The optional externalIds parameter allows a specific list of records,
+     *     identified by their external identifiers, to be fetched from a catalog.
+     *     Only records where one of their associated external identifiers equals one of the values listed for this parameter shall appear in the response.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-externalIds"> OGC API - Records - Part 1: Core - externalIds parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetRecords externalId(String externalId) {
         setExternalId(externalId);
@@ -203,27 +232,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * An expression in a query language (e.g. CQL2) for which an entire record will be returned
-     * if the filter predicate is matched. Sent as-is to the server, not parsed client-side.
-     * (optional)
-     *
-     * @return the filter
+     * @see #filter(java.lang.String)
      */
     public String getFilter() {
         return filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * @see #filter(java.lang.String)
      */
     public void setFilter(String filter) {
         this.filter = filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * <blockquote><q>
+     *     The HTTP GET operation on the path that fetches resource instances (e.g.
+     *     /collections/{collectionId}/items) SHALL support a parameter filter based on the following OpenAPI 3.0 fragment.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-079r2/19-079r2.html#req_filter_filter-param"> OGC API - Features - Part 3: Filtering - filter parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>An entire record is returned if the filter predicate is matched.</li>
+     * </ul>
      */
     public GetRecords filter(String filter) {
         setFilter(filter);
@@ -231,25 +263,31 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * The query language of the {@code filter} parameter (e.g. {@code cql2-text}). (optional)
-     *
-     * @return the filterLang
+     * @see #filterLang(java.lang.String)
      */
     public String getFilterLang() {
         return filterLang;
     }
 
     /**
-     * @param filterLang the filterLang to set
-     * @see #getFilterLang()
+     * @see #filterLang(java.lang.String)
      */
     public void setFilterLang(String filterLang) {
         this.filterLang = filterLang;
     }
 
     /**
-     * @param filterLang the filterLang to set
-     * @see #getFilterLang()
+     * <blockquote><q>
+     *     The HTTP GET operation on the path that fetches resource instances (e.g.
+     *     /collections/{collectionId}/items) SHALL support a parameter filter-lang based on the following OpenAPI 3.0 fragment.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-079r2/19-079r2.html#req_filter_filter-lang-param"> OGC API - Features - Part 3: Filtering - filter-lang parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code cql2-text}, {@code cql2-json}.</li>
+     *     <li>Default: {@code cql2-text}.</li>
+     * </ul>
      */
     public GetRecords filterLang(String filterLang) {
         setFilterLang(filterLang);
@@ -257,26 +295,31 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * A comma-separated list of property names to sort by, each optionally prefixed with
-     * {@code +} (ascending, default) or {@code -} (descending). (optional)
-     *
-     * @return the sortby
+     * @see #sortby(java.lang.String)
      */
     public String getSortby() {
         return sortby;
     }
 
     /**
-     * @param sortby the sortby to set
-     * @see #getSortby()
+     * @see #sortby(java.lang.String)
      */
     public void setSortby(String sortby) {
         this.sortby = sortby;
     }
 
     /**
-     * @param sortby the sortby to set
-     * @see #getSortby()
+     * <blockquote><q>
+     *     At the searchable catalog endpoint, the operation SHALL support a parameter
+     *     sortby with the following characteristics (using an OpenAPI Specification 3.0 fragment).
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#req_sorting_sortby-param"> OGC API - Records - Part 1: Core - sortby parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Comma-separated list of property names, each optionally prefixed with {@code +} (ascending) or {@code -} (descending).</li>
+     *     <li>Default sort order is ascending ({@code +}).</li>
+     * </ul>
      */
     public GetRecords sortby(String sortby) {
         setSortby(sortby);
@@ -284,26 +327,29 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of records presented in the response.
-     * (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     A searchable endpoint SHALL support a Paging (limit) parameter as defined in
+     *     the OGC API — Features — Part 1: Core Standard.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html#core-query-parameters-limit"> OGC API - Records - Part 1: Core - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetRecords limit(Integer limit) {
         setLimit(limit);
@@ -311,27 +357,31 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * The optional offset parameter indicates the offset within the result set from which the
-     * server shall begin presenting results in the response document. The first element has an
-     * offset of 0. (optional)
-     *
-     * @return the offset
+     * @see #offset(java.lang.Integer)
      */
     public Integer getOffset() {
         return offset;
     }
 
     /**
-     * @param offset the offset to set
-     * @see #getOffset()
+     * @see #offset(java.lang.Integer)
      */
     public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
     /**
-     * @param offset the offset to set
-     * @see #getOffset()
+     * <blockquote><q>
+     *     ...an additional parameter (e.g., "offset") that a client can use to construct
+     *     the next request.
+     *     </q><i><small><a href="https://docs.ogc.org/is/17-069r4/17-069r4.html#_parameter_limit"> OGC API - Features - Part 1: Core (example paging scheme)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; not a normatively-required parameter, provided as a server-specific
+     *     paging mechanism (no verbatim spec requirement text available for this field).</li>
+     *     <li>The first element has an offset of 0.</li>
+     * </ul>
      */
     public GetRecords offset(Integer offset) {
         setOffset(offset);
@@ -339,26 +389,30 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * The coordinate reference system of the response geometries, as a URI. If not given, the
-     * default CRS (CRS84) is used. (optional)
-     *
-     * @return the crs
+     * @see #crs(java.lang.String)
      */
     public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * @see #crs(java.lang.String)
      */
     public void setCrs(String crs) {
         this.crs = crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * <blockquote><q>
+     *     Each GET request on a 'features' or 'feature' resource SHALL support a query
+     *     parameter named crs with the following characteristics:
+     *     </q><i><small><a href="https://docs.ogc.org/is/18-058r1/18-058r1.html#req_crs_fc-crs-definition"> OGC API - Features - Part 2: Coordinate Reference Systems by Reference</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Default: {@code http://www.opengis.net/def/crs/OGC/1.3/CRS84} (CRS84) if not specified.</li>
+     * </ul>
      */
     public GetRecords crs(String crs) {
         setCrs(crs);
@@ -366,26 +420,31 @@ public final class GetRecords extends RequestParameters {
     }
 
     /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
+     * @see #f(java.lang.String)
      */
     public String getF() {
         return f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * @see #f(java.lang.String)
      */
     public void setF(String f) {
         this.f = f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code json}, {@code html}.</li>
+     *     <li>Default: {@code json}.</li>
+     * </ul>
      */
     public GetRecords f(String f) {
         setF(f);

@@ -19,7 +19,13 @@ package org.geotoolkit.ogcapi.request.tiles;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * To retrive the definition of the specified tiling scheme (tile matrix set).
+ * To retrieve the definition of the specified tiling scheme (tile matrix set).
+ *
+ * <blockquote><q>
+ *     The target IRI points to a resource that describes the TileMatrixSet according to the
+ *     2D-TMS standard.
+ *     </q><i><small><a href="https://docs.ogc.org/is/20-057/20-057.html#_1f2e99f5-bd84-07ad-69f0-29f8b3d2d258"> OGC API - Tiles - Part 1: Core - 5.2. Link relations (tiling-scheme)</a></small></i>
+ * </blockquote>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -29,9 +35,8 @@ public final class GetTileMatrixSet extends RequestParameters {
     private String format;
 
     /**
-     * get tileMatrixSetId Identifier for a supported TileMatrixSet (required)
-     *
      * @return tileMatrixSetId
+     * @see #tileMatrixSetId(java.lang.String)
      */
     public String getTileMatrixSetId() {
         return tileMatrixSetId;
@@ -39,15 +44,25 @@ public final class GetTileMatrixSet extends RequestParameters {
 
     /**
      * @param tileMatrixSetId the tileMatrixSetId to set
-     * @see #getTileMatrixSetId()
+     * @see #tileMatrixSetId(java.lang.String)
      */
     public void setTileMatrixSetId(String tileMatrixSetId) {
         this.tileMatrixSetId = tileMatrixSetId;
     }
 
     /**
+     * <blockquote><q>
+     *     The {@code tileMatrixSetId} variable will be interpreted as one of TileMatrixSet
+     *     identifiers supported by the resource. In other words, tileMatrixSetId represents all
+     *     the TileMatrixSets supported by the resource.
+     *     </q><i><small><a href="https://docs.ogc.org/is/20-057/20-057.html#_7f66635d-a86f-e3ed-427f-494127984475"> OGC API - Tiles - Part 1: Core - 7.1.5. Parameter tileMatrixSetId (optional)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
+     *
      * @param tileMatrixSetId the tileMatrixSetId to set
-     * @see #getTileMatrixSetId()
      */
     public GetTileMatrixSet tileMatrixSetId(String tileMatrixSetId) {
         setTileMatrixSetId(tileMatrixSetId);
@@ -55,11 +70,8 @@ public final class GetTileMatrixSet extends RequestParameters {
     }
 
     /**
-     * Get the format of the response.
-     * If no value is provided, the accept header is used to determine the format.
-     * Accepted values are &#39;json&#39; or &#39;html&#39;. (optional)
-     *
      * @return the format
+     * @see #format(java.lang.String)
      */
     public String getFormat() {
         return format;
@@ -67,20 +79,30 @@ public final class GetTileMatrixSet extends RequestParameters {
 
     /**
      * @param format the format to set
-     * @see #getFormat()
+     * @see #format(java.lang.String)
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Accepted values are typically {@code json} or {@code html}.</li>
+     *     <li>If no value is provided, the {@code Accept} header is used to determine the format.</li>
+     * </ul>
+     *
      * @param format the format to set
-     * @see #getFormat()
      */
     public GetTileMatrixSet format(String format) {
         setFormat(format);
         return this;
     }
-
 
 }

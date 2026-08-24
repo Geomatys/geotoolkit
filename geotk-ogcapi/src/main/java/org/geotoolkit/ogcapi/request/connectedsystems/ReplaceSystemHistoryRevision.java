@@ -19,10 +19,13 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code PUT} operation on {@code /systems/{systemId}/history/{revId}}: replaces an existing
- * historical revision of a System.
+ * <blockquote><q>
+ *     This will completely replace a specific revision of a system description. The server will
+ *     reject the update if the `validTime` property of the provided system description is different
+ *     from the original.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/systemHistoryById.yaml"> OGC API - Connected Systems - Part 2 (draft) - Update a system description revision</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ReplaceSystemHistoryRevision extends RequestParameters {
@@ -33,25 +36,29 @@ public final class ReplaceSystemHistoryRevision extends RequestParameters {
     private String contentType;
 
     /**
-     * Local identifier of the system. (required)
-     *
-     * @return the systemId
+     * @see #systemId(java.lang.String)
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * @see #systemId(java.lang.String)
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * @param systemId the systemId to set
-     * @see #getSystemId()
+     * <blockquote><q>
+     *     Local identifier of a System
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemId.yaml"> OGC API - Connected Systems - Part 1 (draft) - systemId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public ReplaceSystemHistoryRevision systemId(String systemId) {
         setSystemId(systemId);
@@ -59,25 +66,29 @@ public final class ReplaceSystemHistoryRevision extends RequestParameters {
     }
 
     /**
-     * Identifier of the historical revision. (required)
-     *
-     * @return the revId
+     * @see #revId(java.lang.String)
      */
     public String getRevId() {
         return revId;
     }
 
     /**
-     * @param revId the revId to set
-     * @see #getRevId()
+     * @see #revId(java.lang.String)
      */
     public void setRevId(String revId) {
         this.revId = revId;
     }
 
     /**
-     * @param revId the revId to set
-     * @see #getRevId()
+     * <blockquote><q>
+     *     Local identifier of a historical revision
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/revId.yaml"> OGC API - Connected Systems - Part 2 (draft) - revId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public ReplaceSystemHistoryRevision revId(String revId) {
         setRevId(revId);
@@ -85,25 +96,30 @@ public final class ReplaceSystemHistoryRevision extends RequestParameters {
     }
 
     /**
-     * The raw document that replaces the existing one. (required)
-     *
-     * @return the content
+     * @see #content(byte[])
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * @see #content(byte[])
      */
     public void setContent(byte[] content) {
         this.content = content;
     }
 
     /**
-     * @param content the content to set
-     * @see #getContent()
+     * <blockquote><q>
+     *     The body of the PUT request SHALL contain a representation of the new resource content.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-002r1.html#replace"> OGC API - Features - Part 4: Create, Replace, Update and Delete (draft) - Replacing an existing resource (REPLACE)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>The raw system description document that replaces the existing revision; its
+     *     {@code validTime} must match the original revision's.</li>
+     * </ul>
      */
     public ReplaceSystemHistoryRevision content(byte[] content) {
         setContent(content);
@@ -111,25 +127,29 @@ public final class ReplaceSystemHistoryRevision extends RequestParameters {
     }
 
     /**
-     * The media type of the document encoding, sent as the {@code Content-Type} header. (required)
-     *
-     * @return the contentType
+     * @see #contentType(java.lang.String)
      */
     public String getContentType() {
         return contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * @see #contentType(java.lang.String)
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * @param contentType the contentType to set
-     * @see #getContentType()
+     * <blockquote><q>
+     *     The Implementation SHALL infer the media type of the request body containing a
+     *     representation of the new resource content from the Content-Type header.
+     *     </q><i><small><a href="https://docs.ogc.org/DRAFTS/20-002r1.html#replace"> OGC API - Features - Part 4: Create, Replace, Update and Delete (draft) - Replacing an existing resource (REPLACE)</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; a {@code 400} error is returned if not provided.</li>
+     * </ul>
      */
     public ReplaceSystemHistoryRevision contentType(String contentType) {
         setContentType(contentType);

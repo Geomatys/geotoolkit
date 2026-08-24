@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code GET} operation on {@code /commands/{cmdId}/status/{statusId}}: retrieves a single
- * status report of a Command.
+ * <blockquote><q>
+ *     Get a status report by ID
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/commandStatusById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Get a status report</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetCommandStatus extends RequestParameters {
@@ -31,25 +32,28 @@ public final class GetCommandStatus extends RequestParameters {
     private String statusId;
 
     /**
-     * Local identifier of the command. (required)
-     *
-     * @return the cmdId
+     * @see #cmdId(java.lang.String)
      */
     public String getCmdId() {
         return cmdId;
     }
 
     /**
-     * @param cmdId the cmdId to set
-     * @see #getCmdId()
+     * @see #cmdId(java.lang.String)
      */
     public void setCmdId(String cmdId) {
         this.cmdId = cmdId;
     }
 
     /**
-     * @param cmdId the cmdId to set
-     * @see #getCmdId()
+     * <blockquote><q>
+     *     Local identifier of a Command
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/cmdId.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - cmdId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetCommandStatus cmdId(String cmdId) {
         setCmdId(cmdId);
@@ -57,25 +61,28 @@ public final class GetCommandStatus extends RequestParameters {
     }
 
     /**
-     * Local identifier of the command status report. (required)
-     *
-     * @return the statusId
+     * @see #statusId(java.lang.String)
      */
     public String getStatusId() {
         return statusId;
     }
 
     /**
-     * @param statusId the statusId to set
-     * @see #getStatusId()
+     * @see #statusId(java.lang.String)
      */
     public void setStatusId(String statusId) {
         this.statusId = statusId;
     }
 
     /**
-     * @param statusId the statusId to set
-     * @see #getStatusId()
+     * <blockquote><q>
+     *     Local identifier of a Status Report
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/statusId.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - statusId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     * </ul>
      */
     public GetCommandStatus statusId(String statusId) {
         setStatusId(statusId);

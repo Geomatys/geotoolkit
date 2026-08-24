@@ -22,8 +22,15 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * The {@code items} query ({@code /collections/{collectionId}/items}).
  *
- * <p>OGC API - Features Part 1: Core. Also reused as-is by OGC API - EDR's {@code Locations}
- * query, which is defined in terms of this same resource.</p>
+ * <blockquote><q>
+ *     For every feature collection identified in the feature collections response (path
+ *     /collections), the server SHALL support the HTTP GET operation at the path
+ *     /collections/{collectionId}/items.
+ *     </q><i><small><a href="https://docs.ogc.org/is/17-069r4/17-069r4.html#_items_"> OGC API - Features - Part 1: Core - Features</a></small></i>
+ * </blockquote>
+ *
+ * <p>Also reused as-is by OGC API - EDR's {@code Locations} query, which is defined in terms of
+ * this same resource.</p>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -40,25 +47,29 @@ public final class GetItems extends RequestParameters {
     private String f;
 
     /**
-     * Local identifier of the collection.
-     *
-     * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
-     * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * <blockquote><q>
+     *     local identifier of a collection
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/collectionId.yaml"> OGC API - Features - Part 1: Core - collectionId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Must match the {@code id} of an existing collection (see {@code GET /collections}).</li>
+     * </ul>
      */
     public GetItems collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -66,27 +77,31 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * Only items that have a geometry that intersects the bounding box are selected. The
-     * bounding box CRS (query parameter {@code bbox-crs}) is derived from this envelope's own
-     * coordinate reference system. (optional)
-     *
-     * @return the bbox
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public Envelope getBbox() {
         return bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public void setBbox(Envelope bbox) {
         this.bbox = bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * <blockquote><q>
+     *     Only features that have a geometry that intersects the bounding box are selected.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/bbox.yaml"> OGC API - Features - Part 1: Core - bbox parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Four or six numbers, depending on whether the CRS includes a vertical axis.</li>
+     *     <li>Default CRS: WGS84 longitude/latitude (CRS84), derived from this envelope's own
+     *     coordinate reference system.</li>
+     * </ul>
      */
     public GetItems bbox(Envelope bbox) {
         setBbox(bbox);
@@ -94,25 +109,34 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/datetime.yaml"> OGC API - Features - Part 1: Core - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Intervals may be bounded or half-bounded (double-dots at start or end).</li>
+     *     <li>Only features with a temporal property intersecting the value are selected.</li>
+     * </ul>
+     * <pre>
+     * datetime=2018-02-12T23:20:50Z
+     * datetime=2018-02-12T00:00:00Z/2018-03-18T12:31:12Z
+     * </pre>
      */
     public GetItems datetime(String datetime) {
         setDatetime(datetime);
@@ -120,26 +144,33 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response.
-     * (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     The optional limit parameter limits the number of items that are
+     *     presented in the response document.
+     *     </q><i><small><a href="https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/limit.yaml"> OGC API - Features - Part 1: Core - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Minimum = 1.</li>
+     *     <li>Maximum = 10000.</li>
+     *     <li>Default = 10.</li>
+     *     <li>Only counts items at the first level of the response document.</li>
+     * </ul>
      */
     public GetItems limit(Integer limit) {
         setLimit(limit);
@@ -147,27 +178,30 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * The optional offset parameter indicates the offset within the result set from which the
-     * server shall begin presenting results in the response document. The first element has an
-     * offset of 0. (optional)
-     *
-     * @return the offset
+     * @see #offset(java.lang.Integer)
      */
     public Integer getOffset() {
         return offset;
     }
 
     /**
-     * @param offset the offset to set
-     * @see #getOffset()
+     * @see #offset(java.lang.Integer)
      */
     public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
     /**
-     * @param offset the offset to set
-     * @see #getOffset()
+     * The offset within the result set from which the server shall begin presenting results,
+     * the first element having an offset of {@code 0}.
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Not part of OGC API - Features - Part 1: Core, which paginates using the
+     *     {@code next}/{@code prev} links instead (no verbatim spec text available for this
+     *     field); several server implementations nonetheless expose it as a convenience
+     *     parameter.</li>
+     * </ul>
      */
     public GetItems offset(Integer offset) {
         setOffset(offset);
@@ -175,26 +209,32 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * OGC API - Features - Part 2: CRS by Reference. The coordinate reference system of the
-     * response geometries, as a URI. If not given, the default CRS (CRS84) is used. (optional)
-     *
-     * @return the crs
+     * @see #crs(java.lang.String)
      */
     public String getCrs() {
         return crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * @see #crs(java.lang.String)
      */
     public void setCrs(String crs) {
         this.crs = crs;
     }
 
     /**
-     * @param crs the crs to set
-     * @see #getCrs()
+     * <blockquote><q>
+     *     Each GET request on a 'features' or 'feature' resource SHALL support a query parameter
+     *     named crs with the following characteristics:
+     *     </q><i><small><a href="https://docs.opengeospatial.org/is/18-058r1/18-058r1.html#_parameter_crs"> OGC API - Features - Part 2: CRS by Reference - Parameter crs</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The coordinate reference system of the response geometries, as a URI.</li>
+     *     <li>Default: CRS84 (or CRS84h) if not specified.</li>
+     * </ul>
+     * <pre>.../collections/buildings/items?crs=http%3A%2F%2Fwww.opengis.net%2Fdef%2Fcrs%2FEPSG%2F0%2F26703&amp;...</pre>
      */
     public GetItems crs(String crs) {
         setCrs(crs);
@@ -202,27 +242,31 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * OGC API - Features - Part 3: Filtering. An expression in a query language (e.g. CQL2) for
-     * which an entire feature will be returned if the filter predicate is matched. Sent as-is to
-     * the server, not parsed client-side. (optional)
-     *
-     * @return the filter
+     * @see #filter(java.lang.String)
      */
     public String getFilter() {
         return filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * @see #filter(java.lang.String)
      */
     public void setFilter(String filter) {
         this.filter = filter;
     }
 
     /**
-     * @param filter the filter to set
-     * @see #getFilter()
+     * <blockquote><q>
+     *     The Filter requirements class defines a general parameter, filter, whose
+     *     value is a filter expression to be applied when retrieving resources.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-079r2/19-079r2.html#filter-param"> OGC API - Features - Part 3: Filtering - Parameter filter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The query language is specified by {@code filterLang}.</li>
+     *     <li>Sent as-is to the server, not parsed client-side.</li>
+     * </ul>
      */
     public GetItems filter(String filter) {
         setFilter(filter);
@@ -230,26 +274,31 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * OGC API - Features - Part 3: Filtering. The query language of the {@code filter}
-     * parameter (e.g. {@code cql2-text}). (optional)
-     *
-     * @return the filterLang
+     * @see #filterLang(java.lang.String)
      */
     public String getFilterLang() {
         return filterLang;
     }
 
     /**
-     * @param filterLang the filterLang to set
-     * @see #getFilterLang()
+     * @see #filterLang(java.lang.String)
      */
     public void setFilterLang(String filterLang) {
         this.filterLang = filterLang;
     }
 
     /**
-     * @param filterLang the filterLang to set
-     * @see #getFilterLang()
+     * <blockquote><q>
+     *     In order to specify that specific language that is being used, this clause
+     *     defines the filter-lang parameter.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-079r2/19-079r2.html#filter-lang-param"> OGC API - Features - Part 3: Filtering - Parameter filter-lang</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Allowed values: {@code cql2-text}, {@code cql2-json}.</li>
+     *     <li>Default: {@code cql2-text}.</li>
+     * </ul>
      */
     public GetItems filterLang(String filterLang) {
         setFilterLang(filterLang);
@@ -257,26 +306,29 @@ public final class GetItems extends RequestParameters {
     }
 
     /**
-     * The output format of the response. If not given, the content type is negotiated from the
-     * {@code Accept} header. (optional)
-     *
-     * @return the f
+     * @see #f(java.lang.String)
      */
     public String getF() {
         return f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * @see #f(java.lang.String)
      */
     public void setF(String f) {
         this.f = f;
     }
 
     /**
-     * @param f the f to set
-     * @see #getF()
+     * <blockquote><q>
+     *     The optional f parameter indicates the output format that the server
+     *     shall provide as part of the response document. The default format is JSON.
+     *     </q><i><small><a href="https://docs.ogc.org/is/19-072/19-072.html#json-api-definition"> OGC API - Common - Part 1: Core</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; content negotiation from the {@code Accept} header is used when omitted.</li>
+     * </ul>
      */
     public GetItems f(String f) {
         setF(f);

@@ -21,10 +21,11 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 import org.opengis.geometry.Envelope;
 
 /**
- * The {@code GET} operation on {@code /deployments/{deploymentId}/subdeployments}: lists the child
- * Deployments of a Deployment resource.
+ * <blockquote><q>
+ *     List or search all `Deployment` resources that are part of a specific parent deployment.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/paths/subdeployments.yaml"> OGC API - Connected Systems - Part 1: Feature Resources - Subdeployments collection (GET)</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-001/23-001.html">OGC API - Connected Systems - Part 1</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GetSubdeployments extends RequestParameters {
@@ -44,25 +45,28 @@ public final class GetSubdeployments extends RequestParameters {
     private Integer limit;
 
     /**
-     * Local identifier of the deployment. (required)
-     *
-     * @return the deploymentId
+     * @see #deploymentId(java.lang.String)
      */
     public String getDeploymentId() {
         return deploymentId;
     }
 
     /**
-     * @param deploymentId the deploymentId to set
-     * @see #getDeploymentId()
+     * @see #deploymentId(java.lang.String)
      */
     public void setDeploymentId(String deploymentId) {
         this.deploymentId = deploymentId;
     }
 
     /**
-     * @param deploymentId the deploymentId to set
-     * @see #getDeploymentId()
+     * <blockquote><q>
+     *     Local identifier of a Deployment
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/deploymentId.yaml"> OGC API - Connected Systems - Part 1 - deploymentId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required; identifies the parent Deployment whose subdeployments are listed.</li>
+     * </ul>
      */
     public GetSubdeployments deploymentId(String deploymentId) {
         setDeploymentId(deploymentId);
@@ -70,25 +74,30 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * If {@code true}, includes resources nested at any depth, not only direct children. (optional)
-     *
-     * @return the recursive
+     * @see #recursive(java.lang.Boolean)
      */
     public Boolean getRecursive() {
         return recursive;
     }
 
     /**
-     * @param recursive the recursive to set
-     * @see #getRecursive()
+     * @see #recursive(java.lang.Boolean)
      */
     public void setRecursive(Boolean recursive) {
         this.recursive = recursive;
     }
 
     /**
-     * @param recursive the recursive to set
-     * @see #getRecursive()
+     * <blockquote><q>
+     *     If true, intructs the server to include nested resources in the search results.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/recursive.yaml"> OGC API - Connected Systems - Part 1 - recursive parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>If omitted or {@code false}, only the deployment's direct subdeployments are returned.</li>
+     *     <li>If {@code true}, all nested subdeployments are returned, recursively.</li>
+     * </ul>
      */
     public GetSubdeployments recursive(Boolean recursive) {
         setRecursive(recursive);
@@ -96,25 +105,30 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources with one of the given identifiers are selected. (optional)
-     *
-     * @return the id
+     * @see #id(java.util.List)
      */
     public List<String> getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * @see #id(java.util.List)
      */
     public void setId(List<String> id) {
         this.id = id;
     }
 
     /**
-     * @param id the id to set
-     * @see #getId()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/idList.yaml"> OGC API - Connected Systems - Part 1 - id parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>RES_ID1,RES_ID2,RES_ID63</pre>
      */
     public GetSubdeployments id(List<String> id) {
         setId(id);
@@ -122,27 +136,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources that have a geometry that intersects the bounding box are selected. The bounding
-     * box coordinate reference system is derived from this envelope's own coordinate reference system.
-     * (optional)
-     *
-     * @return the bbox
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public Envelope getBbox() {
         return bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * @see #bbox(org.opengis.geometry.Envelope)
      */
     public void setBbox(Envelope bbox) {
         this.bbox = bbox;
     }
 
     /**
-     * @param bbox the bbox to set
-     * @see #getBbox()
+     * <blockquote><q>
+     *     Only features that have a geometry that intersects the bounding box are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/bbox.yaml"> OGC API - Connected Systems - Part 1 - bbox parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The bounding box CRS is derived from this envelope's own coordinate reference system.</li>
+     * </ul>
      */
     public GetSubdeployments bbox(Envelope bbox) {
         setBbox(bbox);
@@ -150,25 +166,30 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * A date-time or a period, per RFC 3339. (optional)
-     *
-     * @return the datetime
+     * @see #datetime(java.lang.String)
      */
     public String getDatetime() {
         return datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * @see #datetime(java.lang.String)
      */
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 
     /**
-     * @param datetime the datetime to set
-     * @see #getDatetime()
+     * <blockquote><q>
+     *     Either a date-time or an interval. Date and time expressions adhere to RFC 3339.
+     *     Intervals may be bounded or half-bounded (double-dots at start or end).
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/datetime.yaml"> OGC API - Connected Systems - Part 1 - datetime parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Only resources that have a {@code validTime} property that intersects the value are selected.</li>
+     * </ul>
      */
     public GetSubdeployments datetime(String datetime) {
         setDatetime(datetime);
@@ -176,25 +197,30 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * A WKT geometry used to spatially filter the selected resources. (optional)
-     *
-     * @return the geom
+     * @see #geom(java.lang.String)
      */
     public String getGeom() {
         return geom;
     }
 
     /**
-     * @param geom the geom to set
-     * @see #getGeom()
+     * @see #geom(java.lang.String)
      */
     public void setGeom(String geom) {
         this.geom = geom;
     }
 
     /**
-     * @param geom the geom to set
-     * @see #getGeom()
+     * <blockquote><q>
+     *     WKT geometry and operator to filter resources on their location or geometry.
+     *     Only features that have a geometry that intersects the value of `geom` are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/geom.yaml"> OGC API - Connected Systems - Part 1 - geom parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
+     * <pre>POLYGON((0 0,4 0,4 4,0 4,0 0))</pre>
      */
     public GetSubdeployments geom(String geom) {
         setGeom(geom);
@@ -202,25 +228,31 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources that match one of the given keywords are selected. (optional)
-     *
-     * @return the keyword
+     * @see #keyword(java.util.List)
      */
     public List<String> getKeyword() {
         return keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * @see #keyword(java.util.List)
      */
     public void setKeyword(List<String> keyword) {
         this.keyword = keyword;
     }
 
     /**
-     * @param keyword the keyword to set
-     * @see #getKeyword()
+     * <blockquote><q>
+     *     Comma separated list of keywords used for full-text search.
+     *     Only resources that have textual fields that contain one of the specified keywords are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/keyword.yaml"> OGC API - Connected Systems - Part 1 - keyword (q) parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>The resource {@code name} and {@code description} properties are always searched.</li>
+     * </ul>
+     * <pre>gps,imu</pre>
      */
     public GetSubdeployments keyword(List<String> keyword) {
         setKeyword(keyword);
@@ -228,25 +260,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources that are children of one of the given parent identifiers are selected. (optional)
-     *
-     * @return the parent
+     * @see #parent(java.util.List)
      */
     public List<String> getParent() {
         return parent;
     }
 
     /**
-     * @param parent the parent to set
-     * @see #getParent()
+     * @see #parent(java.util.List)
      */
     public void setParent(List<String> parent) {
         this.parent = parent;
     }
 
     /**
-     * @param parent the parent to set
-     * @see #getParent()
+     * <blockquote><q>
+     *     List of resource local IDs or unique IDs (URI).
+     *     Only resources that have a parent that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/parentIdList.yaml"> OGC API - Connected Systems - Part 1 - parent parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSubdeployments parent(List<String> parent) {
         setParent(parent);
@@ -254,25 +290,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given system identifiers are selected. (optional)
-     *
-     * @return the system
+     * @see #system(java.util.List)
      */
     public List<String> getSystem() {
         return system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * @see #system(java.util.List)
      */
     public void setSystem(List<String> system) {
         this.system = system;
     }
 
     /**
-     * @param system the system to set
-     * @see #getSystem()
+     * <blockquote><q>
+     *     List of system local IDs or unique IDs (URI).
+     *     Only resources that are associated to a System that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/systemIdList.yaml"> OGC API - Connected Systems - Part 1 - system parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSubdeployments system(List<String> system) {
         setSystem(system);
@@ -280,25 +320,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources associated with one of the given features of interest are selected. (optional)
-     *
-     * @return the foi
+     * @see #foi(java.util.List)
      */
     public List<String> getFoi() {
         return foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * @see #foi(java.util.List)
      */
     public void setFoi(List<String> foi) {
         this.foi = foi;
     }
 
     /**
-     * @param foi the foi to set
-     * @see #getFoi()
+     * <blockquote><q>
+     *     List of feature local IDs or unique IDs (URI).
+     *     Only resources that are associated to a feature of interest that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/foiIdList.yaml"> OGC API - Connected Systems - Part 1 - foi parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSubdeployments foi(List<String> foi) {
         setFoi(foi);
@@ -306,25 +350,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources that observe one of the given properties are selected. (optional)
-     *
-     * @return the observedProperty
+     * @see #observedProperty(java.util.List)
      */
     public List<String> getObservedProperty() {
         return observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * @see #observedProperty(java.util.List)
      */
     public void setObservedProperty(List<String> observedProperty) {
         this.observedProperty = observedProperty;
     }
 
     /**
-     * @param observedProperty the observedProperty to set
-     * @see #getObservedProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to an observable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/obsPropIdList.yaml"> OGC API - Connected Systems - Part 1 - observedProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSubdeployments observedProperty(List<String> observedProperty) {
         setObservedProperty(observedProperty);
@@ -332,25 +380,29 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * Only resources that control one of the given properties are selected. (optional)
-     *
-     * @return the controlledProperty
+     * @see #controlledProperty(java.util.List)
      */
     public List<String> getControlledProperty() {
         return controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * @see #controlledProperty(java.util.List)
      */
     public void setControlledProperty(List<String> controlledProperty) {
         this.controlledProperty = controlledProperty;
     }
 
     /**
-     * @param controlledProperty the controlledProperty to set
-     * @see #getControlledProperty()
+     * <blockquote><q>
+     *     List of property local IDs or unique IDs (URI).
+     *     Only resources that are associated to a controllable property that has one of the provided identifiers are selected.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/controlPropIdList.yaml"> OGC API - Connected Systems - Part 1 - controlledProperty parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     * </ul>
      */
     public GetSubdeployments controlledProperty(List<String> controlledProperty) {
         setControlledProperty(controlledProperty);
@@ -358,25 +410,31 @@ public final class GetSubdeployments extends RequestParameters {
     }
 
     /**
-     * The optional limit parameter limits the number of items presented in the response. (optional)
-     *
-     * @return the limit
+     * @see #limit(java.lang.Integer)
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * @see #limit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param limit the limit to set
-     * @see #getLimit()
+     * <blockquote><q>
+     *     This parameter limits the number of items that are presented in the response document.
+     *     Only items that are on the first level of the collection in the response document are counted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/limit.yaml"> OGC API - Connected Systems - Part 1 - limit parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional.</li>
+     *     <li>Between 1 and 10000.</li>
+     *     <li>Default: 10.</li>
+     * </ul>
      */
     public GetSubdeployments limit(Integer limit) {
         setLimit(limit);

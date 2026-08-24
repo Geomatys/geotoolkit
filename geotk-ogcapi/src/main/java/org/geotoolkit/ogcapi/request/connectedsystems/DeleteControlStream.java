@@ -19,10 +19,11 @@ package org.geotoolkit.ogcapi.request.connectedsystems;
 import org.geotoolkit.ogcapi.request.RequestParameters;
 
 /**
- * The {@code DELETE} operation on {@code /controlstreams/{controlStreamId}}: deletes a
- * ControlStream resource.
+ * <blockquote><q>
+ *     This will delete the control stream and remove it from all collections it is associated to.
+ *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/paths/controlStreamById.yaml"> OGC API - Connected Systems - Part 2: Dynamic Data (draft) - Delete a control stream</a></small></i>
+ * </blockquote>
  *
- * @see <a href="https://docs.ogc.org/is/23-002/23-002.html">OGC API - Connected Systems - Part 2</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DeleteControlStream extends RequestParameters {
@@ -31,25 +32,29 @@ public final class DeleteControlStream extends RequestParameters {
     private Boolean cascade;
 
     /**
-     * Local identifier of the control stream. (required)
-     *
-     * @return the controlStreamId
+     * @see #controlStreamId(java.lang.String)
      */
     public String getControlStreamId() {
         return controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * @see #controlStreamId(java.lang.String)
      */
     public void setControlStreamId(String controlStreamId) {
         this.controlStreamId = controlStreamId;
     }
 
     /**
-     * @param controlStreamId the controlStreamId to set
-     * @see #getControlStreamId()
+     * <blockquote><q>
+     *     Local identifier of a Control Stream
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part2/openapi/parameters/controlStreamId.yaml"> OGC API - Connected Systems - Part 2 (draft) - controlStreamId parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required.</li>
+     *     <li>Non-empty string.</li>
+     * </ul>
      */
     public DeleteControlStream controlStreamId(String controlStreamId) {
         setControlStreamId(controlStreamId);
@@ -57,25 +62,29 @@ public final class DeleteControlStream extends RequestParameters {
     }
 
     /**
-     * If {@code true}, related resources are deleted as well. (optional)
-     *
-     * @return the cascade
+     * @see #cascade(java.lang.Boolean)
      */
     public Boolean getCascade() {
         return cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * @see #cascade(java.lang.Boolean)
      */
     public void setCascade(Boolean cascade) {
         this.cascade = cascade;
     }
 
     /**
-     * @param cascade the cascade to set
-     * @see #getCascade()
+     * <blockquote><q>
+     *     If set to true, dependent resources are also deleted.
+     *     </q><i><small><a href="https://github.com/opengeospatial/ogcapi-connected-systems/blob/master/api/part1/openapi/parameters/cascade.yaml"> OGC API - Connected Systems - Part 1 (draft) - cascade parameter</a></small></i>
+     * </blockquote>
+     * <br>
+     * <ul>
+     *     <li>Optional; default {@code false}.</li>
+     *     <li>If used, all commands and command status associated with the control stream are also deleted.</li>
+     * </ul>
      */
     public DeleteControlStream cascade(Boolean cascade) {
         setCascade(cascade);

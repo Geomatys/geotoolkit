@@ -21,7 +21,10 @@ import org.geotoolkit.ogcapi.request.RequestParameters;
 /**
  * To delete a named temporal property and all its values from a moving feature.
  *
- * <p>OGC API - Moving Features, Part 1: Core ({@code deleteTemporalProperty}).</p>
+ * <blockquote><q>A delete operation deletes an existing TemporalProperty resource that is
+ * specified by {tPropertyName}.</q>
+ * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+ * Features - Part 1: Core - 8.9.1. Overview</a></small></i></blockquote>
  *
  * @author Quentin Bialota (Geomatys)
  */
@@ -32,9 +35,8 @@ public final class DeleteTemporalProperty extends RequestParameters {
     private String tPropertyName;
 
     /**
-     * Local identifier of the collection. (required)
-     *
      * @return the collectionId
+     * @see #collectionId(java.lang.String)
      */
     public String getCollectionId() {
         return collectionId;
@@ -42,15 +44,21 @@ public final class DeleteTemporalProperty extends RequestParameters {
 
     /**
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @see #collectionId(java.lang.String)
      */
     public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 
     /**
+     * Local identifier of the collection to which the moving feature belongs.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code collectionId} path parameter.</li>
+     * </ul>
+     *
      * @param collectionId the collectionId to set
-     * @see #getCollectionId()
+     * @return this
      */
     public DeleteTemporalProperty collectionId(String collectionId) {
         setCollectionId(collectionId);
@@ -58,9 +66,8 @@ public final class DeleteTemporalProperty extends RequestParameters {
     }
 
     /**
-     * Local identifier of the moving feature. (required)
-     *
      * @return the mFeatureId
+     * @see #mFeatureId(java.lang.String)
      */
     public String getMFeatureId() {
         return mFeatureId;
@@ -68,15 +75,21 @@ public final class DeleteTemporalProperty extends RequestParameters {
 
     /**
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @see #mFeatureId(java.lang.String)
      */
     public void setMFeatureId(String mFeatureId) {
         this.mFeatureId = mFeatureId;
     }
 
     /**
+     * Local identifier of the moving feature.
+     *
+     * <ul>
+     *     <li>Required. Corresponds to the {@code mFeatureId} path parameter.</li>
+     * </ul>
+     *
      * @param mFeatureId the mFeatureId to set
-     * @see #getMFeatureId()
+     * @return this
      */
     public DeleteTemporalProperty mFeatureId(String mFeatureId) {
         setMFeatureId(mFeatureId);
@@ -84,9 +97,8 @@ public final class DeleteTemporalProperty extends RequestParameters {
     }
 
     /**
-     * Local identifier of the temporal property. (required)
-     *
      * @return the tPropertyName
+     * @see #tPropertyName(java.lang.String)
      */
     public String getTPropertyName() {
         return tPropertyName;
@@ -94,15 +106,24 @@ public final class DeleteTemporalProperty extends RequestParameters {
 
     /**
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @see #tPropertyName(java.lang.String)
      */
     public void setTPropertyName(String tPropertyName) {
         this.tPropertyName = tPropertyName;
     }
 
     /**
+     * <blockquote><q>tPropertyName is a local identifier of the temporal property.</q>
+     * <i><small><a href="https://docs.ogc.org/is/22-003r3/22-003r3.html">OGC API - Moving
+     * Features - Part 1: Core - 8.9.3.1. Retrieve</a></small></i></blockquote>
+     * <br>
+     * <ul>
+     *     <li>Required. Corresponds to the {@code tPropertyName} path parameter, and identifies
+     *     the TemporalProperty (and all its values) to be deleted.</li>
+     * </ul>
+     *
      * @param tPropertyName the tPropertyName to set
-     * @see #getTPropertyName()
+     * @return this
      */
     public DeleteTemporalProperty tPropertyName(String tPropertyName) {
         setTPropertyName(tPropertyName);
