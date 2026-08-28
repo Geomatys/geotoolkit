@@ -900,6 +900,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                         stream = Stream.concat(stream, s);
                     } catch (Exception ex) {
                         s.close();
+                        stream.close();
                         throw new PortrayalException(ex);
                     }
                 } catch (PortrayalException | DataStoreException ex) {
