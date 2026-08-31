@@ -62,6 +62,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -74,7 +75,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
@@ -256,7 +256,7 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
             final BufferedImage emptyTile;
             if (dims != null && !dims.isEmpty()) {
                 final int dimsSize = dims.size();
-                emptyTile = BufferedImages.createImage(tileWidth, tileHeight, dimsSize, dims.get(0).getDataType());
+                emptyTile = new ImageBuilder().setSize(tileWidth, tileHeight).setNumBands(dimsSize).setDataType(dims.get(0).getDataType()).createBufferedImage();
                 //-- fill image by noData if it is possible
                 if (dims.get(0).buildSampleDimension().getNoDataValues() != null) {
                     final boolean[] nodataExists = new boolean[dimsSize];

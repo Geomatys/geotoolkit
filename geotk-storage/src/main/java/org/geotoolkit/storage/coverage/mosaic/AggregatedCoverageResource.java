@@ -86,6 +86,7 @@ import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -900,7 +901,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     if (result == null) {
                         final int width = Math.toIntExact(canvas.getExtent().getSize(0));
                         final int height = Math.toIntExact(canvas.getExtent().getSize(1));
-                        result = BufferedImages.createImage(sourceImage, width, height, null, null);
+                        result = new ImageBuilder().copyFrom(sourceImage).setSize(width, height).createBufferedImage();
                         mask = new BitSet2D(width, height);
                         transparent = new double[result.getSampleModel().getNumBands()];
                     }
@@ -957,10 +958,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //create blank images with NoData value if a band image is missing
             for (int i = 0; i < bandImages.length; i++) {
                 if (bandImages[i] == null) {
-                    bandImages[i] = BufferedImages.createImage(
-                            (int) canvas.getExtent().getSize(0),
-                            (int) canvas.getExtent().getSize(1),
-                            1, dataType, new double[]{noData[i]});
+                    bandImages[i] = new ImageBuilder()
+                            .setSize((int) canvas.getExtent().getSize(0),(int) canvas.getExtent().getSize(1))
+                            .setNumBands(1)
+                            .setDataType(dataType)
+                            .setFillValue(new double[]{noData[i]})
+                            .createBufferedImage();
                 }
             }
 
@@ -969,7 +972,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 result = bandImages[0];
 
                 if (result.getSampleModel().getDataType() != dataType) {
-                    final BufferedImage cp = BufferedImages.createImage(result, null, null, null, dataType);
+                    final BufferedImage cp = new ImageBuilder()
+                            .copyFrom(result)
+                            .setDataType(dataType)
+                            .createBufferedImage();
                     final PixelIterator readIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(result);
                     final WritablePixelIterator writeIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(cp);
                     final double[] buffer = new double[cp.getSampleModel().getNumBands()];
@@ -980,7 +986,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 }
 
             } else {
-                result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, dataType);
+                result = new ImageBuilder()
+                        .setSize(bandImages[0].getWidth(), bandImages[1].getHeight())
+                        .setNumBands(bandImages.length)
+                        .setDataType(dataType)
+                        .createBufferedImage();
                 WritablePixelIterator writer = WritablePixelIterator.create(result);
                 for (int bandIndex = 0; bandIndex < bandImages.length; bandIndex++) {
                     final PixelIterator reader = PixelIterator.create(bandImages[bandIndex]);
@@ -1098,7 +1108,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final BitSet2D mask = new BitSet2D(sizeX, sizeY);
 
         final int tmpDataType = this.dataType < 0 ? DataBuffer.TYPE_DOUBLE : this.dataType;
-        final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, tmpDataType, noData);
+        final BufferedImage result = new ImageBuilder()
+                .setSize(sizeX, sizeY)
+                .setNumBands(1)
+                .setDataType(tmpDataType)
+                .setFillValue(noData)
+                .createBufferedImage();
 
         // HACK: To try and preserve color space if possible, we keep aggregated source images in memory
         final List<Integer> sourceDataTypes = new ArrayList<>(ordered.size());
@@ -1125,7 +1140,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     try {
                         final RenderedImage coverageImage = filteredSource.image;
                         sourceDataTypes.add(coverageImage.getSampleModel().getDataType());
-                        final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE, sourceNoData);
+                        final BufferedImage image = new ImageBuilder()
+                                .copyFrom(result)
+                                .setDataType(DataBuffer.TYPE_DOUBLE)
+                                .setFillValue(sourceNoData)
+                                .createBufferedImage();
 
                         final MathTransform toSource = createTransform(canvas, image, filteredSource.geometry, coverageImage);
 
@@ -1221,7 +1240,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         if (tmpDataType != dataType) {
             final PixelIterator.Builder builder = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR);
             PixelIterator source = builder.create(result);
-            final BufferedImage newResult = BufferedImages.createImage(result.getWidth(), result.getHeight(), source.getNumBands(), dataType, noData);
+            final BufferedImage newResult = new ImageBuilder()
+                    .setSize(result.getWidth(), result.getHeight())
+                    .setNumBands(source.getNumBands())
+                    .setDataType(dataType)
+                    .setFillValue(noData)
+                    .createBufferedImage();
             try (WritablePixelIterator destination = builder.createWritable(newResult, newResult)) {
                 final double[] buffer= new double[source.getNumBands()];
                 while (source.next() && destination.next()) destination.setPixel(source.getPixel(buffer));

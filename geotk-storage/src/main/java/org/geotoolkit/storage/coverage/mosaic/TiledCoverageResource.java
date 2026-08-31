@@ -56,6 +56,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.util.GenericName;
 
 /**
@@ -152,7 +153,11 @@ public class TiledCoverageResource extends AbstractGridCoverageResource {
         }
 
         if (forceTransformedValues) {
-            final BufferedImage imageTemplate = BufferedImages.createImage(sampleModel.getWidth(), sampleModel.getHeight(), sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+            final BufferedImage imageTemplate = new ImageBuilder()
+                    .setSize(sampleModel.getWidth(), sampleModel.getHeight())
+                    .setNumBands(sampleDimensions.size())
+                    .setDataType(DataBuffer.TYPE_DOUBLE)
+                    .createBufferedImage();
             rasterTemplate = imageTemplate.getTile(0, 0);
             sampleModel = rasterTemplate.getSampleModel();
             colorModel = imageTemplate.getColorModel();

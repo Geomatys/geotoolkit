@@ -42,12 +42,12 @@ import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.geotoolkit.geometry.HyperCubeIterator;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -132,10 +132,11 @@ public class FillCoverage {
             }
 
             //create the slice coverage
-            final BufferedImage zoneImage = BufferedImages.createImage(
-                    Math.toIntExact(hcubeUpper[0]-hcubeLower[0]),
-                    Math.toIntExact(hcubeUpper[1]-hcubeLower[1]),
-                    1, DataBuffer.TYPE_DOUBLE);
+            final BufferedImage zoneImage = new ImageBuilder()
+                    .setSize(Math.toIntExact(hcubeUpper[0]-hcubeLower[0]),Math.toIntExact(hcubeUpper[1]-hcubeLower[1]))
+                    .setNumBands(1)
+                    .setDataType(DataBuffer.TYPE_DOUBLE)
+                    .createBufferedImage();
             final WritableRaster raster = zoneImage.getRaster();
 
 

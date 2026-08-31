@@ -18,9 +18,6 @@ package org.geotoolkit.image;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
@@ -30,7 +27,6 @@ import java.awt.image.DataBufferShort;
 import java.awt.image.ImagingOpException;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
@@ -41,11 +37,7 @@ import java.util.stream.Stream;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.image.internal.shared.ColorModelFactory;
 import org.apache.sis.image.internal.shared.FillValues;
-import org.apache.sis.image.internal.shared.WritableUntiledImage;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.util.TriFunction;
 
 /**
@@ -53,178 +45,6 @@ import org.geotoolkit.util.TriFunction;
  * @author Johann Sorel (Geomatys)
  */
 public class BufferedImages {
-
-    /**
-     * Create a new image, trying to preserve raster, sample model and color model
-     * when possible.
-     *
-     * @param reference not null
-     * @param width if null reference image width is copied
-     * @param height if null reference image height is copied
-     * @param nbBand if null reference image number of bands is copied
-     * @param dataType if null reference image data type is copied
-     */
-    public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
-        return createImage(reference, width, height, nbBand, dataType, null);
-    }
-
-    /**
-     * Create a new image, trying to preserve raster, sample model and color model
-     * when possible.
-     *
-     * @param reference not null
-     * @param width if null reference image width is copied
-     * @param height if null reference image height is copied
-     * @param nbBand if null reference image number of bands is copied
-     * @param dataType if null reference image data type is copied
-     * @param fillValue if not null, samples to fill image
-     */
-    public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType, double[] fillValue) throws IllegalArgumentException{
-        final SampleModel sm = reference.getSampleModel();
-        if (width == null) width = reference.getWidth();
-        if (height == null) height = reference.getHeight();
-        if (nbBand == null) nbBand = sm.getNumBands();
-        if (dataType == null) dataType = sm.getDataType();
-        ArgumentChecks.ensureStrictlyPositive("width", width);
-        ArgumentChecks.ensureStrictlyPositive("height", height);
-        ArgumentChecks.ensureStrictlyPositive("nbBand", nbBand);
-
-        if (nbBand == sm.getNumBands() && dataType == sm.getDataType()) {
-            //we can preserver color model and raster configuration
-            final Raster anyTile = reference.getTile(reference.getMinTileX(), reference.getMinTileY());
-            final WritableRaster raster = anyTile.createCompatibleWritableRaster(width, height);
-            if (fillValue != null && !isAllZero(fillValue)) setAll(raster, fillValue);
-            ColorModel cm = reference.getColorModel();
-            if (cm == null) {
-                cm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
-            }
-            final BufferedImage resultImage = new WritableUntiledImage(cm, raster, cm.isAlphaPremultiplied(), null);
-            return resultImage;
-        } else {
-            //we need to create a new image
-            return createImage(width, height, nbBand, dataType, fillValue);
-        }
-    }
-
-    /**
-     * Create a new image of the same type with a different size.
-     */
-    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException {
-        return createImage(reference, width, height, null, null);
-    }
-
-    public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
-        return createImage(width, height, nbBand, dataType, null);
-    }
-
-    public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType, double[] fillValue) throws IllegalArgumentException{
-        ArgumentChecks.ensureStrictlyPositive("width", width);
-        ArgumentChecks.ensureStrictlyPositive("height", height);
-        final Point upperLeft = new Point(0,0);
-        final WritableRaster raster = createRaster(width, height, nbBand, dataType, upperLeft, fillValue);
-
-        //TODO try to reuse java colormodel if possible
-        //create a temporary fallback colormodel which will always work
-        //extract grayscale min/max from sample dimension
-        final ColorModel graycm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
-        return new WritableUntiledImage(graycm, raster, false, null);
-    }
-
-    public static WritableRaster createRaster(int width, int height, int nbBand, int dataType, Point upperLeft) throws IllegalArgumentException{
-        return createRaster(width, height, nbBand, dataType, upperLeft, null);
-    }
-
-    public static WritableRaster createRaster(int width, int height, int nbBand, int dataType, Point upperLeft, double[] fillValue) throws IllegalArgumentException{
-        ArgumentChecks.ensureStrictlyPositive("width", width);
-        ArgumentChecks.ensureStrictlyPositive("height", height);
-
-        if (fillValue != null) {
-            if (fillValue.length != nbBand) {
-                throw new IllegalArgumentException("Fill value size " + fillValue.length + "do not match nb band " + nbBand);
-            }
-            /*
-            Created rasters are filled with 0 by default, set fillValue to null if all samples are 0
-            */
-            if (isAllZero(fillValue)) {
-                fillValue = null;
-            }
-        }
-
-        final WritableRaster raster;
-        if (nbBand == 1) {
-            if (dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT || dataType == DataBuffer.TYPE_INT) {
-                raster = WritableRaster.createBandedRaster(dataType, width, height, nbBand, upperLeft);
-                if (fillValue != null) {
-                    ImageUtilities.fill(raster, fillValue[0]);
-                }
-            } else {
-                //create it ourself
-                final int bufferSize = Math.multiplyExact(width, height);
-
-                final DataBuffer buffer;
-                if (dataType == DataBuffer.TYPE_SHORT) {
-                    final short[] data = new short[bufferSize];
-                    if (fillValue != null) Arrays.fill(data, (short) fillValue[0]);
-                    buffer = new DataBufferShort(data, bufferSize);
-                } else if(dataType == DataBuffer.TYPE_FLOAT) {
-                    final float[] data = new float[bufferSize];
-                    if (fillValue != null) Arrays.fill(data, (float) fillValue[0]);
-                    buffer = new DataBufferFloat(data, bufferSize);
-                } else if(dataType == DataBuffer.TYPE_DOUBLE) {
-                    final double[] data = new double[bufferSize];
-                    if (fillValue != null) Arrays.fill(data, fillValue[0]);
-                    buffer = new DataBufferDouble(data, bufferSize);
-                } else {
-                    throw new IllegalArgumentException("Type not supported "+dataType);
-                }
-                final int[] zero = new int[1];
-                //TODO create our own raster factory to avoid JAI
-                raster = org.apache.sis.image.internal.shared.RasterFactory.createRaster(buffer, width, height, 1, width, zero, zero, upperLeft);
-                //raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
-            }
-
-        } else {
-            if (dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT) {
-                raster = WritableRaster.createInterleavedRaster(dataType, width, height, nbBand, upperLeft);
-                if (fillValue != null) {
-                    setAll(raster, fillValue);
-                }
-            } else {
-                //create it ourself
-                final int size = Math.multiplyExact(Math.multiplyExact(width, height), nbBand);
-                final DataBuffer buffer;
-                switch (dataType) {
-                    case DataBuffer.TYPE_SHORT: buffer = new DataBufferShort(size); break;
-                    case DataBuffer.TYPE_INT: buffer = new DataBufferInt(size); break;
-                    case DataBuffer.TYPE_FLOAT: buffer = new DataBufferFloat(size); break;
-                    case DataBuffer.TYPE_DOUBLE: buffer = new DataBufferDouble(size); break;
-                    default: throw new IllegalArgumentException("Type not supported "+dataType);
-                }
-                final int[] bankIndices = new int[nbBand];
-                final int[] bandOffsets = new int[nbBand];
-                for(int i=1;i<nbBand;i++){
-                    bandOffsets[i] = bandOffsets[i-1] + width*height;
-                }
-                /*
-                 * The following line creates a `BandedSampleModel` with only one bank shared by all bands.
-                 * This is unusual, as the standard pattern of `BandedSampleModel` convenience constructors
-                 * is to create one bank per band. It is possible to have many banks wrapping the same array
-                 * at different offsets. The use of a single bank, as done below, is more typically done with
-                 * `PixelInterleavedSampleModel`.
-                 *
-                 * However, despite being unusual, Java2D seems to accept this configuration. The following
-                 * code uses that configuration because this is what the initial version of this method was
-                 * doing. But it should not be used as a source of inspiration for new codes.
-                 */
-                var sm = new BandedSampleModel(dataType, width, height, width, bankIndices, bandOffsets);
-                raster = Raster.createWritableRaster(sm, buffer, upperLeft);
-                if (fillValue != null) {
-                    setAll(raster, fillValue);
-                }
-            }
-        }
-        return raster;
-    }
 
     /**
      * Convert a primitive array to a DataBuffer.

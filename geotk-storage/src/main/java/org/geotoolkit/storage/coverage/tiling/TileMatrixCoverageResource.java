@@ -37,6 +37,7 @@ import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
@@ -51,7 +52,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.opengis.coverage.CannotEvaluateException;
@@ -159,7 +159,11 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
         } catch (DataStoreException ex) {
             if (sampleDimensions != null) {
                 //use a fake tile created from sample dimensions
-                sample = BufferedImages.createImage(tileSizeX, tileSizeY, sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+                sample = new ImageBuilder()
+                        .setSize(tileSizeX, tileSizeY)
+                        .setNumBands(sampleDimensions.size())
+                        .setDataType(DataBuffer.TYPE_DOUBLE)
+                        .createBufferedImage();
             } else {
                 throw new CannotEvaluateException(ex.getMessage(), ex);
             }
@@ -235,7 +239,7 @@ public class TileMatrixCoverageResource extends AbstractGridCoverageResource {
                     final GridCoverage coverage = resource.read(null);
                     currentlyTile = (BufferedImage) coverage.render(coverage.getGridGeometry().getExtent());
                 } else {
-                    currentlyTile = BufferedImages.createImage(tileSize[0], tileSize[1], template);
+                    currentlyTile = new ImageBuilder().copyFrom(template).setSize(tileSize[0], tileSize[1]).createBufferedImage();
                 }
 
                 //current tile grid geometry

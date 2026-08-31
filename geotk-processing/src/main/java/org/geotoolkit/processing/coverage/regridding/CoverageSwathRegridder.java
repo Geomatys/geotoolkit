@@ -9,7 +9,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.processing.regridding.SphericalKDTree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -26,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import org.apache.sis.images.ImageBuilder;
 
 /**
  * Regrids swath (curvilinear) GridCoverageResource tiles onto a regular lat/lon GridCoverage.
@@ -332,7 +332,11 @@ public class CoverageSwathRegridder {
     private GridCoverage buildGridCoverage(float[][][] merged, int nbBands, int nx, int ny,
                                             double minLon, float[] targetLats, float[] outputLons) throws Exception {
         // Build north-first image: image row 0 = targetLats[ny-1] (northernmost)
-        BufferedImage image = BufferedImages.createImage(nx, ny, nbBands, DataBuffer.TYPE_FLOAT);
+        BufferedImage image = new ImageBuilder()
+                .setSize(nx, ny)
+                .setNumBands(nbBands)
+                .setDataType(DataBuffer.TYPE_FLOAT)
+                .createBufferedImage();
         WritableRaster raster = image.getRaster();
 
         for (int b = 0; b < nbBands; b++) {

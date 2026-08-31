@@ -78,6 +78,11 @@
        =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-geometry</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-imagery</artifactId>
       <version>${project.version}</version>

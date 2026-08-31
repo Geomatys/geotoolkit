@@ -62,6 +62,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -280,12 +281,19 @@ public final class FeatureSetToCoverageTileGenerator extends AbstractTileGenerat
             }
             final BufferedImage image;
             if (template == null) {
-                image = BufferedImages.createImage(width, height, outputSampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+                image = new ImageBuilder()
+                        .setSize(width, height)
+                        .setNumBands(outputSampleDimensions.size())
+                        .setDataType(DataBuffer.TYPE_DOUBLE)
+                        .createBufferedImage();
             } else {
                 if (template.getSampleModel().getNumBands() != outputSampleDimensions.size()) {
                     throw new IllegalArgumentException("Template sample model and sample dimensions must have the same size");
                 }
-                image = BufferedImages.createImage(template, Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)), null, null);
+                image = new ImageBuilder()
+                        .copyFrom(template)
+                        .setSize(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)))
+                        .createBufferedImage();
             }
 
             double[] noData = featureToSamples.apply(null, 0);

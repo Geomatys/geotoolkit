@@ -45,7 +45,6 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
@@ -55,6 +54,7 @@ import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -327,7 +327,7 @@ public class TileMatrixSetCoverageWriter <T extends TiledResource & org.apache.s
                         throw new RuntimeException(ex);
                     }
                 } else {
-                    currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
+                    currentlyTile = new ImageBuilder().copyFrom(baseImage).setSize(tileWidth, tileHeight).createBufferedImage();
                 }
 
                 final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(matrix, new long[]{idx, idy}, tileSize);

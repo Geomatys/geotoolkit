@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.image.BufferedImages;
+import org.apache.sis.images.ImageBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -218,7 +218,11 @@ public class MarchingSquaresTest {
     }
 
     private static MultiLineString createImage(double[][] array, double threshold, boolean mergeLines) {
-        final BufferedImage image = BufferedImages.createImage(array[0].length, array.length, 1, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage image = new ImageBuilder()
+                .setSize(array[0].length, array.length)
+                .setNumBands(1)
+                .setDataType(DataBuffer.TYPE_DOUBLE)
+                .createBufferedImage();
         final WritableRaster raster = image.getRaster();
         for (int y = 0; y < array.length; y++) {
             for (int x = 0; x < array[0].length; x++) {

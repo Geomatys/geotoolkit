@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.map.MapLayers;
 import org.apache.sis.storage.DataStore;
@@ -19,7 +20,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
@@ -49,7 +49,7 @@ public class PortrayalDemo {
 
         //show the image
         final JFrame frm = new JFrame();
-        frm.setContentPane(new JLabel(new ImageIcon(BufferedImages.createImage(img.getWidth(),img.getHeight(),img))));
+        frm.setContentPane(new JLabel(new ImageIcon(new ImageBuilder().copyFrom(img).setSize(img.getWidth(),img.getHeight()).createBufferedImage())));
         frm.pack();
         frm.setLocationRelativeTo(null);
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

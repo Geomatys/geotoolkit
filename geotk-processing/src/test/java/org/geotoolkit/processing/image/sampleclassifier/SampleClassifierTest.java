@@ -1,6 +1,5 @@
 package org.geotoolkit.processing.image.sampleclassifier;
 
-import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -12,7 +11,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import org.apache.sis.image.PlanarImage;
-import org.geotoolkit.image.BufferedImages;
+import org.apache.sis.images.ImageBuilder;
 import org.geotoolkit.process.ProcessException;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -221,7 +220,7 @@ public class SampleClassifierTest {
     }
 
     public static BufferedImage createGrayScale(final int width, final int height, final double[] samples) {
-        final WritableRaster data = BufferedImages.createRaster(width, height, 1, DataBuffer.TYPE_FLOAT, new Point(0, 0));
+        final WritableRaster data = new ImageBuilder().setSize(width, height).setNumBands(1).setDataType(DataBuffer.TYPE_FLOAT).createRaster();
         data.setPixels(0, 0, width, height, samples);
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         final ComponentColorModel cm = new ComponentColorModel(cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_FLOAT);

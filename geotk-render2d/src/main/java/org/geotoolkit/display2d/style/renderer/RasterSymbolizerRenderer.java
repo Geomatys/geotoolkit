@@ -59,6 +59,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.image.internal.shared.TiledImage;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.map.ExceptionPresentation;
 import org.apache.sis.map.Presentation;
 import org.apache.sis.map.coverage.RenderingWorkaround;
@@ -763,7 +764,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             if (source instanceof WritableRenderedImage) {
                 destination = (WritableRenderedImage) source;
             } else {
-                destination = BufferedImages.createImage(source.getWidth(), source.getHeight(), source);
+                destination = new ImageBuilder().copyFrom(source).setSize(source.getWidth(), source.getHeight()).createBufferedImage();
             }
 
             final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source);

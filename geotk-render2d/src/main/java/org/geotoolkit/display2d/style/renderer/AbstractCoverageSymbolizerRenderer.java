@@ -66,6 +66,7 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -377,7 +378,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GridExtent canvasExtent = canvasGrid.getExtent();
         final int width = (int) canvasExtent.getSize(0);
         final int height = (int) canvasExtent.getSize(1);
-        final BufferedImage result = BufferedImages.createImage(width, height, img);
+        final BufferedImage result = new ImageBuilder().copyFrom(img).setSize(width, height).createBufferedImage();
         final WritablePixelIterator output = WritablePixelIterator.create(result);
 
         //fill out image with NaN

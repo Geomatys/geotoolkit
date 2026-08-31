@@ -21,10 +21,10 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import org.apache.sis.images.ImageBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,7 +41,11 @@ public class DynamicRangeStretchTest {
     @Test
     public void stretchTest() throws Exception{
 
-        final BufferedImage inputImage = BufferedImages.createImage(1, 6, 2, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage inputImage = new ImageBuilder()
+                .setSize(1, 6)
+                .setNumBands(2)
+                .setDataType(DataBuffer.TYPE_DOUBLE)
+                .createBufferedImage();
         final WritableRaster inputRaster = inputImage.getRaster();
         inputRaster.setPixel(0, 0, new double[]{-9,-5});
         inputRaster.setPixel(0, 1, new double[]{10, 0});

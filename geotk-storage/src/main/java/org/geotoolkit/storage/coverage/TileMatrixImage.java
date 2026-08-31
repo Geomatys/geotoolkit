@@ -28,6 +28,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ComputedImage;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -108,7 +109,7 @@ public class TileMatrixImage extends ComputedImage {
             if (sampleDimensions != null) {
                 //use a fake tile created from sample dimensions
                 final int[] tileSize = matrix.getTileSize();
-                sample = BufferedImages.createImage(tileSize[0], tileSize[1], sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+                sample = new ImageBuilder().setSize(tileSize[0], tileSize[1]).setNumBands(sampleDimensions.size()).setDataType(DataBuffer.TYPE_DOUBLE).createBufferedImage();
             } else {
                 throw new DataStoreException(ex.getMessage(), ex);
             }

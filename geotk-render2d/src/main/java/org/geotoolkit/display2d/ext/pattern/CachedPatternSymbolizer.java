@@ -46,7 +46,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSMapping;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -67,6 +66,7 @@ import org.opengis.filter.MatchAction;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 
@@ -229,7 +229,12 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
 
         RenderedImage ri = coverage.forConvertedValues(true).render(null);
 
-        BufferedImage img = BufferedImages.createImage(ri.getWidth()+6, ri.getHeight()+6, 1, DataBuffer.TYPE_DOUBLE, new double[]{Double.MAX_VALUE});
+        BufferedImage img = new ImageBuilder()
+                .setSize(ri.getWidth()+6, ri.getHeight()+6)
+                .setNumBands(1)
+                .setDataType(DataBuffer.TYPE_DOUBLE)
+                .setFillValue(new double[]{Double.MAX_VALUE})
+                .createBufferedImage();
         img.getRaster().setDataElements(3, 3, ri.getData());
 
         final NumberRange[] ranges = styles.keySet().toArray(new NumberRange[0]);
