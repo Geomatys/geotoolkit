@@ -36,6 +36,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
@@ -51,7 +52,6 @@ import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
@@ -167,7 +167,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
      * @return FeatureCollection , never null
      */
     public FeatureCollection getFeatureCollection(final Query query) {
-        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("id"));
+        final NamedIdentifier ident = new NamedIdentifier(Names.createLocalName(null,null,"id"));
         return new DefaultSelectorFeatureCollection(ident, query, this);
     }
 

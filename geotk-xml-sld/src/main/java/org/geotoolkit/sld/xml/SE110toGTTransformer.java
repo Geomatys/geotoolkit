@@ -41,6 +41,7 @@ import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
@@ -465,7 +466,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(cst.getSemanticTypeIdentifier()));
 
             if(cst.getCoverageName() != null){
-                fts.featureTypeNames().add(NamesExt.create(cst.getCoverageName()));
+                fts.featureTypeNames().add(Names.createLocalName(null,null,cst.getCoverageName()));
             }
 
             if(cst.getRuleOrOnlineResource() == null || cst.getRuleOrOnlineResource().isEmpty()){

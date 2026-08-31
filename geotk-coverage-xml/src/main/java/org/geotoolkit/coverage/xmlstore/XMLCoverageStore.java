@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,20 +30,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
-import jakarta.xml.bind.JAXBException;
-import java.util.Optional;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -189,7 +189,7 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
         if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
-        name = NamesExt.create(name.tip().toString());
+        name = Names.createLocalName(null,null,name.tip().toString());
         final Set<GenericName> names = DataStores.getNames(this, false, GridCoverageResource.class);
         if (names.contains(name)) {
             throw new DataStoreException("Name already used in store: " + name.tip());

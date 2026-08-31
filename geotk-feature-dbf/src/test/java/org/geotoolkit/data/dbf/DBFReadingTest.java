@@ -27,8 +27,8 @@ import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.AbstractReadingTests;
-import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.assertNotNull;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -56,11 +56,11 @@ public class DBFReadingTest extends AbstractReadingTests {
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
-        final GenericName name = NamesExt.create("sample");
+        final GenericName name = Names.createLocalName(null,null,"sample");
         builder.setName(name);
-        builder.addAttribute(Double.class).setName(NamesExt.create("N1")).setMaximalLength(5);
-        builder.addAttribute(Double.class).setName(NamesExt.create("N2")).setMaximalLength(5);
-        builder.addAttribute(String.class).setName(NamesExt.create("N3")).setMaximalLength(6);
+        builder.addAttribute(Double.class).setName(Names.createLocalName(null,null,"N1")).setMaximalLength(5);
+        builder.addAttribute(Double.class).setName(Names.createLocalName(null,null,"N2")).setMaximalLength(5);
+        builder.addAttribute(String.class).setName(Names.createLocalName(null,null,"N3")).setMaximalLength(6);
         final FeatureType type3 = builder.build();
 
         names.add(name);

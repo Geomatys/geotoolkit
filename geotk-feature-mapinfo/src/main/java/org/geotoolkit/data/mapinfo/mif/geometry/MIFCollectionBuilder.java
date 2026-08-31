@@ -16,14 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.*;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,12 +24,19 @@ import java.util.Scanner;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.InvalidPropertyValueException;
 import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Build features representing MIF Collection geometries.
@@ -46,8 +45,8 @@ import org.opengis.feature.PropertyNotFoundException;
  *         Date : 27/02/13
  */
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
-    public static final GenericName NAME = NamesExt.create("COLLECTION");
-    public static final GenericName GEOM_NAME = NamesExt.create("STYLE_RULES").push(NAME);
+    public static final GenericName NAME = Names.createLocalName(null,null,"COLLECTION");
+    public static final GenericName GEOM_NAME = Names.createLocalName(null,null,"STYLE_RULES").push(NAME);
     public static final FeatureType EMPTY_TYPE = new DefaultFeatureType(Collections.singletonMap("name", "abstract"), true, null);
 
     @Override

@@ -23,8 +23,8 @@ import java.util.Set;
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -45,7 +45,7 @@ public class ExpressionOperation extends AbstractOperation {
     private static final ParameterDescriptorGroup EMPTY_PARAMS = CalculateLineStringOperation.parameters("Expression", 1);
 
     private static final AttributeType<Object> TYPE = new DefaultAttributeType<>(
-            Collections.singletonMap(NAME_KEY, NamesExt.create("Object")),Object.class,1,1,null);
+            Collections.singletonMap(NAME_KEY, Names.createLocalName(null, null, "Object")),Object.class,1,1,null);
 
     private final Expression expression;
 

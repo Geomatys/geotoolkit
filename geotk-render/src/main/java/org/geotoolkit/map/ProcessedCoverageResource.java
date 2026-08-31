@@ -23,10 +23,10 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -49,7 +49,7 @@ public class ProcessedCoverageResource extends InMemoryGridCoverageResource {
     private long lastCall = 0;
 
     public ProcessedCoverageResource(){
-        super(NamesExt.create("Processed"));
+        super(Names.createLocalName(null,null,"Processed"));
     }
 
     /**

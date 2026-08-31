@@ -1,21 +1,20 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.*;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.locationtech.jts.geom.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Class to build feature from abstract geometry type.
@@ -25,8 +24,8 @@ import org.opengis.feature.FeatureType;
  */
 public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
-    public static final GenericName NAME = NamesExt.create("GEOMETRY");
-    public static final GenericName GEOM_NAME = NamesExt.create("GEOMETRY");
+    public static final GenericName NAME = Names.createLocalName(null,null,"GEOMETRY");
+    public static final GenericName GEOM_NAME = Names.createLocalName(null,null,"GEOMETRY");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

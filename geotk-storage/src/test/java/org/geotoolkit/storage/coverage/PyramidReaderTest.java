@@ -28,15 +28,18 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.storage.tiling.WritableTiledResource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.storage.memory.InMemoryStore;
@@ -44,12 +47,9 @@ import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 
 
@@ -80,7 +80,7 @@ public class PyramidReaderTest {
         final int width = 28;
         final int height = 13;
 
-        final InMemoryTiledGridCoverageResource ref1 = (InMemoryTiledGridCoverageResource) store.add(new DefiningTiledGridCoverageResource(NamesExt.create("test1")));
+        final InMemoryTiledGridCoverageResource ref1 = (InMemoryTiledGridCoverageResource) store.add(new DefiningTiledGridCoverageResource(Names.createLocalName(null,null,"test1")));
         ref1.setSampleDimensions(Collections.singletonList(new SampleDimension.Builder().setName(0).build()));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},

@@ -34,6 +34,7 @@ import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ViewMapper;
@@ -44,7 +45,6 @@ import org.geotoolkit.storage.event.StorageListener.Weak;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -70,7 +70,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     protected Session session;
 
     public AbstractFeatureCollection(final String id, Session session){
-        this(new NamedIdentifier(NamesExt.create(id)),session);
+        this(new NamedIdentifier(Names.createLocalName(null,null,id)),session);
     }
 
     public AbstractFeatureCollection(final NamedIdentifier id, Session session){

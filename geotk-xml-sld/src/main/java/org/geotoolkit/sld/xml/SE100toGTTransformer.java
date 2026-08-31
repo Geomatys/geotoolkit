@@ -33,6 +33,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
 import org.geotoolkit.sld.xml.v100.ColorMapEntry;
 import org.geotoolkit.sld.xml.v100.CssParameter;
@@ -44,7 +45,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
@@ -287,7 +287,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         fts.semanticTypeIdentifiers().addAll(visitSemantics(ftst.getSemanticTypeIdentifier()));
 
         if(ftst.getFeatureTypeName() != null){
-            fts.featureTypeNames().add(NamesExt.create(ftst.getFeatureTypeName()));
+            fts.featureTypeNames().add(Names.createLocalName(null,null,ftst.getFeatureTypeName()));
         }
 
         if(ftst.getRule() == null || ftst.getRule().isEmpty()){

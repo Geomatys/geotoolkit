@@ -24,8 +24,8 @@ import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -33,6 +33,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableGridCoverageResource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
@@ -41,7 +42,6 @@ import org.geotoolkit.image.io.plugin.TiffImageWriteParam;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -138,7 +138,7 @@ final class TiffStore extends DataStore implements WritableGridCoverageResource 
         public Optional<GenericName> getIdentifier() throws DataStoreException {
             //create identifier with file name
             String name = IOUtilities.filenameWithoutExtension(path);
-            return Optional.of(NamesExt.create(name));
+            return Optional.of(Names.createLocalName(null,null,name));
         }
 
         @Override

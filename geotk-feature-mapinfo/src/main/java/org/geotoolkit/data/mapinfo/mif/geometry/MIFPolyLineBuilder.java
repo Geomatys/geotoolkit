@@ -16,18 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InputMismatchException;
@@ -36,12 +24,22 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
 import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -51,8 +49,8 @@ import org.geotoolkit.feature.FeatureExt;
  */
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = NamesExt.create("PLINE");
-    public static final GenericName SMOOTH_NAME = NamesExt.create("SMOOTH");
+    public static final GenericName NAME = Names.createLocalName(null,null,"PLINE");
+    public static final GenericName SMOOTH_NAME = Names.createLocalName(null,null,"SMOOTH");
 
     private static final AttributeType SMOOTH = new DefaultAttributeType(Collections.singletonMap("name", SMOOTH_NAME), Boolean.class, 1, 1, null);
 

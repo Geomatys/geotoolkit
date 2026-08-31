@@ -29,18 +29,18 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.internal.shared.GeodeticObjectBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
 import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -83,7 +83,7 @@ public abstract class PyramidalModelStoreNDTest <T extends WritableTiledResource
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
-        final GenericName name = NamesExt.create("test");
+        final GenericName name = Names.createLocalName(null,null,"test");
         ref = (T) agg.add(new DefiningGridCoverageResource(name));
 
         //prepare expected colors

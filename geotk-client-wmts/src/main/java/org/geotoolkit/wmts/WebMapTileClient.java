@@ -29,13 +29,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
@@ -346,7 +346,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
         final List<LayerType> layers = capa.getContents().getLayers();
         for (LayerType lt : layers) {
             final String name = lt.getIdentifier().getValue();
-            final GenericName nn = NamesExt.create(name);
+            final GenericName nn = Names.createLocalName(null,null,name);
 
             //try to reuse existing resource
             if (existing != null) {

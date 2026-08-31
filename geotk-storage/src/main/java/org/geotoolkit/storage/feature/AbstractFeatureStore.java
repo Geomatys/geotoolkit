@@ -45,6 +45,7 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -589,7 +590,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         }else if(local.equals(GML_DESCRIPTION)){
             return NamesExt.create(GML_311_NAMESPACE, GML_DESCRIPTION);
         }else{
-            return NamesExt.create(local);
+            return Names.createLocalName(null,null,local);
         }
     }
 

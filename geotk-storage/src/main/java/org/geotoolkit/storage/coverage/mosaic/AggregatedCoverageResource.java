@@ -44,12 +44,14 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
@@ -66,6 +68,7 @@ import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -76,17 +79,14 @@ import org.geotoolkit.storage.InterruptedStoreException;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.TriFunction;
 import org.locationtech.jts.index.quadtree.Quadtree;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
-import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -1414,7 +1414,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             texts.add(StringUtilities.toStringTree(name, sources));
         }
 
-        final String name = getIdentifier().orElse(NamesExt.create("Unnamed")).toString();
+        final String name = getIdentifier().orElse(Names.createLocalName(null,null,"Unnamed")).toString();
 
         return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
     }

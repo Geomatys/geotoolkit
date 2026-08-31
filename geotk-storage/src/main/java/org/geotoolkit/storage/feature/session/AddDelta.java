@@ -27,18 +27,18 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -77,7 +77,7 @@ public class AddDelta extends AbstractDelta{
             ft = null;
         }
 
-        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("temp"));
+        final NamedIdentifier ident = new NamedIdentifier(Names.createLocalName(null,null,"temp"));
         this.features = FeatureStoreUtilities.collection(ident, ft);
 
         //we must copy the features since they might be changed later

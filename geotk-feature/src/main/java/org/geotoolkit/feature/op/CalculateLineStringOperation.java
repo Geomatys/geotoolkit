@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.feature.op;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +24,13 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.util.iso.Names;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -39,8 +41,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
-import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 /**
  * A calculated attribut that define a LineString geometry calculated
@@ -69,7 +69,7 @@ final class CalculateLineStringOperation extends AbstractOperation {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final AttributeType<LineString> TYPE = new DefaultAttributeType<>(
-            Collections.singletonMap(NAME_KEY, NamesExt.create("LineString")),LineString.class,1,1,null);
+            Collections.singletonMap(NAME_KEY, Names.createLocalName(null, null, "LineString")),LineString.class,1,1,null);
 
     private final GenericName[] path;
 

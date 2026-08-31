@@ -35,6 +35,7 @@ import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -49,7 +50,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -211,7 +212,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
 
         private Res() {
             super(VI3GStore.this);
-            name = NamesExt.create(fileInput.getFileName().toString());
+            name = Names.createLocalName(null,null,fileInput.getFileName().toString());
         }
 
         @Override
