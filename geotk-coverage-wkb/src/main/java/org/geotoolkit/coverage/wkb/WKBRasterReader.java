@@ -25,10 +25,10 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -38,11 +38,13 @@ import org.apache.sis.image.internal.shared.ColorModelFactory;
 import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
-import org.geotoolkit.io.LEDataInputStream;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.io.stream.ChannelDataInput;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.StorageConnector;
 import org.opengis.util.FactoryException;
 
 /**
@@ -139,14 +141,19 @@ public class WKBRasterReader {
      */
     public BufferedImage read(final InputStream stream) throws IOException{
 
-        final DataInput ds;
+        final ChannelDataInput ds;
+        try {
+            ds = new StorageConnector(stream).getStorageAs(ChannelDataInput.class);
+        } catch (IllegalArgumentException | DataStoreException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
         final boolean littleEndian = stream.read() == 1;
         if (littleEndian) {
-            //big endian
-            ds = new LEDataInputStream(stream);
-        } else {
             //little endian
-            ds = new DataInputStream(stream);
+            ds.buffer.order(ByteOrder.LITTLE_ENDIAN);
+        } else {
+            //big endian
+            ds.buffer.order(ByteOrder.BIG_ENDIAN);
         }
 
         final int version = ds.readUnsignedShort();
