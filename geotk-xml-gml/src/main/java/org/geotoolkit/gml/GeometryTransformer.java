@@ -431,7 +431,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                         pp = arc.getPointRep();
                     }
 
-                    if (pp == null) {
+                    if (pp == null || pp.getPoint() == null) {
                         throw new UnconvertibleObjectException("Not enough information to build an arc.");
                     }
 
