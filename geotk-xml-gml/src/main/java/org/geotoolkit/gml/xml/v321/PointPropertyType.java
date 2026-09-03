@@ -18,12 +18,14 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import jakarta.xml.bind.JAXBElement;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.PointProperty;
@@ -58,8 +60,8 @@ import org.geotoolkit.gml.xml.PointProperty;
 })
 public class PointPropertyType implements PointProperty {
 
-    @XmlElement(name = "Point")
-    private PointType point;
+    @XmlElementRef(name = "Point", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
+    private JAXBElement<? extends PointType> point;
     @XmlAttribute
     private java.lang.Boolean owns;
     @XmlAttribute
@@ -90,7 +92,9 @@ public class PointPropertyType implements PointProperty {
     }
 
     public PointPropertyType(final PointType point) {
-        this.point = point;
+        if (point != null) {
+            this.point = new ObjectFactory().createPoint(point);
+        }
     }
 
     /**
@@ -103,7 +107,8 @@ public class PointPropertyType implements PointProperty {
      */
     @Override
     public PointType getPoint() {
-        return point;
+        if (point == null) return null;
+        return point.getValue();
     }
 
     /**
@@ -115,7 +120,11 @@ public class PointPropertyType implements PointProperty {
      *
      */
     public void setPoint(PointType value) {
-        this.point = value;
+        if (value != null) {
+            this.point = new ObjectFactory().createPoint(value);
+        } else {
+            this.point = null;
+        }
     }
 
     /**
