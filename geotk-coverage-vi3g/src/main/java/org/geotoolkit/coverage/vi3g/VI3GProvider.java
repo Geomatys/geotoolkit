@@ -40,11 +40,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
         fileSuffixes = {"vi3g",".n07-vi3g"},
         capabilities = {Capability.READ},
         resourceTypes = {GridCoverageResource.class})
-public class VI3GProvider extends DataStoreProvider {
+public final class VI3GProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "vi3g";
     public static final String MIME_TYPE = "application/x-ogc-vi3g";
+    private static VI3GProvider INSTANCE;
 
     /**
      * Mandatory - the file uri
@@ -59,6 +60,21 @@ public class VI3GProvider extends DataStoreProvider {
                       .setDescription("VI3G file")
                       .create(URI.class, null);
         PARAMETERS_DESCRIPTOR = builder.addName(NAME).createGroup(PATH);
+    }
+
+    /**
+     * Get singleton instance of the provider.
+     *
+     * <p>
+     * Note : this method is named after Java 9 service loader provider method.
+     * {@link https://docs.oracle.com/javase/9/docs/api/java/util/ServiceLoader.html}
+     * </p>
+     *
+     * @return singleton instance
+     */
+    public static synchronized VI3GProvider provider() {
+        if (INSTANCE == null) INSTANCE = new VI3GProvider();
+        return INSTANCE;
     }
 
     @Override

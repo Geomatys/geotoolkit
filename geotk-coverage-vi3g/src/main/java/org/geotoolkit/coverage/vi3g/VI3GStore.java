@@ -28,11 +28,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.referencing.internal.shared.AffineTransform2D;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -40,14 +42,14 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
+import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -55,7 +57,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.math.NumberType;
-import org.apache.sis.util.ArraysExt;
 import org.opengis.util.GenericName;
 
 /**
@@ -156,7 +157,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
     private final Res resource;
 
     public VI3GStore(final StorageConnector connector) throws DataStoreException {
-        super(DataStores.getProviderById(VI3GProvider.NAME), connector);
+        super(VI3GProvider.provider(), connector);
         this.fileInput = connector.commit(Path.class, VI3GProvider.NAME);
         this.parameters = Parameters.castOrWrap(VI3GProvider.PARAMETERS_DESCRIPTOR.createValue());
         this.parameters.getOrCreate(VI3GProvider.PATH).setValue(fileInput.toUri());
@@ -171,11 +172,6 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
     @Override
     public Optional<FileSet> getFileSet() throws DataStoreException {
         return Optional.of(new FileSet(fileInput));
-    }
-
-    @Override
-    public DataStoreProvider getProvider() {
-        return DataStores.getProviderById(VI3GProvider.NAME);
     }
 
     @Override
@@ -208,7 +204,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
     }
 
 
-    private final class Res extends GeoreferencedGridCoverageResource {
+    private final class Res extends AbstractGridCoverageResource {
 
         private final GenericName name;
         private GridGeometry grid;
@@ -245,11 +241,30 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
         }
 
         @Override
-        protected GridCoverage readGridSlice(GridGeometry result, int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException {
+        public GridCoverage read(GridGeometry domain, int... ranges) throws DataStoreException {
 
-            final GridGeometry allGridGeom = getGridGeometry();
-            final GridGeometry gridGeometry = getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
-            final GridExtent extent = allGridGeom.getExtent();
+            final GridGeometry fullGeometry = getGridGeometry();
+            final GridExtent fullExtent = fullGeometry.getExtent();
+
+            //convert domain to coverage grid
+            final GridDerivation derivate;
+            if (domain == null) {
+                derivate = getGridGeometry().derive();
+            } else {
+                try {
+                    derivate = getGridGeometry()
+                            .derive()
+                            .rounding(GridRoundingMode.ENCLOSING)
+                            .subgrid(domain);
+                } catch (DisjointExtentException ex) {
+                    throw new NoSuchDataException();
+                } catch (Exception e) {
+                    throw new DataStoreException(e.getMessage(), e);
+                }
+            }
+            final GridExtent intersection = derivate.getIntersection();
+            final long[] subsampling = derivate.getSubsampling();
+            final GridGeometry resultGeometry = derivate.build();
 
             short[] allData;
             try (final ChannelImageInputStream imageStream = new ChannelImageInputStream(
@@ -258,18 +273,18 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
 
                 final var reader = new HyperRectangleReader(NumberType.SHORT, imageStream);
                 allData = (short[]) reader.read(new Region(
-                        new long[]{extent.getSize(0),extent.getSize(1)},
-                        new long[]{areaLower[0], areaLower[1]},
-                        new long[]{areaUpper[0], areaUpper[1]},
-                        ArraysExt.copyAsLongs(subsampling)));
+                        new long[]{fullExtent.getSize(0),fullExtent.getSize(1)},
+                        intersection.getLow().getCoordinateValues(),
+                        new long[]{intersection.getHigh(0)+1, intersection.getHigh(1)+1},
+                        subsampling));
 
 
             } catch (IOException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
 
-            final int width = (int) gridGeometry.getExtent().getSize(0);
-            final int height = (int) gridGeometry.getExtent().getSize(1);
+            final int width = (int) resultGeometry.getExtent().getSize(0);
+            final int height = (int) resultGeometry.getExtent().getSize(1);
             final BufferedImage image = BufferedImages.createImage(width, height, 1, DataBuffer.TYPE_SHORT);
             DataBuffer dataBuffer = image.getRaster().getDataBuffer();
             System.arraycopy(allData, 0, ((DataBufferShort) dataBuffer).getData(), 0, allData.length);
@@ -277,7 +292,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setValues(image);
             gcb.setRanges(getSampleDimensions());
-            gcb.setDomain(gridGeometry);
+            gcb.setDomain(resultGeometry);
             return gcb.build();
         }
 
