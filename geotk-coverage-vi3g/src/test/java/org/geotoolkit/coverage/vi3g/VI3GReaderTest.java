@@ -17,7 +17,6 @@
 
 package org.geotoolkit.coverage.vi3g;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.DataOutputStream;
@@ -27,10 +26,11 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -52,7 +52,7 @@ public class VI3GReaderTest {
 
     private static Path TEMP_IMG;
 
-    private static final Rectangle SOURCE_REGION = new Rectangle(5, 3, 6, 4);
+    private static final GridExtent SOURCE_REGION = new GridExtent(null, new long[]{5,3}, new long[]{5+6,3+4}, false);
 
     @BeforeClass
     public static void init() throws IOException {
@@ -90,7 +90,7 @@ public class VI3GReaderTest {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
         final RenderedImage read = store.read(null).render(null);
 
-        final PixelIterator pxIt = PixelIterator.create(read);
+        final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
         int expected = 0;
         while (pxIt.next()) {
             Assert.assertEquals("A pixel value is invalid !", expected++ % 10000, pxIt.getSample(0));
@@ -105,21 +105,21 @@ public class VI3GReaderTest {
     @Test
     public void readRegion() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
-        final SpatialImageReadParam readParam = null; //TODO
-        readParam.setSourceRegion(SOURCE_REGION);
 
-        final RenderedImage read = store.read(null).render(null);
-        Assert.assertEquals("Read image width is invalid !", SOURCE_REGION.width, read.getWidth());
-        Assert.assertEquals("Read image height is invalid !", SOURCE_REGION.height, read.getHeight());
+        final GridGeometry readParam = store.getGridGeometry().derive().subgrid(SOURCE_REGION).build();
+
+        final RenderedImage read = store.read(readParam).render(null);
+        Assert.assertEquals("Read image width is invalid !", SOURCE_REGION.getSize(0), read.getWidth());
+        Assert.assertEquals("Read image height is invalid !", SOURCE_REGION.getSize(1), read.getHeight());
         final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
 
-        final int widthPad = VI3GStore.WIDTH - SOURCE_REGION.width - SOURCE_REGION.x;
-        int expected = SOURCE_REGION.y * VI3GStore.WIDTH - widthPad;
+        final long widthPad = VI3GStore.WIDTH - SOURCE_REGION.getSize(0) - SOURCE_REGION.getLow(0);
+        long expected = SOURCE_REGION.getLow(1) * VI3GStore.WIDTH - widthPad;
         // When we change line, we must add an offset to expected value.
-        int previousY = -1;
+        long previousY = -1;
         while (pxIt.next()) {
             if (previousY < pxIt.getPosition().y) {
-                expected += SOURCE_REGION.x + widthPad;
+                expected += SOURCE_REGION.getLow(0) + widthPad;
                 previousY = pxIt.getPosition().y;
             }
             Assert.assertEquals("Pixel value at ("+pxIt.getPosition().x+", "+pxIt.getPosition().y+") is invalid !", expected++ % MAX_VALUE, pxIt.getSample(0));
@@ -134,18 +134,17 @@ public class VI3GReaderTest {
     @Test
     public void readSubsampled() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
-        final SpatialImageReadParam readParam = null;
-
         // Subsampling without offset
-        final int xSubsampling = 5;
-        final int ySubsampling = 3;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
-        RenderedImage read = store.read(null).render(null);
+        final long xSubsampling = 5;
+        final long ySubsampling = 3;
+        final GridGeometry readParam = store.getGridGeometry().derive().subgrid((GridExtent)null, xSubsampling, ySubsampling).build();
+
+        RenderedImage read = store.read(readParam).render(null);
         Assert.assertEquals("Read image width is invalid !", VI3GStore.WIDTH / 5, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", VI3GStore.HEIGHT / 3, read.getHeight());
 
         PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
-        int expected = -1;
+        long expected = -1;
         // When we change line, we must add an offset to expected value.
         int previousY = -1;
         while (pxIt.next()) {
@@ -162,7 +161,7 @@ public class VI3GReaderTest {
         // Subsampling with an offset
         final int xOffset = 2;
         final int yOffset = 1;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
+        //readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset); //TODO
         read = (BufferedImage) store.read(null).render(null);
         Assert.assertEquals("Read image width is invalid !", Math.round((VI3GStore.WIDTH - xOffset) / 5.0), read.getWidth());
         Assert.assertEquals("Read image height is invalid !", Math.round((VI3GStore.HEIGHT - yOffset) / 3.0), read.getHeight());
@@ -189,22 +188,21 @@ public class VI3GReaderTest {
     @Test
     public void readSubSampledRegion() throws DataStoreException {
         final VI3GStore store = new VI3GStore(new StorageConnector(TEMP_IMG));
-        final SpatialImageReadParam readParam = null;
 
-        readParam.setSourceRegion(SOURCE_REGION);
         // Subsampling with an offset
         final int xSubsampling = 2;
         final int ySubsampling = 2;
         final int xOffset = 1;
         final int yOffset = 1;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
+        //readParam.setSourceRegion(SOURCE_REGION); //TODO
+        //readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
 
         final RenderedImage read = store.read(null).render(null);
         Assert.assertEquals("Read image width is invalid !", 3, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", 2, read.getHeight());
 
-        final int firstPxValue = (SOURCE_REGION.y + yOffset) * VI3GStore.WIDTH + SOURCE_REGION.x + xOffset;
-        final int[] expectedValues = new int[]{
+        final long firstPxValue = (SOURCE_REGION.getLow(1) + yOffset) * VI3GStore.WIDTH + SOURCE_REGION.getLow(0) + xOffset;
+        final long[] expectedValues = new long[]{
                 firstPxValue,
                 firstPxValue + xSubsampling,
                 firstPxValue + xSubsampling*2,
