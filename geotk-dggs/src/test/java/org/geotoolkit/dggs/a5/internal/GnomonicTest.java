@@ -4,7 +4,7 @@ package org.geotoolkit.dggs.a5.internal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import static org.geotoolkit.dggs.a5.internal.Gnomonic.*;
 import static org.junit.Assert.*;
 import org.junit.Test;

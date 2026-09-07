@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import org.apache.sis.geometries.math.SampleSystem;
+import org.apache.sis.maths.SampleSystem;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.dggs.h3.internal.shared.Constants;

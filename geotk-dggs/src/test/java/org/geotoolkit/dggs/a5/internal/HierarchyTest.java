@@ -6,7 +6,7 @@ import org.geotoolkit.dggs.a5.internal.Tiling;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.geotoolkit.dggs.a5.internal.Hilbert.Anchor;
 import org.geotoolkit.dggs.a5.internal.Hilbert.Orientation;
 import org.geotoolkit.dggs.a5.internal.Utils.PentagonShape;

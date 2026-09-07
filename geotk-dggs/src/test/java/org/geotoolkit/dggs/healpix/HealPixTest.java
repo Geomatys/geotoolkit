@@ -18,7 +18,7 @@ package org.geotoolkit.dggs.healpix;
 
 import com.google.common.geometry.S2LatLng;
 import com.google.common.geometry.S2Polygon;
-import org.apache.sis.geometries.Polygon;
+import org.apache.sis.geometries.surface.Polygon;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.dggs.AbstractDggrsTest;

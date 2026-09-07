@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.display2d.GO2Utilities;

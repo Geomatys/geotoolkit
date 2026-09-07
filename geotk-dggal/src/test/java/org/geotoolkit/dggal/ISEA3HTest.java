@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.dggal;
 
-import org.apache.sis.geometries.Polygon;
+import org.apache.sis.geometries.surface.Polygon;
 import org.geotoolkit.dggs.AbstractDggrsTest;
 import org.apache.sis.referencing.dggs.Zone;
 import org.apache.sis.storage.dggs.DiscreteGlobalGridSystems;

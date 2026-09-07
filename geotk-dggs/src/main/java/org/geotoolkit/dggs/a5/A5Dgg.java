@@ -18,7 +18,7 @@ package org.geotoolkit.dggs.a5;
 
 import com.google.common.geometry.S2Polygon;
 import java.util.stream.Stream;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.referencing.dggs.Zone;

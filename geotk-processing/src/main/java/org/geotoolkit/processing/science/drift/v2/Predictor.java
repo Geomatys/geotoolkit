@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;

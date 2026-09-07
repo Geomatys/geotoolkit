@@ -18,7 +18,7 @@ package org.geotoolkit.dggs.a5;
 
 import java.math.BigInteger;
 import java.util.List;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.geotoolkit.dggs.a5.internal.Cell;
 import org.geotoolkit.dggs.a5.internal.Serialization;
 

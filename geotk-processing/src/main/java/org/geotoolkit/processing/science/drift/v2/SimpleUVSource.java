@@ -20,7 +20,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
 import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;

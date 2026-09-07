@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import static org.geotoolkit.dggs.a5.internal.Hilbert.*;
 import org.geotoolkit.dggs.a5.internal.Hilbert.Anchor;
 import org.geotoolkit.dggs.a5.internal.Hilbert.Orientation;

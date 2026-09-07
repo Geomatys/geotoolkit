@@ -17,7 +17,7 @@
 package org.geotoolkit.dggs.a5;
 
 import javax.measure.IncommensurableException;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
