@@ -50,6 +50,10 @@ public final class LandingPage extends DataTransferObject implements CommonRespo
     public LandingPage() {
     }
 
+    public LandingPage(List<Link> links) {
+        this.links = links;
+    }
+
     public LandingPage title(String title) {
         this.title = title;
         return this;
