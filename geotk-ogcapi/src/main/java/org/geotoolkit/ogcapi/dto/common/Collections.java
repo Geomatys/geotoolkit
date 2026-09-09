@@ -56,6 +56,11 @@ public final class Collections extends DataTransferObject implements CommonRespo
     public Collections() {
     }
 
+    public Collections(List<Link> links, List<CollectionDescription> collections) {
+        this.collections = collections;
+        this.links = links;
+    }
+
     public Collections links(List<Link> links) {
         this.links = links;
         return this;
