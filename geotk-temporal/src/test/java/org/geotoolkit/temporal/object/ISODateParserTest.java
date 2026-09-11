@@ -19,6 +19,12 @@ package org.geotoolkit.temporal.object;
 import java.util.GregorianCalendar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.TimeZone;
 import org.junit.Test;
@@ -63,6 +69,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(Year.of(1995), fdp.parseToTemporal(str));
 
         str = "1995Z";
 
@@ -75,6 +82,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(Year.of(1995), fdp.parseToTemporal(str));
 
         str = "1995+2";
 
@@ -87,6 +95,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(Year.of(1995), fdp.parseToTemporal(str));
 
         // yyyyMM -------------------------------------------------------------
 
@@ -101,6 +110,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
         str = "199511Z";
 
@@ -113,6 +123,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
         str = "199511+2";
 
@@ -125,6 +136,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
         // yyyy-MM -------------------------------------------------------------
 
@@ -139,6 +151,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
         str = "1995-11Z";
 
@@ -151,6 +164,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
         str = "1995-11+2";
 
@@ -163,6 +177,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(1995,11), fdp.parseToTemporal(str));
 
 
         // yyyMMdd -----------------------------------------------------
@@ -177,6 +192,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
         str = "19951123Z";
 
@@ -189,6 +205,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
         str = "19951123+2";
 
@@ -201,6 +218,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
         //test simple date -----------------------------------------------------
         str = "1995-11-23";
@@ -214,6 +232,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
         str = "1995-11-23Z";
 
@@ -226,6 +245,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
         str = "1995-11-23+2";
 
@@ -238,6 +258,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(1995,11,23), fdp.parseToTemporal(str));
 
 
         //test no 'Z' for local GMT --------------------------------------------
@@ -253,6 +274,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDateTime.of(1995,11,23,16,41,36), fdp.parseToTemporal(str));
 
         str = "1995-11-23T16:41:36.512";
 
@@ -265,6 +287,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(mil,   calendar.get(MILLISECOND));
+        assertEquals(LocalDateTime.of(1995,11,23,16,41,36,512000000), fdp.parseToTemporal(str));
 
         //test 'Z' for GMT+0 ---------------------------------------------------
 
@@ -279,6 +302,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(OffsetDateTime.of(1995,11,23,16,41,36,0,ZoneOffset.UTC), fdp.parseToTemporal(str));
 
         str = "1995-11-23T16:41:36.512Z";
 
@@ -291,6 +315,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(mil,   calendar.get(MILLISECOND));
+        assertEquals(OffsetDateTime.of(1995,11,23,16,41,36,512000000,ZoneOffset.UTC), fdp.parseToTemporal(str));
 
         //test Z for GMT+2 -----------------------------------------------------
 
@@ -305,6 +330,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(OffsetDateTime.of(1995,11,23,16,41,36,0,ZoneOffset.ofHours(2)), fdp.parseToTemporal(str));
 
         str = "1995-11-23T16:41:36.512+2";
 
@@ -317,6 +343,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(mil,   calendar.get(MILLISECOND));
+        assertEquals(OffsetDateTime.of(1995,11,23,16,41,36,512000000,ZoneOffset.ofHours(2)), fdp.parseToTemporal(str));
 
         //test a negative ------------------------------------------------------
 
@@ -332,6 +359,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(Year.of(-1995), fdp.parseToTemporal(str));
 
         str = "-199511";
 
@@ -345,6 +373,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(YearMonth.of(-1995,11), fdp.parseToTemporal(str));
 
         str = "-19951123";
 
@@ -358,6 +387,7 @@ public class ISODateParserTest {
         assertEquals(0,   calendar.get(MINUTE));
         assertEquals(0,   calendar.get(SECOND));
         assertEquals(0,     calendar.get(MILLISECOND));
+        assertEquals(LocalDate.of(-1995,11,23), fdp.parseToTemporal(str));
 
         str = "-1995-11-23T16:41:36.512+2";
 
@@ -371,6 +401,7 @@ public class ISODateParserTest {
         assertEquals(min,   calendar.get(MINUTE));
         assertEquals(sec,   calendar.get(SECOND));
         assertEquals(mil,   calendar.get(MILLISECOND));
+        assertEquals(OffsetDateTime.of(-1995,11,23,16,41,36,512000000,ZoneOffset.ofHours(2)), fdp.parseToTemporal(str));
     }
 
     @Test
