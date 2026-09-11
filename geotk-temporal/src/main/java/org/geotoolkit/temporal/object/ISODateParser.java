@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -59,6 +60,25 @@ public class ISODateParser {
     private final Calendar calendar = Calendar.getInstance();
     private static final int DECIMAL = 10;
 
+    /**
+     * Tracks how much precision was actually present in the last parsed
+     * String, so we can later choose the narrowest matching java.time type.
+     */
+    private static enum Precision {
+        YEAR, MONTH, DAY, SECOND, MILLISECOND
+    }
+
+    //parsed values
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int min;
+    private int sec;
+    private int mil;
+    private TimeZone timeZone;
+    private Precision precision;
+
     private final Map<String,TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(10){
         @Override
         public TimeZone get(Object o) {
@@ -73,23 +93,23 @@ public class ISODateParser {
     };
 
     public ISODateParser() {
-        calendar.setTimeZone(GMT0);
-        calendar.set(0, 0, 1, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
     }
 
     private void parse(final String date) {
+        //reset values
+        year = 0;
+        month = 1;
+        day = 1;
+        hour = 0;
+        min = 0;
+        sec = 0;
+        mil = 0;
+        timeZone = null;
+        precision = Precision.YEAR;
 
         //start and end index of the current block.
         final TimeZone[] bufferTZ = new TimeZone[1];
         int index1, index2;
-        final int year;
-        final int month;
-        final int day;
-        final int hour;
-        final int min;
-        final int sec;
-        final int mil;
 
         //skip the first character in case we have a negative year
         if((index1 = date.indexOf('-',1)) < 0){
@@ -104,13 +124,7 @@ public class ISODateParser {
                 // yyyyZ
                 // yyyy'Z'
                 year = Integer.parseInt(date, 0, index1, DECIMAL);
-
-                month = 1; // a -1 occures at the end.
-                day = 1;
-                hour = 0;
-                min = 0;
-                sec = 0;
-                mil = 0;
+                precision = Precision.YEAR;
 
             } else {
                 //date is like :
@@ -126,12 +140,7 @@ public class ISODateParser {
 
                 if (index1 <= 7) {
                     month = Integer.parseInt(date, idxNegative + 4, index1, DECIMAL);
-
-                    day = 1;
-                    hour = 0;
-                    min = 0;
-                    sec = 0;
-                    mil = 0;
+                    precision = Precision.MONTH;
 
                 } else {
                     //date is like :
@@ -152,11 +161,7 @@ public class ISODateParser {
 
                         //@TODO Manage hour,min,sec,mill cases
                     }
-
-                    hour = 0;
-                    min = 0;
-                    sec = 0;
-                    mil = 0;
+                    precision = Precision.DAY;
                 }
             }
 
@@ -173,11 +178,7 @@ public class ISODateParser {
                 index2 = searchTimeZone(date, index1, bufferTZ);
 
                 month = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
-                day = 1;
-                hour = 0;
-                min = 0;
-                sec = 0;
-                mil = 0;
+                precision = Precision.MONTH;
 
             }else{
                 month = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
@@ -192,10 +193,7 @@ public class ISODateParser {
                     index1 = searchTimeZone(date, index2, bufferTZ);
 
                     day = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
-                    hour = 0;
-                    min = 0;
-                    sec = 0;
-                    mil = 0;
+                    precision = Precision.DAY;
                 }else{
                     day = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
                     index1++;
@@ -217,32 +215,17 @@ public class ISODateParser {
                         index1 = searchTimeZone(date, index2, bufferTZ);
 
                         mil = Integer.parseUnsignedInt(date, index2, index1, DECIMAL);
+                        precision = Precision.MILLISECOND;
                     }else{
                         index2 = searchTimeZone(date, index1, bufferTZ);
                         sec = Integer.parseUnsignedInt(date, index1, index2, DECIMAL);
-                        mil = 0;
+                        precision = Precision.SECOND;
                     }
                 }
             }
         }
 
-        //build the date
-
-        if(year > 0){
-            calendar.set(Calendar.ERA, GregorianCalendar.AD);
-            calendar.set(Calendar.YEAR, year);
-        } else {
-            calendar.set(Calendar.ERA, GregorianCalendar.BC);
-            calendar.set(Calendar.YEAR, -year);
-        }
-        calendar.setTimeZone((TimeZone) bufferTZ[0]);
-
-        calendar.set(Calendar.MONTH, month - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, min);
-        calendar.set(Calendar.SECOND, sec);
-        calendar.set(Calendar.MILLISECOND, mil);
+        timeZone = bufferTZ[0];
     }
 
     /**
@@ -264,7 +247,7 @@ public class ISODateParser {
             return index1;
         }else{
             //no Z == local time zone
-            buffer[0] = TimeZone.getDefault();
+            buffer[0] = null;
             return date.length();
         }
     }
@@ -277,17 +260,75 @@ public class ISODateParser {
      */
     public Calendar getCalendar(final String str) {
         parse(str);
+
+        if (year > 0){
+            calendar.set(Calendar.ERA, GregorianCalendar.AD);
+            calendar.set(Calendar.YEAR, year);
+        } else {
+            calendar.set(Calendar.ERA, GregorianCalendar.BC);
+            calendar.set(Calendar.YEAR, -year);
+        }
+        calendar.setTimeZone(timeZone == null ? TimeZone.getDefault() : timeZone);
+
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min);
+        calendar.set(Calendar.SECOND, sec);
+        calendar.set(Calendar.MILLISECOND, mil);
         return calendar;
     }
 
     public Date parseToDate(final String str) {
-        parse(str);
-        return calendar.getTime();
+        return getCalendar(str).getTime();
     }
 
     public long parseToMillis(final String str) {
+        return getCalendar(str).getTimeInMillis();
+    }
+
+    /**
+     * Parses the given ISO-8601 String and returns it as the narrowest
+     * (most appropriate) {@code java.time} type able to represent the
+     * precision actually present in the String :
+     * <ul>
+     * <li>{@code yyyy} &rarr; {@link java.time.Year}</li>
+     * <li>{@code yyyy-MM} &rarr; {@link java.time.YearMonth}</li>
+     * <li>{@code yyyy-MM-dd} &rarr; {@link java.time.LocalDate}</li>
+     * <li>{@code yyyy-MM-dd'T'HH:mm:ss[.SSS]} (no zone) &rarr; {@link java.time.LocalDateTime}</li>
+     * <li>{@code yyyy-MM-dd'T'HH:mm:ss[.SSS]Z} (explicit zone) &rarr; {@link java.time.OffsetDateTime}</li>
+     * </ul>
+     *
+     * @param str : String to parse
+     * @return the most appropriate {@link java.time.temporal.Temporal}
+     * representing the parsed String.
+     */
+    public Temporal parseToTemporal(final String str) {
         parse(str);
-        return calendar.getTimeInMillis();
+
+        switch (precision) {
+            case YEAR:
+                return java.time.Year.of(year);
+            case MONTH:
+                return java.time.YearMonth.of(year, month);
+            case DAY:
+                return java.time.LocalDate.of(year, month, day);
+            default: {
+                //SECOND or MILLISECOND precision
+                final java.time.LocalDateTime ldt = java.time.LocalDateTime.of(
+                        year, month, day,
+                        hour,
+                        min,
+                        sec,
+                        mil * 1_000_000);
+
+                if (timeZone != null) {
+                    return ldt.atZone(timeZone.toZoneId()).toOffsetDateTime();
+                } else {
+                    return ldt;
+                }
+            }
+        }
     }
 
 }
