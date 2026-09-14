@@ -35,6 +35,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
@@ -42,8 +44,6 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.feature.DefaultSelectorFeatureCollection;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -500,43 +500,16 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
      */
     @Override
     public void eventOccurred(StoreEvent event) {
-        if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
+        //if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
         sendEvent(event);
-    }
-    /**
-     * Fires a features add event.
-     *
-     * @param name of the schema where features where added.
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesAdded(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
-    }
-
-    /**
-     * Fires a features update event.
-     *
-     * @param name of the schema where features where updated.
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesUpdated(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
-    }
-
-    /**
-     * Fires a features delete event.
-     *
-     * @param name of the schema where features where deleted
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesDeleted(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**
      * Fires a session event. when new pending changes are added.
      */
     protected void fireSessionChanged(){
-        sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
+        //obsolete, to be removed with shapefile
+        //sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
     }
+
 }

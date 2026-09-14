@@ -43,6 +43,10 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.AggregationEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetModelEvent;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.iso.Names;
@@ -50,9 +54,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.GenericFeatureWriter;
 import org.geotoolkit.util.NamesExt;
@@ -402,8 +403,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name added schema name
      * @param type added feature type
      */
-    protected void fireSchemaAdded(final GenericName name, final FeatureType type){
-        sendEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
+    protected void fireSchemaAdded(final GenericName name, final FeatureType type) throws DataStoreException{
+        sendEvent(new AggregationEvent(this, AggregationEvent.TYPE_ADD, findResource(name.toString())));
     }
 
     /**
@@ -413,8 +414,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param oldType featuretype before change
      * @param newType featuretype after change
      */
-    protected void fireSchemaUpdated(final GenericName name, final FeatureType oldType, final FeatureType newType){
-        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
+    protected void fireSchemaUpdated(final GenericName name, final FeatureType oldType, final FeatureType newType) throws DataStoreException{
+        FeatureSet r = (FeatureSet) findResource(name.toString());
+        sendEvent(FeatureSetModelEvent.createUpdateEvent(r, oldType, newType));
     }
 
     /**
@@ -423,8 +425,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name deleted schema name
      * @param type feature type of the deleted schema
      */
-    protected void fireSchemaDeleted(final GenericName name, final FeatureType type){
-        sendEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
+    protected void fireSchemaDeleted(final GenericName name, final FeatureType type) throws DataStoreException{
+        sendEvent(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, findResource(name.toString())));
     }
 
     /**
@@ -433,8 +435,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where added.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesAdded(final GenericName name, final Set<ResourceId> ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
+    protected void fireFeaturesAdded(final GenericName name, final Set<ResourceId> ids) throws DataStoreException{
+        FeatureSet r = (FeatureSet) findResource(name.toString());
+        sendEvent(FeatureSetContentEvent.createAddEvent(r, FeatureSetContentEvent.resourceId(ids)));
     }
 
     /**
@@ -443,8 +446,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where updated.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesUpdated(final GenericName name, final Set<ResourceId> ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
+    protected void fireFeaturesUpdated(final GenericName name, final Set<ResourceId> ids) throws DataStoreException{
+        FeatureSet r = (FeatureSet) findResource(name.toString());
+        sendEvent(FeatureSetContentEvent.createUpdateEvent(r, FeatureSetContentEvent.resourceId(ids)));
     }
 
     /**
@@ -453,8 +457,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where deleted
      * @param ids modified feature ids
      */
-    protected void fireFeaturesDeleted(final GenericName name, final Set<ResourceId> ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
+    protected void fireFeaturesDeleted(final GenericName name, final Set<ResourceId> ids) throws DataStoreException{
+        FeatureSet r = (FeatureSet) findResource(name.toString());
+        sendEvent(FeatureSetContentEvent.createDeleteEvent(r, FeatureSetContentEvent.resourceId(ids)));
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -623,10 +628,10 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     /**
-     * Forward given event, changing the source by this object.
+     * Forward given event.
      * For implementation use only.
      */
     public void forwardEvent(StorageEvent event){
-        sendEvent(event.copy(this));
+        sendEvent(event);
     }
 }

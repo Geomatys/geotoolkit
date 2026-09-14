@@ -59,14 +59,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetModelEvent;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.csv.CSVUtils.LatLonConfig;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.AttributeType;
@@ -413,7 +413,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             fileLock.writeLock().unlock();
         }
 
-        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, newType.getName(), oldSchema, newType));
+        sendEvent(FeatureSetModelEvent.createUpdateEvent(this, oldSchema, newType));
     }
 
     String createHeader(final FeatureType type) throws DataStoreException{
@@ -518,15 +518,15 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     void fireDataChangeEvents(Set<ResourceId> addedIds, Set<ResourceId> updatedIds, Set<ResourceId> deletedIds) {
         if (!addedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), addedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.ADD, addedIds));
         }
 
         if (!updatedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), updatedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.UPDATE, updatedIds));
         }
 
         if (!deletedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), deletedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.DELETE, deletedIds));
         }
     }
 }

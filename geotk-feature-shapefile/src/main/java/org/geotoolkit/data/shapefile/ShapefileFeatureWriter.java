@@ -45,7 +45,8 @@ import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
@@ -73,6 +74,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     protected final FilterFactory FF = FilterUtilities.FF;
 
     protected final ShapefileFeatureStore parent;
+    private final FeatureSet featureSet;
 
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
     protected FeatureReader featureReader;
@@ -129,6 +131,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,
             final FeatureReader featureReader, final Charset charset) throws IOException,DataStoreException {
         this.parent = parent;
+        this.featureSet = (FeatureSet) parent.findResource(typeName);
         this.shpFiles = shpFiles;
         this.dbfCharset = charset;
         // set up reader
@@ -321,17 +324,17 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     private void fireDataChangeEvents(){
         if (!addedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.ADD, featureType.getName(), addedIds);
+            final FeatureSetContentEvent event = new FeatureSetContentEvent(featureSet, FeatureSetContentEvent.Type.ADD, addedIds);
             parent.forwardEvent(event);
         }
 
         if (!updatedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), updatedIds);
+            final FeatureSetContentEvent event = new FeatureSetContentEvent(featureSet, FeatureSetContentEvent.Type.UPDATE, updatedIds);
             parent.forwardEvent(event);
         }
 
         if (!deletedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), deletedIds);
+            final FeatureSetContentEvent event = new FeatureSetContentEvent(featureSet, FeatureSetContentEvent.Type.DELETE, deletedIds);
             parent.forwardEvent(event);
         }
     }

@@ -57,7 +57,7 @@ import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.event.ModelEvent;
+import org.apache.sis.storage.internal.shared.ModelEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
