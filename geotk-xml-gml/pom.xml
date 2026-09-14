@@ -88,8 +88,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-referencing</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -98,11 +98,6 @@
         <artifactId>geotk-utility</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
         <scope>test</scope>
     </dependency>
   </dependencies>

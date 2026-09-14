@@ -19,10 +19,6 @@
             <artifactId>geotk-utility</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

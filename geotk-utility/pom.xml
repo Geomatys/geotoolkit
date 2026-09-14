@@ -103,20 +103,20 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-referencing</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbytools</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
 
     <!-- TEST DEPENDENCIES-->

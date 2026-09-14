@@ -437,16 +437,6 @@
     </dependency>
     <!-- Force database drivers in tests for all modules -->
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
@@ -504,12 +494,6 @@
              <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
              @{argLine}
           </argLine>
-          <systemProperties>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>${project.build.directory}/derby.log</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
 
