@@ -25,7 +25,8 @@ package org.geotoolkit.csw.xml;
  */
 public enum CSWVersion {
     v200("2.0.0"),
-    v202("2.0.2");
+    v202("2.0.2"),
+    v300("3.0.0");
 
     private final String code;
 
