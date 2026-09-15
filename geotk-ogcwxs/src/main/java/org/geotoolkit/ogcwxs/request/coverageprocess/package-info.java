@@ -20,4 +20,4 @@
  * OGC-WXS Coverage processing service bindings.
  * @see https://www.ogc.org/standards/wcps/
  */
-package org.geotoolkit.ogcwxs.client.coverageprocess;
+package org.geotoolkit.ogcwxs.request.coverageprocess;
