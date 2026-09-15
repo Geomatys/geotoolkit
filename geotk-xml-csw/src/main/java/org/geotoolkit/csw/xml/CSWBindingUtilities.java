@@ -23,13 +23,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -59,6 +62,42 @@ public class CSWBindingUtilities {
         AbstractCapabilities c = (AbstractCapabilities) unmarshall(source, unMarshaller);
         selectedPool.recycle(unMarshaller);
         return c;
+    }
+
+    /**
+     * Unmarshal XML data from the specified source and return the resulting content tree, cast
+     * to the given data type.
+     *
+     * @param source object to unmarshall
+     * @param dataType expected result type
+     * @return the newly created root object of the java content tree
+     * @throws JAXBException if any unexpected error occurs while unmarshalling, or if the
+     *         unmarshalled content is not compatible with {@code dataType}
+     */
+    public static <T> T unmarshall(final Object source, final Class<T> dataType) throws JAXBException {
+        ArgumentChecks.ensureNonNull("Return type", dataType);
+
+        final MarshallerPool pool = CSWMarshallerPool.getInstance();
+        final Unmarshaller unMarshaller = pool.acquireUnmarshaller();
+        Object unmarshalled = unmarshall(source, unMarshaller);
+        pool.recycle(unMarshaller);
+
+        if (unmarshalled instanceof JAXBElement) {
+            unmarshalled = ((JAXBElement) unmarshalled).getValue();
+        }
+
+        if (unmarshalled == null) {
+            throw new JAXBException("No value available in given data source");
+        } else if (dataType.isAssignableFrom(unmarshalled.getClass())) {
+            return (T) unmarshalled;
+        } else if (unmarshalled instanceof ExceptionResponse) {
+            throw new JAXBException(((ExceptionResponse) unmarshalled).toException());
+        } else {
+            throw new JAXBException(String.format(
+                    "Read object is not compatible with queried type.%nExpected: %s%nBut was: %s",
+                    dataType, unmarshalled.getClass()
+            ));
+        }
     }
 
     /**
