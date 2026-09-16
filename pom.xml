@@ -959,6 +959,7 @@
     <module>geotk-xml-swe</module>
     <module>geotk-xml-tjs</module>
     <module>geotk-xml-tms</module>
+    <module>geotk-xml-wcps</module>
     <module>geotk-xml-wcs</module>
     <module>geotk-xml-wfs</module>
     <module>geotk-xml-wmc</module>
