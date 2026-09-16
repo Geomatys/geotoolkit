@@ -441,6 +441,22 @@
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-epsg</artifactId>
+        <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.apache.sis.core</groupId>
+                <artifactId>sis-referencing</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
