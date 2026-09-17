@@ -17,13 +17,9 @@
 
 package org.geotoolkit.storage.coverage;
 
-import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.event.CoverageStoreContentEvent;
-import java.awt.Point;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -43,9 +39,9 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.WarningEvent;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
@@ -70,7 +66,7 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
 
         //redirect warning listener events to default logger
         listeners.addListener(WarningEvent.class, new StoreListener<WarningEvent>() {
-            @Override public void eventOccured(WarningEvent t) {
+            @Override public void eventOccurred(WarningEvent t) {
                 t.getDescription().setLoggerName("org.geotoolkit.storage.coverage");
             }
         });
@@ -219,87 +215,6 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
     ////////////////////////////////////////////////////////////////////////////
     // convinient methods                                                     //
     ////////////////////////////////////////////////////////////////////////////
-
-    protected CoverageStoreManagementEvent fireCoverageAdded(final GenericName name){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageAddEvent(this, name);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent fireCoverageUpdated(final GenericName name){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageUpdateEvent(this, name);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent fireCoverageDeleted(final GenericName name){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageDeleteEvent(this, name);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent firePyramidAdded(final GenericName name, final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, name, pyramidId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent firePyramidUpdated(final GenericName name, final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, name, pyramidId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent firePyramidDeleted(final GenericName name, final String pyramidId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, name, pyramidId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent fireMosaicAdded(final GenericName name, final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, name, pyramidId, mosaicId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent fireMosaicUpdated(final GenericName name, final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, name, pyramidId, mosaicId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreManagementEvent fireMosaicDeleted(final GenericName name, final String pyramidId, final String mosaicId){
-        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, name, pyramidId, mosaicId);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreContentEvent fireDataUpdated(final GenericName name){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, name);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreContentEvent fireTileAdded(final GenericName name,
-            final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, name, pyramidId, mosaicId, tiles);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreContentEvent fireTileUpdated(final GenericName name,
-            final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, name, pyramidId, mosaicId, tiles);
-        sendEvent(event);
-        return event;
-    }
-
-    protected CoverageStoreContentEvent fireTileDeleted(final GenericName name,
-            final String pyramidId, final String mosaicId, final List<Point> tiles){
-        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, name, pyramidId, mosaicId, tiles);
-        sendEvent(event);
-        return event;
-    }
 
     /**
      * Convinient method to check that the given type name exist.

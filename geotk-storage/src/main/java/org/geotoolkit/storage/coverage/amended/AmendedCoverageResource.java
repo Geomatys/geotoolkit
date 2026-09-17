@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
@@ -30,12 +29,12 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.internal.shared.AxisDirections;
-import org.apache.sis.referencing.internal.shared.AffineTransform2D;
-import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
+import org.apache.sis.referencing.internal.shared.AxisDirections;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
@@ -43,18 +42,17 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.ModelEvent;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -163,11 +161,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
     public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
         if(this.overrideCRS==overrideCRS) return;
         this.overrideCRS = overrideCRS;
-        try {
-            sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        }
+        sendStructureEvent(new ModelEvent(this));
     }
 
     /**
@@ -207,11 +201,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
     public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
         if(this.overrideGridToCrs==overrideGridToCrs) return;
         this.overrideGridToCrs = overrideGridToCrs;
-        try {
-            sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        }
+        sendStructureEvent(new ModelEvent(this));
     }
 
     /**
@@ -289,13 +279,13 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    private void sendStructureEvent(final StorageEvent event){
+    private void sendStructureEvent(final StoreEvent event){
         final StoreListener[] lst;
         synchronized (listeners) {
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 

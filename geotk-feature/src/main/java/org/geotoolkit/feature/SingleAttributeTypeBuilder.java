@@ -23,13 +23,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.sis.feature.DefaultAttributeType;
 import static org.apache.sis.feature.AbstractIdentifiedType.*;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 /**
  *
@@ -172,7 +173,7 @@ public class SingleAttributeTypeBuilder {
     }
 
     public SingleAttributeTypeBuilder addCharacteristic(String localPart, Class valueClass, int minimumOccurs, int maximumOccurs, Object defaultValue){
-        final GenericName name = NamesExt.create(localPart);
+        final GenericName name = Names.createLocalName(null,null,localPart);
         return addCharacteristic(name,valueClass,minimumOccurs,maximumOccurs,defaultValue);
     }
 

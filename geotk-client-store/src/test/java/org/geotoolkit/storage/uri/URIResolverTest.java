@@ -25,9 +25,9 @@ import java.nio.file.Path;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -51,7 +51,7 @@ public class URIResolverTest {
             corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
-                    NamesExt.create("test"),
+                    Names.createLocalName(null,null,"test"),
                     corner,
                     new Dimension(100, 100),
                     new int[]{256,256}, 10);
@@ -86,7 +86,7 @@ public class URIResolverTest {
             corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
-                    NamesExt.create("test"),
+                    Names.createLocalName(null,null,"test"),
                     corner,
                     new Dimension(100, 100),
                     new int[]{256,256}, 10);
@@ -122,7 +122,7 @@ public class URIResolverTest {
             corner.setCoordinates(0,0);
             final URITileMatrix matrix = new URITileMatrix(null, dirUri, resolver,
                     DefaultClientSecurity.NO_SECURITY, URITileFormat.PNG,
-                    NamesExt.create("test"),
+                    Names.createLocalName(null,null,"test"),
                     corner,
                     new Dimension(100, 100),
                     new int[]{256,256}, 10);

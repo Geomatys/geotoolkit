@@ -18,8 +18,8 @@ package org.geotoolkit.dggal;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystemFactory;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystemFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;

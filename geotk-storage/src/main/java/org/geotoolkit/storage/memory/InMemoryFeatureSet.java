@@ -45,10 +45,10 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -121,7 +121,7 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
     }
 
     public InMemoryFeatureSet(String id, FeatureType type) {
-        this((id != null) ? NamesExt.create(id) : null, type, null, true);
+        this((id != null) ? Names.createLocalName(null,null,id) : null, type, null, true);
     }
 
     /**
@@ -383,7 +383,13 @@ public class InMemoryFeatureSet extends AbstractFeatureSet implements WritableFe
                 .orElse(null);
 
         if (fEnv == null) return null;
-        if (fEnv.getCoordinateReferenceSystem() == null) fEnv.setCoordinateReferenceSystem(defaultGeometryCrs);
+        int dim = CRS.getDimensionOrZero(defaultGeometryCrs);
+        if (dim > 0 && dim < fEnv.getDimension()) {
+            fEnv = fEnv.subEnvelope(0, dim);
+        }
+        if (fEnv.getCoordinateReferenceSystem() == null) {
+            fEnv.setCoordinateReferenceSystem(defaultGeometryCrs);
+        }
         try {
             fEnv = GeneralEnvelope.castOrCopy(Envelopes.transform(fEnv, INDEX_CRS));
         } catch (TransformException ex) {

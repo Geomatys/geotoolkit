@@ -987,12 +987,16 @@ public final class TileMatrices {
                 } catch (NoSuchDataException ex) {
                     continue;
                 }
-                count += countCells(ext);
+                count += ext.getLatticePointCount();
             }
         }
         return count;
     }
 
+    /**
+     * @deprecated use GridExtent.getLatticePointCount
+     */
+    @Deprecated
     public static long countCells(GridExtent extent) {
         long nb = 1;
         for (int i = 0; i < extent.getDimension(); i++) {

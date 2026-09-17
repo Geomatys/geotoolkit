@@ -2,7 +2,7 @@
 package org.geotoolkit.dggs.a5.internal;
 
 import org.geotoolkit.dggs.a5.internal.Utils;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import static org.geotoolkit.dggs.a5.internal.Orig.origins;
 import static org.geotoolkit.dggs.a5.internal.Project.*;
 import org.geotoolkit.dggs.a5.internal.Utils.Origin;

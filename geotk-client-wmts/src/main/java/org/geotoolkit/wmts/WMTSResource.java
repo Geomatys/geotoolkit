@@ -31,7 +31,7 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.tiling.TileMatrixSet;
 import org.apache.sis.storage.tiling.TiledResource;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.event.ModelEvent;
+import org.apache.sis.storage.internal.shared.ModelEvent;
 import org.geotoolkit.wmts.model.WMTSTileMatrixSets;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;

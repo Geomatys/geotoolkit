@@ -33,8 +33,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
@@ -43,6 +43,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.query.Query;
@@ -91,7 +92,7 @@ public class FeatureStoreUtilities {
     public static FeatureCollection collection(final String id, final FeatureType type) {
         ArgumentChecks.ensureNonNull("Collection id", id);
         ArgumentChecks.ensureNonEmpty("Collection id", id);
-        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
+        final NamedIdentifier ident = new NamedIdentifier(Names.createLocalName(null,null,id));
         return collection(ident, type);
     }
 

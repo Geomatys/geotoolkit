@@ -45,7 +45,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
@@ -57,6 +56,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.wrapper.jts.JTS;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -229,7 +229,7 @@ public class Compose extends AbstractProcess {
             }
         }
 
-        final BufferedImage outImage = BufferedImages.createImage(outWidth, outHeight, outImageReference);
+        final BufferedImage outImage = new ImageBuilder().copyFrom(outImageReference).setSize(outWidth, outHeight).createBufferedImage();
         final WritableRaster outRaster = outImage.getRaster();
 
         final double[] pixelBuffer = new double[outImage.getSampleModel().getNumBands()];

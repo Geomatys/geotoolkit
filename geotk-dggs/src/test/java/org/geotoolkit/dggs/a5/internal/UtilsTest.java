@@ -1,7 +1,7 @@
 
 package org.geotoolkit.dggs.a5.internal;
 
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.geotoolkit.dggs.a5.internal.Utils.PentagonShape;
 import static org.junit.Assert.*;
 import org.junit.Test;

@@ -35,14 +35,15 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.feature.DefaultSelectorFeatureCollection;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -51,7 +52,6 @@ import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
@@ -167,7 +167,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
      * @return FeatureCollection , never null
      */
     public FeatureCollection getFeatureCollection(final Query query) {
-        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("id"));
+        final NamedIdentifier ident = new NamedIdentifier(Names.createLocalName(null,null,"id"));
         return new DefaultSelectorFeatureCollection(ident, query, this);
     }
 
@@ -482,7 +482,7 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 
@@ -499,44 +499,17 @@ public final class Session implements Resource, StoreListener<StoreEvent> {
      * Forward event to listeners by changing source.
      */
     @Override
-    public void eventOccured(StoreEvent event) {
-        if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
+    public void eventOccurred(StoreEvent event) {
+        //if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
         sendEvent(event);
-    }
-    /**
-     * Fires a features add event.
-     *
-     * @param name of the schema where features where added.
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesAdded(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
-    }
-
-    /**
-     * Fires a features update event.
-     *
-     * @param name of the schema where features where updated.
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesUpdated(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
-    }
-
-    /**
-     * Fires a features delete event.
-     *
-     * @param name of the schema where features where deleted
-     * @param ids modified feature ids.
-     */
-    protected void fireFeaturesDeleted(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**
      * Fires a session event. when new pending changes are added.
      */
     protected void fireSessionChanged(){
-        sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
+        //obsolete, to be removed with shapefile
+        //sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
     }
+
 }

@@ -3,7 +3,7 @@ package org.geotoolkit.dggs.a5.internal;
 
 import java.util.Arrays;
 import java.util.List;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 
 public final class TestPolarCoordinates {
 

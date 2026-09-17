@@ -31,11 +31,11 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -183,7 +183,7 @@ public final class MapBuilder {
      */
     @Deprecated
     public static MapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
-        final GridCoverageResource ref = new InMemoryGridCoverageResource(NamesExt.create(name), grid);
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(Names.createLocalName(null,null,name), grid);
         return createCoverageLayer(ref, style);
     }
 

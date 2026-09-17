@@ -16,27 +16,25 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Brush;
-import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-
+import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
 import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Utility class to read and write MIF-MID Region geometries.
@@ -46,7 +44,7 @@ import org.geotoolkit.feature.FeatureExt;
  */
 public class MIFRegionBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = NamesExt.create("REGION");
+    public static final GenericName NAME = Names.createLocalName(null,null,"REGION");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

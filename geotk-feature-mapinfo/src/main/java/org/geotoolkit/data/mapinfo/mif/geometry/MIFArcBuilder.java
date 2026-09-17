@@ -16,16 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InputMismatchException;
@@ -33,12 +23,21 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Class Description
@@ -48,9 +47,9 @@ import org.opengis.feature.Feature;
  */
 public class MIFArcBuilder extends MIFRectangleBuilder {
 
-    public static final GenericName NAME = NamesExt.create("ARC");
-    public static final GenericName BEGIN_ANGLE_NAME = NamesExt.create("BEGIN_ANGLE");
-    public static final GenericName END_ANGLE_NAME = NamesExt.create("END_ANGLE");
+    public static final GenericName NAME = Names.createLocalName(null,null,"ARC");
+    public static final GenericName BEGIN_ANGLE_NAME = Names.createLocalName(null,null,"BEGIN_ANGLE");
+    public static final GenericName END_ANGLE_NAME = Names.createLocalName(null,null,"END_ANGLE");
 
     public static final AttributeType BEGIN_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", BEGIN_ANGLE_NAME), Double.class, 1, 1, null);
     public static final AttributeType END_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", END_ANGLE_NAME), Double.class, 1, 1, null);

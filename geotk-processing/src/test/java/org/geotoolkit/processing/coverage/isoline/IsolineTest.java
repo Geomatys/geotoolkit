@@ -53,6 +53,7 @@ import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -224,10 +225,10 @@ public class IsolineTest {
             +-----+-----+
             Result geometry is an octogone, a square with cutted edges
         */
-        final BufferedImage tile00 = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_DOUBLE);
-        final BufferedImage tile10 = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_DOUBLE);
-        final BufferedImage tile01 = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_DOUBLE);
-        final BufferedImage tile11 = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage tile00 = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_DOUBLE).createBufferedImage();
+        final BufferedImage tile10 = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_DOUBLE).createBufferedImage();
+        final BufferedImage tile01 = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_DOUBLE).createBufferedImage();
+        final BufferedImage tile11 = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_DOUBLE).createBufferedImage();
         final WritableRaster raster00 = tile00.getRaster();
         final WritableRaster raster10 = tile10.getRaster().createWritableTranslatedChild(2, 0);
         final WritableRaster raster01 = tile01.getRaster().createWritableTranslatedChild(0, 2);

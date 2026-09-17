@@ -1,7 +1,7 @@
 
 package org.geotoolkit.dggs.a5.internal;
 
-import org.apache.sis.geometries.math.Vector3D;
+import org.apache.sis.maths.Vector3D;
 import org.geotoolkit.dggs.a5.internal.SphericalPolygon.SphericalPolygonShape;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;

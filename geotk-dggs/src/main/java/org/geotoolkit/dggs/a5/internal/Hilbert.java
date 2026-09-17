@@ -16,7 +16,7 @@
 package org.geotoolkit.dggs.a5.internal;
 
 import java.util.Arrays;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.apache.sis.util.ArraysExt;
 
 /**

@@ -51,6 +51,7 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
@@ -270,7 +271,11 @@ public class ResampleTest extends AbstractProcessTest {
             CommonCRS.WGS84.normalizedGeographic()
         );
 
-        final BufferedImage sourceImage = BufferedImages.createImage(32, 32, 1, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage sourceImage = new ImageBuilder()
+                .setSize(32, 32)
+                .setNumBands(1)
+                .setDataType(DataBuffer.TYPE_DOUBLE)
+                .createBufferedImage();
         sourceImage.getRaster().setPixels(0, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> -1).toArray());
         sourceImage.getRaster().setPixels(16, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> 1).toArray());
 

@@ -29,22 +29,24 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetModelEvent;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.event.StorageListener.Weak;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -70,7 +72,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     protected Session session;
 
     public AbstractFeatureCollection(final String id, Session session){
-        this(new NamedIdentifier(NamesExt.create(id)),session);
+        this(new NamedIdentifier(Names.createLocalName(null,null,id)),session);
     }
 
     public AbstractFeatureCollection(final NamedIdentifier id, Session session){
@@ -316,30 +318,48 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void eventOccured(StoreEvent event) {
-        if (event instanceof FeatureStoreManagementEvent) {
-            FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
-            final FeatureType currentType = getType();
+    public void eventOccurred(StoreEvent event) {
+        try {
+            if (event instanceof FeatureSetModelEvent fevent) {
+                final FeatureType currentType = getType();
 
-            //forward events only if the collection is typed and match the type name
-            if (currentType != null && currentType.getName().equals(fevent.getFeatureTypeName())) {
-                fevent = fevent.copy(this);
-                final StoreListener[] lst;
-                synchronized (listeners) {
-                    lst = listeners.toArray(new StoreListener[listeners.size()]);
+                GenericName eventSourceName;
+                Resource res = fevent.getSource();
+                if (res instanceof Session s) {
+                    eventSourceName = s.getIdentifier().get();
+                } else {
+                    eventSourceName = ((FeatureSet)fevent.getSource()).getType().getName();
                 }
-                for (final StoreListener listener : lst) {
-                    listener.eventOccured(fevent);
+
+                //forward events only if the collection is typed and match the type name
+                if (currentType != null && currentType.getName().equals(eventSourceName)) {
+                    fevent = fevent.copy(this);
+                    final StoreListener[] lst;
+                    synchronized (listeners) {
+                        lst = listeners.toArray(new StoreListener[listeners.size()]);
+                    }
+                    for (final StoreListener listener : lst) {
+                        listener.eventOccurred(fevent);
+                    }
+                }
+            } else if(event instanceof FeatureSetContentEvent fevent) {
+                final FeatureType currentType = getType();
+
+                GenericName eventSourceName;
+                Resource res = fevent.getSource();
+                if (res instanceof Session s) {
+                    eventSourceName = s.getIdentifier().get();
+                } else {
+                    eventSourceName = ((FeatureSet)fevent.getSource()).getType().getName();
+                }
+
+                //forward events only if the collection is typed and match the type name
+                if (currentType != null && currentType.getName().equals(eventSourceName)) {
+                    sendEvent(fevent.copy(this));
                 }
             }
-        } else if(event instanceof FeatureStoreContentEvent) {
-            final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
-            final FeatureType currentType = getType();
-
-            //forward events only if the collection is typed and match the type name
-            if (currentType != null && currentType.getName().equals(fevent.getFeatureTypeName())) {
-                sendEvent(fevent.copy(this));
-            }
+        } catch (DataStoreException ex) {
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -370,7 +390,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param ids modified feature ids.
      */
     protected void fireFeaturesAdded(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name,ids));
+        sendEvent(FeatureSetContentEvent.createAddEvent(this, ids));
     }
 
     /**
@@ -380,7 +400,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param ids modified feature ids.
      */
     protected void fireFeaturesUpdated(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+        sendEvent(FeatureSetContentEvent.createUpdateEvent(this, ids));
     }
 
     /**
@@ -390,7 +410,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param ids modified feature ids.
      */
     protected void fireFeaturesDeleted(final GenericName name, final ResourceId ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+        sendEvent(FeatureSetContentEvent.createDeleteEvent(this, ids));
     }
 
     /**
@@ -403,7 +423,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for (final StoreListener listener : lst) {
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 }

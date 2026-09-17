@@ -21,7 +21,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -29,6 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import org.apache.sis.images.ImageBuilder;
 
 public abstract class CoverageMathsWithValueAbstractProcess extends AbstractProcess {
 
@@ -66,7 +66,7 @@ public abstract class CoverageMathsWithValueAbstractProcess extends AbstractProc
         // on byte or integer imagery). outputSampleType lets callers opt back into that legacy
         // behaviour (SOURCE) or pick another explicit type.
         final int sampleType = OutputSampleTypeParameter.resolve(inputParameters, inputImage.getSampleModel().getDataType());
-        final BufferedImage img = BufferedImages.createImage(width, height, 1, sampleType);
+        final BufferedImage img = new ImageBuilder().setSize(width, height).setNumBands(1).setDataType(sampleType).createBufferedImage();
         final WritablePixelIterator out = WritablePixelIterator.create(img);
         final org.apache.sis.image.PixelIterator ins = org.apache.sis.image.PixelIterator.create(inputImage);
 

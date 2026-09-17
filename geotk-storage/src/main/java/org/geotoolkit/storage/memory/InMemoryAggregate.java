@@ -32,7 +32,7 @@ import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
-import org.geotoolkit.storage.event.AggregationEvent;
+import org.apache.sis.storage.internal.shared.AggregationEvent;
 import org.geotoolkit.storage.coverage.DefiningGridCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningTiledGridCoverageResource;
 import org.opengis.feature.Feature;

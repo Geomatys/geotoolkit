@@ -34,15 +34,16 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetModelEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.AbstractResource;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
@@ -181,18 +182,23 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
      * Forward event to listeners by changing source.
      */
     @Override
-    public void eventOccured(StoreEvent event) {
+    public void eventOccurred(StoreEvent event) {
 
-        if (event instanceof FeatureStoreManagementEvent) {
-            final FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
-            //forward events only if the collection is typed and match the type name
-            if (NamesExt.match(fevent.getFeatureTypeName(), query.getTypeName())) {
-                sendEvent(fevent.copy(this));
+        Resource source = event.getSource();
+        if (source instanceof FeatureSet fs) {
+            try {
+                if (!NamesExt.match(fs.getType().getName(), query.getTypeName())) {
+                    return;
+                }
+            } catch (DataStoreException ex) {
+                //do nothing
             }
-        } else if (event instanceof FeatureStoreContentEvent) {
-            final FeatureStoreContentEvent fevent = (FeatureStoreContentEvent) event;
-            //forward events only if the collection is typed and match the type name
-            if (NamesExt.match(fevent.getFeatureTypeName(), query.getTypeName())) {
+
+            if (event instanceof FeatureSetModelEvent fevent) {
+                //forward events only if the collection is typed and match the type name
+                sendEvent(fevent.copy(this));
+            } else if (event instanceof FeatureSetContentEvent fevent) {
+                //forward events only if the collection is typed and match the type name
                 sendEvent(fevent.copy(this));
             }
         }

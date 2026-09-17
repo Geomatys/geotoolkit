@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.dggal;
 
-import org.apache.sis.geometries.Polygon;
+import org.apache.sis.geometries.surface.Polygon;
 import org.geotoolkit.dggs.AbstractDggrsTest;
-import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridSystems;
+import org.apache.sis.referencing.dggs.Zone;
+import org.apache.sis.storage.dggs.DiscreteGlobalGridSystems;
 import org.junit.jupiter.api.Test;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.operation.TransformException;

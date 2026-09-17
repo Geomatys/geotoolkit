@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage;
 
-import org.geotoolkit.storage.event.StorageEvent;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -30,6 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
@@ -115,7 +115,7 @@ public abstract class AbstractResource implements Resource {
             lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
         for(final StoreListener listener : lst){
-            listener.eventOccured(event);
+            listener.eventOccurred(event);
         }
     }
 

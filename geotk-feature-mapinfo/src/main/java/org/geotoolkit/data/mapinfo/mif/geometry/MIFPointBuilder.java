@@ -16,25 +16,23 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Symbol;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-
+import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
 import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Util class to build a feature from Point object of a MIF file.
@@ -44,7 +42,7 @@ import org.geotoolkit.feature.FeatureExt;
  */
 public final class MIFPointBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = NamesExt.create("POINT");
+    public static final GenericName NAME = Names.createLocalName(null,null,"POINT");
 
     /**
      * Build a feature describing a MIF point geometry. That assume that user gave a {@link Scanner} which is placed on

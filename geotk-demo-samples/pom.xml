@@ -16,16 +16,10 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-index</artifactId>

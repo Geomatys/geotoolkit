@@ -17,7 +17,7 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.hips.storage.HIPSProvider;
 import org.geotoolkit.hips.storage.HIPSStore;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
+import org.apache.sis.storage.dggs.DiscreteGlobalGridResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 

@@ -51,7 +51,7 @@ public class CachedTiledGridCoverageResourceTest {
         final List<StoreEvent> events = new ArrayList<>();
         r.addListener(StoreEvent.class, new StoreListener<StoreEvent>() {
             @Override
-            public void eventOccured(StoreEvent event) {
+            public void eventOccurred(StoreEvent event) {
                 events.add(event);
             }
         });

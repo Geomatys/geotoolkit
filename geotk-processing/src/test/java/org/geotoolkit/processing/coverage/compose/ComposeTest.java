@@ -28,7 +28,6 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.wrapper.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -38,6 +37,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -59,7 +59,7 @@ public class ComposeTest {
         envelope.setRange(1, 0, 2);
 
         {
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 1);
             image.getRaster().setSample(1, 0, 0, 1);
             image.getRaster().setSample(0, 1, 0, 1);
@@ -86,7 +86,7 @@ public class ComposeTest {
         }
 
         {
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 2);
             image.getRaster().setSample(1, 0, 0, 2);
             image.getRaster().setSample(0, 1, 0, 2);
@@ -132,7 +132,7 @@ public class ComposeTest {
         envelope.setRange(1, 0, 2);
 
         {
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 1);
             image.getRaster().setSample(1, 0, 0, 1);
             image.getRaster().setSample(0, 1, 0, 1);
@@ -159,7 +159,7 @@ public class ComposeTest {
         }
 
         {
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 2);
             image.getRaster().setSample(1, 0, 0, 2);
             image.getRaster().setSample(0, 1, 0, 2);
@@ -186,7 +186,7 @@ public class ComposeTest {
         }
 
         {
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 3);
             image.getRaster().setSample(1, 0, 0, 3);
             image.getRaster().setSample(0, 1, 0, 3);
@@ -232,7 +232,7 @@ public class ComposeTest {
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 1);
             image.getRaster().setSample(1, 0, 0, 1);
             image.getRaster().setSample(0, 1, 0, 1);
@@ -264,7 +264,7 @@ public class ComposeTest {
             envelope.setRange(0, 1, 3);
             envelope.setRange(1, 1, 3);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 2);
             image.getRaster().setSample(1, 0, 0, 2);
             image.getRaster().setSample(0, 1, 0, 2);
@@ -318,7 +318,7 @@ public class ComposeTest {
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 1);
             image.getRaster().setSample(1, 0, 0, 1);
             image.getRaster().setSample(0, 1, 0, 1);
@@ -350,7 +350,7 @@ public class ComposeTest {
             envelope.setRange(0, 1, 3);
             envelope.setRange(1, 0, 2);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 2);
             image.getRaster().setSample(1, 0, 0, 2);
             image.getRaster().setSample(0, 1, 0, 2);
@@ -398,7 +398,7 @@ public class ComposeTest {
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 1);
             image.getRaster().setSample(1, 0, 0, 1);
             image.getRaster().setSample(0, 1, 0, 1);
@@ -430,7 +430,7 @@ public class ComposeTest {
             envelope.setRange(0, 4, 6);
             envelope.setRange(1, 0, 2);
 
-            final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
+            final BufferedImage image = new ImageBuilder().setSize(2, 2).setNumBands(1).setDataType(DataBuffer.TYPE_INT).createBufferedImage();
             image.getRaster().setSample(0, 0, 0, 2);
             image.getRaster().setSample(1, 0, 0, 2);
             image.getRaster().setSample(0, 1, 0, 2);

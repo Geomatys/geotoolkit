@@ -35,11 +35,11 @@ import org.apache.sis.storage.tiling.Tile;
 import org.geotoolkit.test.storage.CoverageReadConsistency;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.BeforeClass;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.junit.Ignore;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -77,7 +77,11 @@ public class TileMatrixCoverageResourceTest extends CoverageReadConsistency {
             for (int y = 0; y <= extent.getHigh(1); y++) {
                 GridGeometry tileGeometry = tilingScheme.derive().subgrid(new GridExtent(null, new long[]{x,y}, new long[]{x,y}, true)).build();
                 tileGeometry = tileGeometry.upsample(ArraysExt.copyAsLongs(tileSize));
-                final BufferedImage image = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], 1, DataBuffer.TYPE_DOUBLE);
+                final BufferedImage image = new ImageBuilder()
+                        .setSize((int) tileSize[0], (int) tileSize[1])
+                        .setNumBands(1)
+                        .setDataType(DataBuffer.TYPE_DOUBLE)
+                        .createBufferedImage();
                 final WritablePixelIterator ite = WritablePixelIterator.create(image);
                 while (ite.next()) {
                     ite.setSample(0, x*4 + y*4*360*4);

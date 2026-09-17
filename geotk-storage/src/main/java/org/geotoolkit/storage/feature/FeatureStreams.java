@@ -30,13 +30,13 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -487,7 +487,7 @@ public final class FeatureStreams {
         private final FeatureCollection[] wrapped;
 
         private FeatureCollectionSequence(final String id, final FeatureCollection[] wrapped) {
-            this(new NamedIdentifier(NamesExt.create(id)), wrapped);
+            this(new NamedIdentifier(Names.createLocalName(null,null,id)), wrapped);
         }
 
         private FeatureCollectionSequence(final NamedIdentifier id, final FeatureCollection[] wrapped) {

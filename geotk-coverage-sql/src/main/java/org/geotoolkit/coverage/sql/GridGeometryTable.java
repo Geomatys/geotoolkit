@@ -233,7 +233,9 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 statement.setNull(11, Types.ARRAY);
             }
             if (insert) {
-                statement.setString(12, geographicAreaWKT(extent.toEnvelope(gridToCRS2D), horizontalCRS));
+                GeneralEnvelope envelope = extent.selectDimensions(0, 1).toEnvelope(gridToCRS2D);
+                envelope.setCoordinateReferenceSystem(null);    // Discard the EngineeringCRS.
+                statement.setString(12, geographicAreaWKT(envelope, horizontalCRS));
                 if (statement.executeUpdate() == 0) {
                     continue;                                           // Should never happen, but we are paranoiac.
                 }

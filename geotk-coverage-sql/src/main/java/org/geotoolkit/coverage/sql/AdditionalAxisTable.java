@@ -248,7 +248,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         if (AxisDirections.isVertical(direction)) {
             RealizationMethod type = VerticalDatumTypes.fromDatum(name, null, null);
             if (type == null) {
-                if (Units.isPressure(units)) {
+                if (Units.isPressure(units) || Units.isScale(units)) {
                     type = RealizationMethod.valueOf("BAROMETRIC");
                 } else if (Units.isLinear(units)) {
                     type = RealizationMethod.GEOID;

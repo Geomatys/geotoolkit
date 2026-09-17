@@ -23,10 +23,10 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -48,7 +48,7 @@ public class CoverageGeometryOperation extends AbstractOperation {
     private static final ParameterDescriptorGroup EMPTY_PARAMS = CalculateLineStringOperation.parameters("CoverageGeometry", 1);
 
     private static final AttributeType<Geometry> TYPE = new DefaultAttributeType<>(
-            Collections.singletonMap(NAME_KEY, NamesExt.create("Contour")),Geometry.class,1,1,null);
+            Collections.singletonMap(NAME_KEY, Names.createLocalName(null, null, "Contour")),Geometry.class,1,1,null);
 
     private final String referentName;
 

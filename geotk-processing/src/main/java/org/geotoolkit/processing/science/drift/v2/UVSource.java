@@ -6,7 +6,7 @@ package org.geotoolkit.processing.science.drift.v2;
 import java.awt.geom.Point2D;
 import java.time.Instant;
 import java.util.Optional;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Vector2D;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

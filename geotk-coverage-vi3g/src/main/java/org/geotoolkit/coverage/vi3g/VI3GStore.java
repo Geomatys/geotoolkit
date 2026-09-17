@@ -35,6 +35,7 @@ import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
@@ -49,13 +50,13 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.util.iso.Names;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.math.NumberType;
 import org.opengis.util.GenericName;
 
@@ -211,7 +212,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
 
         private Res() {
             super(VI3GStore.this);
-            name = NamesExt.create(fileInput.getFileName().toString());
+            name = Names.createLocalName(null,null,fileInput.getFileName().toString());
         }
 
         @Override
@@ -285,7 +286,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource {
 
             final int width = (int) resultGeometry.getExtent().getSize(0);
             final int height = (int) resultGeometry.getExtent().getSize(1);
-            final BufferedImage image = BufferedImages.createImage(width, height, 1, DataBuffer.TYPE_SHORT);
+            final BufferedImage image = new ImageBuilder().setSize(width, height).setNumBands(1).setDataType(DataBuffer.TYPE_SHORT).createBufferedImage();
             DataBuffer dataBuffer = image.getRaster().getDataBuffer();
             System.arraycopy(allData, 0, ((DataBufferShort) dataBuffer).getData(), 0, allData.length);
 

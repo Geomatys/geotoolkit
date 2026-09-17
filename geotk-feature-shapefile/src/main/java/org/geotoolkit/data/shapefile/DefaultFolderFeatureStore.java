@@ -30,8 +30,8 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.internal.shared.StorageEvent;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStore;
@@ -64,7 +64,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore {
     private final StoreListener subListener = new StoreListener() {
 
         @Override
-        public void eventOccured(StoreEvent event) {
+        public void eventOccurred(StoreEvent event) {
             if (event instanceof StorageEvent) {
                 event = ((StorageEvent)event).copy(DefaultFolderFeatureStore.this);
             }

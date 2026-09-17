@@ -72,6 +72,7 @@ import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -303,7 +304,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 final GridCoverageResource sourceCenter = resourceCenter;
                 final GridCoverageResource sourceBorder = resourceBorder;
 
-                final long nbTile = TileMatrices.countCells(rect);
+                final long nbTile = rect.getLatticePointCount();
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
 
                 Stream<Tile> stream = rect.latticePointStream(true)
@@ -454,7 +455,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 Object result = baseRendering.get(5, TimeUnit.MINUTES);
                 if (result instanceof RenderedImage) {
                     final RenderedImage base = (RenderedImage) result;
-                    final BufferedImage image = BufferedImages.createImage(base, (int) tileSize[0], (int) tileSize[1], null, null);
+                    final BufferedImage image = new ImageBuilder().copyFrom(base).setSize((int) tileSize[0], (int) tileSize[1]).createBufferedImage();
                     BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                     return new DefaultImageTile(matrix, image, source.getIndices());
                 } else {
@@ -467,7 +468,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 }
 
                 double[] arr = fillValues == null ? empty : fillValues;
-                final BufferedImage image = BufferedImages.createImage((int) tileSize[0], (int) tileSize[1], arr.length, DataBuffer.TYPE_DOUBLE);
+                final BufferedImage image = new ImageBuilder()
+                        .setSize((int) tileSize[0], (int) tileSize[1])
+                        .setNumBands(arr.length)
+                        .setDataType(DataBuffer.TYPE_DOUBLE)
+                        .createBufferedImage();
                 BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                 return new DefaultImageTile(matrix, image, source.getIndices());
             } catch (Exception e) {

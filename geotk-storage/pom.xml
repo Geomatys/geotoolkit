@@ -50,6 +50,16 @@
         <version>${sis.version}</version>
     </dependency>
     <dependency>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-dggs</artifactId>
+        <version>${sis.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.sis.storage</groupId>
+        <artifactId>sis-shapefile</artifactId>
+        <version>${sis.version}</version>
+    </dependency>
+    <dependency>
         <groupId>com.google.geometry</groupId>
         <artifactId>s2-geometry</artifactId>
         <version>2.0.0</version>

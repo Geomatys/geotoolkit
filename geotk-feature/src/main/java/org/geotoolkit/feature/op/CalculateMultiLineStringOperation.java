@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.feature.op;
 
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.util.iso.Names;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -52,7 +52,7 @@ final class CalculateMultiLineStringOperation extends AbstractOperation {
 
     private static final GeometryFactory GF = org.geotoolkit.geometry.jts.JTS.getFactory();
     private static final AttributeType<MultiLineString> TYPE = new DefaultAttributeType<>(
-            Collections.singletonMap(NAME_KEY, NamesExt.create("MultiLineString")),MultiLineString.class,1,1,null);
+            Collections.singletonMap(NAME_KEY, Names.createLocalName(null, null, "MultiLineString")),MultiLineString.class,1,1,null);
 
     private final GenericName[] path;
 

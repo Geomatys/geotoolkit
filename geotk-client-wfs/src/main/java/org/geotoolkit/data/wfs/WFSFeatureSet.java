@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.data.wfs;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,9 +40,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.feature.AbstractOperation;
@@ -47,8 +47,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.filter.visitor.FunctionNames;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -65,6 +65,7 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -261,7 +262,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         insert.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
         final FeatureType featureType = getType();
-        final FeatureSet col = new InMemoryFeatureSet(NamesExt.create("id"), featureType, features, false);
+        final FeatureSet col = new InMemoryFeatureSet(Names.createLocalName(null,null,"id"), featureType, features, false);
         insert.setFeatures(col);
 
         request.elements().add(insert);

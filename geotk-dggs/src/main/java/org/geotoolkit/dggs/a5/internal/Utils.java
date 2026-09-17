@@ -18,11 +18,11 @@ package org.geotoolkit.dggs.a5.internal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-import org.apache.sis.geometries.math.Matrix2D;
-import org.apache.sis.geometries.math.Quaternion;
-import org.apache.sis.geometries.math.Vector;
-import org.apache.sis.geometries.math.Vector2D;
-import org.apache.sis.geometries.math.Vector3D;
+import org.apache.sis.maths.Matrix2D;
+import org.apache.sis.maths.Quaternion;
+import org.apache.sis.maths.Vector;
+import org.apache.sis.maths.Vector2D;
+import org.apache.sis.maths.Vector3D;
 import org.geotoolkit.dggs.a5.internal.Hilbert.Orientation;
 
 /**

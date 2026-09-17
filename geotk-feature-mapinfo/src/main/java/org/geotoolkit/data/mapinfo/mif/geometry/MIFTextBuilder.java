@@ -16,18 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Font;
-import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,14 +24,24 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Font;
+import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
+import static org.geotoolkit.data.mapinfo.mif.style.LabelLine.LABEL;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
-
-import static org.geotoolkit.data.mapinfo.mif.style.LabelLine.LABEL;
-import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * A class which manage MIF text geometry.
@@ -52,11 +50,11 @@ import org.geotoolkit.geometry.jts.JTS;
  *         Date : 26/02/13
  */
 public class MIFTextBuilder extends MIFRectangleBuilder {
-    public static final GenericName NAME = NamesExt.create("ENVELOPE");
-    public static final GenericName TEXT_NAME = NamesExt.create("TEXT");
-    public static final GenericName SPACING_NAME = NamesExt.create("SPACING");
-    public static final GenericName JUSTIFY_NAME = NamesExt.create("JUSTIFY");
-    public static final GenericName ANGLE_NAME = NamesExt.create("ANGLE");
+    public static final GenericName NAME = Names.createLocalName(null,null,"ENVELOPE");
+    public static final GenericName TEXT_NAME = Names.createLocalName(null,null,"TEXT");
+    public static final GenericName SPACING_NAME = Names.createLocalName(null,null,"SPACING");
+    public static final GenericName JUSTIFY_NAME = Names.createLocalName(null,null,"JUSTIFY");
+    public static final GenericName ANGLE_NAME = Names.createLocalName(null,null,"ANGLE");
 
     public static final AttributeType TEXT_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", TEXT_NAME), String.class, 1, 1, null);
     public static final AttributeType FONT_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Font.NAME), String.class, 1, 1, null);

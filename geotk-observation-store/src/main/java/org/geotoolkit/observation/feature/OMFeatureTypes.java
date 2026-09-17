@@ -18,7 +18,7 @@ package org.geotoolkit.observation.feature;
 
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.iso.Names;
 import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
@@ -53,7 +53,7 @@ public class OMFeatureTypes {
     }
 
     public static FeatureType buildSensorFeatureType(String name) {
-        return buildSensorFeatureType(NamesExt.create(name), null);
+        return buildSensorFeatureType(Names.createLocalName(null,null,name), null);
     }
 
     public static FeatureType buildSensorFeatureType(GenericName name) {
@@ -77,7 +77,7 @@ public class OMFeatureTypes {
     }
 
     public static FeatureType buildSamplingFeatureFeatureType(String name) {
-        return buildSamplingFeatureFeatureType(NamesExt.create(name), null);
+        return buildSamplingFeatureFeatureType(Names.createLocalName(null,null,name), null);
     }
 
     public static FeatureType buildSamplingFeatureFeatureType(final GenericName name) {

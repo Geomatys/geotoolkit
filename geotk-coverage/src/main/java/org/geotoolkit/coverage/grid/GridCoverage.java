@@ -60,12 +60,12 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.internal.shared.AxisDirections;
 import org.apache.sis.image.internal.shared.ColorModelFactory;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.io.LineWriter;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -221,7 +221,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
             final BufferedImage bimg = (BufferedImage) img;
             return bimg.getSubimage(x, y, width, height);
         } else {
-            final BufferedImage bimg = BufferedImages.createImage(width, height, img);
+            final BufferedImage bimg = new ImageBuilder().copyFrom(img).setSize(width, height).createBufferedImage();
             bimg.setData(img.getData(new Rectangle(x, y, width, height)));
             return bimg;
         }

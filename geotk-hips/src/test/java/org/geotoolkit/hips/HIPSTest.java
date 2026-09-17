@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.referencing.dggs.Zone;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridGeometry;
-import org.geotoolkit.storage.dggs.DiscreteGlobalGridResource;
-import org.geotoolkit.storage.rs.CodeIterator;
-import org.geotoolkit.storage.rs.CodedCoverage;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.apache.sis.referencing.dggs.Zone;
+import org.apache.sis.storage.dggs.DiscreteGlobalGridGeometry;
+import org.apache.sis.storage.dggs.DiscreteGlobalGridResource;
+import org.apache.sis.storage.rs.CodeIterator;
+import org.apache.sis.storage.rs.CodedCoverage;
 
 /**
  *

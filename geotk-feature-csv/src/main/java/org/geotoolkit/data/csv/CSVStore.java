@@ -24,9 +24,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import static java.nio.file.StandardOpenOption.*;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -61,14 +59,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetContentEvent;
+import org.apache.sis.storage.internal.shared.FeatureSetModelEvent;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.csv.CSVUtils.LatLonConfig;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.AttributeType;
@@ -80,7 +78,6 @@ import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -272,7 +269,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             AttributeTypeBuilder atb = ftb.addAttribute(Object.class);
             // Check non-empty parenthesis
             if (dep > 0 && fin > dep + 1) {
-                fieldName = NamesExt.create(field.substring(0, dep));
+                fieldName = Names.createLocalName(null,null,field.substring(0, dep));
                 //there is a defined type
                 final String typeName = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
@@ -313,7 +310,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
                     }
                 }
             } else {
-                fieldName = NamesExt.create(field);
+                fieldName = Names.createLocalName(null,null,field);
                 type = String.class;
             }
 
@@ -416,7 +413,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
             fileLock.writeLock().unlock();
         }
 
-        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, newType.getName(), oldSchema, newType));
+        sendEvent(FeatureSetModelEvent.createUpdateEvent(this, oldSchema, newType));
     }
 
     String createHeader(final FeatureType type) throws DataStoreException{
@@ -521,15 +518,15 @@ public class CSVStore extends DataStore implements WritableFeatureSet {
 
     void fireDataChangeEvents(Set<ResourceId> addedIds, Set<ResourceId> updatedIds, Set<ResourceId> deletedIds) {
         if (!addedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), addedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.ADD, addedIds));
         }
 
         if (!updatedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), updatedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.UPDATE, updatedIds));
         }
 
         if (!deletedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), deletedIds));
+            sendEvent(new FeatureSetContentEvent(this, FeatureSetContentEvent.Type.DELETE, deletedIds));
         }
     }
 }

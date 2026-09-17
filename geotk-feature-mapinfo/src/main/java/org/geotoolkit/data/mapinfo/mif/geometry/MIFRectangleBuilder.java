@@ -16,18 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Brush;
-import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,16 +24,26 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Brush;
+import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
+import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
-
-import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
-import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
-import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.
@@ -54,8 +52,8 @@ import org.geotoolkit.geometry.jts.JTS;
  *         Date : 27/02/13
  */
 public class MIFRectangleBuilder extends MIFGeometryBuilder {
-    public GenericName NAME = NamesExt.create("RECTANGLE");
-    public static final GenericName ROUND_NAME = NamesExt.create("ROUNDING");
+    public GenericName NAME = Names.createLocalName(null,null,"RECTANGLE");
+    public static final GenericName ROUND_NAME = Names.createLocalName(null,null,"ROUNDING");
 
     private static final AttributeType ROUNDING = new DefaultAttributeType(Collections.singletonMap("name", ROUND_NAME), Float.class, 1, 1, null);
 

@@ -17,8 +17,8 @@ package org.geotoolkit.dggs.a5.internal;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.apache.sis.geometries.math.Quaternion;
-import org.apache.sis.geometries.math.Vector3D;
+import org.apache.sis.maths.Quaternion;
+import org.apache.sis.maths.Vector3D;
 
 /**
  * Use Cartesian system for all calculations for greater accuracy

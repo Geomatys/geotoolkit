@@ -3,10 +3,10 @@ package org.geotoolkit.pending.demo.dggs;
 
 import java.util.Collection;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem.Coder;
+import org.apache.sis.referencing.dggs.Zone;
 import org.geotoolkit.dggs.a5.A5Dggrs;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem;
-import org.geotoolkit.referencing.dggs.DiscreteGlobalGridReferenceSystem.Coder;
-import org.geotoolkit.referencing.dggs.Zone;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicExtent;

@@ -172,13 +172,14 @@
 
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M29</geoapi.version>
-    <sis.version>2.0-M0131</sis.version>
+    <sis.version>2.0-M0132</sis.version>
+
     <!--
     SIS build helper version froozen to official release.
     It ensures we can import it after SIS will migrate to Gradle build system.
     -->
     <sis.build.helper.version>1.3</sis.build.helper.version>
-    <sis.non-free.version>2.0-M0130</sis.non-free.version>
+    <sis.non-free.version>2.0-M0132</sis.non-free.version>
 
     <!-- third party dependencies versions -->
     <esri.geometry>2.2.4</esri.geometry>
@@ -436,19 +437,25 @@
     </dependency>
     <!-- Force database drivers in tests for all modules -->
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-epsg</artifactId>
+        <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.apache.sis.core</groupId>
+                <artifactId>sis-referencing</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -503,12 +510,6 @@
              <!-- @{argLine} necessary for jacoco generation, because we added more parameters -->
              @{argLine}
           </argLine>
-          <systemProperties>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>${project.build.directory}/derby.log</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
 

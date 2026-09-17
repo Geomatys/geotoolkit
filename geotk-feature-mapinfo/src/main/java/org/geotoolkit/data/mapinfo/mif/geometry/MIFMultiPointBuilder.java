@@ -16,27 +16,25 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.mapinfo.mif.style.Symbol;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-
+import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
 import org.geotoolkit.feature.FeatureExt;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Create collection of points from MIF MultiPoint
@@ -46,7 +44,7 @@ import org.geotoolkit.feature.FeatureExt;
  */
 public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = NamesExt.create("MULTIPOINT");
+    public static final GenericName NAME = Names.createLocalName(null,null,"MULTIPOINT");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

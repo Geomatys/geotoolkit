@@ -33,29 +33,29 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.referencing.internal.shared.AffineTransform2D;
+import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.io.stream.ChannelImageInputStream;
 import org.apache.sis.io.stream.HyperRectangleReader;
 import org.apache.sis.io.stream.Region;
+import org.apache.sis.math.NumberType;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.image.BufferedImages;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.coverage.grid.PixelInCell;
-import org.apache.sis.math.NumberType;
-import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
 
@@ -151,7 +151,7 @@ public class HGTStore extends DataStore implements GridCoverageResource {
         private Res() throws DataStoreException {
             super(HGTStore.this);
             final String name = IOUtilities.filenameWithoutExtension(fileInput);
-            this.name = NamesExt.create(name);
+            this.name = Names.createLocalName(null,null,name);
 
             final Matcher matcher = FILENAME_PATTERN.matcher(name);
             matcher.find();
@@ -211,7 +211,7 @@ public class HGTStore extends DataStore implements GridCoverageResource {
 
             final int width = (int) gridGeometry.getExtent().getSize(0);
             final int height = (int) gridGeometry.getExtent().getSize(1);
-            final BufferedImage image = BufferedImages.createImage(width, height, 1, DataBuffer.TYPE_SHORT);
+            final BufferedImage image = new ImageBuilder().setSize(width, height).setNumBands(1).setDataType(DataBuffer.TYPE_SHORT).createBufferedImage();
             DataBuffer dataBuffer = image.getRaster().getDataBuffer();
             System.arraycopy(allData, 0, ((DataBufferShort) dataBuffer).getData(), 0, allData.length);
 

@@ -40,7 +40,6 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.feature.TypeConventions;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -52,6 +51,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.images.ImageBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
@@ -75,7 +75,11 @@ public class GridCoverageFeatureSetTest {
     public void coverageRecord2DTest() throws DataStoreException {
 
         //create coverage
-        final BufferedImage image = BufferedImages.createImage(2, 2, 2, DataBuffer.TYPE_INT);
+        final BufferedImage image = new ImageBuilder()
+                .setSize(2, 2)
+                .setNumBands(2)
+                .setDataType(DataBuffer.TYPE_INT)
+                .createBufferedImage();
         final WritableRaster raster = image.getRaster();
         raster.setPixel(0, 0, new int[]{10,2});
         raster.setPixel(1, 0, new int[]{30,4});

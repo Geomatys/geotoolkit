@@ -23,8 +23,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -121,7 +121,11 @@ public class BandCombineProcess extends AbstractProcess {
         }
 
         //TODO : use a subclass of computed image.
-        final BufferedImage img = BufferedImages.createImage(width, height, nbtotalbands, sampleType);
+        final BufferedImage img = new ImageBuilder()
+                .setSize(width, height)
+                .setNumBands(nbtotalbands)
+                .setDataType(sampleType)
+                .createBufferedImage();
 
         final org.apache.sis.image.PixelIterator[] ins = new org.apache.sis.image.PixelIterator[inputImages.length];
         for (int i=0;i<inputImages.length;i++) {

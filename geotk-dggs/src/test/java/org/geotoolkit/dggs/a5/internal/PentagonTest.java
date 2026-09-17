@@ -1,8 +1,8 @@
 
 package org.geotoolkit.dggs.a5.internal;
 
-import org.apache.sis.geometries.math.Matrix2D;
-import org.apache.sis.geometries.math.Vector2D;
+import org.apache.sis.maths.Matrix2D;
+import org.apache.sis.maths.Vector2D;
 import static org.geotoolkit.dggs.a5.internal.Pentagon.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;

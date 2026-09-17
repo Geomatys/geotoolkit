@@ -30,7 +30,7 @@ public final class StorageCountListener implements StoreListener<StoreEvent> {
     private final List<StoreEvent> events = new ArrayList<>();
 
     @Override
-    public void eventOccured(StoreEvent event) {
+    public void eventOccurred(StoreEvent event) {
         events.add(event);
     }
 

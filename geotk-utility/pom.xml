@@ -97,30 +97,6 @@
         <artifactId>commons-compress</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.sis.non-free</groupId>
-      <artifactId>sis-embedded-data</artifactId>
-      <version>${sis.non-free.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- TEST DEPENDENCIES-->
-    <dependency>
       <groupId>org.opengis</groupId>
       <artifactId>geoapi-conformance</artifactId>
       <scope>test</scope>

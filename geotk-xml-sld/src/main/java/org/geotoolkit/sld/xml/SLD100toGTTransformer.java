@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.sld.Extent;
 import org.geotoolkit.sld.FeatureTypeConstraint;
 import org.geotoolkit.sld.MutableLayer;
@@ -39,7 +40,6 @@ import org.geotoolkit.sld.xml.v100.UserLayer;
 import org.geotoolkit.sld.xml.v100.UserStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.metadata.citation.OnlineResource;
@@ -131,7 +131,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
                 GenericName name = null;
                 if (aftc.getFeatureTypeName() != null && !aftc.getFeatureTypeName().isEmpty()) {
-                    name = NamesExt.create(aftc.getFeatureTypeName());
+                    name = Names.createLocalName(null,null,aftc.getFeatureTypeName());
                 }
                 final Filter filter = visitFilter(aftc.getFilter());
                 final List<Extent> extents = visitExtents(aftc.getExtent());

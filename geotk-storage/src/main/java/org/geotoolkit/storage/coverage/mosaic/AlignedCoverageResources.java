@@ -34,6 +34,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.CoverageCombiner;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.storage.AbstractGridCoverageResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -134,7 +135,10 @@ public final class AlignedCoverageResources extends AbstractGridCoverageResource
             //TODO works for 2d only
             final GridExtent extent = intersection.getExtent();
             final RenderedImage template = coverages.get(0).render(null);
-            final WritableRenderedImage target = BufferedImages.createImage(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)), template);
+            final WritableRenderedImage target = new ImageBuilder()
+                    .copyFrom(template)
+                    .setSize(Math.toIntExact(extent.getSize(0)), Math.toIntExact(extent.getSize(1)))
+                    .createBufferedImage();
             BufferedImages.setAll(target, fill);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();

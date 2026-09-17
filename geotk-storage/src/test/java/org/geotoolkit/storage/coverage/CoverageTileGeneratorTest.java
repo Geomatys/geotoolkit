@@ -35,6 +35,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
+import org.apache.sis.images.ImageBuilder;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -211,7 +212,7 @@ public class CoverageTileGeneratorTest {
             final GridCoverage2D coverage = new GridCoverage2D(
                     new GridGeometry(new GridExtent(1, 1),
                             CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.REFLECTION_Y), sd,
-                    BufferedImages.createImage(1, 1, 2, DataBuffer.TYPE_FLOAT));
+                    new ImageBuilder().setSize(1, 1).setNumBands(2).setDataType(DataBuffer.TYPE_FLOAT).createBufferedImage());
 
             final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
 

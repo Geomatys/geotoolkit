@@ -27,7 +27,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
-import org.geotoolkit.storage.event.AggregationEvent;
+import org.apache.sis.storage.internal.shared.AggregationEvent;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
 

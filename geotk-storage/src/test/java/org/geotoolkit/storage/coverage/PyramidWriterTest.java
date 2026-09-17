@@ -28,13 +28,15 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelInCell;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.internal.shared.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.memory.InMemoryTiledGridCoverageResource;
 import org.geotoolkit.storage.multires.DefiningTileMatrix;
@@ -42,12 +44,10 @@ import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.WritableTileMatrix;
 import org.geotoolkit.storage.multires.WritableTileMatrixSet;
-import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.coverage.grid.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -58,7 +58,7 @@ import org.opengis.util.GenericName;
  */
 public class PyramidWriterTest <T extends InMemoryTiledGridCoverageResource> {
 
-    private static final GenericName NAME = NamesExt.create("test");
+    private static final GenericName NAME = Names.createLocalName(null,null,"test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326 = CommonCRS.WGS84.geographic();
     private static final GeneralDirectPosition UL84;

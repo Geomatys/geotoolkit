@@ -57,7 +57,7 @@ import org.apache.sis.storage.tiling.WritableTiledResource;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
-import org.geotoolkit.storage.event.ModelEvent;
+import org.apache.sis.storage.internal.shared.ModelEvent;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
@@ -103,7 +103,7 @@ public class CachedTiledGridCoverageResource <T extends TiledResource & org.apac
      */
     private final StoreListener<StoreEvent> eventListener = new StoreListener<StoreEvent>() {
         @Override
-        public void eventOccured(StoreEvent event) {
+        public void eventOccurred(StoreEvent event) {
             cacheMap.clear();
             tiles.clear();
             listeners.fire(StoreEvent.class, new ModelEvent(CachedTiledGridCoverageResource.this));

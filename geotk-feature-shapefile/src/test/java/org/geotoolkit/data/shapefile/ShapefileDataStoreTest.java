@@ -33,6 +33,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.feature.FeatureExt;
@@ -45,7 +46,6 @@ import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.Test;
@@ -111,12 +111,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testLoad() throws Exception {
-        loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
+        loadFeatures(STATE_POP, new Query(Names.createLocalName(null,null,"statepop")));
     }
 
     @Test
     public void testLoadDanishChars() throws Exception {
-        FeatureCollection fc = loadFeatures(DANISH, new Query(NamesExt.create("danish_point")));
+        FeatureCollection fc = loadFeatures(DANISH, new Query(Names.createLocalName(null,null,"danish_point")));
         Feature first = firstFeature(fc);
 
         // Charlotte (but with the o is stroked)
@@ -166,7 +166,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testEnvelope() throws Exception {
-        FeatureCollection features = loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
+        FeatureCollection features = loadFeatures(STATE_POP, new Query(Names.createLocalName(null,null,"statepop")));
         ShapefileFeatureStore s = new ShapefileFeatureStore(ShapeTestData.url(STATE_POP).toURI());
         String typeName = s.getName().toString();
         FeatureCollection all = s.createSession(true).getFeatureCollection(new Query(s.getName()));
@@ -176,7 +176,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testLoadAndVerify() throws Exception {
-        FeatureCollection features = loadFeatures(STATE_POP, new Query(NamesExt.create("statepop")));
+        FeatureCollection features = loadFeatures(STATE_POP, new Query(Names.createLocalName(null,null,"statepop")));
         // FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeaturesM2();
         int count = features.size();
 
