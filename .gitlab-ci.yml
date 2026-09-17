@@ -6,6 +6,7 @@
 variables:
   MAVEN_LOCAL: ".m2_local"
   MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL -Djava.awt.headless=true"
+  SIS_DATA: "$CI_PROJECT_DIR/.sis_data"
   SONAR_HOST_URL: "https://sonar.geomatys.com"
   DEPLOY_SERVER: "releases::https://nexus.geomatys.com/repository/releases/"
   TAG_VERSION:
@@ -29,6 +30,9 @@ stages:
   - publish
 
 image: images.geomatys.com/build/maven:3.9.12-25.0.2-tem
+
+before_script:
+  - mkdir -p "$SIS_DATA"
 
 # Force removing artifacts installed by local jobs, to avoid cache corruption with snapshots.
 after_script:
