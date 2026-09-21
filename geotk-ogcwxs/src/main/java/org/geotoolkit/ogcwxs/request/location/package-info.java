@@ -20,4 +20,4 @@
  * OGC-WXS Location service bindings.
  * @see https://www.ogc.org/standards/ols/
  */
-package org.geotoolkit.ogcwxs.client.location;
+package org.geotoolkit.ogcwxs.request.location;
