@@ -20,4 +20,4 @@
  * OGC-WXS Transformation service bindings.
  * @see https://www.ogc.org/standards/ct/
  */
-package org.geotoolkit.ogcwxs.client.transformation;
+package org.geotoolkit.ogcwxs.request.transformation;
