@@ -40,7 +40,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * containing 2K entries, then the node is split and one node contains K symbols
  * and the other contains K+1 symbols.
  *
- * @see III.B. Disk Format: Level 1B - Group Symbol Table Nodes
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_symboltable">III.B. Disk Format: Level 1B - Group Symbol Table Nodes</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SymbolTableNode extends IOStructure {
@@ -67,6 +67,10 @@ public final class SymbolTableNode extends IOStructure {
      * the “Group Leaf Node K” value from the superblock.
      */
     public List<SymbolTableEntry> entries;
+
+    /** Creates an empty node, filled by {@link #read(HDF5DataInput)}. */
+    public SymbolTableNode() {
+    }
 
     public void read(HDF5DataInput channel) throws IOException {
 

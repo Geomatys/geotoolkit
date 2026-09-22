@@ -33,7 +33,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * a group or indexed storage v1 B-trees. This message is only found in the
  * superblock extension.
  *
- * @see IV.A.2.t. The B-tree ‘K’ Values Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_btreek">IV.A.2.t. The B-tree &lsquo;K&rsquo; Values Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BtreeKValuesMessage extends Message {
@@ -56,6 +56,10 @@ public final class BtreeKValuesMessage extends Message {
      * well as the section on v1 B-trees.
      */
     private int groupLeafNodeK;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public BtreeKValuesMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

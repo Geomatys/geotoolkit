@@ -18,8 +18,10 @@ package org.geotoolkit.hdf.heap;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
+import org.geotoolkit.hdf.message.FilterPipelineMessage;
 
 /**
  * Each fractal heap consists of a header and zero or more direct and indirect
@@ -61,8 +63,9 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * The number of rows of blocks, nrows, in an indirect block is calculated by
  * the following expression:
- * <p>
- * nrows = (log2(block_size) - log2(<Starting Block Size>)) + 1
+ *
+ * <pre>nrows = (log2(block_size) - log2(&lt;Starting Block Size&gt;)) + 1</pre>
+ *
  * <p>
  * where block_size is the size of the block that the indirect block represents
  * in the doubling table. For example, to represent a block with block_size
@@ -70,28 +73,31 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * The maximum number of rows of direct blocks, max_dblock_rows, in any indirect
  * block of a fractal heap is given by the following expression:
- * <p>
- * max_dblock_rows = (log2(<Maximum Direct Block Size>) - log2(<Starting Block Size>)) + 2
+ *
+ * <pre>max_dblock_rows = (log2(&lt;Maximum Direct Block Size&gt;) - log2(&lt;Starting Block Size&gt;)) + 2</pre>
+ *
  * <p>
  * Using the computed values for nrows and max_dblock_rows, along with the width
  * of the doubling table, the number of direct and indirect block entries
  * (K and N in the indirect block description, below)
  * in an indirect block can be computed:
- * <p>
- * K = MIN(nrows, max_dblock_rows) * <Table Width>
+ *
+ * <pre>K = MIN(nrows, max_dblock_rows) * &lt;Table Width&gt;</pre>
+ *
  * <p>
  * If nrows is less than or equal to max_dblock_rows, N is 0. Otherwise, N is simply computed:
- * <p>
- * N = K - (max_dblock_rows * <Table Width>)
+ *
+ * <pre>N = K - (max_dblock_rows * &lt;Table Width&gt;)</pre>
+ *
  * <p>
  * The size of indirect blocks on disk is determined by the number of rows in
  * the indirect block (computed above). The size of direct blocks on disk is
  * exactly the size of the block in the doubling table.
  * <p>
- * <p>
  * An object in the fractal heap is identified by means of a fractal heap ID,
  * which encodes information to locate the object in the heap. Currently, the
  * fractal heap stores an object in one of three ways, depending on the object’s size:
+ *
  * <ul>
  * <li>Tiny : When an object is small enough to be encoded in the heap ID, the
  * object’s data is embedded in the fractal heap ID itself. There are two
@@ -134,7 +140,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * the doubling table. </li>
  * </ul>
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeap extends IOStructure {
@@ -297,7 +303,93 @@ public final class FractalHeap extends IOStructure {
      * Pipeline message. The size of this field is determined by I/O Filters’
      * Encoded Length.
      */
-    private int ioFilterInformation;
+    private FilterPipelineMessage ioFilterInformation;
+
+    //values derived from the header, see the class javadoc for the formulas
+    private int heapOffsetSize;
+    private int heapLengthSize;
+    private int firstRowBits;
+    private int maximumDirectRows;
+    private boolean directBlockChecksummed;
+
+    /** Creates an empty fractal heap header, filled by {@link #read(HDF5DataInput)}. */
+    public FractalHeap() {
+    }
+
+    /**
+     * Returns the number of bytes used to encode an offset in the heap linear address space.
+     *
+     * @return the number of bytes used to encode an offset in the heap linear address space
+     */
+    public int getHeapOffsetSize() {
+        return heapOffsetSize;
+    }
+
+    /**
+     * Returns the number of bytes used to encode the length of a managed object.
+     *
+     * @return the number of bytes used to encode the length of a managed object
+     */
+    public int getHeapLengthSize() {
+        return heapLengthSize;
+    }
+
+    /**
+     * Returns the number of columns of the doubling table, a power of two.
+     *
+     * @return the number of columns of the doubling table, a power of two
+     */
+    public int getTableWidth() {
+        return tableWidth;
+    }
+
+    /**
+     * Returns the maximum number of rows of an indirect block that point at direct blocks ({@code
+     * max_dblock_rows}).
+     *
+     * @return the maximum number of rows of an indirect block that point at direct blocks ({@code
+     *         max_dblock_rows})
+     */
+    public int getMaximumDirectRows() {
+        return maximumDirectRows;
+    }
+
+    /**
+     * Returns whether direct blocks carry a checksum in their prefix.
+     *
+     * @return whether direct blocks carry a checksum in their prefix
+     */
+    public boolean isDirectBlockChecksummed() {
+        return directBlockChecksummed;
+    }
+
+    /**
+     * Returns whether a filter pipeline applies to the heap blocks and objects.
+     *
+     * @return whether a filter pipeline applies to the heap blocks and objects
+     */
+    public boolean isFiltered() {
+        return ioFilterEncodedLength > 0;
+    }
+
+    /**
+     * Returns the size in bytes of the blocks of the given row of the doubling table.
+     * The first two rows hold blocks of the starting size, each row after that doubles.
+     *
+     * @param row row index, starting at 0
+     * @return the size in bytes of the blocks of the given row of the doubling table
+     */
+    public long getRowBlockSize(int row) {
+        return row <= 1 ? startingBlockSize : startingBlockSize << (row - 1);
+    }
+
+    private static int log2Exact(long value) {
+        return Long.numberOfTrailingZeros(value);
+    }
+
+    private static int log2Floor(long value) {
+        return value <= 1 ? 0 : 63 - Long.numberOfLeadingZeros(value);
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {
@@ -330,15 +422,210 @@ public final class FractalHeap extends IOStructure {
         startingOfRowsInRootIndirectBlock = channel.readUnsignedShort();
         addressOfRootBlock = channel.readOffset();
         currentOfRowsInRootIndirectBlock = channel.readUnsignedShort();
-        sizeOfFilteredRootDirectBlock = channel.readLength();
-        ioFilterMask = channel.readInt();
-
         /*
-        ioFilterInformation
-
-        Checksum
+        The filtered root block size, the filter mask and the filter pipeline are
+        only present when the heap has filters.
         */
+        if (ioFilterEncodedLength > 0) {
+            sizeOfFilteredRootDirectBlock = channel.readLength();
+            ioFilterMask = channel.readInt();
+            final long start = channel.getStreamPosition();
+            ioFilterInformation = new FilterPipelineMessage();
+            ioFilterInformation.read(channel);
+            channel.seek(start + ioFilterEncodedLength);
+        }
+        final int checksum = channel.readInt();
 
-        throw new IOException("TODO");
+        derive();
+    }
+
+    /**
+     * Compute the values the format derives from the header rather than storing.
+     */
+    private void derive() {
+        heapOffsetSize = (maximumHeapSize + 7) / 8;
+        /*
+        A managed object can neither exceed a direct block nor the maximum managed
+        size, so its length field is as wide as the smaller of the two needs.
+        */
+        final int directBlockOffsetSize = (log2Exact(maximumDirectBlockSize) + 7) / 8;
+        heapLengthSize = Math.min(directBlockOffsetSize,
+                HDF5DataInput.limitEncodedSize(maximumSizeOfManagedObjects));
+        /*
+        Rows 0 and 1 each span tableWidth blocks of the starting size and every
+        row after that doubles, so the address space covered through row r is
+        2^r * tableWidth * startingBlockSize. Note the specification states this
+        formula without the table width, which is wrong.
+        */
+        firstRowBits = log2Exact(startingBlockSize) + log2Exact(tableWidth);
+        maximumDirectRows = log2Exact(maximumDirectBlockSize) - log2Exact(startingBlockSize) + 2;
+        directBlockChecksummed = (flags & 2) != 0;
+    }
+
+    /**
+     * Locate the row and column of the doubling table holding the given offset,
+     * following {@code H5HF__dtable_lookup}.
+     *
+     * @param localOffset offset relative to the block offset of the indirect block
+     * @return the row in index 0 and the column in index 1
+     */
+    private int[] lookup(long localOffset) {
+        if (localOffset < startingBlockSize * (long) tableWidth) {
+            return new int[]{0, (int) (localOffset / startingBlockSize)};
+        }
+        final int highBit = 63 - Long.numberOfLeadingZeros(localOffset);
+        final int row = highBit - firstRowBits + 1;
+        final int col = (int) ((localOffset - (1L << highBit)) / getRowBlockSize(row));
+        return new int[]{row, col};
+    }
+
+    /**
+     * Read the object designated by the given heap identifier.
+     *
+     * @param channel channel on the file, its position is restored on return
+     * @param heapId heap identifier, as many bytes as the heap ID length of the header
+     * @return the object bytes, never null
+     * @throws IOException if an I/O error occurred, or the object kind
+     *         (indirectly accessed huge object, filtered heap) is not supported.
+     */
+    public byte[] getObject(HDF5DataInput channel, byte[] heapId) throws IOException {
+        /*
+        Bits 4 and 5 of the first byte give the kind of identifier :
+        0 managed, 1 huge, 2 tiny.
+        */
+        final int type = ((heapId[0] & 0xFF) >>> 4) & 0x03;
+        switch (type) {
+            case 0: {
+                final HDF5DataInput id = channel.subChannel(heapId);
+                id.skipFully(1);
+                final long offset = id.readUnsignedInteger(heapOffsetSize);
+                final long length = id.readUnsignedInteger(heapLengthSize);
+                return readManaged(channel, offset, length);
+            }
+            case 1: {
+                return readHuge(channel, heapId);
+            }
+            case 2: {
+                /*
+                The object is embedded in the identifier itself. The encoded length
+                is one less than the real one, zero length objects being impossible.
+                */
+                final int length;
+                final int start;
+                if (heapIDLength <= 18) {
+                    length = (heapId[0] & 0x0F) + 1;
+                    start = 1;
+                } else {
+                    length = (((heapId[0] & 0x0F) << 8) | (heapId[1] & 0xFF)) + 1;
+                    start = 2;
+                }
+                return Arrays.copyOfRange(heapId, start, start + length);
+            }
+            default:
+                throw new IOException("Unexpected fractal heap identifier type " + type);
+        }
+    }
+
+    /**
+     * Read a huge object, which is stored on its own in the file rather than in a
+     * heap block.
+     *
+     * @param channel channel on the file, its position is restored on return
+     * @param heapId heap identifier of a huge object
+     * @return the object bytes
+     * @throws IOException if an I/O error occurred or the object is not directly accessed.
+     */
+    private byte[] readHuge(HDF5DataInput channel, byte[] heapId) throws IOException {
+        /*
+        The identifier holds the address and the length directly when it is large
+        enough, otherwise it holds a key into the version 2 B-tree of huge objects.
+        */
+        final int directLength = 1 + channel.getOffsetSize() + channel.getLengthSize()
+                + (isFiltered() ? 4 + channel.getLengthSize() : 0);
+        if (heapIDLength < directLength) {
+            throw new IOException("Indirectly accessed huge fractal heap objects are not decoded yet.");
+        }
+        if (isFiltered()) {
+            throw new IOException("Filtered fractal heaps are not decoded yet.");
+        }
+        final HDF5DataInput id = channel.subChannel(heapId);
+        id.skipFully(1);
+        final long address = id.readOffset();
+        final long length = id.readLength();
+        channel.mark();
+        try {
+            channel.seek(address);
+            return channel.readNBytes(Math.toIntExact(length));
+        } finally {
+            channel.reset();
+        }
+    }
+
+    /**
+     * Read a managed object by walking the doubling table down to the direct block
+     * holding it.
+     *
+     * @param channel channel on the file, its position is restored on return
+     * @param offset offset of the object in the heap linear address space
+     * @param length length of the object in bytes
+     * @return the object bytes
+     * @throws IOException if an I/O error occurred or the heap is filtered.
+     */
+    private byte[] readManaged(HDF5DataInput channel, long offset, long length) throws IOException {
+        if (isFiltered()) {
+            throw new IOException("Filtered fractal heaps are not decoded yet.");
+        }
+        channel.mark();
+        try {
+            final long blockAddress;
+            final long blockOffset;
+            if (currentOfRowsInRootIndirectBlock == 0) {
+                //the root block is a direct block covering the whole heap
+                channel.seek(addressOfRootBlock);
+                final FractalHeapDirectBlock block = new FractalHeapDirectBlock();
+                block.read(channel, this);
+                blockAddress = block.getAddress();
+                blockOffset = block.getBlockOffset();
+            } else {
+                channel.seek(addressOfRootBlock);
+                FractalHeapIndirectBlock indirect = new FractalHeapIndirectBlock();
+                indirect.read(channel, this, currentOfRowsInRootIndirectBlock);
+
+                int[] rc = lookup(offset - indirect.getBlockOffset());
+                while (rc[0] >= maximumDirectRows) {
+                    /*
+                    This row points at another indirect block. The number of rows it
+                    spans follows from the size of the range it covers.
+                    */
+                    final int childRows = log2Exact(getRowBlockSize(rc[0])) - firstRowBits + 1;
+                    final int entry = rc[0] * tableWidth + rc[1];
+                    final long childAddress = indirect.getChildIndirectBlockAddresses()
+                            [entry - indirect.getDirectBlockCount()];
+                    channel.seek(childAddress);
+                    indirect = new FractalHeapIndirectBlock();
+                    indirect.read(channel, this, childRows);
+                    rc = lookup(offset - indirect.getBlockOffset());
+                }
+                final int entry = rc[0] * tableWidth + rc[1];
+                final long directAddress = indirect.getChildDirectBlockAddresses()[entry];
+                if (channel.isUndefinedOffset(directAddress)) {
+                    throw new IOException("Fractal heap object at offset " + offset
+                            + " points at an unallocated direct block.");
+                }
+                channel.seek(directAddress);
+                final FractalHeapDirectBlock block = new FractalHeapDirectBlock();
+                block.read(channel, this);
+                blockAddress = block.getAddress();
+                blockOffset = block.getBlockOffset();
+            }
+            /*
+            Heap offsets are relative to the beginning of the block, its prefix
+            included, so the data position is a plain difference.
+            */
+            channel.seek(blockAddress + (offset - blockOffset));
+            return channel.readNBytes(Math.toIntExact(length));
+        } finally {
+            channel.reset();
+        }
     }
 }

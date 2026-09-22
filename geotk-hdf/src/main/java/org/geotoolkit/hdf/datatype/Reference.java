@@ -17,13 +17,24 @@
 package org.geotoolkit.hdf.datatype;
 
 import java.io.IOException;
+import org.geotoolkit.hdf.heap.GlobalHeapId;
+import org.geotoolkit.hdf.heap.GlobalHeapObject;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Reference datatype : a reference to another object of the file, or to a
+ * region of a dataset. Values are decoded as {@link Reference.Object} or
+ * {@link Reference.Region} instances.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class Reference extends DataType {
+
+    /** A reference to another object of this file. */
+    public static final int TYPE_OBJECT = 0;
+    /** A reference to a region within a dataset of this file. */
+    public static final int TYPE_DATASET_REGION = 1;
 
     /**
      * This four-bit value contains the revised reference types. The values defined are:
@@ -47,9 +58,17 @@ public final class Reference extends DataType {
      */
     public final int version;
 
+    /**
+     * Reads the datatype properties.
+     *
+     * @param byteSize element size in bytes.
+     * @param version datatype message version, 4 for the revised reference types.
+     * @param classBitFields class bit fields (reference type, encoding version since version 4).
+     * @param channel input positioned on the datatype properties, nothing is read.
+     * @throws IOException if the datatype message version is unexpected.
+     */
     public Reference(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
-        if (byteSize != 8) throw new IOException("Unexpected reference length "+ byteSize + ", was expecting 8");
         if (version < 4) {
             this.type = classBitFields & 0b1111;
             this.version = 0;
@@ -63,19 +82,93 @@ public final class Reference extends DataType {
 
     @Override
     public Class getValueClass() {
-        return long.class;
+        /*
+        The decoded value is a reference holder, not a plain address : returning
+        long.class here would make Dataset allocate a long[] that readData can
+        not store into. Note this is Reference.Object, which shadows
+        java.lang.Object inside this class.
+        */
+        return Reference.Object.class;
     }
 
     @Override
-    public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
-        return new Object(input.readLong());
+    public java.lang.Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException {
+        if (type == TYPE_DATASET_REGION) {
+            /*
+            The element is a global heap identifier; the heap object holds the
+            address of the dataset followed by a serialized dataspace selection.
+            */
+            final GlobalHeapId heapId = new GlobalHeapId();
+            heapId.read(input);
+            final GlobalHeapObject heapObject = input.getGlobalHeapObject(heapId);
+            if (heapObject == null) {
+                return new Region(-1, null);
+            }
+            //the heap object position is a position in the file, not in this buffer
+            final HDF5DataInput fileChannel = input.getFileChannel();
+            fileChannel.mark();
+            try {
+                fileChannel.seek(heapObject.streamDataPosition);
+                final long address = fileChannel.readOffset();
+                final int remaining = Math.toIntExact(heapObject.objectSize - fileChannel.getOffsetSize());
+                return new Region(address, remaining > 0 ? fileChannel.readNBytes(remaining) : null);
+            } finally {
+                fileChannel.reset();
+            }
+        }
+        if (type == TYPE_OBJECT) {
+            return new Object(input.readOffset());
+        }
+        /*
+        Revised reference types, whose payload is a length prefixed blob this
+        reader does not interpret.
+        */
+        return new Region(-1, input.readNBytes(getByteSize()));
     }
 
+    /** A reference to an object, identified by the address of its object header. */
     public static class Object {
+        /** Address of the referenced object header, or -1 when unknown. */
         public final long address;
 
+        /**
+         * Creates an object reference.
+         *
+         * @param address address of the referenced object header.
+         */
         public Object(long address) {
             this.address = address;
+        }
+
+        @Override
+        public String toString() {
+            return "Reference to " + address;
+        }
+    }
+
+    /**
+     * A reference to a region of a dataset. The selection itself is kept as the
+     * raw bytes of a serialized dataspace selection, which this reader does not
+     * decode yet.
+     */
+    public static final class Region extends Object {
+        /** Serialized dataspace selection, or {@code null} when it could not be located. */
+        public final byte[] selection;
+
+        /**
+         * Creates a dataset region reference.
+         *
+         * @param address address of the dataset object header, or -1 when unknown.
+         * @param selection serialized dataspace selection, or {@code null}.
+         */
+        public Region(long address, byte[] selection) {
+            super(address);
+            this.selection = selection;
+        }
+
+        @Override
+        public String toString() {
+            return "Reference to a region of " + address;
         }
     }
 }

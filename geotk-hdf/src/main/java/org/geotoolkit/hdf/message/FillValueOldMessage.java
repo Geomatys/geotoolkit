@@ -40,20 +40,22 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * only appears for datasets with a user-defined fill value (as opposed to the
  * library default fill value or an explicitly set “undefined” fill value).
  *
- * @see IV.A.2.e. The Data Storage - Fill Value (Old) Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_ofvmessage">IV.A.2.e. The Data Storage - Fill Value (Old) Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FillValueOldMessage extends Message {
 
-    /**
-     * This is the size of the Fill Value field in bytes.
-     */
+    /** This is the size of the Fill Value field in bytes. */
     private int size;
     /**
      * The fill value. The bytes of the fill value are interpreted using the same
      * datatype as for the dataset.
      */
     private byte[] fillValue;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public FillValueOldMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

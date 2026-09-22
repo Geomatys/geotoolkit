@@ -32,7 +32,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Each “old style” group has a v1 B-tree and a local heap for storing symbol
  * table entries, which are located with this message.
  *
- * @see IV.A.2.r. The Symbol Table Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_stmgroup">IV.A.2.r. The Symbol Table Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SymbolTableMessage extends Message {
@@ -47,6 +47,10 @@ public final class SymbolTableMessage extends Message {
      * for the symbol table entries for the group.
      */
     public long localHeapAddress;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public SymbolTableMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

@@ -17,8 +17,12 @@
 package org.geotoolkit.hdf.api;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -30,13 +34,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.format.MeasurementParseException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.io.stream.ChannelDataInput;
+import org.apache.sis.math.Statistics;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
@@ -53,20 +64,31 @@ import org.apache.sis.util.ArraysExt;
 import static org.apache.sis.util.ArraysExt.swap;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.resources.Vocabulary;
+import org.geotoolkit.hdf.DenseStorage;
 import org.geotoolkit.hdf.HDF5Provider;
+import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.ObjectHeader;
-import org.geotoolkit.hdf.SymbolTableEntry;
-import static org.geotoolkit.hdf.api.Group.prettyPrint;
-import org.geotoolkit.hdf.btree.BTreeV1;
-import org.geotoolkit.hdf.btree.BTreeV1Chunk;
-import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.heap.LocalHeap;
+import org.geotoolkit.hdf.io.SegmentsSeekableByteChannel;
+import org.geotoolkit.hdf.message.ExternalFileListMessage;
+import static org.geotoolkit.hdf.api.Group.prettyPrint;
+import org.geotoolkit.hdf.chunk.BTreeV1ChunkIndex;
+import org.geotoolkit.hdf.chunk.BTreeV2ChunkIndex;
+import org.geotoolkit.hdf.chunk.Chunk;
+import org.geotoolkit.hdf.chunk.ChunkGrid;
+import org.geotoolkit.hdf.chunk.ChunkIndex;
+import org.geotoolkit.hdf.chunk.ExtensibleArrayChunkIndex;
+import org.geotoolkit.hdf.chunk.FixedArrayChunkIndex;
+import org.geotoolkit.hdf.chunk.ImplicitChunkIndex;
+import org.geotoolkit.hdf.chunk.SingleChunkIndex;
+import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.io.ChunkSeekableByteChannel;
+import org.geotoolkit.hdf.io.ConstantSeekableByteChannel;
 import org.geotoolkit.hdf.io.Connector;
 import org.geotoolkit.hdf.io.HDF5ChannelDataInput;
 import org.geotoolkit.hdf.io.HDF5DataInput;
+import org.geotoolkit.hdf.message.AttributeInfoMessage;
 import org.geotoolkit.hdf.message.AttributeMessage;
-import org.geotoolkit.hdf.message.BogusMessage;
 import org.geotoolkit.hdf.message.DataLayoutMessage;
 import org.geotoolkit.hdf.message.DataspaceMessage;
 import org.geotoolkit.hdf.message.DatatypeMessage;
@@ -74,9 +96,6 @@ import org.geotoolkit.hdf.message.FillValueMessage;
 import org.geotoolkit.hdf.message.FilterPipelineMessage;
 import org.geotoolkit.hdf.message.FilterPipelineMessage.FilterDescription;
 import org.geotoolkit.hdf.message.Message;
-import org.geotoolkit.hdf.message.NillMessage;
-import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
-import org.geotoolkit.hdf.message.ObjectModificationTimeMessage;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -97,9 +116,11 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class Dataset extends AbstractResource implements Node {
+public class Dataset extends AbstractResource implements Node {
 
+    /** Engineering CRS with a unitless north axis, for datasets whose CF {@code standard_name} is {@code latitude}. */
     public static final CoordinateReferenceSystem LATITUDE;
+    /** Engineering CRS with a unitless east axis, for datasets whose CF {@code standard_name} is {@code longitude}. */
     public static final CoordinateReferenceSystem LONGITUDE;
 
     static {
@@ -122,8 +143,6 @@ public final class Dataset extends AbstractResource implements Node {
 
     private final String name;
     private final GenericName genericName;
-    private final BTreeV1 btree;
-    private final LocalHeap localHeap;
     private final long address;
 
     //parsed values
@@ -133,29 +152,81 @@ public final class Dataset extends AbstractResource implements Node {
     private FillValueMessage fillValue;
     private DataLayoutMessage.Layout layout;
     private FilterPipelineMessage filter;
+    private ExternalFileListMessage externalFiles;
+    private NumberRange valueRange; //computed only once
 
     //decoding informations
     private final int cellByteSize;
-    private List<BTreeV1Chunk> chunks = null;
+    private ChunkGrid chunkGrid;
+    private ChunkIndex chunkIndex;
 
-    public Dataset(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
+    /**
+     * Chunks already read and de-filtered, by chunk address.
+     * <p>
+     * Without it every read decodes again the chunks it touches, so reading a
+     * dataset tile by tile inflates the same chunks over and over. References are
+     * soft rather than weak on purpose : a weakly reachable entry is cleared at
+     * the next garbage collection, which for a cache means almost never hitting,
+     * whereas a soft one survives until memory is actually needed. The virtual
+     * machine clears them all before throwing an out of memory error.
+     */
+    private final Map<Long,Reference<byte[]>> decodedChunks = new ConcurrentHashMap<>();
+    /**
+     * Receives the cache references whose chunk has been reclaimed, so that the
+     * map does not keep growing with empty entries.
+     */
+    private final ReferenceQueue<byte[]> reclaimedChunks = new ReferenceQueue<>();
+
+    /** A cached chunk, remembering its key so a reclaimed entry can be removed. */
+    private static final class ChunkReference extends SoftReference<byte[]> {
+        private final Long address;
+
+        ChunkReference(Long address, byte[] datas, ReferenceQueue<byte[]> queue) {
+            super(datas, queue);
+            this.address = address;
+        }
+    }
+
+    /**
+     * Create a dataset from the address of its object header.
+     *
+     * @param parent parent group, not {@code null}
+     * @param connector file connector, not {@code null}
+     * @param objectHeaderAddress address of this dataset object header
+     * @param name name of this dataset within its parent
+     * @throws IOException if an I/O error occurred, or the object header has no datatype or dataspace message.
+     * @throws DataStoreException if the object header is invalid or unsupported.
+     */
+    public Dataset(Group parent, Connector connector, long objectHeaderAddress, String name) throws IOException, DataStoreException {
+        this(parent, connector, objectHeaderAddress, name, Node.readHeader(connector, objectHeaderAddress));
+    }
+
+    /**
+     * Create a dataset from an already decoded object header, avoiding a second read.
+     *
+     * @param parent parent group, not {@code null}
+     * @param connector file connector, not {@code null}
+     * @param objectHeaderAddress address of this dataset object header
+     * @param name name of this dataset within its parent
+     * @param header decoded object header of this dataset
+     * @throws IOException if an I/O error occurred, or the object header has no datatype or dataspace message.
+     * @throws DataStoreException if the dense attributes are invalid or unsupported.
+     * @see Node#create(Group, Connector, long, String)
+     */
+    Dataset(Group parent, Connector connector, long objectHeaderAddress, String name, ObjectHeader header) throws IOException, DataStoreException {
         super(null, false);
         this.parent = parent;
         this.connector = connector;
         this.name = name;
-        this.address = entry.getObjectHeaderAddress();
-
-        final ObjectHeader header;
-        try (final HDF5DataInput channel = connector.createChannel()) {
-            header = entry.getHeader(channel);
-            btree = entry.getBTree(channel).orElse(null);
-            localHeap = entry.getLocalHeap(channel).orElse(null);
-        }
+        this.address = objectHeaderAddress;
 
         //extract properties
+        AttributeInfoMessage attributeInfo = null;
         for (Message message : header.getMessages()) {
             if (message instanceof AttributeMessage cdt) {
                 attributes.put(cdt.getName(), cdt.getValue());
+            } else if (message instanceof AttributeInfoMessage cdt) {
+                attributeInfo = cdt;
             } else if (message instanceof DataspaceMessage cdt) {
                 dataspace = cdt;
             } else if (message instanceof DatatypeMessage cdt) {
@@ -166,14 +237,35 @@ public final class Dataset extends AbstractResource implements Node {
                 filter = cdt;
             } else if (message instanceof DataLayoutMessage cdt) {
                 layout = cdt.getLayout();
-            } else if (message instanceof NillMessage
-                    || message instanceof BogusMessage
-                    || message instanceof ObjectModificationTimeMessage
-                    || message instanceof ObjectHeaderContinuationMessage) {
-                //ignore those
+            } else if (message instanceof ExternalFileListMessage cdt) {
+                externalFiles = cdt;
             } else {
-                throw new IOException("Unhandled message " + message.getClass().getSimpleName());
+                /*
+                Unknown or merely informative messages are ignored : refusing to
+                open a file because of a single unrecognized optional message
+                would be worse than reading what we do understand.
+                */
+                HDF5Provider.LOGGER.log(Level.FINE, () -> "Ignored message "
+                        + message.getClass().getSimpleName() + " in dataset " + name);
             }
+        }
+
+        if (attributeInfo != null && connector.isDefinedOffset(attributeInfo.getFractalHeapAddress())) {
+            /*
+            Dense attribute storage : the Attribute messages live in a fractal heap
+            indexed by a version 2 B-tree rather than in this object header.
+            */
+            try (final HDF5DataInput channel = connector.createChannel()) {
+                DenseStorage.readAttributes(channel, attributeInfo.getFractalHeapAddress(),
+                        attributeInfo.getAttributeNameV2btreeAddress(), attributes, name);
+            }
+        }
+
+        if (datatype == null) {
+            throw new IOException("Dataset " + name + " has no datatype message.");
+        }
+        if (dataspace == null) {
+            throw new IOException("Dataset " + name + " has no dataspace message.");
         }
 
         cellByteSize = datatype.getByteSize();
@@ -219,9 +311,10 @@ public final class Dataset extends AbstractResource implements Node {
     }
 
     /**
-     * Extract attribute descrption concatenating CF standard_name and long_name.
-     * @param attributeName, null if datatype is not compund.
-     * @return
+     * Extract attribute description concatenating CF {@code standard_name} and {@code long_name}.
+     *
+     * @param attributeName compound member name, or {@code null} if datatype is not compound.
+     * @return the description, or {@code null} if none of these attributes is defined.
      */
     public String getAttributeDescription(String attributeName) {
         final Object standardName = attributes.get(attributeName == null ? AttributeNames.STANDARD_NAME : attributeName + ":" + AttributeNames.STANDARD_NAME);
@@ -243,9 +336,14 @@ public final class Dataset extends AbstractResource implements Node {
     }
 
     /**
+     * Extract the unit of the values from the CF {@code units} attribute.
+     * A unit of the form {@code "<unit> since <date>"} produces a temporal CRS,
+     * and a {@code standard_name} of {@code latitude} or {@code longitude} produces
+     * the {@link #LATITUDE} or {@link #LONGITUDE} CRS.
      *
-     * @param attributeName null if datatype is not compund.
-     * @return
+     * @param attributeName compound member name, or {@code null} if datatype is not compound.
+     * @return the unit and the CRS (possibly {@code null}), or {@code null} if no unit could be determined.
+     * @throws FactoryException if the temporal CRS could not be created.
      */
     public Entry<Unit,CoordinateReferenceSystem> getAttributeUnit(String attributeName) throws FactoryException {
         final Object units = attributes.get(attributeName == null ? "units" : (attributeName + ":units"));
@@ -305,30 +403,139 @@ public final class Dataset extends AbstractResource implements Node {
         return null;
     }
 
+    /**
+     * Returns the datatype of the dataset elements, never {@code null}.
+     *
+     * @return the datatype of the dataset elements, never {@code null}
+     */
     public DataType getDataType() {
         return datatype;
     }
 
+    /**
+     * Returns the Dataspace message giving the dimension sizes, never {@code null}.
+     *
+     * @return the Dataspace message giving the dimension sizes, never {@code null}
+     */
     public DataspaceMessage getDataspace() {
         return dataspace;
     }
 
+    /**
+     * Returns the Fill Value message for elements never written, or {@code null} if none.
+     *
+     * @return the Fill Value message for elements never written, or {@code null} if none
+     */
     public FillValueMessage getFillValue() {
         return fillValue;
     }
 
+    /**
+     * Returns the raw data layout (compact, contiguous, chunked or virtual), or {@code null} if none.
+     *
+     * @return the raw data layout (compact, contiguous, chunked or virtual), or {@code null} if none
+     */
     public DataLayoutMessage.Layout getLayout() {
         return layout;
     }
 
     /**
+     * Returns the Filter Pipeline message, or {@code null} if the raw data is not filtered.
      * Currently, only datasets using chunked data storage use the filter
      * pipeline on their raw data.
+     *
+     * @return the Filter Pipeline message, or {@code null} if the raw data is not filtered
      */
     public FilterPipelineMessage getFilter() {
         return filter;
     }
 
+    /**
+     * Returns the range of the dataset values, inclusive.
+     * Computed on first call by reading the whole dataset by blocks of 1000 elements
+     * per dimension, ignoring the blocks which fail to be read.
+     *
+     * @return the range of the dataset values, inclusive
+     */
+    public synchronized NumberRange getValueRange() {
+        if (valueRange != null) return valueRange;
+
+        //limited to 1D dataset
+        final int[] dimensionSizes = getDataspace().getDimensionSizes();
+        final GridExtent area = getDataspace().getDimensionExtent();
+
+        //read by blocks of 1000
+        final int blockSize = 1000;
+        final long[] sub = new long[dimensionSizes.length];
+        Arrays.fill(sub, blockSize);
+        final GridExtent points = area.subsample(sub);
+
+        Stream<GridExtent> streamExtent = points.latticePointStream(false).map(new Function<long[],GridExtent>() {
+            @Override
+            public GridExtent apply(long[] value) {
+                final long[] low = new long[dimensionSizes.length];
+                final long[] high = new long[dimensionSizes.length];
+                for (int i=0;i<low.length;i++) {
+                    low[i] = value[i] * blockSize;
+                    high[i] = (value[i]+1) * blockSize -1; //inclusive
+                }
+                //ensure we do not got out of data range
+                return area.intersect(new GridExtent(null, low, high, true));
+            }
+        });
+        Stream<NumberRange> s = streamExtent.map(new Function<GridExtent,NumberRange>() {
+            @Override
+            public NumberRange apply(GridExtent t) {
+                try {
+                    return getValueRange(t);
+                } catch (DataStoreException | IOException ex) {
+                    //do nothing
+                    return null;
+                }
+            }
+        });
+
+        Optional<NumberRange> reduce = s.filter(Objects::nonNull).reduce(new BinaryOperator<NumberRange>() {
+            @Override
+            public NumberRange apply(NumberRange t, NumberRange u) {
+                return t.unionAny(u);
+            }
+        });
+        valueRange = reduce.get();
+        return valueRange;
+    }
+
+    private NumberRange getValueRange(GridExtent extent) throws DataStoreException, IOException {
+        final Object rawData = read(extent);
+
+        final Statistics stats = new Statistics("v");
+
+        for (int i = 0, n = Array.getLength(rawData); i < n; i++) {
+            final Object valueI = Array.get(rawData, i);
+            if (valueI instanceof Number v) {
+                stats.accept(v.doubleValue());
+            } else if (valueI.getClass().isArray()) {
+                for (int j = 0, m = Array.getLength(valueI); j < m; j++) {
+                    final Object valueJ = Array.get(valueI, j);
+                    stats.accept(((Number)valueJ).doubleValue());
+                }
+            }
+        }
+        return NumberRange.create(stats.minimum(), true, stats.maximum(), true);
+    }
+
+    /**
+     * Returns the values in the given extent.
+     * The result is a multi-dimensional Java array of {@link DataType#getValueClass()} elements
+     * with one level per dimension, or a single value for a scalar dataspace.
+     *
+     * @param extent region to read in dataspace coordinates, or {@code null} for the whole dataset.
+     * @param compoundindexes indexes of the compound members to read.
+     * @return the values in the given extent
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the extent is not contained in the dataspace,
+     *         or the data layout or storage is not supported.
+     */
     public Object read(GridExtent extent, int ... compoundindexes) throws IOException, DataStoreException {
 
         //build read extent
@@ -353,53 +560,45 @@ public final class Dataset extends AbstractResource implements Node {
                 if (layout instanceof DataLayoutMessage.Compact cdt) {
                     channel.seek(cdt.rawDataAddress);
                 } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                    if (connector.isUndefinedOffset(cdt.address)) {
+                        throw new DataStoreException("Scalar dataset " + name + " has no allocated storage.");
+                    }
                     channel.seek(cdt.address);
-                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
-                    throw new DataStoreException("Using chunked layout for a scalar value is not supported");
+                } else {
+                    /*
+                    A chunked or virtual layout can not describe a scalar dataspace;
+                    falling through would decode at whatever position the stream
+                    happens to be at and silently return garbage.
+                    */
+                    throw new DataStoreException("Layout " + layout.getClass().getSimpleName()
+                            + " is not supported for the scalar dataset " + name);
                 }
                 return datatype.readData(channel, compoundindexes);
             } else {
-                final List<BTreeV1Chunk> chunks;
                 final List<FilterDescription> filters = new ArrayList<>();
-
-                if (layout instanceof DataLayoutMessage.Compact cdt) {
-                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
-                    fakeChunk.address = cdt.rawDataAddress;
-                    fakeChunk.uncompressedSize = cdt.size;
-                    fakeChunk.size = cdt.size;
-                    fakeChunk.filterMask = 255;
-                    fakeChunk.offset = getDataspace().getDimensionExtent();
-                    chunks = Arrays.asList(fakeChunk);
-
-                } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
-                    final BTreeV1Chunk fakeChunk = new BTreeV1Chunk();
-                    fakeChunk.address = cdt.address;
-                    fakeChunk.uncompressedSize = cdt.size;
-                    fakeChunk.size = cdt.size;
-                    fakeChunk.filterMask = 255;
-                    fakeChunk.offset = getDataspace().getDimensionExtent();
-                    chunks = Arrays.asList(fakeChunk);
-
-                } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
-
-                    if (connector.isUndefinedLength(cdt.address)) {
-                        chunks = Collections.EMPTY_LIST;
-                    } else {
-
-                        //build filters
-                        if (filter != null) {
-                            filters.addAll(filter.getFilters());
-                        }
-
-                        //read btree of all chunks
-                        chunks = getChunks(channel);
-                    }
-
-                } else if (layout instanceof DataLayoutMessage.Virtual cdt) {
-                    throw new IOException("Not supported layout " + layout.getClass().getSimpleName());
-                } else {
-                    throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
+                if (filter != null) {
+                    filters.addAll(filter.getFilters());
                 }
+
+                if (externalFiles != null) {
+                    /*
+                    The raw data lives outside this file, as the concatenation of
+                    ranges of the files listed by the External Data Files message.
+                    Filters do not apply to that storage.
+                    */
+                    final int[] dimensions = new int[extent.getDimension()];
+                    for (int i = 0; i < dimensions.length; i++) {
+                        dimensions[i] = (int) extent.getSize(i);
+                    }
+                    final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
+                    final GridExtent queryExtent = extent;
+                    appendChunkDatas(results, () -> openExternalFiles(channel), channel,
+                            dataspace.getDimensionExtent(), queryExtent, compoundindexes);
+                    return results;
+                }
+
+                final ChunkGrid grid = getChunkGrid();
+                final ChunkIndex index = getChunkIndex();
 
                 //read datas
                 final int[] dimensions = new int[extent.getDimension()];
@@ -408,38 +607,270 @@ public final class Dataset extends AbstractResource implements Node {
                 }
                 final Object results = java.lang.reflect.Array.newInstance(datatype.getValueClass(), dimensions);
 
-                // TODO: chunks matching query should be retrieved using an index, instead of using a full-scan strategy.
-                for (BTreeV1Chunk chunk : chunks) {
-                    appendChunkDatas(results, () -> {
-                        channel.seek(chunk.address);
-                        if (chunk.filterMask == 255) {
+                final GridExtent queryExtent = extent;
+                final byte[] fillPattern = fill;
+                final long chunkByteSize = grid.getChunkElementCount() * cellByteSize;
+
+                for (long[] scaled : grid.intersecting(queryExtent)) {
+                    final Chunk chunk = index.getChunk(channel, scaled);
+                    if (chunk == null || connector.isUndefinedOffset(chunk.address)) {
+                        /*
+                        Storage was never allocated for this chunk, its elements
+                        take the dataset fill value.
+                        */
+                        appendChunkDatas(results, () -> new HDF5ChannelDataInput(
+                                new ChannelDataInput("", new ConstantSeekableByteChannel(chunkByteSize, fillPattern),
+                                        ByteBuffer.allocate(4096), false)), channel,
+                                grid.extentOf(scaled), queryExtent, compoundindexes);
+                    } else if (!chunk.filtered || filters.isEmpty()) {
+                        /*
+                        Raw bytes, read straight from the file with no copy.
+                        */
+                        appendChunkDatas(results, () -> {
+                            channel.seek(chunk.address);
                             return channel;
-                        } else {
-                            final ChunkSeekableByteChannel chunkChannel = new ChunkSeekableByteChannel(chunk, channel, filters);
-                            return new HDF5ChannelDataInput(new ChannelDataInput("", chunkChannel, ByteBuffer.allocate(4096), false));
-                        }
-                    }, chunk.offset, extent, compoundindexes);
+                        }, channel, chunk.offset != null ? chunk.offset : grid.extentOf(scaled),
+                                queryExtent, compoundindexes);
+                    } else {
+                        /*
+                        Filtered chunk, decoded once and kept for the next read
+                        that touches it.
+                        */
+                        appendChunkDatas(results,
+                                () -> channel.subChannel(getDecodedChunk(channel, chunk, filters)), channel,
+                                chunk.offset != null ? chunk.offset : grid.extentOf(scaled),
+                                queryExtent, compoundindexes);
+                    }
                 }
                 return results;
             }
         }
     }
 
-    private synchronized List<BTreeV1Chunk> getChunks(HDF5DataInput channel) throws IOException {
-        if (chunks == null) {
-            final DataLayoutMessage.Chunked cdt = (DataLayoutMessage.Chunked) layout;
-            //read btree of all chunks
-            channel.seek(cdt.address);
-            final BTreeV1 datatree = new BTreeV1();
-            datatree.read(channel, cdt.dimensionSizes);
-            final BTreeV1.DataNode node = (BTreeV1.DataNode) datatree.root;
-            chunks = new ArrayList<>(node.getChunks());
+    /**
+     * Returns the decoded bytes of a filtered chunk.
+     * They are read and de-filtered only if not already cached.
+     *
+     * @param channel channel on the file, not null
+     * @param chunk chunk to decode, its address being the cache key
+     * @param filters filter pipeline of this dataset
+     * @return the decoded bytes of a filtered chunk
+     * @throws IOException if an error occurred while reading or decoding the chunk.
+     */
+    private byte[] getDecodedChunk(HDF5DataInput channel, Chunk chunk,
+            List<FilterDescription> filters) throws IOException {
+        //drop the entries whose chunk has been reclaimed since the last read
+        Reference<? extends byte[]> reclaimed;
+        while ((reclaimed = reclaimedChunks.poll()) != null) {
+            decodedChunks.remove(((ChunkReference) reclaimed).address, reclaimed);
         }
 
-        return chunks;
+        final Long key = chunk.address;
+        final Reference<byte[]> reference = decodedChunks.get(key);
+        if (reference != null) {
+            final byte[] cached = reference.get();
+            if (cached != null) {
+                chunk.uncompressedSize = cached.length;
+                return cached;
+            }
+            //reclaimed between the purge above and now
+            decodedChunks.remove(key, reference);
+        }
+
+        final byte[] decoded = ChunkSeekableByteChannel.decode(chunk, channel, filters);
+        decodedChunks.put(key, new ChunkReference(key, decoded, reclaimedChunks));
+        return decoded;
     }
 
-    private void appendChunkDatas(Object results, Callable<HDF5DataInput> chunkChannel,
+    /**
+     * Forget every decoded chunk kept in memory. Reading them again decodes them
+     * again, so this only frees memory.
+     */
+    public void clearChunkCache() {
+        decodedChunks.clear();
+    }
+
+    /**
+     * Returns a single channel over the external data files of this dataset.
+     * <p>
+     * File names live in a local heap of their own and are resolved relative to
+     * the directory of this HDF5 file.
+     *
+     * @param channel channel on the file.
+     * @return a single channel over the external data files of this dataset
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the local heap is invalid or a file location is not supported.
+     */
+    private HDF5DataInput openExternalFiles(HDF5DataInput channel) throws IOException, DataStoreException {
+        final LocalHeap heap;
+        channel.mark();
+        try {
+            channel.seek(externalFiles.getHeapAddress());
+            heap = (LocalHeap) IOStructure.loadIdentifiedObject(channel);
+        } finally {
+            channel.reset();
+        }
+
+        final Path parent = connector.getPath().toAbsolutePath().getParent();
+        final List<SegmentsSeekableByteChannel.Segment> segments = new ArrayList<>();
+        for (ExternalFileListMessage.ExternalFileListSlot slot : externalFiles.getSlots()) {
+            final String name = heap.getString(channel, slot.getNameOffset());
+            segments.add(new SegmentsSeekableByteChannel.Segment(
+                    resolveExternalFile(parent, name), slot.getOffsetInFile(), slot.getSizeInFile()));
+        }
+        return new HDF5ChannelDataInput(new ChannelDataInput("",
+                new SegmentsSeekableByteChannel(segments), ByteBuffer.allocate(4096), false));
+    }
+
+    /**
+     * Returns the path of an external data file.
+     * External file names are URLs, of which only the file scheme and plain
+     * relative paths make sense here.
+     *
+     * @param parent directory of this HDF5 file.
+     * @param name external file name, as stored.
+     * @return the path of an external data file
+     * @throws DataStoreException if the name is a URL with an unsupported scheme.
+     */
+    private static Path resolveExternalFile(Path parent, String name) throws DataStoreException {
+        String path = name;
+        if (path.startsWith("file://")) {
+            path = path.substring("file://".length());
+            //an empty host means localhost
+            if (path.startsWith("localhost/")) {
+                path = path.substring("localhost".length());
+            }
+        } else if (path.startsWith("file:")) {
+            path = path.substring("file:".length());
+        } else if (path.contains("://")) {
+            throw new DataStoreException("Unsupported external data file location " + name);
+        }
+        final Path resolved = Path.of(path);
+        return resolved.isAbsolute() ? resolved : parent.resolve(resolved);
+    }
+
+    /**
+     * Returns the chunk grid of this dataset, computed on first call.
+     * Compact and contiguous layouts are described as a grid holding a single chunk
+     * covering the whole dataset, so that all four layouts share one read path.
+     *
+     * @return the chunk grid of this dataset, computed on first call
+     */
+    private synchronized ChunkGrid getChunkGrid() {
+        if (chunkGrid == null) {
+            final int[] dimensionSizes = dataspace.getDimensionSizes();
+            final int[] chunkDimensions;
+            if (layout instanceof DataLayoutMessage.Chunked cdt) {
+                chunkDimensions = cdt.dimensionSizes;
+            } else {
+                chunkDimensions = new int[dimensionSizes.length];
+                for (int i = 0; i < chunkDimensions.length; i++) {
+                    //a zero sized dimension would make the grid degenerate
+                    chunkDimensions[i] = Math.max(1, dimensionSizes[i]);
+                }
+            }
+            chunkGrid = new ChunkGrid(dimensionSizes, chunkDimensions);
+        }
+        return chunkGrid;
+    }
+
+    private synchronized ChunkIndex getChunkIndex() throws IOException, DataStoreException {
+        if (chunkIndex == null) {
+            final ChunkGrid grid = getChunkGrid();
+            if (layout instanceof DataLayoutMessage.Compact cdt) {
+                final Chunk chunk = new Chunk();
+                chunk.address = cdt.rawDataAddress;
+                chunk.size = cdt.size;
+                chunk.uncompressedSize = cdt.size;
+                chunk.offset = grid.extentOf(new long[grid.getDimension()]);
+                chunkIndex = new SingleChunkIndex(chunk);
+            } else if (layout instanceof DataLayoutMessage.Contiguous cdt) {
+                if (connector.isUndefinedOffset(cdt.address)) {
+                    //storage not allocated, everything is the fill value
+                    chunkIndex = new SingleChunkIndex(null);
+                } else {
+                    final Chunk chunk = new Chunk();
+                    chunk.address = cdt.address;
+                    chunk.size = cdt.size;
+                    chunk.uncompressedSize = cdt.size;
+                    chunk.offset = grid.extentOf(new long[grid.getDimension()]);
+                    chunkIndex = new SingleChunkIndex(chunk);
+                }
+            } else if (layout instanceof DataLayoutMessage.Chunked cdt) {
+                chunkIndex = createChunkedIndex(cdt, grid);
+            } else if (layout instanceof DataLayoutMessage.Virtual) {
+                throw new IOException("Virtual datasets are not decoded yet for dataset " + name);
+            } else {
+                throw new IOException("Unexpected layout " + layout.getClass().getSimpleName());
+            }
+        }
+        return chunkIndex;
+    }
+
+    private ChunkIndex createChunkedIndex(DataLayoutMessage.Chunked cdt, ChunkGrid grid) throws IOException, DataStoreException {
+        if (connector.isUndefinedOffset(cdt.address)) {
+            //storage not allocated, everything is the fill value
+            return new SingleChunkIndex(null);
+        }
+        final long chunkByteSize = cdt.datasetElementSize > 0
+                ? cdt.getChunkByteSize()
+                : grid.getChunkElementCount() * cellByteSize;
+
+        switch (cdt.chunkIndexingType) {
+            case DataLayoutMessage.Chunked.INDEX_BTREE_V1: {
+                /*
+                A version 1 B-tree chunk key holds one offset per dataset dimension
+                plus a trailing zero, so it must be given exactly the rank. Version
+                1 and 2 layout messages declare one dimension more than the rank.
+                */
+                final int[] chunkDimensions = Arrays.copyOf(cdt.dimensionSizes, grid.getDimension());
+                return new BTreeV1ChunkIndex(cdt.address, chunkDimensions, grid, filter != null);
+            }
+            case DataLayoutMessage.Chunked.INDEX_SINGLE_CHUNK: {
+                final Chunk chunk = new Chunk();
+                chunk.address = cdt.address;
+                chunk.offset = grid.extentOf(new long[grid.getDimension()]);
+                if ((cdt.flags & DataLayoutMessage.Chunked.FLAG_SINGLE_INDEX_WITH_FILTER) != 0) {
+                    chunk.size = cdt.singleChunkSize;
+                    chunk.filterMask = cdt.singleChunkFilterMask;
+                    chunk.filtered = true;
+                } else {
+                    chunk.size = chunkByteSize;
+                    chunk.uncompressedSize = chunkByteSize;
+                    chunk.filtered = false;
+                }
+                return new SingleChunkIndex(chunk);
+            }
+            case DataLayoutMessage.Chunked.INDEX_IMPLICIT: {
+                return new ImplicitChunkIndex(cdt.address, chunkByteSize, grid);
+            }
+            case DataLayoutMessage.Chunked.INDEX_FIXED_ARRAY: {
+                return new FixedArrayChunkIndex(cdt.address, grid, chunkByteSize);
+            }
+            case DataLayoutMessage.Chunked.INDEX_EXTENSIBLE_ARRAY: {
+                return new ExtensibleArrayChunkIndex(cdt.address, grid, chunkByteSize);
+            }
+            case DataLayoutMessage.Chunked.INDEX_BTREE_V2: {
+                return new BTreeV2ChunkIndex(cdt.address, grid, chunkByteSize);
+            }
+            default:
+                throw new IOException("Unexpected chunk indexing type " + cdt.chunkIndexingType);
+        }
+    }
+
+    /**
+     * Copies the part of a chunk intersecting the query extent in the result array.
+     *
+     * @param results array of the whole query extent.
+     * @param chunkChannel supplier of a channel positioned on the chunk data.
+     * @param shared channel reading this file, which the caller owns and which
+     *        must not be closed here
+     * @param chunkExtent chunk extent, in dataspace coordinates.
+     * @param queryExtent queried extent, in dataspace coordinates.
+     * @param compoundindexes indexes of the compound members to read.
+     * @throws IOException if an I/O error occurred.
+     */
+    private void appendChunkDatas(Object results, Callable<HDF5DataInput> chunkChannel, HDF5DataInput shared,
             GridExtent chunkExtent, GridExtent queryExtent, int ... compoundindexes) throws IOException {
 
 
@@ -472,9 +903,13 @@ public final class Dataset extends AbstractResource implements Node {
         } catch (Exception ex) {
             throw new IOException(ex);
         } finally {
-            //close channel only if it's a chunk
-            if (dfi instanceof ChunkSeekableByteChannel csbc) {
-                csbc.close();
+            /*
+            Close the channel unless it is the shared one reading this file, which
+            the caller owns. A dedicated channel may hold file handles of its own,
+            as the external data files one does.
+            */
+            if (dfi != null && dfi != shared) {
+                dfi.close();
             }
         }
     }
@@ -537,7 +972,11 @@ public final class Dataset extends AbstractResource implements Node {
     }
 
     /**
-     * Extract a string representation of the first values in the dataset.
+     * Returns a string representation of the first values, or the error message if they could not be read.
+     *
+     * @param dataset dataset to preview.
+     * @param maxArraySize maximum number of values per dimension.
+     * @return a string representation of the first values, or the error message if they could not be read
      */
     private static String dataPreview(Dataset dataset, int maxArraySize) {
         Object value;
@@ -597,7 +1036,11 @@ public final class Dataset extends AbstractResource implements Node {
     }
 
     /**
-     * @return {@code null} if extents do <em>not</em> intersect. Otherwise, the result of their intersection.
+     * Returns the intersection of the given extents, or {@code null} if they do <em>not</em> intersect.
+     *
+     * @param first first extent.
+     * @param second second extent, of same dimension.
+     * @return the intersection of the given extents, or {@code null} if they do <em>not</em> intersect
      */
     private static GridExtent safeIntersection(GridExtent first, GridExtent second) {
         var dim = first.getDimension();

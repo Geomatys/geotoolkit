@@ -22,14 +22,18 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.io.stream.ChannelDataInput;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.hdf.heap.GlobalHeap;
 import org.geotoolkit.hdf.heap.GlobalHeapId;
 import org.geotoolkit.hdf.heap.GlobalHeapObject;
 
 /**
+ * {@link HDF5DataInput} implementation backed by an Apache SIS {@link ChannelDataInput}.
+ * <p>
+ * The channel either reads the HDF-5 file itself, or an in-memory buffer
+ * (see {@link HDF5DataInput#subChannel(byte[])}) in which case global heap
+ * lookups are delegated to the enclosing file channel.
+ * Global heap collections read from the file are cached by address.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -39,21 +43,65 @@ public final class HDF5ChannelDataInput implements HDF5DataInput {
     private int offsetSize;
     private int lengthSize;
 
+    /**
+     * When this channel reads an in-memory buffer extracted from a heap, the
+     * enclosing file channel, to which global heap lookups are delegated.
+     * Null when this channel reads the file itself.
+     *
+     * @see HDF5DataInput#subChannel(byte[])
+     */
+    private final HDF5DataInput parent;
+
     private final Map<Long,GlobalHeap> globalheaps = new HashMap<>();
 
-    public HDF5ChannelDataInput(byte[] datas) throws DataStoreException {
+    /**
+     * Create a channel over in-memory bytes.
+     *
+     * @param datas bytes to read, not null
+     * @param parent enclosing file channel to which global heap lookups are
+     *        delegated and from which the offset and length sizes are inherited,
+     *        or null.
+     */
+    public HDF5ChannelDataInput(byte[] datas, HDF5DataInput parent) {
         ArgumentChecks.ensureNonNull("datas", datas);
-        final StorageConnector cnx = new StorageConnector(ByteBuffer.wrap(datas).asReadOnlyBuffer());
-        this.input = cnx.getStorageAs(ChannelDataInput.class);
+        this.input = new ChannelDataInput("", ByteBuffer.wrap(datas));
+        //HDF5 metadata is always little endian
+        this.input.buffer.order(ByteOrder.LITTLE_ENDIAN);
+        this.parent = parent;
+        if (parent != null) {
+            this.offsetSize = parent.getOffsetSize();
+            this.lengthSize = parent.getLengthSize();
+        }
     }
 
+    /**
+     * Create a channel reading the file through the given input.
+     * The offset and length sizes must be set afterward.
+     *
+     * @param channel input on the HDF-5 file
+     */
     public HDF5ChannelDataInput(ChannelDataInput channel) {
         ArgumentChecks.ensureNonNull("input", channel);
         this.input = channel;
+        this.parent = null;
+    }
+
+    @Override
+    public HDF5DataInput subChannel(byte[] datas) throws IOException {
+        return new HDF5ChannelDataInput(datas, this);
+    }
+
+    @Override
+    public HDF5DataInput getFileChannel() {
+        return parent == null ? this : parent.getFileChannel();
     }
 
     @Override
     public synchronized GlobalHeap getGlobalHeap(long address) throws IOException {
+        if (parent != null) {
+            //global heap collections live in the file, not in this buffer
+            return parent.getGlobalHeap(address);
+        }
         GlobalHeap heap = globalheaps.get(address);
         if (heap != null) return heap;
         heap = new GlobalHeap();
@@ -214,20 +262,25 @@ public final class HDF5ChannelDataInput implements HDF5DataInput {
     }
 
     /**
-     * Read an unsigned int of variable byte length.
+     * Delegates to {@link #readUnsignedInteger(int)} and fails if the value does not fit in a Java int.
+     *
+     * @deprecated Use {@link #readUnsignedInteger(int)} instead.
      */
     @Override
+    @Deprecated
     public int readUnsignedInt(int nbBytes) throws IOException {
-        switch (nbBytes) {
-            case 1 : return input.readUnsignedByte();
-            case 2 : return input.readUnsignedShort();
-            case 4 : return input.readInt();
-            default: throw new IOException("Unsupported size " + nbBytes);
+        final long value = readUnsignedInteger(nbBytes);
+        if (value < 0 || value > Integer.MAX_VALUE) {
+            throw new IOException("Unsigned integer " + Long.toUnsignedString(value)
+                    + " read on " + nbBytes + " bytes does not fit in a Java int");
         }
+        return (int) value;
     }
 
     @Override
     public void close() throws IOException {
-        input.channel.close();
+        if (input.channel != null) {
+            input.channel.close();
+        }
     }
 }

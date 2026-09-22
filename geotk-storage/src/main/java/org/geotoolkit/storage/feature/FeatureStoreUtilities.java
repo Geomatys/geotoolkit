@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.Features;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
@@ -30,6 +31,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
@@ -158,22 +160,25 @@ public class FeatureStoreUtilities {
 
         if (envelope == null) {
             GeneralEnvelope env = null;
-            if (dataset instanceof org.apache.sis.storage.FeatureSet) {
-                try (Stream<Feature> features = ((org.apache.sis.storage.FeatureSet) dataset).features(false)) {
-                    final Iterator<Feature> iterator = features.iterator();
-                    while (iterator.hasNext()) {
-                        final Feature f = iterator.next();
-                        final Envelope bbox = FeatureExt.getEnvelope(f);
-                        if (bbox != null) {
-                            if (env != null) {
-                                env.add(bbox);
-                            } else {
-                                env = new GeneralEnvelope(bbox);
+            if (dataset instanceof org.apache.sis.storage.FeatureSet fs) {
+                final FeatureType type = fs.getType();
+                if (type.isAbstract() || type.hasProperty(AttributeConvention.ENVELOPE)) {
+                    try (Stream<Feature> features = fs.features(false)) {
+                        final Iterator<Feature> iterator = features.iterator();
+                        while (iterator.hasNext()) {
+                            final Feature f = iterator.next();
+                            final Envelope bbox = FeatureExt.getEnvelope(f);
+                            if (bbox != null) {
+                                if (env != null) {
+                                    env.add(bbox);
+                                } else {
+                                    env = new GeneralEnvelope(bbox);
+                                }
                             }
                         }
+                    } catch (BackingStoreException ex) {
+                        throw ex.unwrapOrRethrow(DataStoreException.class);
                     }
-                } catch (BackingStoreException ex) {
-                    throw ex.unwrapOrRethrow(DataStoreException.class);
                 }
             } else if (dataset instanceof GridCoverageResource) {
                 final GridCoverageResource gcr = (GridCoverageResource) dataset;

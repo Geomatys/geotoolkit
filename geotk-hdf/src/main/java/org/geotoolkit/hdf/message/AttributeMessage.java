@@ -26,11 +26,14 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
  * Header Message Name: Attribute
+ * <p>
  * Header Message Type: 0x000C
+ * <p>
  * Length: Varies
+ * <p>
  * Status: Optional; may be repeated.
+ * <p>
  * Description:
- *
  * The Attribute message is used to store objects in the HDF5 file
  * which are used as attributes, or “metadata” about the current object.
  * An attribute is a small dataset; it has a name, a datatype, a
@@ -38,32 +41,29 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * header, they should be relatively small (in other words, less than
  * 64KB). They can be associated with any type of object which has an
  * object header (groups, datasets, or committed (named) datatypes).
- *
+ * <p>
  * In 1.8.x versions of the library, attributes can be larger than 64KB.
  * See the “Special Issues” section of the Attributes chapter in the
  * HDF5 User’s Guide for more information.
- *
+ * <p>
  * Note: Attributes on an object must have unique names: the HDF5
  * Library currently enforces this by causing the creation of an
  * attribute with a duplicate name to fail. Attributes on different
  * objects may have the same name, however.
  *
- * @see IV.A.2.m. The Attribute Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_attribute">IV.A.2.m. The Attribute Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class AttributeMessage extends Message {
 
-    /**
-     * Attribute name.
-     */
     private String name;
     /**
      * This bit field contains extra information about interpreting the
      * attribute message:
-     * Bit
-     * 0 : If set, datatype is shared.
-     * 1 : If set, dataspace is shared.
-     *
+     * <ul>
+     *   <li>Bit 0 : If set, datatype is shared.</li>
+     *   <li>Bit 1 : If set, dataspace is shared.</li>
+     * </ul>
      * This field is used in version 2 and 3.
      */
     private int flags;
@@ -82,27 +82,34 @@ public final class AttributeMessage extends Message {
      * and dataspace descriptions. This field is not padded with additional bytes.
      */
     private Object data;
-    /**
-     * Store data reading exception.
-     */
     private Exception dataException;
 
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public AttributeMessage() {
+    }
+
     /**
-     * Attribute name.
+     * Returns the attribute name, unique among the attributes of an object.
+     *
+     * @return the attribute name, unique among the attributes of an object
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Decoded attribute value
+     * Returns the decoded value, or {@code null} if the dataspace is null or decoding failed.
+     *
+     * @return the decoded value, or {@code null} if the dataspace is null or decoding failed
      */
     public Object getValue() {
         return data;
     }
 
     /**
-     * @return raised exception if data decoding has failed
+     * Returns the exception raised while decoding the value, or {@code null}.
+     *
+     * @return the exception raised while decoding the value, or {@code null}
      */
     public Exception getDataException() {
         return dataException;

@@ -33,7 +33,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * find the shared messages from either the heap or object header. This message
  * is only found in the superblock extension.
  *
- * @see IV.A.2.p. The Shared Message Table Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_shared">IV.A.2.p. The Shared Message Table Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedMessageTableMessage extends Message {
@@ -43,10 +43,12 @@ public final class SharedMessageTableMessage extends Message {
      * message indexes.
      */
     private long sharedObjectHeaderMessageTableAddress;
-    /**
-     * This field is the number of indices in the master table.
-     */
+    /** This field is the number of indices in the master table. */
     private int numberOfIndices;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public SharedMessageTableMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

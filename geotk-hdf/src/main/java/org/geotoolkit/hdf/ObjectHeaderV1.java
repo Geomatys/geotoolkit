@@ -39,12 +39,13 @@ import org.geotoolkit.hdf.message.SharedMessageV3;
  * data in the file and in fact may be located in any position in the file. The
  * order of the messages in an object header is not significant.
  *
+ * <p>
  * Object headers are composed of a prefix and a set of messages. The prefix
  * contains the information needed to interpret the messages and a small amount
  * of metadata about the object, and the messages contain the majority of the
  * metadata about the object.
  *
- * @see IV.A.1.a. Version 1 Data Object Header Prefix
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_prefix_one">IV.A.1.a. Version 1 Data Object Header Prefix</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
@@ -68,7 +69,12 @@ public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
      * for this object elsewhere in the file.
      */
     private int objectHeaderSize;
+    /** All header messages, including those read from continuation blocks. */
     public List<Message> messages;
+
+    /** Creates an empty object header, filled by {@link #read(HDF5DataInput)}. */
+    public ObjectHeaderV1() {
+    }
 
     @Override
     public List<Message> getMessages() {
@@ -97,20 +103,20 @@ public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
     }
 
     private void readMessage(HDF5DataInput channel) throws IOException, DataStoreException {
-        /**
+        /*
          * This value specifies the type of information included in the
          * following header message data. The message types for header messages
          * are defined in sections below.
          */
         final int headerMessageType = channel.readUnsignedShort();
-        /**
+        /*
          * This value specifies the number of bytes of header message data
          * following the header message type and length information for the
          * current message. The size includes padding bytes to make the message
          * a multiple of eight bytes.
          */
         final int sizeOfHeaderMessageData = channel.readUnsignedShort();
-        /**
+        /*
          * This is a bit field with the following definition:
          * <ul>
          * <li>0 : If set, the message data is constant. This is used for
@@ -160,7 +166,7 @@ public final class ObjectHeaderV1 extends IOStructure implements ObjectHeader {
             message.read(channel);
             messages.add(message);
         } else {
-            /**
+            /*
              * The format and length of this field is determined by the header
              * message type and size respectively. Some header message types do
              * not require any data and this information can be eliminated by

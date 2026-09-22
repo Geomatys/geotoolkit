@@ -23,12 +23,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 import org.apache.sis.storage.AbstractResource;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.hdf.DenseStorage;
+import org.geotoolkit.hdf.HDF5Provider;
 import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.ObjectHeader;
 import org.geotoolkit.hdf.SymbolTableEntry;
@@ -38,11 +42,11 @@ import org.geotoolkit.hdf.datatype.Reference;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.Connector;
 import org.geotoolkit.hdf.io.HDF5DataInput;
+import org.geotoolkit.hdf.message.AttributeInfoMessage;
 import org.geotoolkit.hdf.message.AttributeMessage;
-import org.geotoolkit.hdf.message.BogusMessage;
+import org.geotoolkit.hdf.message.LinkInfo;
+import org.geotoolkit.hdf.message.LinkMessage;
 import org.geotoolkit.hdf.message.Message;
-import org.geotoolkit.hdf.message.NillMessage;
-import org.geotoolkit.hdf.message.ObjectHeaderContinuationMessage;
 import org.geotoolkit.hdf.message.SymbolTableMessage;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.util.GenericName;
@@ -58,48 +62,171 @@ public final class Group extends AbstractResource implements Node, Aggregate {
 
     private final Group parent;
     private final Connector connector;
-    private final SymbolTableEntry entry;
 
     private final long address;
     private final String name;
     private final GenericName genericName;
-    private final BTreeV1 btree;
-    private final LocalHeap localHeap;
     private final List<Node> components = new ArrayList<>();
 
     //parsed values
     private final Map<String,Object> attributes = new HashMap<>();
+    /**
+     * Soft links of this group, by link name, the value being the path of the
+     * link target. Soft links are exposed as is, they are not resolved.
+     */
+    private final Map<String,String> softLinks = new LinkedHashMap<>();
+    /**
+     * External links of this group, by link name. Following one would mean
+     * opening another file, which is not done.
+     */
+    private final Map<String,LinkMessage.External> externalLinks = new LinkedHashMap<>();
 
-    public Group(Group parent, Connector connector, SymbolTableEntry entry, String name) throws IOException, DataStoreException {
+    /**
+     * Create a group from the address of its object header.
+     *
+     * @param parent parent group, {@code null} for the root group
+     * @param connector file connector, not {@code null}
+     * @param objectHeaderAddress address of this group object header
+     * @param name name of this group within its parent
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the object header or a child is invalid or unsupported.
+     */
+    public Group(Group parent, Connector connector, long objectHeaderAddress, String name) throws IOException, DataStoreException {
+        this(parent, connector, objectHeaderAddress, name, Node.readHeader(connector, objectHeaderAddress));
+    }
+
+    /**
+     * Create a group from an already decoded object header, avoiding a second read.
+     *
+     * @param parent parent group, {@code null} for the root group
+     * @param connector file connector, not {@code null}
+     * @param objectHeaderAddress address of this group object header
+     * @param name name of this group within its parent
+     * @param header decoded object header of this group
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if a link or a child is invalid or unsupported.
+     * @see Node#create(Group, Connector, long, String)
+     */
+    Group(Group parent, Connector connector, long objectHeaderAddress, String name, ObjectHeader header) throws IOException, DataStoreException {
         super(null, false);
         this.parent = parent;
         this.name = name;
         this.connector = connector;
-        this.entry = entry;
         this.genericName = Node.createName(this);
-        this.address = entry.getObjectHeaderAddress();
+        this.address = objectHeaderAddress;
 
-        final ObjectHeader header;
         try (final HDF5DataInput channel = connector.createChannel()) {
-            header = entry.getHeader(channel);
-            btree = entry.getBTree(channel).orElse(null);
-            localHeap = entry.getLocalHeap(channel).orElse(null);
+            /*
+            A "new style" group stores its links either compactly, as Link messages
+            in this header, or densely, in a fractal heap referenced by the Link
+            Info message. Collect them first, the dense case needs the Link Info.
+            */
+            final List<LinkMessage> links = new ArrayList<>();
+            LinkInfo linkInfo = null;
+            AttributeInfoMessage attributeInfo = null;
 
             //extract properties
             for (Message message : header.getMessages()) {
                 if (message instanceof AttributeMessage cdt) {
                     attributes.put(cdt.getName(), cdt.getValue());
+                } else if (message instanceof AttributeInfoMessage cdt) {
+                    attributeInfo = cdt;
                 } else if (message instanceof SymbolTableMessage stm) {
                     buildComponents(channel, stm);
-                } else if (message instanceof NillMessage
-                        || message instanceof BogusMessage
-                        || message instanceof ObjectHeaderContinuationMessage) {
-                //ignore those
-            } else {
-                    throw new IOException("Unhandled message " + message.getClass().getSimpleName());
+                } else if (message instanceof LinkMessage cdt) {
+                    links.add(cdt);
+                } else if (message instanceof LinkInfo cdt) {
+                    linkInfo = cdt;
+                } else {
+                    /*
+                    Unknown or merely informative messages are ignored : refusing to
+                    open a file because of a single unrecognized optional message
+                    would be worse than reading what we do understand.
+                    */
+                    HDF5Provider.LOGGER.log(Level.FINE, () -> "Ignored message "
+                            + message.getClass().getSimpleName() + " in group " + name);
                 }
             }
+
+            if (linkInfo != null && channel.isDefinedOffset(linkInfo.getFractalHeapAddress())) {
+                /*
+                Dense link storage : the Link messages live in a fractal heap
+                indexed by a version 2 B-tree rather than in this object header.
+                */
+                links.addAll(DenseStorage.readLinks(channel,
+                        linkInfo.getFractalHeapAddress(), linkInfo.getV2BtreeNameIndexAddress()));
+            }
+
+            for (LinkMessage link : links) {
+                addLink(link);
+            }
+
+            if (attributeInfo != null && channel.isDefinedOffset(attributeInfo.getFractalHeapAddress())) {
+                DenseStorage.readAttributes(channel, attributeInfo.getFractalHeapAddress(),
+                        attributeInfo.getAttributeNameV2btreeAddress(), attributes, name);
+            }
         }
+    }
+
+    /**
+     * Returns whether the given object header address is this group or one of its ancestors.
+     * Hard links may point back at an enclosing group, which the HDF5 library
+     * allows, so following them blindly would recurse forever.
+     *
+     * @param objectHeaderAddress object header address to test.
+     * @return whether the given object header address is this group or one of its ancestors
+     */
+    private boolean isAncestor(long objectHeaderAddress) {
+        for (Group group = this; group != null; group = group.getParent()) {
+            if (group.getAddress() == objectHeaderAddress) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Add the component or link described by the given Link message.
+     *
+     * @param link link to add, hard links become child nodes.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the linked object is invalid or unsupported.
+     */
+    private void addLink(LinkMessage link) throws IOException, DataStoreException {
+        final String linkName = link.getName();
+        final LinkMessage.LinkInformation info = link.getLinkInformation();
+        if (info instanceof LinkMessage.Hard hard) {
+            if (isAncestor(hard.objectHeaderAddress())) {
+                HDF5Provider.LOGGER.log(Level.FINE, () -> "Skipped link " + linkName
+                        + " of group " + name + ", it points back at an enclosing group.");
+                return;
+            }
+            components.add(Node.create(this, connector, hard.objectHeaderAddress(), linkName));
+        } else if (info instanceof LinkMessage.Soft soft) {
+            softLinks.put(linkName, soft.value());
+        } else if (info instanceof LinkMessage.External external) {
+            externalLinks.put(linkName, external);
+        } else {
+            HDF5Provider.LOGGER.log(Level.FINE, () -> "Ignored user defined link " + linkName);
+        }
+    }
+
+    /**
+     * Returns the soft links of this group by link name, never {@code null}.
+     * The value is the path of the target, which is not resolved.
+     *
+     * @return the soft links of this group by link name, never {@code null}
+     */
+    public Map<String,String> getSoftLinks() {
+        return Collections.unmodifiableMap(softLinks);
+    }
+
+    /**
+     * Returns the external links of this group by link name, never {@code null}.
+     * Targets live in another file and are not opened.
+     *
+     * @return the external links of this group by link name, never {@code null}
+     */
+    public Map<String,LinkMessage.External> getExternalLinks() {
+        return Collections.unmodifiableMap(externalLinks);
     }
 
     @Override
@@ -158,14 +285,25 @@ public final class Group extends AbstractResource implements Node, Aggregate {
         for (SymbolTableEntry entry : stn.entries) {
             final String componentName = entry.getName(channel, localHeap).orElse("");
             final int cacheType = entry.getCacheType();
-            if (cacheType == 0) {
-                components.add(new Dataset(this, connector, entry, componentName));
-            } else if (cacheType == 1) {
-                components.add(new Group(this, connector, entry, componentName));
-            } else if (cacheType == 2) {
-                throw new IOException("Not supported yet");
+            if (cacheType == 2) {
+                /*
+                Symbolic (soft) link. The target path is stored in the local heap
+                of the group holding the link, not in the entry itself.
+                */
+                final String target = localHeap == null ? null
+                        : localHeap.getString(channel, entry.offsetToLinkValue);
+                softLinks.put(componentName, target);
+            } else if (isAncestor(entry.getObjectHeaderAddress())) {
+                HDF5Provider.LOGGER.log(Level.FINE, () -> "Skipped entry " + componentName
+                        + " of group " + name + ", it points back at an enclosing group.");
             } else {
-                throw new IOException("Unexpected symbol table entry cache type " + cacheType);
+                /*
+                Cache types 0 and 1 only say whether the group metadata happened to
+                be cached in the scratch pad; type 0 also occurs for groups whose
+                hard link count exceeds one. The object header itself is what tells
+                a group from a dataset.
+                */
+                components.add(Node.create(this, connector, entry.getObjectHeaderAddress(), componentName));
             }
         }
     }
@@ -175,6 +313,35 @@ public final class Group extends AbstractResource implements Node, Aggregate {
         return name;
     }
 
+    /**
+     * Find node for given path.
+     *
+     * @param path {@code '/'} separated path, relative to this group or absolute if starting with {@code '/'}.
+     * @return the node, or {@code null} if the last path component is not found.
+     */
+    public Node resolve(String path) {
+        if (path.startsWith("/")) {
+            Group parent = this;
+            while (parent.getParent() != null) {
+                parent = parent.getParent();
+            }
+            return parent.resolve(path.substring(1));
+        }
+        final int split = path.indexOf('/');
+        if (split == -1) {
+            return getComponent(path);
+        } else {
+            final Node child = getComponent(path.substring(0, split));
+            return ((Group)child).resolve(path.substring(split+1));
+        }
+    }
+
+    /**
+     * Returns the direct child with the given name, or {@code null} if none.
+     *
+     * @param name child name.
+     * @return the direct child with the given name, or {@code null} if none
+     */
     public Node getComponent(String name) {
         for (Node n : components()) {
             if (name.equals(n.getName())) {

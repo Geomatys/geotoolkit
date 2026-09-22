@@ -60,8 +60,7 @@ import org.geotoolkit.util.StringUtilities;
  * compares as “greater-than” any other chunk offset and has a chunk byte size of
  * zero to indicate that it is not actually allocated.
  *
- *
- * @see III.A.1. Disk Format: Level 1A1 - Version 1 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v1">III.A.1. Disk Format: Level 1A1 - Version 1 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV1 extends IOStructure {
@@ -72,8 +71,17 @@ public final class BTreeV1 extends IOStructure {
      */
     public static final byte[] SIGNATURE = "TREE".getBytes(StandardCharsets.US_ASCII);
 
+    /** Header of the root node. */
     public Header header;
+    /**
+     * Root node: a {@link GroupNode} for group trees (node type 0),
+     * a {@link LeafChunksNode} or {@link ParentChunksNode} for chunk trees (node type 1).
+     */
     public Node root;
+
+    /** Creates an empty B-tree, filled by {@link #read(HDF5DataInput, int[])}. */
+    public BTreeV1() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {
@@ -81,10 +89,11 @@ public final class BTreeV1 extends IOStructure {
     }
 
     /**
+     * Reads the root node. For chunk trees, child nodes are read recursively.
      *
-     * @param channel
-     * @param chunkDimension only used for nodeType == 1
-     * @throws IOException
+     * @param channel channel positioned on the node
+     * @param chunkDimension chunk size in each dimension, only used for chunk trees (node type 1)
+     * @throws IOException if an I/O error occurred or the node type is unknown.
      */
     public void read(HDF5DataInput channel, int[] chunkDimension) throws IOException {
         header = new Header();
@@ -116,9 +125,17 @@ public final class BTreeV1 extends IOStructure {
      */
     public static abstract class Node {
 
+        /** Creates an empty node. */
+        public Node() {
+        }
+
         abstract void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException;
     }
 
+    /**
+     * A node of a group tree (node type 0), whose keys are offsets of object
+     * names in the local heap and whose children are symbol table nodes.
+     */
     public static final class GroupNode extends Node {
 
         /**
@@ -142,6 +159,10 @@ public final class BTreeV1 extends IOStructure {
          */
         public long[] groupChildAddresses;
 
+        /** Creates an empty group node. */
+        public GroupNode() {
+        }
+
         @Override
         public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
             groupChildKeys = new long[header.entriesUsed + 1];
@@ -159,14 +180,34 @@ public final class BTreeV1 extends IOStructure {
         }
     }
 
+    /**
+     * A node of a chunk tree (node type 1), which indexes the raw data chunks of a dataset.
+     */
     public static abstract class DataNode extends Node {
 
+        /** Creates an empty data node. */
+        public DataNode() {
+        }
+
+        /**
+         * Returns the chunks of this node and its sub-trees.
+         *
+         * @return the chunks of this node and its sub-trees
+         */
         public abstract List<BTreeV1Chunk> getChunks();
     }
 
+    /**
+     * An internal node of a chunk tree (node level above 0), whose children are other chunk tree nodes.
+     */
     public static final class ParentChunksNode extends DataNode {
 
+        /** Child nodes, read from the sub-trees. */
         public DataNode[] dataKeys;
+
+        /** Creates an empty parent node. */
+        public ParentChunksNode() {
+        }
 
         @Override
         public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
@@ -202,9 +243,17 @@ public final class BTreeV1 extends IOStructure {
 
     }
 
+    /**
+     * A leaf node of a chunk tree (node level 0), whose children are raw data chunks.
+     */
     public static final class LeafChunksNode extends DataNode {
 
+        /** Chunk keys, each completed with the address of the chunk raw data. */
         public BTreeV1Chunk[] dataKeys;
+
+        /** Creates an empty leaf node. */
+        public LeafChunksNode() {
+        }
 
         @Override
         public void read(HDF5DataInput channel, Header header, int[] chunkDimension) throws IOException {
@@ -230,6 +279,10 @@ public final class BTreeV1 extends IOStructure {
         }
     }
 
+    /**
+     * The header of a B-tree node: signature, node type and level, number of
+     * entries and addresses of the sibling nodes.
+     */
     public static final class Header {
 
         /**
@@ -271,6 +324,16 @@ public final class BTreeV1 extends IOStructure {
          */
         public long addressOfRightSibling;
 
+        /** Creates an empty header, filled by {@link #read(HDF5DataInput)}. */
+        public Header() {
+        }
+
+        /**
+         * Reads the header and checks the node signature.
+         *
+         * @param channel channel positioned on the node
+         * @throws IOException if an I/O error occurred or the signature does not match.
+         */
         public void read(HDF5DataInput channel) throws IOException {
             channel.ensureSignature(SIGNATURE);
             nodeType = channel.readUnsignedByte();

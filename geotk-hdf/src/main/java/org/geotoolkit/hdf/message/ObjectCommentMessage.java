@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf.message;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -30,21 +31,32 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * Description:
  * The object comment is designed to be a short description of an object. An
- * object comment is a sequence of non-zero (\0) ASCII characters with no
+ * object comment is a sequence of non-zero ({@code \0}) ASCII characters with no
  * other formatting included by the library.
  *
- * @see IV.A.2.n. The Object Comment Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_comment">IV.A.2.n. The Object Comment Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ObjectCommentMessage extends Message {
 
+    /** A null terminated ASCII character string. */
+    private String comment;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ObjectCommentMessage() {
+    }
+
     /**
-     * A null terminated ASCII character string.
+     * Returns the object comment, a short description of the object.
+     *
+     * @return the object comment, a short description of the object
      */
-    private byte[] comment;
+    public String getComment() {
+        return comment;
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {
-        throw new IOException("TODO");
+        comment = channel.readNullTerminatedString(0, StandardCharsets.US_ASCII);
     }
 }

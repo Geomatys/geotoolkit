@@ -20,8 +20,9 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Shared message record of an index node, for a message stored in an object header.
  *
- * @see III.I. Disk Format: Level 1I - Shared Object Header Message Table
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_sohm">III.I. Disk Format: Level 1I - Shared Object Header Message Table</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedMessageRecordStoredInObjectHeader extends IOStructure {
@@ -48,14 +49,19 @@ public final class SharedMessageRecordStoredInObjectHeader extends IOStructure {
     private long objectHeaderAddress;
 
 
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public SharedMessageRecordStoredInObjectHeader() {
+    }
+
     @Override
     public void read(HDF5DataInput channel) throws IOException {
 
         messageLocation = channel.readUnsignedByte();
         hashValue = channel.readInt();
-        channel.skipFully(1);
+        channel.skipFully(1); //reserved
         messageType = channel.readUnsignedByte();
-        creationIndex = channel.readUnsignedByte();
+        //the creation index is two bytes, making this record 17 bytes long
+        creationIndex = channel.readUnsignedShort();
         objectHeaderAddress = channel.readOffset();
     }
 }

@@ -22,63 +22,86 @@ import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Direct block of a fractal heap, holding the actual object data.
+ * <p>
+ * The width of the block offset field is derived from the heap header, so this
+ * block can not be decoded without it.
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeapDirectBlock extends IOStructure {
 
     /**
      * The ASCII character string “FHDB” is used to indicate the beginning of a
-     * fractal heap direct block. This gives file consistency checking utilities
-     * a better chance of reconstructing a damaged file.
+     * fractal heap direct block.
      */
     public static final byte[] SIGNATURE = "FHDB".getBytes(StandardCharsets.US_ASCII);
 
     /**
-     * This is the address for the fractal heap header that this block belongs
-     * to. This field is principally used for file integrity checking.
+     * Address of the fractal heap header this block belongs to.
      */
     private long heapHeaderAddress;
     /**
-     * This is the offset of the block within the fractal heap’s address space
-     * (in bytes). The number of bytes used to encode this field is the Maximum
-     * Heap Size (in the heap’s header) divided by 8 and rounded up to the next
-     * highest integer, for values that are not a multiple of 8. This value is
-     * principally used for file integrity checking.
+     * Offset of the first byte of this block in the heap linear address space.
      */
-    private int blockOffset;
+    private long blockOffset;
     /**
-     * This is the checksum for the direct block.
-     * This field is only present if bit 1 of Flags in the heap’s header is set.
+     * Address of this block in the file.
      */
-    private int Checksum;
-    /**
-     * This section of the direct block stores the actual data for objects in
-     * the heap. The size of this section is determined by the direct block’s
-     * size minus the size of the other fields stored in the direct block (for
-     * example, the Signature, Version, and others including the Checksum if
-     * it is present).
-     */
-    private byte[] objectData;
+    private long address;
 
+    /** Creates an empty direct block, filled by {@link #read(HDF5DataInput, FractalHeap)}. */
+    public FractalHeapDirectBlock() {
+    }
+
+    /**
+     * Returns the offset of the first byte of this block in the heap linear address space.
+     *
+     * @return the offset of the first byte of this block in the heap linear address space
+     */
+    public long getBlockOffset() {
+        return blockOffset;
+    }
+
+    /**
+     * Returns the address of this block in the file, that is the position of its signature.
+     *
+     * @return the address of this block in the file, that is the position of its signature
+     */
+    public long getAddress() {
+        return address;
+    }
+
+    /**
+     * A direct block can not be decoded without its heap header.
+     *
+     * @throws UnsupportedOperationException always
+     * @see #read(HDF5DataInput, FractalHeap)
+     */
     @Override
     public void read(HDF5DataInput channel) throws IOException {
+        throw new UnsupportedOperationException("A fractal heap direct block requires"
+                + " its heap header to be decoded, use read(channel, heap).");
+    }
 
+    /**
+     * Read the block prefix. The object data follows and is left in place; heap
+     * offsets are relative to the beginning of the block, prefix included, so the
+     * caller seeks directly rather than copying the data.
+     *
+     * @param channel channel positioned on the block signature
+     * @param heap owning heap header, not null
+     * @throws IOException if an I/O error occurred or the signature or version is invalid.
+     */
+    public void read(HDF5DataInput channel, FractalHeap heap) throws IOException {
+        address = channel.getStreamPosition();
         channel.ensureSignature(SIGNATURE);
-        /*
-        This document describes version 0.
-        */
         channel.ensureVersion(0);
         heapHeaderAddress = channel.readOffset();
-        /*
-        blockOffset
-
-        checksum
-
-        object data
-        */
-
-        throw new IOException("TODO");
+        blockOffset = channel.readUnsignedInteger(heap.getHeapOffsetSize());
+        if (heap.isDirectBlockChecksummed()) {
+            final int checksum = channel.readInt();
+        }
     }
 }

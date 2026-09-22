@@ -21,8 +21,10 @@ import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Fractal heap ID of a tiny object, extended form (heap IDs longer than 18 bytes).
+ * The object data is embedded in the ID, after two bytes holding a 12 bits length.
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeapId_TinyObject_Subtype2_Extended extends IOStructure {
@@ -55,6 +57,10 @@ public final class FractalHeapId_TinyObject_Subtype2_Extended extends IOStructur
      * This is the data for the object.
      */
     private byte[] data;
+
+    /** Creates an empty heap ID, filled by {@link #read(HDF5DataInput)}. */
+    public FractalHeapId_TinyObject_Subtype2_Extended() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

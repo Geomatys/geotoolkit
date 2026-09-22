@@ -33,7 +33,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * the maximum creation index for the attributes created and the location of
  * the attribute storage when the attributes are stored “densely”.
  *
- * @see IV.A.2.v. The Attribute Info Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_attrinfo">IV.A.2.v. The Attribute Info Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class AttributeInfoMessage extends Message {
@@ -41,16 +41,17 @@ public final class AttributeInfoMessage extends Message {
     /**
      * This is the attribute index information flag with the following
      * definition:
-     * Bit
-     * 0 : If set, creation order for attributes is tracked.
-     * 1 : If set, creation order for attributes is indexed.
-     * 2-7 : Reserved
+     * <ul>
+     *   <li>Bit 0 : If set, creation order for attributes is tracked.</li>
+     *   <li>Bit 1 : If set, creation order for attributes is indexed.</li>
+     *   <li>Bits 2-7 : Reserved</li>
+     * </ul>
      */
     private int flags;
     /**
      * This field is present if bit 0 of Flags is set.
-     *
-     * The is the maximum creation order index value for the attributes on the
+     * <p>
+     * This is the maximum creation order index value for the attributes on the
      * object.
      */
     private int maximumCreationIndex;
@@ -67,11 +68,72 @@ public final class AttributeInfoMessage extends Message {
     private long attributeNameV2btreeAddress;
     /**
      * This field is present if bit 1 of Flags is set.
-     *
+     * <p>
      * This is the address of the version 2 B-tree to index the creation order
      * of densely stored attributes.
      */
     private long attributeCreationOrderV2btreeAddress;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public AttributeInfoMessage() {
+    }
+
+    /**
+     * Returns whether creation order for attributes is tracked.
+     *
+     * @return whether creation order for attributes is tracked
+     */
+    public boolean isCreationOrderTracked() {
+        return (flags & 1) != 0;
+    }
+
+    /**
+     * Returns whether creation order for attributes is indexed.
+     *
+     * @return whether creation order for attributes is indexed
+     */
+    public boolean isCreationOrderIndexed() {
+        return (flags & 2) != 0;
+    }
+
+    /**
+     * Returns the address of the fractal heap storing dense attributes.
+     * Undefined when attributes are stored compactly as object header messages.
+     *
+     * @return the address of the fractal heap storing dense attributes
+     */
+    public long getFractalHeapAddress() {
+        return fractalHeapAddress;
+    }
+
+    /**
+     * Returns the address of the version 2 B-tree indexing dense attribute names.
+     *
+     * @return the address of the version 2 B-tree indexing dense attribute names
+     */
+    public long getAttributeNameV2btreeAddress() {
+        return attributeNameV2btreeAddress;
+    }
+
+    /**
+     * Returns the address of the version 2 B-tree indexing dense attribute creation order.
+     * Only meaningful when {@link #isCreationOrderIndexed()}.
+     *
+     * @return the address of the version 2 B-tree indexing dense attribute creation order
+     */
+    public long getAttributeCreationOrderV2btreeAddress() {
+        return attributeCreationOrderV2btreeAddress;
+    }
+
+    /**
+     * Returns the maximum creation order index of the attributes.
+     * Only meaningful when {@link #isCreationOrderTracked()}.
+     *
+     * @return the maximum creation order index of the attributes
+     */
+    public int getMaximumCreationIndex() {
+        return maximumCreationIndex;
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

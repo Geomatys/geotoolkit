@@ -23,7 +23,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 /**
  * The format for the ID used to locate an object in the global heap.
  *
- * @see III.E. Disk Format: Level 1E - Global Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_globalheap">III.E. Disk Format: Level 1E - Global Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GlobalHeapId extends IOStructure {
@@ -37,6 +37,10 @@ public final class GlobalHeapId extends IOStructure {
      * This field is the index of the data object within the global heap collection.
      */
     public int objectIndex;
+
+    /** Creates an empty global heap ID, filled by {@link #read(HDF5DataInput)}. */
+    public GlobalHeapId() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

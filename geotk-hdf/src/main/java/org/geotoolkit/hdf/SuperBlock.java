@@ -17,6 +17,7 @@
 package org.geotoolkit.hdf;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -47,7 +48,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * is used for file locking. This format version will enable support for the latest version.</li>
  * </ul>
  *
- * @see II.A. Disk Format: Level 0A - Format Signature and Superblock
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_boot_super">II.A. Disk Format: Level 0A - Format Signature and Superblock</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SuperBlock extends IOStructure {
@@ -155,10 +156,10 @@ public final class SuperBlock extends IOStructure {
      * Bit 1 is reserved for future use.
      * Bit 2 if set indicates that the file has been opened for single-writer/multiple-reader (SWMR) write access.
      * Bits 3-7 are reserved for future use.
-     *
+     * <p>
      * Bit 0 should be set as the first action when a file has been opened for write access. Bit 2 should be set when a file has been opened for SWMR write access. These two bits should be cleared only as the final action when closing a file.
      * The size of this field has been reduced from 4 bytes in superblock format versions 0 and 1 to 1 byte.
-     *
+     * <p>
      * This field is present in version 0+ of the superblock.
      */
     private int fileConsistencyFlags;
@@ -240,10 +241,24 @@ public final class SuperBlock extends IOStructure {
      */
     private long rootGroupObjectHeaderAddress;
 
+    /** Creates an empty superblock, filled by {@link #read(HDF5DataInput)}. */
+    public SuperBlock() {
+    }
+
+    /**
+     * Returns the number of bytes used to store the size of an object in the file.
+     *
+     * @return the number of bytes used to store the size of an object in the file
+     */
     public int getSizeOfLengths() {
         return sizeOfLengths;
     }
 
+    /**
+     * Returns the number of bytes used to store addresses in the file.
+     *
+     * @return the number of bytes used to store addresses in the file
+     */
     public int getSizeOfOffsets() {
         return sizeOfOffsets;
     }
@@ -283,11 +298,109 @@ public final class SuperBlock extends IOStructure {
             channel.setOffsetSize(sizeOfOffsets);
             channel.setLengthSize(sizeOfLengths);
             fileConsistencyFlags = channel.readUnsignedByte();
+            baseAddress = channel.readOffset();
             superblockExtensionAddress = channel.readOffset();
             endOfFileAddress = channel.readOffset();
             rootGroupObjectHeaderAddress = channel.readOffset();
             int checksum = channel.readInt();//ignored for now
+        } else {
+            throw new IOException("Unsupported superblock version " + superblockVersion);
         }
+
+        /*
+        Every address stored in the file is relative to the base address. This
+        reader treats them as absolute, which is only correct when the base
+        address is zero, that is when the file has no user block. Fail clearly
+        rather than decode every structure at the wrong place.
+        */
+        if (baseAddress != 0) {
+            throw new IOException("This file declares a base address of " + baseAddress
+                    + ", meaning it has a user block. Such files are not supported yet.");
+        }
+    }
+
+    /** Offset of the first byte a superblock may start at after offset zero. */
+    private static final int FIRST_ALTERNATE_OFFSET = 512;
+
+    /**
+     * Look for the format signature at the offsets where a superblock may start.
+     * <p>
+     * A file may begin with a user block of unspecified content, so the signature
+     * is searched at byte offset 0, then 512, then at each successive multiple of
+     * two of the previous one. The user block size is a power of two, which is why
+     * no other offset needs to be tried.
+     * <p>
+     * The buffer is read with absolute accesses, so its position is left untouched
+     * and only the bytes it already holds are looked at. A file whose user block is
+     * larger than that is reported as not being HDF5.
+     *
+     * @param buffer bytes from the beginning of the file, not {@code null}
+     * @return offset of the signature, or -1 if the buffer holds no signature
+     */
+    public static long findSignatureOffset(final ByteBuffer buffer) {
+        final int start = buffer.position();
+        final int limit = buffer.limit();
+        for (long offset = 0; ; offset = (offset == 0) ? FIRST_ALTERNATE_OFFSET : offset * 2) {
+            final long position = start + offset;
+            if (position + SIGNATURE.length > limit) {
+                return -1;
+            }
+            int i = 0;
+            while (i < SIGNATURE.length && buffer.get((int) position + i) == SIGNATURE[i]) {
+                i++;
+            }
+            if (i == SIGNATURE.length) {
+                return offset;
+            }
+        }
+    }
+
+    /**
+     * Returns the version of this superblock, 0 to 3.
+     *
+     * @return the version of this superblock, 0 to 3
+     */
+    public int getVersion() {
+        return superblockVersion;
+    }
+
+    /**
+     * Returns the address of the root group object header.
+     * Only meaningful for superblock versions 2 and 3, versions 0 and 1 use
+     * {@link #rootGroupSymbolTableEntry} instead.
+     *
+     * @return the address of the root group object header
+     * @see #resolveRootObjectHeaderAddress()
+     */
+    public long getRootGroupObjectHeaderAddress() {
+        return rootGroupObjectHeaderAddress;
+    }
+
+    /**
+     * Returns the address of the superblock extension object header, or the undefined address if none.
+     * Only present in versions 2 and 3.
+     *
+     * @return the address of the superblock extension object header, or the undefined address if none
+     */
+    public long getSuperblockExtensionAddress() {
+        return superblockExtensionAddress;
+    }
+
+    /**
+     * Returns the address of the root group object header, whichever way this superblock version stores it.
+     *
+     * @return the address of the root group object header, whichever way this superblock version stores it
+     * @throws IOException if this superblock is of version 0 or 1 and has no root group symbol table entry.
+     */
+    public long resolveRootObjectHeaderAddress() throws IOException {
+        if (superblockVersion == 0 || superblockVersion == 1) {
+            if (rootGroupSymbolTableEntry == null) {
+                throw new IOException("Superblock version " + superblockVersion
+                        + " has no root group symbol table entry.");
+            }
+            return rootGroupSymbolTableEntry.getObjectHeaderAddress();
+        }
+        return rootGroupObjectHeaderAddress;
     }
 
     @Override

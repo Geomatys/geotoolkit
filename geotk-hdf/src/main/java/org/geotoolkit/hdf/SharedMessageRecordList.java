@@ -22,8 +22,10 @@ import java.util.List;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * List of shared message records, used as a list index node of the shared object header message table.
+ * Each record locates a shared message either in the fractal heap of the index or in an object header.
  *
- * @see III.I. Disk Format: Level 1I - Shared Object Header Message Table
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_sohm">III.I. Disk Format: Level 1I - Shared Object Header Message Table</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedMessageRecordList extends IOStructure {
@@ -41,6 +43,16 @@ public final class SharedMessageRecordList extends IOStructure {
      */
     public List<Object> sharedMessages;
 
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public SharedMessageRecordList() {
+    }
+
+    /**
+     * Not yet implemented.
+     *
+     * @param channel channel positioned on the record list.
+     * @throws IOException always.
+     */
     public void read(HDF5DataInput channel) throws IOException {
 
         channel.ensureSignature(SIGNATURE);

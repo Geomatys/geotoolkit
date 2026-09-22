@@ -28,7 +28,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * which is typically shared between datasets. The global heap was designed to
  * satisfy these goals:
  * <ul>
- * <li>A.Repeated access to a heap object must be efficient without resulting in
+ * <li>A. Repeated access to a heap object must be efficient without resulting in
  * repeated file I/O requests. Since global heap objects will typically be shared
  * among several datasets, it is probable that the object will be accessed repeatedly.</li>
  * <li>B. Collections of related global heap objects should result in fewer and
@@ -36,7 +36,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * a global heap object for each reference.
  * Reading the entire set of object references should result in a few large
  * I/O requests instead of one small I/O request for each reference.</li>
- * <li>It should be possible to remove objects from the global heap and the
+ * <li>C. It should be possible to remove objects from the global heap and the
  * resulting file hole should be eligible to be reclaimed for other uses.</li>
  * </ul>
  * The implementation of the heap makes use of the memory management already
@@ -65,9 +65,9 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * heap ID. The format for global heap IDs is described at the end of this section.
  * <p>
  * For more information on global heaps for virtual datasets, see
- * “Disk Format: Level 1F - Global Heap Block for Virtual Datasets.”
+ * {@link GlobalHeapBlockForVirtualDatasets} (“Disk Format: Level 1F - Global Heap Block for Virtual Datasets”).
  *
- * @see III.E. Disk Format: Level 1E - Global Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_globalheap">III.E. Disk Format: Level 1E - Global Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GlobalHeap extends IOStructure {
@@ -86,12 +86,22 @@ public final class GlobalHeap extends IOStructure {
      * the collection. Free space always appears at the end of the collection.
      * If the free space is too small to store the header for Object 0
      * (described below) then the header is implied and is not written.
-     *
+     * <p>
      * The field Object Size for Object 0 indicates the amount of possible free
      * space in the collection including the 16-byte header size of Object 0.
      */
     private Map<Integer,GlobalHeapObject> globalHeapObjects = new HashMap<>();
 
+    /** Creates an empty global heap collection, filled by {@link #read(HDF5DataInput)}. */
+    public GlobalHeap() {
+    }
+
+    /**
+     * Returns the object with the given index, or {@code null} if none.
+     *
+     * @param index object index within the collection, as given by a {@link GlobalHeapId}
+     * @return the object with the given index, or {@code null} if none
+     */
     public GlobalHeapObject getHeapObject(int index) {
         return globalHeapObjects.get(index);
     }

@@ -24,7 +24,11 @@ import org.geotoolkit.hdf.heap.GlobalHeapObject;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Variable-length datatype : a sequence of a base type or a string, whose
+ * content is stored in a global heap. Sequences are decoded as arrays of the
+ * base type and strings as {@link String} with their padding removed.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class VariableLength extends DataType {
@@ -35,44 +39,45 @@ public final class VariableLength extends DataType {
 
     /**
      * Type. This four-bit value contains the type of variable-length datatype described. The values defined are:
-     * Value Description
-     * 0 : Sequence: A variable-length sequence of any datatype.
-     * Variable-length sequences do not have padding or character set
-     * information.
-     * 1 : String: A variable-length sequence of characters. Variable-length
-     * strings have padding and character set information.
-     * 2-15 : Reserved
+     * <ul>
+     *   <li>0 : Sequence: A variable-length sequence of any datatype.
+     *   Variable-length sequences do not have padding or character set
+     *   information.</li>
+     *   <li>1 : String: A variable-length sequence of characters. Variable-length
+     *   strings have padding and character set information.</li>
+     *   <li>2-15 : Reserved</li>
+     * </ul>
      */
     public final int type;
     /**
      * Padding type. (variable-length string only) This four-bit value
      * determines the type of padding used for variable-length strings.
      * The values are the same as for the string padding type, as follows:
-     * Value  Description
-     * 0 : Null terminate: A zero byte marks the end of a string and is
-     * guaranteed to be present after converting a long string to a short
-     * string. When converting a short string to a long string, the value is
-     * padded with additional null characters as necessary.
-     * 1 : Null pad: Null characters are added to the end of the value during
-     * conversion from a short string to a longer string. Conversion from a
-     * long string to a shorter string simply truncates the value.
-     * 2 : Space pad: Space characters are added to the end of the value
-     * during conversion from a short string to a longer string. Conversion
-     * from a long string to a shorter string simply truncates the value.
-     * This is the Fortran representation of the string.
-     * 3-15 : Reserved
-     *
+     * <ul>
+     *   <li>0 : Null terminate: A zero byte marks the end of a string and is
+     *   guaranteed to be present after converting a long string to a short
+     *   string. When converting a short string to a long string, the value is
+     *   padded with additional null characters as necessary.</li>
+     *   <li>1 : Null pad: Null characters are added to the end of the value during
+     *   conversion from a short string to a longer string. Conversion from a
+     *   long string to a shorter string simply truncates the value.</li>
+     *   <li>2 : Space pad: Space characters are added to the end of the value
+     *   during conversion from a short string to a longer string. Conversion
+     *   from a long string to a shorter string simply truncates the value.
+     *   This is the Fortran representation of the string.</li>
+     *   <li>3-15 : Reserved</li>
+     * </ul>
      * This value is set to zero for variable-length sequences.
      */
     public final int paddingType;
     /**
      * Character Set. (variable-length string only) This four-bit value
      * specifies the character set to be used for encoding the string:
-     * Value Description
-     * 0 : ASCII character set encoding
-     * 1 : UTF-8 character set encoding
-     * 2-15 : Reserved
-     *
+     * <ul>
+     *   <li>0 : ASCII character set encoding</li>
+     *   <li>1 : UTF-8 character set encoding</li>
+     *   <li>2-15 : Reserved</li>
+     * </ul>
      * This value is set to zero for variable-length sequences.
      */
     public final int characterSet;
@@ -82,6 +87,15 @@ public final class VariableLength extends DataType {
      */
     public final DataType baseType;
 
+    /**
+     * Reads the datatype properties, which are the base type.
+     *
+     * @param byteSize element size in bytes, which is the size of the heap reference.
+     * @param classBitFields class bit fields (type, padding, character set).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the base datatype is invalid or unsupported.
+     */
     public VariableLength(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         type = classBitFields & 0b1111;
@@ -93,9 +107,38 @@ public final class VariableLength extends DataType {
     @Override
     public Class getValueClass() {
         if (type == 0) {
-            return Object.class;
+            //a sequence decodes to an array of the base type
+            return java.lang.reflect.Array.newInstance(baseType.getValueClass(), 0).getClass();
         } else {
             return String.class;
+        }
+    }
+
+    /**
+     * Apply the padding rule of a fixed or variable length string.
+     *
+     * @param value raw characters
+     * @param paddingType 0 null terminated, 1 null padded, 2 space padded
+     * @return the trimmed string
+     */
+    static String trim(String value, int paddingType) {
+        switch (paddingType) {
+            case PADDING_NULL_TERMINATED: {
+                final int end = value.indexOf('\0');
+                return end < 0 ? value : value.substring(0, end);
+            }
+            case PADDING_NULL_PAD: {
+                int end = value.length();
+                while (end > 0 && value.charAt(end - 1) == '\0') end--;
+                return value.substring(0, end);
+            }
+            case PADDING_SPACE_PAD: {
+                int end = value.length();
+                while (end > 0 && value.charAt(end - 1) == ' ') end--;
+                return value.substring(0, end);
+            }
+            default:
+                return value;
         }
     }
 
@@ -116,8 +159,11 @@ public final class VariableLength extends DataType {
         format for global heap IDs is described at the end of this section.
         */
 
-        //TODO is is not defined anywhere, but 4bytes are here with an unkown information
-        channel.skipFully(4);
+        /*
+        An element is the number of items of the value, then the global heap
+        identifier of the collection holding them.
+        */
+        final long length = channel.readUnsignedInt();
 
         final GlobalHeapId globalheapId = new GlobalHeapId();
         globalheapId.read(channel);
@@ -133,41 +179,47 @@ public final class VariableLength extends DataType {
             return null;
         }
 
-        if (type == 0) {
-            //undefined type
-            try {
-                channel.mark();
-                channel.seek(globalHeapObject.streamDataPosition);
+        /*
+        The heap object lives in the file, at a position the heap reported. When
+        this value is being decoded from a buffer extracted from a heap, such as a
+        densely stored attribute, that position must be seeked on the file channel
+        rather than on the buffer.
+        */
+        final HDF5DataInput fileChannel = channel.getFileChannel();
 
-                switch (paddingType) {
-                    case PADDING_NULL_TERMINATED:
-                        return baseType.readData(channel);
-                        //return channel.readNBytes((int) globalHeapObject.objectSize);
-                    case PADDING_NULL_PAD:
-                    case PADDING_SPACE_PAD:
-                    default:
-                        throw new IOException("Unsupported padding " + paddingType);
+        if (type == 0) {
+            /*
+            A sequence of the base type. The element gives how many items there
+            are; reading a single one would only be correct by accident.
+            */
+            final int count = Math.toIntExact(length);
+            final Object values = java.lang.reflect.Array.newInstance(baseType.getValueClass(), count);
+            try {
+                fileChannel.mark();
+                fileChannel.seek(globalHeapObject.streamDataPosition);
+                for (int i = 0; i < count; i++) {
+                    java.lang.reflect.Array.set(values, i, baseType.readData(fileChannel));
                 }
             } finally {
-                channel.reset();
+                fileChannel.reset();
             }
+            return values;
 
         } else if (type == 1) {
-
+            /*
+            A string of the given length, the padding rule then telling which of
+            those characters are significant.
+            */
             try {
-                channel.mark();
-                channel.seek(globalHeapObject.streamDataPosition);
-
-                switch (paddingType) {
-                    case PADDING_NULL_TERMINATED:
-                        return channel.readNullTerminatedString(0, (int) globalHeapObject.objectSize, characterSet == 0 ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
-                    case PADDING_NULL_PAD:
-                    case PADDING_SPACE_PAD:
-                    default:
-                        throw new IOException("Unsupported padding " + paddingType);
-                }
+                fileChannel.mark();
+                fileChannel.seek(globalHeapObject.streamDataPosition);
+                final int count = Math.toIntExact(Math.min(length, globalHeapObject.objectSize));
+                final byte[] datas = fileChannel.readNBytes(count);
+                final String value = new String(datas,
+                        characterSet == 0 ? StandardCharsets.US_ASCII : StandardCharsets.UTF_8);
+                return trim(value, paddingType);
             } finally {
-                channel.reset();
+                fileChannel.reset();
             }
 
         } else {

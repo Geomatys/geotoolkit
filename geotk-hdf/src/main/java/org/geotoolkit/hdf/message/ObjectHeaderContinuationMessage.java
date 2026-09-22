@@ -33,7 +33,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * containing more header messages for the current data object. This can be
  * used when header blocks become too large or are likely to change over time.
  *
- * @see IV.A.2.q. The Object Header Continuation Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_continuation">IV.A.2.q. The Object Header Continuation Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ObjectHeaderContinuationMessage extends Message {
@@ -53,8 +53,7 @@ public final class ObjectHeaderContinuationMessage extends Message {
      * Prefix.
      * <p>
      * Continuation blocks for version 2 object headers do have special formatting
-     * information as described here (see also the description of Version 2 Data
-     * Object Header Prefix.):
+     * information (see the description of Version 2 Data Object Header Prefix).
      */
     public long offset;
     /**
@@ -62,6 +61,10 @@ public final class ObjectHeaderContinuationMessage extends Message {
      * the file.
      */
     public long length;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ObjectHeaderContinuationMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

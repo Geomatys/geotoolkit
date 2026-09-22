@@ -18,29 +18,111 @@ package org.geotoolkit.hdf.btree;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Internal node of a version 2 B-tree : all the records first, then one child
+ * pointer more than there are records.
+ * <p>
+ * A child pointer carries the number of records of the child and, below the
+ * nodes sitting just above the leaves, the total number of records of the whole
+ * subtree. The width of both counts is computed by the header rather than stored.
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2InternalNode extends IOStructure {
 
     /**
-     * The ASCII character string “BTIN” is used to indicate the internal node of a B-tree.
+     * The ASCII character string “BTIN” is used to indicate the internal node of
+     * a version 2 (v2) B-tree.
      */
     public static final byte[] SIGNATURE = "BTIN".getBytes(StandardCharsets.US_ASCII);
 
     /**
-     * This field is the type of the B-tree node. It should always be the
-     * same as the B-tree type in the header.
+     * This field is the type of the B-tree node. It should always be the same as
+     * the B-tree type in the header.
      */
     private int type;
+    /**
+     * Raw bytes of each record.
+     */
+    private List<byte[]> records;
+    /**
+     * Addresses of the children, one more than there are records.
+     */
+    private long[] childAddresses;
+    /**
+     * Number of records held by each child.
+     */
+    private int[] childRecordCounts;
 
+    /** Creates an empty node, filled by {@link #read(HDF5DataInput, BTreeV2, int, int)}. */
+    public BTreeV2InternalNode() {
+    }
+
+    /**
+     * Returns the node type, same as the B-tree type in the header.
+     *
+     * @return the node type, same as the B-tree type in the header
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Returns the raw bytes of each record, in key order.
+     *
+     * @return the raw bytes of each record, in key order
+     */
+    public List<byte[]> getRecords() {
+        return records;
+    }
+
+    /**
+     * Returns the child node addresses, one more than there are records.
+     *
+     * @return the child node addresses, one more than there are records
+     */
+    public long[] getChildAddresses() {
+        return childAddresses;
+    }
+
+    /**
+     * Returns the number of records in each child node, excluding its descendants.
+     *
+     * @return the number of records in each child node, excluding its descendants
+     */
+    public int[] getChildRecordCounts() {
+        return childRecordCounts;
+    }
+
+    /**
+     * An internal node can not be decoded without its header, depth and record count.
+     *
+     * @throws UnsupportedOperationException always
+     * @see #read(HDF5DataInput, BTreeV2, int, int)
+     */
+    @Override
     public void read(HDF5DataInput channel) throws IOException {
+        throw new UnsupportedOperationException("A version 2 B-tree internal node requires its"
+                + " header, depth and record count to be decoded,"
+                + " use read(channel, header, depth, recordCount).");
+    }
 
+    /**
+     * Reads the records and the child pointers.
+     *
+     * @param channel channel positioned on the node signature
+     * @param header owning B-tree header, not null
+     * @param depth depth of this node, the leaves being at depth 0
+     * @param recordCount number of records in this node
+     * @throws IOException if an I/O error occurred or the node type does not match the header.
+     */
+    public void read(HDF5DataInput channel, BTreeV2 header, int depth, int recordCount) throws IOException {
         channel.ensureSignature(SIGNATURE);
         /*
         The version number for this B-tree internal node.
@@ -48,49 +130,33 @@ public final class BTreeV2InternalNode extends IOStructure {
         */
         channel.ensureVersion(0);
         type = channel.readUnsignedByte();
+        if (type != header.getType()) {
+            throw new IOException("Version 2 B-tree internal node type " + type
+                    + " does not match header type " + header.getType());
+        }
+
+        final int recordSize = header.getRecordSize();
+        records = new ArrayList<>(recordCount);
+        for (int i = 0; i < recordCount; i++) {
+            records.add(channel.readNBytes(recordSize));
+        }
 
         /*
-        Records
-
-        The size of this field is determined by the number of records for this
-        node and the record size (from the header).
-        The format of records depends on the type of B-tree.
-
-        Child Node Pointer
-
-        This field is the address of the child node pointed to by the internal node.
-
-        Number of Records in Child Node
-
-        This is the number of records in the child node pointed to by the corresponding Node Pointer.
-        The number of bytes used to store this field is determined by the maximum possible number of records able to be stored in the child node.
-
-        The maximum number of records in a child node is computed in the following way:
-        Subtract the fixed size overhead for the child node (for example, its signature, version, checksum, and so on and one pointer triplet of information for the child node (because there is one more pointer triplet than records in each internal node)) from the size of nodes for the B-tree.
-        Divide that result by the size of a record plus the pointer triplet of information stored to reach each child node from this node.
-
-        Note that leaf nodes do not encode any child pointer triplets, so the maximum number of records in a leaf node is just the node size minus the leaf node overhead, divided by the record size.
-
-        Also note that the first level of internal nodes above the leaf nodes do not encode the Total Number of Records in Child Node value in the child pointer triplets (since it is the same as the Number of Records in Child Node), so the maximum number of records in these nodes is computed with the equation above, but using (Child Pointer, Number of Records in Child Node) pairs instead of triplets.
-
-        The number of bytes used to encode this field is the least number of bytes required to encode the maximum number of records in a child node value for the child nodes below this level in the B-tree.
-
-        For example, if the maximum number of child records is 123, one byte will be used to encode these values in this node; if the maximum number of child records is 20000, two bytes will be used to encode these values in this node; and so on. The maximum number of bytes used to encode these values is 8 (in other words, an unsigned 64-bit integer).
-
-        Total Number of Records in Child Node
-
-        This is the total number of records for the node pointed to by the corresponding Node Pointer and all its children. This field exists only in nodes whose depth in the B-tree node is greater than 1 (in other words, the “twig” internal nodes, just above leaf nodes, do not store this field in their child node pointers).
-
-        The number of bytes used to store this field is determined by the maximum possible number of records able to be stored in the child node and its descendants.
-
-        The maximum possible number of records able to be stored in a child node and its descendants is computed iteratively, in the following way: The maximum number of records in a leaf node is computed, then that value is used to compute the maximum possible number of records in the first level of internal nodes above the leaf nodes. Multiplying these two values together determines the maximum possible number of records in child node pointers for the level of nodes two levels above leaf nodes. This process is continued up to any level in the B-tree.
-
-        The number of bytes used to encode this value is computed in the same way as for the Number of Records in Child Node field.
-
+        The total record count is omitted just above the leaves, where its computed
+        width is zero.
         */
+        final int countSize = header.getChildRecordCountSize();
+        final int totalCountSize = header.getChildTotalRecordCountSize(depth);
+        childAddresses = new long[recordCount + 1];
+        childRecordCounts = new int[recordCount + 1];
+        for (int i = 0; i < childAddresses.length; i++) {
+            childAddresses[i] = channel.readOffset();
+            childRecordCounts[i] = Math.toIntExact(channel.readUnsignedInteger(countSize));
+            if (totalCountSize > 0) {
+                channel.readUnsignedInteger(totalCountSize);
+            }
+        }
 
-        int cheksum = channel.readInt();
-
-        throw new IOException("TODO");
+        final int checksum = channel.readInt();
     }
 }

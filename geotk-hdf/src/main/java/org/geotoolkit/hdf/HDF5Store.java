@@ -42,6 +42,10 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
+ * Data store for HDF-5 files.
+ * The HDF-5 group and dataset tree is exposed as resources: groups following the CF conventions
+ * are exposed as {@link CFCoverageResource}, other groups as {@link GroupAsAggregate}
+ * and datasets as {@link DatasetAsFeatureSet}.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -51,10 +55,29 @@ public final class HDF5Store extends DataStore implements Aggregate {
     private final Group root;
     private final Resource decorate;
 
+    /**
+     * Opens the HDF-5 file at the given path and reads its root group.
+     *
+     * @param provider provider creating this store.
+     * @param path path to the HDF-5 file.
+     * @throws IllegalArgumentException if the store can not be created for the given path.
+     * @throws DataStoreException if the file is invalid or unsupported, or its root object is not a group.
+     * @throws IOException if an I/O error occurred.
+     */
     public HDF5Store(HDF5Provider provider, Path path) throws IllegalArgumentException, DataStoreException, IOException {
         super(provider, new StorageConnector(path));
         cnx = new Connector(path);
-        root = new Group(null, cnx, cnx.getSuperblock().rootGroupSymbolTableEntry, path.getFileName().toString());
+        /*
+        Superblock versions 0 and 1 point at the root group through a symbol table
+        entry, versions 2 and 3 through an object header address. Both resolve to
+        an object header address.
+        */
+        final long rootAddress = cnx.getSuperblock().resolveRootObjectHeaderAddress();
+        final Node rootNode = Node.create(null, cnx, rootAddress, path.getFileName().toString());
+        if (!(rootNode instanceof Group g)) {
+            throw new DataStoreException("Root object of " + path + " is not a group.");
+        }
+        root = g;
         decorate = decorate(root);
     }
 
@@ -76,8 +99,9 @@ public final class HDF5Store extends DataStore implements Aggregate {
     }
 
     /**
-     * Get root HDF-5 Group.
-     * @return root HDF-5 Group, never null.
+     * Returns the root HDF-5 group, never {@code null}.
+     *
+     * @return the root HDF-5 group, never {@code null}
      */
     public Group getRootGroup() {
         return root;
@@ -105,6 +129,9 @@ public final class HDF5Store extends DataStore implements Aggregate {
 
     /**
      * Decorate HDF nodes to Resources.
+     *
+     * @param node group or dataset.
+     * @return resource exposing the node.
      */
     private Resource decorate(Node node) {
         if (node instanceof Group group) {

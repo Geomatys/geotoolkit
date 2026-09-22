@@ -60,6 +60,10 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
+ * Exposes an HDF-5 group following the CF (Climate and Forecast) conventions as a grid coverage.
+ * The multi-dimensional datasets of the group whose dimensions are identified by a
+ * {@code coordinates} or {@code DIMENSION_LIST} attribute become the coverage sample dimensions,
+ * and the one dimensional datasets of those dimensions define the grid geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -72,6 +76,15 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
     private final GridGeometry innerGridGeometry;
     private final GridGeometry outerGridGeometry;
 
+    /**
+     * Creates a coverage resource for the given CF group.
+     *
+     * @param store store owning the group.
+     * @param group group containing the variables and their dimension datasets.
+     * @throws DataStoreException if the group has no usable variable, the variables have
+     *         different sizes, or their dimensions can not be read or converted to a CRS.
+     * @throws FactoryException if a coordinate reference system could not be created.
+     */
     public CFCoverageResource(HDF5Store store, Group group) throws DataStoreException, FactoryException {
         super(null, false);
         this.store = store;
@@ -106,7 +119,7 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
             final SampleDimension.Builder sdb = new SampleDimension.Builder();
             sdb.setName(description == null ? ds.getName() : description);
             if (unit != null) {
-                sdb.addQuantitative("data", Double.MIN_VALUE, Double.MAX_VALUE, unit.getKey());
+                sdb.addQuantitative("data", -Double.MAX_VALUE, Double.MAX_VALUE, unit.getKey());
             }
             sampleDimensions.add(sdb.build());
         }
@@ -338,13 +351,14 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
      * Try to identify input dataset dimensions by analyzing its "coordinates" or "DIMENSION_LIST" attribute.
      *
      * @param target The dataset to find dimensions for.
+     * @param parent The group where dimension datasets are searched.
      * @return An empty list if neither "coordinates" nor "DIMENSION_LIST" attribute is found, or they're empty.
      *         Otherwise, return the list of datasets referenced by dimension list.
      * @throws DataStoreException If one of the attribute contains unsupported value or type.
      */
     private static List<Dataset> searchForDimensions(Dataset target, Group parent) throws DataStoreException {
         final Map<String, Object> attributes = target.getAttributes();
-        Object coordinates = attributes.getOrDefault("coordinates", attributes.get("DIMENSION_LIST"));
+        Object coordinates = attributes.getOrDefault("coordinates", attributes.get(HDF5DimensionScaleAPI.ATT_DIMENSION_LIST));
         if (coordinates == null) return Collections.emptyList();
 
         if (coordinates instanceof String s) coordinates = s.split("\\s+");
@@ -363,8 +377,13 @@ public final class CFCoverageResource extends AbstractGridCoverageResource imple
     }
 
     /**
-     * Test if given dataset is a CF coverage.
-     * @param dataset
+     * Returns whether the given dataset is a CF coverage variable.
+     * This is the case if it has more than one dimension and its dimension attributes,
+     * if any, reference existing datasets.
+     *
+     * @param dataset dataset to test.
+     * @param parent group where dimension datasets are searched.
+     * @return whether the given dataset is a CF coverage variable
      */
     private static boolean isCoverage(Dataset dataset, Group parent) {
         if (dataset.getDataspace().getDimensionSizes().length > 1) {

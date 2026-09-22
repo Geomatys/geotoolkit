@@ -32,7 +32,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * This message stores the number of hard links (in groups or objects) pointing
  * to an object: in other words, its reference count.
  *
- * @see IV.A.2.w. The Object Reference Count Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_refcount">IV.A.2.w. The Object Reference Count Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ObjectReferenceCount extends Message {
@@ -44,6 +44,10 @@ public final class ObjectReferenceCount extends Message {
      * object is assumed to be 1.
      */
     private int referenceCount;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ObjectReferenceCount() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

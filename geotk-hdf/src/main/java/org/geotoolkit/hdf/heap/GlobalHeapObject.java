@@ -21,7 +21,10 @@ import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
- * @see III.E. Disk Format: Level 1E - Global Heap
+ * An object of a global heap collection: a header (index, reference count, size)
+ * followed by the object data, of which only the file position is kept.
+ *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_globalheap">III.E. Disk Format: Level 1E - Global Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GlobalHeapObject extends IOStructure {
@@ -47,11 +50,15 @@ public final class GlobalHeapObject extends IOStructure {
     public long objectSize;
     /**
      * Object data position in the channel.
-     *
+     * <p>
      * The object data is treated as a one-dimensional array of bytes to be
      * interpreted by the caller.
      */
     public long streamDataPosition;
+
+    /** Creates an empty heap object, filled by {@link #read(HDF5DataInput)}. */
+    public GlobalHeapObject() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

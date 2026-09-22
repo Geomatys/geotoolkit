@@ -39,14 +39,12 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Modification Time message and is no longer written to the file in versions
  * of the HDF5 Library after the 1.6.0 version.
  *
- * @see IV.A.2.o. The Object Modification Time (Old) Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_omodified">IV.A.2.o. The Object Modification Time (Old) Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ModificationTimeMessageOld extends Message {
 
-    /**
-     * The four-digit year as an ASCII string. For example, 1998.
-     */
+    /** The four-digit year as an ASCII string. For example, 1998. */
     private int year;
     /**
      * The month number as a two digit ASCII string where January is 01 and
@@ -73,6 +71,10 @@ public final class ModificationTimeMessageOld extends Message {
      * second of the minute is 00 and the last is 59.
      */
     private int second;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ModificationTimeMessageOld() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

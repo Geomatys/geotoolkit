@@ -36,7 +36,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Level 0B - File Driver Info” section; those who use the multi and family
  * file drivers will find this section particularly helpful.
  *
- * @see IV.A.2.u. The Driver Info Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_drvinfo">IV.A.2.u. The Driver Info Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DriverInfoMessage extends Message {
@@ -46,14 +46,14 @@ public final class DriverInfoMessage extends Message {
      * identifies the driver.
      */
     private int driverIdentification;
-    /**
-     * The size in bytes of the Driver Information field of this message.
-     */
+    /** The size in bytes of the Driver Information field of this message. */
     private int driverInformationSize;
-    /**
-     * Driver information is stored in a format defined by the file driver.
-     */
+    /** Driver information is stored in a format defined by the file driver. */
     private int driverInformation;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public DriverInfoMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

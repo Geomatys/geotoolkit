@@ -23,6 +23,9 @@ import java.nio.channels.NonWritableChannelException;
 import java.nio.channels.SeekableByteChannel;
 
 /**
+ * Read only channel returning a byte pattern repeated up to a given size.
+ * Used for dataset regions which are not stored in the file and must be
+ * filled with the fill value.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -35,6 +38,12 @@ public final class ConstantSeekableByteChannel implements SeekableByteChannel {
     private long position = 0;
     private boolean open = true;
 
+    /**
+     * Creates a channel repeating the given pattern.
+     *
+     * @param size total number of bytes of the channel
+     * @param pattern bytes to repeat, not empty
+     */
     public ConstantSeekableByteChannel(long size, byte[] pattern) {
         this.size = size;
 
@@ -98,7 +107,7 @@ public final class ConstantSeekableByteChannel implements SeekableByteChannel {
     @Override
     public SeekableByteChannel position(long newPosition) throws IOException {
         if (!open) throw new ClosedChannelException();
-        if (position < 0) throw new IllegalArgumentException("Position is negative");
+        if (newPosition < 0) throw new IllegalArgumentException("Position is negative");
         this.position = newPosition;
         return this;
     }

@@ -17,6 +17,8 @@
 package org.geotoolkit.hdf.message;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
@@ -36,7 +38,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * the data within the file and the amount of space reserved in the file for
  * that data.
  *
- * @see IV.A.2.h. The Data Storage - External Data Files Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_external">IV.A.2.h. The Data Storage - External Data Files Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ExternalFileListMessage extends Message {
@@ -44,12 +46,10 @@ public final class ExternalFileListMessage extends Message {
     /**
      * The total number of slots allocated in the message. Its value must be at
      * least as large as the value contained in the Used Slots field.
-     * (The current library simply uses the number of Used Slots for this message)
+     * (The current library simply uses the number of Used Slots for this message.)
      */
     private int allocatedSlots;
-    /**
-     * The number of initial slots which contains valid information.
-     */
+    /** The number of initial slots which contains valid information. */
     private int usedSlots;
     /**
      * This is the address of a local heap which contains the names for the
@@ -63,7 +63,29 @@ public final class ExternalFileListMessage extends Message {
      * The slot definitions are stored in order according to the array addresses
      * they represent.
      */
-    private Object slotDefinitions;
+    private List<ExternalFileListSlot> slotDefinitions;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ExternalFileListMessage() {
+    }
+
+    /**
+     * Returns the address of the local heap holding the external file names.
+     *
+     * @return the address of the local heap holding the external file names
+     */
+    public long getHeapAddress() {
+        return heapAddress;
+    }
+
+    /**
+     * Returns the segments of external files making up the raw data, in order.
+     *
+     * @return the segments of external files making up the raw data, in order
+     */
+    public List<ExternalFileListSlot> getSlots() {
+        return slotDefinitions;
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {
@@ -78,10 +100,16 @@ public final class ExternalFileListMessage extends Message {
         allocatedSlots = channel.readUnsignedShort();
         usedSlots = channel.readUnsignedShort();
         heapAddress = channel.readOffset();
-        throw new IOException("TODO");
+        slotDefinitions = new ArrayList<>(usedSlots);
+        for (int i = 0; i < usedSlots; i++) {
+            final ExternalFileListSlot slot = new ExternalFileListSlot();
+            slot.read(channel);
+            slotDefinitions.add(slot);
+        }
     }
 
-    private class ExternalFileListSlot {
+    /** A slot of the external file list : a segment of an external file holding raw data. */
+    public static class ExternalFileListSlot {
         /**
          * The byte offset within the local name heap for the name of the file.
          * File names are stored as a URL which has a protocol name, a host name,
@@ -113,6 +141,44 @@ public final class ExternalFileListMessage extends Message {
          */
         private long dataSizeinExternalFile;
 
+        /** Creates an empty slot, filled by {@link #read(HDF5DataInput)}. */
+        public ExternalFileListSlot() {
+        }
+
+        /**
+         * Returns the byte offset of the file name in the local heap.
+         *
+         * @return the byte offset of the file name in the local heap
+         */
+        public long getNameOffset() {
+            return nameOffsetinLocalHeap;
+        }
+
+        /**
+         * Returns the byte offset of the data within the external file.
+         *
+         * @return the byte offset of the data within the external file
+         */
+        public long getOffsetInFile() {
+            return offsetinExternalDataFile;
+        }
+
+        /**
+         * Returns the number of bytes reserved in the external file.
+         * It may exceed the file size, missing bytes reading as zeroes.
+         *
+         * @return the number of bytes reserved in the external file
+         */
+        public long getSizeInFile() {
+            return dataSizeinExternalFile;
+        }
+
+        /**
+         * Reads this slot.
+         *
+         * @param channel input positioned on the slot.
+         * @throws IOException if an I/O error occurred.
+         */
         public void read(HDF5DataInput channel) throws IOException {
             nameOffsetinLocalHeap = channel.readLength();
             offsetinExternalDataFile = channel.readLength();

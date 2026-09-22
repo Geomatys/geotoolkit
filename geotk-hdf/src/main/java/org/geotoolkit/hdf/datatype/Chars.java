@@ -22,7 +22,10 @@ import java.util.Arrays;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * String datatype : a fixed length string, decoded as a {@link String}
+ * with its padding removed.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class Chars extends DataType {
@@ -30,30 +33,40 @@ public final class Chars extends DataType {
     /**
      * Padding type. This four-bit value determines the type of padding to
      * use for the string. The values are:
-     * Value Description
-     * 0 : Null Terminate: A zero byte marks the end of the string and is
-     * guaranteed to be present after converting a long string to a short
-     * string. When converting a short string to a long string the value
-     * is padded with additional null characters as necessary.
-     * 1 : Null Pad: Null characters are added to the end of the value during
-     * conversions from short values to long values but conversion in the
-     * opposite direction simply truncates the value.
-     * 2 : Space Pad: Space characters are added to the end of the value
-     * during conversions from short values to long values but conversion
-     * in the opposite direction simply truncates the value. This is the
-     * Fortran representation of the string.
-     * 3-15 : Reserved
+     * <ul>
+     *   <li>0 : Null Terminate: A zero byte marks the end of the string and is
+     *   guaranteed to be present after converting a long string to a short
+     *   string. When converting a short string to a long string the value
+     *   is padded with additional null characters as necessary.</li>
+     *   <li>1 : Null Pad: Null characters are added to the end of the value during
+     *   conversions from short values to long values but conversion in the
+     *   opposite direction simply truncates the value.</li>
+     *   <li>2 : Space Pad: Space characters are added to the end of the value
+     *   during conversions from short values to long values but conversion
+     *   in the opposite direction simply truncates the value. This is the
+     *   Fortran representation of the string.</li>
+     *   <li>3-15 : Reserved</li>
+     * </ul>
      */
     public final int paddingType;
     /**
-     * Character Set. The character set used to encode the string.
-     * Value Description
-     * 0 : ASCII character set encoding
-     * 1 : UTF-8 character set encoding
-     * 2-15 : Reserved
+     * Character Set. The character set used to encode the string:
+     * <ul>
+     *   <li>0 : ASCII character set encoding</li>
+     *   <li>1 : UTF-8 character set encoding</li>
+     *   <li>2-15 : Reserved</li>
+     * </ul>
      */
     public final int charset;
 
+    /**
+     * Reads the datatype properties.
+     *
+     * @param byteSize string size in bytes.
+     * @param classBitFields class bit fields (padding type, character set).
+     * @param channel input positioned on the datatype properties, nothing is read.
+     * @throws IOException if an I/O error occurred.
+     */
     public Chars(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
         paddingType = classBitFields & 0b1111;

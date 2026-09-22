@@ -23,9 +23,9 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 /**
  * The layout for the global heap block used with virtual datasets is described
  * below. For more information on global heaps,
- * see “Disk Format: Level 1E - Global Heap.”
+ * see {@link GlobalHeap} (“Disk Format: Level 1E - Global Heap”).
  *
- * @see III.F. Disk Format: Level 1F - Global Heap Block for Virtual Datasets
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_globalheapvds">III.F. Disk Format: Level 1F - Global Heap Block for Virtual Datasets</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class GlobalHeapBlockForVirtualDatasets extends IOStructure {
@@ -34,6 +34,10 @@ public final class GlobalHeapBlockForVirtualDatasets extends IOStructure {
      * The number of entries in the block.
      */
     private long numEntries;
+
+    /** Creates an empty block, filled by {@link #read(HDF5DataInput)}. */
+    public GlobalHeapBlockForVirtualDatasets() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

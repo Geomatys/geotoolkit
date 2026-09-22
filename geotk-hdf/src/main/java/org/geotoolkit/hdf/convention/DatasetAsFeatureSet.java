@@ -28,26 +28,39 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.measure.Unit;
+import ucar.nc2.constants.CF;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.hdf.HDF5Provider;
 import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.datatype.Compound;
 import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.message.DataspaceMessage;
+import org.locationtech.jts.geom.CoordinateXY;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
@@ -55,11 +68,15 @@ import org.opengis.util.FactoryException;
 
 /**
  * View a HDF Dataset as a FeatureSet.
+ * Each element of the dataset becomes a feature, identified by its index in the dataspace.
+ * Compound datatype members become feature attributes, and datasets listed in the CF
+ * {@code coordinates} attribute (limited to longitude and latitude) are combined into a point geometry.
  *
  * @author Johann Sorel (Geomatys)
  */
 public final class DatasetAsFeatureSet extends AbstractFeatureSet implements StoreResource{
 
+    private static final GeometryFactory GF = new GeometryFactory();
     private static final String HDF_INDEX = "hdf-index";
 
     private final HDF5Store store;
@@ -70,87 +87,155 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
     private boolean is1D;
     private boolean isEmpty;
     private final Map<String,Function<Object, Instant>> timeAttributes = new HashMap<>();
+    private double scaleFactor = 1.0;
+    private Class valueClass;
 
+    //geometry type info
+    private CoordinateReferenceSystem crs;
+    private Dataset[] coordinates;
+
+    /**
+     * Creates a feature set view of the given dataset.
+     *
+     * @param store store owning the dataset.
+     * @param dataset dataset to expose as features.
+     */
     public DatasetAsFeatureSet(HDF5Store store, Dataset dataset) {
         super(null, false);
         this.store = store;
         this.dataset = dataset;
     }
 
+    /**
+     * Returns the dataset viewed as a feature set.
+     *
+     * @return the dataset viewed as a feature set
+     */
     public Dataset getDataset() {
         return dataset;
     }
 
     @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        getType();
+        if (crs != null) {
+            final GeneralEnvelope env = new GeneralEnvelope(crs);
+            for (int i = 0; i < coordinates.length; i++) {
+                final NumberRange range = coordinates[i].getValueRange();
+                final double scale = getScale(coordinates[i]);
+                env.setRange(i, range.getMinDouble(true) * scale, range.getMaxDouble(true) * scale);
+            }
+            return Optional.of(env);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public synchronized FeatureType getType() throws DataStoreException {
+        if (featureType != null) return featureType;
+
         final DataType datatype = dataset.getDataType();
         final DataspaceMessage dataspace = dataset.getDataspace();
-        if (featureType == null) {
-            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(dataset.getIdentifier().orElseThrow(() -> new IllegalStateException("Dataset name should never be null")));
 
-            final int[] dimensionSizes = dataspace.getDimensionSizes();
-            if (dimensionSizes == null || dimensionSizes.length < 1) {
-                isEmpty = true;
-                is1D = true;
-            } else {
-                for (int i = 0; i < dimensionSizes.length; i++) {
-                    if (dimensionSizes[i] == 0) {
-                        isEmpty = true;
-                        break;
-                    }
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(dataset.getIdentifier().orElseThrow(() -> new IllegalStateException("Dataset name should never be null")));
+
+        valueClass = datatype.getValueClass();
+
+        //check if we have a CF scale factor
+        this.scaleFactor = getScale(dataset);
+        if (this.scaleFactor != 1.0) {
+            valueClass = double.class;
+        }
+
+        //check if we have CF related coordinates
+        final String coordinates = (String) dataset.getAttributes().getOrDefault(CF.COORDINATES, null);
+        if (coordinates != null) {
+            final String[] parts = coordinates.split(" ");
+
+
+            this.coordinates = new Dataset[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                this.coordinates[i] = (Dataset) dataset.getParent().resolve(parts[i].trim());
+            }
+
+            if (parts.length == 2) {
+                if (CF.LONGITUDE.equals(this.coordinates[0].getName())) {
+                    crs = CommonCRS.WGS84.normalizedGeographic();
+                } else {
+                    crs = CommonCRS.WGS84.geographic();
                 }
-                is1D = dimensionSizes.length == 1;
-            }
+                crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
 
-            if (is1D) {
-                ftb.addAttribute(Long.class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+                ftb.addAttribute(Point.class).setName(CF.COORDINATES).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
             } else {
-                ftb.addAttribute(long[].class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+                HDF5Provider.LOGGER.log(Level.WARNING, "Dataset " + dataset.getName() +" has " + parts.length + "dimensions, it is not supported yet");
+                this.coordinates = null;
             }
+        }
 
-            if (datatype instanceof Compound cmp) {
-                for (Member member : cmp.members) {
-                    final Entry<Unit,CoordinateReferenceSystem> unitAndCrs;
-                    try {
-                        unitAndCrs = dataset.getAttributeUnit(member.name);
-                    } catch (FactoryException ex) {
-                        throw new DataStoreException("Failed to parse unit and crs.", ex);
-                    }
-                    final String description = dataset.getAttributeDescription(member.name);
+        final int[] dimensionSizes = dataspace.getDimensionSizes();
+        if (dimensionSizes == null || dimensionSizes.length < 1) {
+            isEmpty = true;
+            is1D = true;
+        } else {
+            for (int i = 0; i < dimensionSizes.length; i++) {
+                if (dimensionSizes[i] == 0) {
+                    isEmpty = true;
+                    break;
+                }
+            }
+            is1D = dimensionSizes.length == 1;
+        }
 
-                    final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
-                    if (description != null) {
-                        atb.setDescription(description);
-                    }
-                    if (unitAndCrs != null) {
-                        atb.setUnit(unitAndCrs.getKey());
-                        if (unitAndCrs.getValue() != null) {
-                            CoordinateReferenceSystem crs = unitAndCrs.getValue();
-                            atb.setCRS(crs);
-                            if (crs instanceof TemporalCRS tcrs) {
-                                atb.setValueClass(Instant.class);
+        if (is1D) {
+            ftb.addAttribute(Long.class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        } else {
+            ftb.addAttribute(long[].class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        }
 
-                                final var defaultTemporalCrs = DefaultTemporalCRS.castOrCopy(tcrs);
-                                final Function<Object, Instant> converter = obj -> {
-                                    if (obj == null) return null;
-                                    else if (obj instanceof Number value) {
-                                        double decimalValue = value.doubleValue();
-                                        return defaultTemporalCrs.toInstant(decimalValue);
-                                    } else {
-                                        throw new IllegalStateException("Input value is not a number, but a "+obj.getClass().getCanonicalName());
-                                    }
-                                };
-                                timeAttributes.put(member.name, converter);
-                            }
+        if (datatype instanceof Compound cmp) {
+            for (Member member : cmp.members) {
+                final Entry<Unit,CoordinateReferenceSystem> unitAndCrs;
+                try {
+                    unitAndCrs = dataset.getAttributeUnit(member.name);
+                } catch (FactoryException ex) {
+                    throw new DataStoreException("Failed to parse unit and crs.", ex);
+                }
+                final String description = dataset.getAttributeDescription(member.name);
+
+                final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
+                if (description != null) {
+                    atb.setDescription(description);
+                }
+                if (unitAndCrs != null) {
+                    atb.setUnit(unitAndCrs.getKey());
+                    if (unitAndCrs.getValue() != null) {
+                        CoordinateReferenceSystem crs = unitAndCrs.getValue();
+                        atb.setCRS(crs);
+                        if (crs instanceof TemporalCRS tcrs) {
+                            atb.setValueClass(Instant.class);
+
+                            final var defaultTemporalCrs = DefaultTemporalCRS.castOrCopy(tcrs);
+                            final Function<Object, Instant> converter = obj -> {
+                                if (obj == null) return null;
+                                else if (obj instanceof Number value) {
+                                    double decimalValue = value.doubleValue();
+                                    return defaultTemporalCrs.toInstant(decimalValue);
+                                } else {
+                                    throw new IllegalStateException("Input value is not a number, but a "+obj.getClass().getCanonicalName());
+                                }
+                            };
+                            timeAttributes.put(member.name, converter);
                         }
                     }
                 }
-            } else {
-                ftb.addAttribute(datatype.getValueClass()).setName("value");
             }
-            featureType = ftb.build();
+        } else {
+            ftb.addAttribute(valueClass).setName("value");
         }
+        featureType = ftb.build();
+
         return featureType;
     }
 
@@ -196,7 +281,15 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
 
     private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException, TransformException {
         final FeatureType type = getType();
-        final Object rawData = dataset.read(extent);
+        final Object rawData = readScaled(dataset, extent);
+
+        //read coordinates
+        Object coord0 = null;
+        Object coord1 = null;
+        if (crs != null) {
+            coord0 = readScaled(coordinates[0],extent);
+            coord1 = readScaled(coordinates[1],extent);
+        }
 
         final long[] low = extent.getLow().getCoordinateValues();
         final List<Feature> features = new ArrayList<>();
@@ -230,6 +323,17 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
             } else {
                 feature.setPropertyValue("value", rawRecord);
             }
+
+            //rebuild geometry
+            if (crs != null) {
+                Number x = (Number) Array.get(coord0, Math.toIntExact(location[0] - low[0]));
+                Number y = (Number) Array.get(coord1, Math.toIntExact(location[0] - low[0]));
+                final Point pt = GF.createPoint(new CoordinateXY(x.doubleValue(), y.doubleValue()));
+                pt.setUserData(crs);
+                feature.setPropertyValue(CF.COORDINATES, pt);
+            }
+
+
             features.add(feature);
         }
 
@@ -244,5 +348,34 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
     @Override
     public Optional<FileSet> getFileSet() throws DataStoreException {
         return store.getFileSet();
+    }
+
+    private static Object readScaled(Dataset dataset, GridExtent extent, int ... compoundindexes) throws IOException, DataStoreException {
+        Object data = dataset.read(extent, compoundindexes);
+        final double scaleFactor = getScale(dataset);
+        if (scaleFactor != 1.0) {
+            double[] array = new double[Array.getLength(data)];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = ((Number)Array.get(data, i)).doubleValue() * scaleFactor;
+            }
+            data = array;
+        }
+
+        return data;
+    }
+
+    private static double getScale(Dataset dataset) {
+        //check if we have a CF scale factor
+        double scaleFactor = 1.0;
+        final Object cdt = dataset.getAttributes().getOrDefault(CF.SCALE_FACTOR, null);
+        if (cdt instanceof Number n) {
+            scaleFactor = n.doubleValue();
+        } else if (cdt != null && cdt.getClass().isArray()) {
+            final Object av = Array.get(cdt, 0);
+            if (av instanceof Number n) {
+                scaleFactor = n.doubleValue();
+            }
+        }
+        return scaleFactor;
     }
 }

@@ -17,44 +17,35 @@
 package org.geotoolkit.hdf.btree;
 
 import java.io.IOException;
-import java.util.Arrays;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.geotoolkit.hdf.chunk.Chunk;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
  * For nodes of node type 1 (chunked raw data nodes), the key is formatted as follows:
+ * <ul>
+ * <li>Bytes 1-4: size of the chunk in bytes.</li>
+ * <li>Bytes 4-8: filter mask.</li>
+ * <li>(D + 1) 64-bit fields: the offset of the chunk within the dataset, where D
+ * is the number of dimensions of the dataset. The last value is the offset within
+ * the dataset datatype and should always be zero.</li>
+ * </ul>
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class BTreeV1Chunk {
+public final class BTreeV1Chunk extends Chunk {
+
+    /** Creates an empty chunk key, filled by {@link #read(HDF5DataInput, int[])}. */
+    public BTreeV1Chunk() {
+    }
 
     /**
-     * Bytes 1-4: Size of chunk in bytes.
+     * Reads the chunk key. The chunk address, which follows the key in the node, is not read.
+     *
+     * @param channel channel positioned on the key
+     * @param chunkDimension chunk size in each dimension, used to compute the chunk extent
+     * @throws IOException if an I/O error occurred or the last offset is not zero.
      */
-    public long size;
-    /**
-     * Bytes 4-8: Filter mask, a 32-bit bit field indicating which filters have
-     * been skipped for this chunk. Each filter has an index number in the
-     * pipeline (starting at 0, with the first filter to apply) and if that
-     * filter is skipped, the bit corresponding to its index is set.
-     */
-    public long filterMask;
-    /**
-     * (D + 1) 64-bit fields: The offset of the chunk within the dataset where
-     * D is the number of dimensions of the dataset, and the last value is the
-     * offset within the dataset’s datatype and should always be zero. For
-     * example, if a chunk in a 3-dimensional dataset begins at the position
-     * [5,5,5], there will be three such 64-bit values, each with the value of
-     * 5, followed by a 0 value.
-     */
-    public GridExtent offset;
-
-    public long address;
-    /**
-     * Opportuniste uncompressed chunk size.
-     */
-    public long uncompressedSize = -1;
-
     public void read(HDF5DataInput channel, int[] chunkDimension) throws IOException {
         size = channel.readUnsignedInt();
         filterMask = channel.readUnsignedInt();
@@ -70,16 +61,4 @@ public final class BTreeV1Chunk {
             throw new IOException("Last dimension should be 0 but was " + last);
         }
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Chunk{");
-        sb.append("size:").append(size);
-        sb.append(",filterMask:").append(filterMask);
-        sb.append(",address:").append(address);
-        sb.append(",offset:").append(Arrays.toString(offset.getLow().getCoordinateValues()));
-        sb.append("}");
-        return sb.toString();
-    }
-
 }

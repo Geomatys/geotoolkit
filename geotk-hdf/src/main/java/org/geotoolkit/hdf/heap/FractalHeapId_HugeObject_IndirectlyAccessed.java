@@ -21,8 +21,10 @@ import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Fractal heap ID of an indirectly accessed huge object.
+ * The ID holds a key into the version 2 B-tree of huge objects of the heap.
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeapId_HugeObject_IndirectlyAccessed extends IOStructure {
@@ -39,9 +41,14 @@ public final class FractalHeapId_HugeObject_IndirectlyAccessed extends IOStructu
      */
     private int versionType;
     /**
-     * This is the data for the object.
+     * This field is the key for retrieving the information about the object
+     * from the v2 B-tree for huge objects.
      */
     private int v2BtreeKey;
+
+    /** Creates an empty heap ID, filled by {@link #read(HDF5DataInput)}. */
+    public FractalHeapId_HugeObject_IndirectlyAccessed() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

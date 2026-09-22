@@ -20,8 +20,10 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Record of a version 2 B-tree of type 8, used for indexing the ‘name’ field of
+ * indexed attributes.
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2_Type8_IndexedAttributesAttributeName {
@@ -44,6 +46,52 @@ public final class BTreeV2_Type8_IndexedAttributesAttributeName {
      */
     private int hash;
 
+    /** Creates an empty record, filled by {@link #read(HDF5DataInput)}. */
+    public BTreeV2_Type8_IndexedAttributesAttributeName() {
+    }
+
+    /**
+     * Returns the 8 bytes heap ID of the Attribute message in the object attribute fractal heap.
+     *
+     * @return the 8 bytes heap ID of the Attribute message in the object attribute fractal heap
+     */
+    public byte[] getHeapId() {
+        return heapId;
+    }
+
+    /**
+     * Returns the attribute message flags, non zero if its datatype or dataspace is shared.
+     *
+     * @return the attribute message flags, non zero if its datatype or dataspace is shared
+     */
+    public int getMessageFlags() {
+        return messageFlags;
+    }
+
+    /**
+     * Returns the creation order of the attribute.
+     *
+     * @return the creation order of the attribute
+     */
+    public int getCreationOrder() {
+        return creationOrder;
+    }
+
+    /**
+     * Returns the Jenkins lookup3 hash of the attribute name.
+     *
+     * @return the Jenkins lookup3 hash of the attribute name
+     */
+    public int getHash() {
+        return hash;
+    }
+
+    /**
+     * Reads the record.
+     *
+     * @param channel channel positioned on the record
+     * @throws IOException if an I/O error occurred.
+     */
     public void read(HDF5DataInput channel) throws IOException {
 
         heapId = channel.readNBytes(8);

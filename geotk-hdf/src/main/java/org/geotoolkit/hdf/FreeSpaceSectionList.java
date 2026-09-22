@@ -29,7 +29,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * by a list of section description records; then another section count and size,
  * followed by the list of section descriptions for that size; and so on.
  *
- * @see III.H. Disk Format: Level 1H - Free-space Manager
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_freespaceindex">III.H. Disk Format: Level 1H - Free-space Index</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FreeSpaceSectionList extends IOStructure {
@@ -91,6 +91,10 @@ public final class FreeSpaceSectionList extends IOStructure {
      * record set, described below.
      */
     public List<byte[]> recordSetSectionRecordData;
+
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public FreeSpaceSectionList() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

@@ -29,7 +29,6 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Length: Variable
  * <p>
  * Status: Required for dataset or committed datatype (formerly named datatype)
- * <p>
  * objects; may not be repeated.
  * <p>
  * Description: The datatype message defines the datatype for each element of a
@@ -44,13 +43,22 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * named datatype) message describe a common datatype that can be shared by
  * multiple datasets in the file.
  *
- * @see IV.A.2.d. The Datatype Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DatatypeMessage extends Message {
 
     private DataType dataType;
 
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public DatatypeMessage() {
+    }
+
+    /**
+     * Returns the datatype of each element of the dataset or committed datatype.
+     *
+     * @return the datatype of each element of the dataset or committed datatype
+     */
     public DataType getDataType() {
         return dataType;
     }
