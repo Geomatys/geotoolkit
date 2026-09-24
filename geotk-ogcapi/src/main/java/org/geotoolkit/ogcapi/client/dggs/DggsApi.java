@@ -47,6 +47,42 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public final class DggsApi extends AbstractOpenApi {
 
     /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX               = "bbox";
+    public static final String PARAM_BBOX_CRS           = "bbox-crs";
+    public static final String PARAM_COLLECTIONS        = "collections";
+    public static final String PARAM_COMPACT_ZONES      = "compact-zones";
+    public static final String PARAM_CRS                = "crs";
+    public static final String PARAM_DATETIME           = "datetime";
+    public static final String PARAM_EXCLUDE_PROPERTIES = "exclude-properties";
+    public static final String PARAM_F                  = "f";
+    public static final String PARAM_FILTER             = "filter";
+    public static final String PARAM_FILTER_LANG        = "filter-lang";
+    public static final String PARAM_GEOMETRY           = "geometry";
+    public static final String PARAM_LIMIT              = "limit";
+    public static final String PARAM_OFFSET             = "offset";
+    public static final String PARAM_PARENT_ZONE        = "parent-zone";
+    public static final String PARAM_PROFILE            = "profile";
+    public static final String PARAM_PROPERTIES         = "properties";
+    public static final String PARAM_SUBSET             = "subset";
+    public static final String PARAM_SUBSET_CRS         = "subset-crs";
+    public static final String PARAM_VALUES_OFFSET      = "values-offset";
+    public static final String PARAM_VALUES_SCALE       = "values-scale";
+    public static final String PARAM_ZONE_DEPTH         = "zone-depth";
+    public static final String PARAM_ZONE_LEVEL         = "zone-level";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_API_ALL_COLLECTIONS = "/api/all-collections";
+    public static final String PATH_API_DGGS            = "/api/dggs";
+    public static final String PATH_COLLECTIONS         = "/collections";
+    public static final String PATH_DATA                = "/data";
+    public static final String PATH_DGGS                = "/dggs";
+    public static final String PATH_ZONES               = "/zones";
+
+    /**
      * Subset name for latitude geographic CRS.
      */
     public static final String SUBSET_LAT = "Lat";
@@ -120,7 +156,7 @@ public final class DggsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<Enumeration>> getAPICollections(String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/api/all-collections", toPairs("f", f)));
+        request.uri(toUri(PATH_API_ALL_COLLECTIONS, toPairs(PARAM_F, f)));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -138,7 +174,7 @@ public final class DggsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<Enumeration>> getAPIDGGRS(String f) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/api/dggs", toPairs("f", f)));
+        request.uri(toUri(PATH_API_DGGS, toPairs(PARAM_F, f)));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -158,7 +194,7 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/dggs", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_DGGS, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -183,7 +219,7 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/dggs/" + urlEncode(parameters.getDggrsId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -211,11 +247,11 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollections()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollections()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/dggs/" + urlEncode(parameters.getDggrsId()) + "/zones/" + urlEncode(parameters.getZoneId()), queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) + PATH_ZONES + '/' + urlEncode(parameters.getZoneId()), queryParams));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -235,7 +271,7 @@ public final class DggsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'dggrsId' when calling datasetGetDGGRS");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/dggs/" + urlEncode(parameters.getDggrsId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -250,7 +286,7 @@ public final class DggsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<DggrsListResponse>> datasetGetDGGRSList(GetDggrsList parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/dggs", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_DGGS, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -273,11 +309,11 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollections()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollections()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/dggs/" + urlEncode(parameters.getDggrsId()) + "/zones/" + urlEncode(parameters.getZoneId()), queryParams));
+        request.uri(toUri(PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) + PATH_ZONES + '/' + urlEncode(parameters.getZoneId()), queryParams));
         request.header("Accept", "application/json, application/geo+json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -306,20 +342,20 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
-        queryParams.addAll(toPairs("properties", parameters.getProperties()));
-        queryParams.addAll(toPairs("exclude-properties", parameters.getExcludeProperties()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("geometry", parameters.getGeometry()));
-        queryParams.addAll(toPairs("profile", parameters.getProfile()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("zone-depth", parameters.getZoneDepth()));
-        queryParams.addAll(toPairs("values-offset", parameters.getValuesOffset()));
-        queryParams.addAll(toPairs("values-scale", parameters.getValuesScale()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_PROPERTIES, parameters.getProperties()));
+        queryParams.addAll(toPairs(PARAM_EXCLUDE_PROPERTIES, parameters.getExcludeProperties()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_GEOMETRY, parameters.getGeometry()));
+        queryParams.addAll(toPairs(PARAM_PROFILE, parameters.getProfile()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_ZONE_DEPTH, parameters.getZoneDepth()));
+        queryParams.addAll(toPairs(PARAM_VALUES_OFFSET, parameters.getValuesOffset()));
+        queryParams.addAll(toPairs(PARAM_VALUES_SCALE, parameters.getValuesScale()));
 
-        final URI uri = toUri("/collections/" + urlEncode(parameters.getCollectionId().get(0)) + "/dggs/" + urlEncode(parameters.getDggrsId()) + "/zones/" + urlEncode(parameters.getZoneId()) + "/data", queryParams);
+        final URI uri = toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId().get(0)) + PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) + PATH_ZONES + '/' + urlEncode(parameters.getZoneId()) + PATH_DATA, queryParams);
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(uri);
         request.header("Accept", "application/json, image/png, image/tiff; application=geotiff, application/geo+json, application/cbor, text/html");
@@ -358,22 +394,22 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollectionId()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
-        queryParams.addAll(toPairs("properties", parameters.getProperties()));
-        queryParams.addAll(toPairs("exclude-properties", parameters.getExcludeProperties()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("geometry", parameters.getGeometry()));
-        queryParams.addAll(toPairs("profile", parameters.getProfile()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("zone-depth", parameters.getZoneDepth()));
-        queryParams.addAll(toPairs("values-offset", parameters.getValuesOffset()));
-        queryParams.addAll(toPairs("values-scale", parameters.getValuesScale()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollectionId()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_PROPERTIES, parameters.getProperties()));
+        queryParams.addAll(toPairs(PARAM_EXCLUDE_PROPERTIES, parameters.getExcludeProperties()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_GEOMETRY, parameters.getGeometry()));
+        queryParams.addAll(toPairs(PARAM_PROFILE, parameters.getProfile()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_ZONE_DEPTH, parameters.getZoneDepth()));
+        queryParams.addAll(toPairs(PARAM_VALUES_OFFSET, parameters.getValuesOffset()));
+        queryParams.addAll(toPairs(PARAM_VALUES_SCALE, parameters.getValuesScale()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/dggs/" + urlEncode(parameters.getDggrsId()) + "/zones/" + urlEncode(parameters.getZoneId()) + "/data", queryParams));
+        request.uri(toUri(PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) + PATH_ZONES + '/' + urlEncode(parameters.getZoneId()) + PATH_DATA, queryParams));
         request.header("Accept", "application/json, image/png, image/tiff; application=geotiff, application/geo+json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -398,25 +434,25 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollectionId()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("bbox-crs", toCrs(parameters.getBbox())));
-        queryParams.addAll(toPairs("compact-zones", parameters.getCompactZones()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("parent-zone", parameters.getParentZone()));
-        queryParams.addAll(toPairs("offset", parameters.getOffset()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("subset-crs", parameters.getSubsetCrs()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("geometry", parameters.getGeometry()));
-        queryParams.addAll(toPairs("profile", parameters.getProfile()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("filter-lang", parameters.getFilterLang()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollectionId()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_BBOX_CRS, toCrs(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_COMPACT_ZONES, parameters.getCompactZones()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_PARENT_ZONE, parameters.getParentZone()));
+        queryParams.addAll(toPairs(PARAM_OFFSET, parameters.getOffset()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_SUBSET_CRS, parameters.getSubsetCrs()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_GEOMETRY, parameters.getGeometry()));
+        queryParams.addAll(toPairs(PARAM_PROFILE, parameters.getProfile()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_FILTER_LANG, parameters.getFilterLang()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId().get(0))+ "/dggs/" + urlEncode(parameters.getDggrsId()) + "/zones", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId().get(0))+ PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) + PATH_ZONES, queryParams));
         request.header("Accept", "application/json, image/png, application/geo+json, image/tiff; application=geotiff, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -438,26 +474,26 @@ public final class DggsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollectionId()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("bbox-crs", toCrs(parameters.getBbox())));
-        queryParams.addAll(toPairs("zone-level", parameters.getZoneLevel()));
-        queryParams.addAll(toPairs("compact-zones", parameters.getCompactZones()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("parent-zone", parameters.getParentZone()));
-        queryParams.addAll(toPairs("offset", parameters.getOffset()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("subset-crs", parameters.getSubsetCrs()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("geometry", parameters.getGeometry()));
-        queryParams.addAll(toPairs("profile", parameters.getProfile()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("filter-lang", parameters.getFilterLang()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollectionId()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_BBOX_CRS, toCrs(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_ZONE_LEVEL, parameters.getZoneLevel()));
+        queryParams.addAll(toPairs(PARAM_COMPACT_ZONES, parameters.getCompactZones()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_PARENT_ZONE, parameters.getParentZone()));
+        queryParams.addAll(toPairs(PARAM_OFFSET, parameters.getOffset()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_SUBSET_CRS, parameters.getSubsetCrs()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_GEOMETRY, parameters.getGeometry()));
+        queryParams.addAll(toPairs(PARAM_PROFILE, parameters.getProfile()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_FILTER_LANG, parameters.getFilterLang()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/dggs/" + urlEncode(parameters.getDggrsId()) +"/zones", queryParams));
+        request.uri(toUri(PATH_DGGS + '/' + urlEncode(parameters.getDggrsId()) +PATH_ZONES, queryParams));
         request.header("Accept", "application/json, image/png, application/geo+json, image/tiff; application=geotiff, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

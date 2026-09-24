@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.geotoolkit.ols.xml.v121.AbstractBodyType;
+import org.geotoolkit.ols.xml.v121.AbstractHeaderType;
 import org.geotoolkit.ols.xml.v121.AbstractRequestParametersType;
 import org.geotoolkit.ols.xml.v121.AbstractResponseParametersType;
 import org.geotoolkit.ols.xml.v121.ErrorListType;
@@ -114,6 +115,59 @@ public final class OLSXmlFactory {
             }
         }
         throw new JAXBException("No <Response> body found in the OLS envelope");
+    }
+
+    /**
+     * Extract the {@code <Request>} body of an unmarshalled envelope. This is the counterpart of
+     * {@link #extractResponse(XLSType)}, for a server reading what {@link #buildRequestEnvelope
+     * buildRequestEnvelope} wrote.
+     *
+     * @param xls the unmarshalled request envelope
+     * @return the request body
+     * @throws JAXBException if the envelope does not contain a {@code <Request>} body
+     */
+    public static RequestType extractRequest(XLSType xls) throws JAXBException {
+        for (JAXBElement<? extends AbstractBodyType> element : xls.getBody()) {
+            final AbstractBodyType body = element.getValue();
+            if (body instanceof RequestType request) {
+                return request;
+            }
+        }
+        throw new JAXBException("No <Request> body found in the OLS envelope");
+    }
+
+    /**
+     * Extract the operation-specific request payload out of an unmarshalled envelope.
+     *
+     * @param <T> expected request parameters type, e.g. {@code GeocodeRequestType}
+     * @param xls the unmarshalled request envelope
+     * @param type expected request parameters type
+     * @return the operation-specific request payload
+     * @throws JAXBException if the envelope carries no request, or a payload of another type
+     */
+    public static <T extends AbstractRequestParametersType> T extractRequestParameters(XLSType xls, Class<T> type)
+            throws JAXBException {
+        final RequestType request = extractRequest(xls);
+        final JAXBElement<? extends AbstractRequestParametersType> parameters = request.getRequestParameters();
+        final AbstractRequestParametersType value = parameters == null ? null : parameters.getValue();
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+        throw new JAXBException(String.format(
+                "Read object is not compatible with queried type.%nExpected: %s%nBut was: %s",
+                type, value == null ? null : value.getClass()));
+    }
+
+    /**
+     * Extract the {@code <RequestHeader>} of an unmarshalled envelope.
+     *
+     * @param xls the unmarshalled request envelope
+     * @return the request header, or {@code null} if the envelope carries none
+     */
+    public static RequestHeaderType extractRequestHeader(XLSType xls) {
+        final JAXBElement<? extends AbstractHeaderType> header = xls.getHeader();
+        final AbstractHeaderType value = header == null ? null : header.getValue();
+        return (value instanceof RequestHeaderType requestHeader) ? requestHeader : null;
     }
 
     /**

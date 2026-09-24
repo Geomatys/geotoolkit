@@ -41,6 +41,18 @@ import org.geotoolkit.ogcapi.request.styles.UpdateDefaultStyle;
  */
 public final class StylesApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_DRY_RUN = "dry-run";
+    public static final String PARAM_F       = "f";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_STYLES      = "/styles";
+
     public StylesApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -54,11 +66,11 @@ public final class StylesApi extends AbstractOpenApi {
     public ServiceRequest<Supplier<Styles>> getStyles(GetStylesList parameters) {
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles");
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(pathBuilder.toString(), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(pathBuilder.toString(), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -80,11 +92,11 @@ public final class StylesApi extends AbstractOpenApi {
         }
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(pathBuilder.toString(), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(pathBuilder.toString(), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/vnd.mapbox.style+json, application/vnd.ogc.sld+xml;version=1.0, application/vnd.ogc.sld+xml;version=1.1, application/vnd.ogc.cartosym+css, application/vnd.ogc.cartosym+json, */*");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -114,11 +126,11 @@ public final class StylesApi extends AbstractOpenApi {
         }
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles");
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(pathBuilder.toString(), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(pathBuilder.toString(), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) request.header("Prefer", parameters.getHandling().headerValue);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -150,11 +162,11 @@ public final class StylesApi extends AbstractOpenApi {
         }
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(pathBuilder.toString(), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(pathBuilder.toString(), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) request.header("Prefer", parameters.getHandling().headerValue);
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -175,8 +187,8 @@ public final class StylesApi extends AbstractOpenApi {
         }
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri(pathBuilder.toString(), null));
@@ -197,8 +209,8 @@ public final class StylesApi extends AbstractOpenApi {
     public ServiceRequest<Void> updateDefaultStyle(UpdateDefaultStyle parameters) throws IllegalArgumentException {
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        pathBuilder.append("/styles");
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        pathBuilder.append(PATH_STYLES);
 
         final byte[] body;
         try {

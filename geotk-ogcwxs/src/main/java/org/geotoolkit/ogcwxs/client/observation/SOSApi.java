@@ -76,7 +76,26 @@ import org.opengis.observation.ObservationCollection;
  */
 public final class SOSApi extends AbstractService {
 
-    private static final String SERVICE = "SOS";
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "SOS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_FEATURE_TYPE        = "DescribeFeatureType";
+    public static final String OP_DESCRIBE_OBSERVATION_TYPE    = "DescribeObservationType";
+    public static final String OP_DESCRIBE_RESULT_MODEL        = "DescribeResultModel";
+    public static final String OP_DESCRIBE_SENSOR              = "DescribeSensor";
+    public static final String OP_GET_CAPABILITIES             = "GetCapabilities";
+    public static final String OP_GET_FEATURE_OF_INTEREST      = "GetFeatureOfInterest";
+    public static final String OP_GET_FEATURE_OF_INTEREST_TIME = "GetFeatureOfInterestTime";
+    public static final String OP_GET_OBSERVATION              = "GetObservation";
+    public static final String OP_GET_OBSERVATION_BY_ID        = "GetObservationById";
+    public static final String OP_GET_RESULT                   = "GetResult";
+
+    private static final String SERVICE = SERVICE_NAME;
 
     public SOSApi(ServiceConfiguration config) {
         super(config);

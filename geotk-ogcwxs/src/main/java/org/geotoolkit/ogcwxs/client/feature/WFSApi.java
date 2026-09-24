@@ -68,6 +68,19 @@ import org.opengis.filter.Filter;
  */
 public final class WFSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WFS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_FEATURE_TYPE = "DescribeFeatureType";
+    public static final String OP_GET_CAPABILITIES      = "GetCapabilities";
+    public static final String OP_GET_FEATURE           = "GetFeature";
+    public static final String OP_GET_PROPERTY_VALUE    = "GetPropertyValue";
+
     public WFSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -81,7 +94,7 @@ public final class WFSApi extends AbstractService {
     public ServiceRequest<Supplier<WFSCapabilities>> getCapabilities(GetCapabilities parameters) {
         final WFSVersion version = version(parameters.getVersion());
         final org.geotoolkit.wfs.xml.GetCapabilities request = WFSXmlFactory.buildGetCapabilities(
-                version.getCode(), null, null, null, parameters.getUpdateSequence(), "WFS");
+                version.getCode(), null, null, null, parameters.getUpdateSequence(), SERVICE_NAME);
         return post(request, version, WFSCapabilities.class);
     }
 
@@ -94,7 +107,7 @@ public final class WFSApi extends AbstractService {
     public ServiceRequest<byte[]> describeFeatureType(DescribeFeatureType parameters) {
         final WFSVersion version = version(parameters.getVersion());
         final org.geotoolkit.wfs.xml.DescribeFeatureType request = WFSXmlFactory.buildDecribeFeatureType(
-                version.getCode(), "WFS", null, parameters.getTypeNames(), parameters.getOutputFormat());
+                version.getCode(), SERVICE_NAME, null, parameters.getTypeNames(), parameters.getOutputFormat());
         return post(request, version, HttpResponse.BodyHandlers.ofByteArray());
     }
 
@@ -128,7 +141,7 @@ public final class WFSApi extends AbstractService {
         final XMLFilter xmlFilter = toXmlFilter(parameters.getFilter(), version);
         final Query query = WFSXmlFactory.buildQuery(version.getCode(), xmlFilter,
                 Collections.singletonList(parameters.getTypeName()), null, null, null, parameters.getPropertyNames());
-        return WFSXmlFactory.buildGetFeature(version.getCode(), "WFS",
+        return WFSXmlFactory.buildGetFeature(version.getCode(), SERVICE_NAME,
                 null, null, parameters.getMaxFeatures(), query, ResultTypeType.RESULTS, parameters.getOutputFormat());
     }
 
@@ -147,7 +160,7 @@ public final class WFSApi extends AbstractService {
         final XMLFilter xmlFilter = toXmlFilter(parameters.getFilter(), version);
         final Query query = WFSXmlFactory.buildQuery(version.getCode(), xmlFilter,
                 Collections.singletonList(parameters.getTypeName()), null, null, null, null);
-        final org.geotoolkit.wfs.xml.GetPropertyValue request = WFSXmlFactory.buildGetPropertyValue(version.getCode(), "WFS",
+        final org.geotoolkit.wfs.xml.GetPropertyValue request = WFSXmlFactory.buildGetPropertyValue(version.getCode(), SERVICE_NAME,
                 null, null, parameters.getMaxFeatures(), query, ResultTypeType.RESULTS, parameters.getOutputFormat(), parameters.getValueReference());
 
         return post(request, version, ValueCollection.class);

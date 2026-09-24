@@ -71,6 +71,23 @@ import org.geotoolkit.tjs.xml.v100.MapStylingType;
  */
 public final class TJSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "TJS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_DATA           = "DescribeData";
+    public static final String OP_DESCRIBE_DATASETS       = "DescribeDatasets";
+    public static final String OP_DESCRIBE_FRAMEWORKS     = "DescribeFrameworks";
+    public static final String OP_DESCRIBE_JOIN_ABILITIES = "DescribeJoinAbilities";
+    public static final String OP_DESCRIBE_KEY            = "DescribeKey";
+    public static final String OP_GET_CAPABILITIES        = "GetCapabilities";
+    public static final String OP_GET_DATA                = "GetData";
+    public static final String OP_JOIN_DATA               = "JoinData";
+
     public TJSApi(ServiceConfiguration config) {
         super(config);
     }

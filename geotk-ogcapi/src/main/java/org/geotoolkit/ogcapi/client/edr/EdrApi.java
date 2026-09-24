@@ -53,6 +53,41 @@ import org.opengis.geometry.Envelope;
  */
 public final class EdrApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX            = "bbox";
+    public static final String PARAM_COORDS          = "coords";
+    public static final String PARAM_CORRIDOR_HEIGHT = "corridor-height";
+    public static final String PARAM_CORRIDOR_WIDTH  = "corridor-width";
+    public static final String PARAM_CRS             = "crs";
+    public static final String PARAM_DATETIME        = "datetime";
+    public static final String PARAM_F               = "f";
+    public static final String PARAM_HEIGHT_UNITS    = "height-units";
+    public static final String PARAM_LIMIT           = "limit";
+    public static final String PARAM_PARAMETER_NAME  = "parameter-name";
+    public static final String PARAM_RESOLUTION_X    = "resolution-x";
+    public static final String PARAM_RESOLUTION_Y    = "resolution-y";
+    public static final String PARAM_RESOLUTION_Z    = "resolution-z";
+    public static final String PARAM_WIDTH_UNITS     = "width-units";
+    public static final String PARAM_WITHIN          = "within";
+    public static final String PARAM_WITHIN_UNITS    = "within-units";
+    public static final String PARAM_Z               = "z";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_AREA        = "/area";
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_CORRIDOR    = "/corridor";
+    public static final String PATH_CUBE        = "/cube";
+    public static final String PATH_INSTANCES   = "/instances";
+    public static final String PATH_ITEMS       = "/items";
+    public static final String PATH_LOCATIONS   = "/locations";
+    public static final String PATH_POSITION    = "/position";
+    public static final String PATH_RADIUS      = "/radius";
+    public static final String PATH_TRAJECTORY  = "/trajectory";
+
     private static final String ACCEPT_COVERAGE = "application/vnd.cov+json, application/geo+json, text/xml";
     private static final String ACCEPT_FEATURES = "application/geo+json, application/json, text/html";
     private static final String ACCEPT_COLLECTION = "application/json, text/html";
@@ -73,7 +108,7 @@ public final class EdrApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", ACCEPT_COLLECTION);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -92,7 +127,7 @@ public final class EdrApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getInstances");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/instances", toPairs("f", parameters.getF())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_INSTANCES, toPairs(PARAM_F, parameters.getF())));
         request.header("Accept", ACCEPT_COLLECTION);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -112,16 +147,16 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("coords", toWkt(parameters.getCoords())));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_COORDS, toWkt(parameters.getCoords())));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/position", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_POSITION, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -141,18 +176,18 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("coords", toWkt(parameters.getCoords())));
-        queryParams.addAll(toPairs("within", parameters.getWithin()));
-        queryParams.addAll(toPairs("within-units", parameters.getWithinUnits()));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_COORDS, toWkt(parameters.getCoords())));
+        queryParams.addAll(toPairs(PARAM_WITHIN, parameters.getWithin()));
+        queryParams.addAll(toPairs(PARAM_WITHIN_UNITS, parameters.getWithinUnits()));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/radius", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_RADIUS, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -172,18 +207,18 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("coords", toWkt(parameters.getCoords())));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("resolution-x", parameters.getResolutionX()));
-        queryParams.addAll(toPairs("resolution-y", parameters.getResolutionY()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_COORDS, toWkt(parameters.getCoords())));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_X, parameters.getResolutionX()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_Y, parameters.getResolutionY()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/area", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_AREA, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -203,18 +238,18 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("resolution-x", parameters.getResolutionX()));
-        queryParams.addAll(toPairs("resolution-y", parameters.getResolutionY()));
-        queryParams.addAll(toPairs("resolution-z", parameters.getResolutionZ()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_X, parameters.getResolutionX()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_Y, parameters.getResolutionY()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_Z, parameters.getResolutionZ()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/cube", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_CUBE, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -234,15 +269,15 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("coords", toWkt(parameters.getCoords())));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_COORDS, toWkt(parameters.getCoords())));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/trajectory", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_TRAJECTORY, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -262,21 +297,21 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("coords", toWkt(parameters.getCoords())));
-        queryParams.addAll(toPairs("z", parameters.getZ()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("corridor-width", parameters.getCorridorWidth()));
-        queryParams.addAll(toPairs("width-units", parameters.getWidthUnits()));
-        queryParams.addAll(toPairs("corridor-height", parameters.getCorridorHeight()));
-        queryParams.addAll(toPairs("height-units", parameters.getHeightUnits()));
-        queryParams.addAll(toPairs("resolution-x", parameters.getResolutionX()));
-        queryParams.addAll(toPairs("resolution-y", parameters.getResolutionY()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_COORDS, toWkt(parameters.getCoords())));
+        queryParams.addAll(toPairs(PARAM_Z, parameters.getZ()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CORRIDOR_WIDTH, parameters.getCorridorWidth()));
+        queryParams.addAll(toPairs(PARAM_WIDTH_UNITS, parameters.getWidthUnits()));
+        queryParams.addAll(toPairs(PARAM_CORRIDOR_HEIGHT, parameters.getCorridorHeight()));
+        queryParams.addAll(toPairs(PARAM_HEIGHT_UNITS, parameters.getHeightUnits()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_X, parameters.getResolutionX()));
+        queryParams.addAll(toPairs(PARAM_RESOLUTION_Y, parameters.getResolutionY()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/corridor", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_CORRIDOR, queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -299,13 +334,13 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/locations", queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_LOCATIONS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -328,14 +363,14 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "parameter-name", parameters.getParameterName()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_PARAMETER_NAME, parameters.getParameterName()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + "/locations/" + urlEncode(parameters.getLocationId()), queryParams));
+        request.uri(toUri(basePath(parameters.getCollectionId(), parameters.getInstanceId()) + PATH_LOCATIONS + '/' + urlEncode(parameters.getLocationId()), queryParams));
         request.header("Accept", ACCEPT_COVERAGE);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -358,13 +393,13 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -390,7 +425,7 @@ public final class EdrApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getItemId()), toPairs("f", parameters.getF())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getItemId()), toPairs(PARAM_F, parameters.getF())));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -398,9 +433,9 @@ public final class EdrApi extends AbstractOpenApi {
     }
 
     private static String basePath(String collectionId, String instanceId) {
-        final StringBuilder pathBuilder = new StringBuilder("/collections/").append(urlEncode(collectionId));
+        final StringBuilder pathBuilder = new StringBuilder(PATH_COLLECTIONS + '/').append(urlEncode(collectionId));
         if (instanceId != null) {
-            pathBuilder.append("/instances/").append(urlEncode(instanceId));
+            pathBuilder.append(PATH_INSTANCES + '/').append(urlEncode(instanceId));
         }
         return pathBuilder.toString();
     }

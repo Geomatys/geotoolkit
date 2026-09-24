@@ -37,6 +37,18 @@ import org.opengis.geometry.Envelope;
  */
 public final class CollectionsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX     = "bbox";
+    public static final String PARAM_DATETIME = "datetime";
+    public static final String PARAM_F        = "f";
+    public static final String PARAM_LIMIT    = "limit";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
 
     public CollectionsApi(OpenApiConfiguration config) {
         super(config);
@@ -54,7 +66,7 @@ public final class CollectionsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -70,12 +82,12 @@ public final class CollectionsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<Collections>> getCollections(GetCollectionList parameters) throws IllegalArgumentException {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS, queryParams));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

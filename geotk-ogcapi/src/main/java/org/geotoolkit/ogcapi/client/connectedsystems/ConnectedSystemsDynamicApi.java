@@ -97,6 +97,46 @@ import org.geotoolkit.ogcapi.request.connectedsystems.ReplaceSystemHistoryRevisi
  */
 public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_CASCADE             = "cascade";
+    public static final String PARAM_CMD_FORMAT          = "cmdFormat";
+    public static final String PARAM_CONTROLLED_PROPERTY = "controlledProperty";
+    public static final String PARAM_DATA_STREAM         = "dataStream";
+    public static final String PARAM_DATETIME            = "datetime";
+    public static final String PARAM_DRY_RUN             = "dry-run";
+    public static final String PARAM_EVENT_TYPE          = "eventType";
+    public static final String PARAM_EXECUTION_TIME      = "executionTime";
+    public static final String PARAM_FOI                 = "foi";
+    public static final String PARAM_ID                  = "id";
+    public static final String PARAM_ISSUE_TIME          = "issueTime";
+    public static final String PARAM_LIMIT               = "limit";
+    public static final String PARAM_OBSERVED_PROPERTY   = "observedProperty";
+    public static final String PARAM_OBS_FORMAT          = "obsFormat";
+    public static final String PARAM_PHENOMENON_TIME     = "phenomenonTime";
+    public static final String PARAM_Q                   = "q";
+    public static final String PARAM_RESULT_TIME         = "resultTime";
+    public static final String PARAM_SENDER              = "sender";
+    public static final String PARAM_STATUS_CODE         = "statusCode";
+    public static final String PARAM_SYSTEM              = "system";
+    public static final String PARAM_VALID_TIME          = "validTime";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COMMANDS       = "/commands";
+    public static final String PATH_CONTROLSTREAMS = "/controlstreams";
+    public static final String PATH_DATASTREAMS    = "/datastreams";
+    public static final String PATH_EVENTS         = "/events";
+    public static final String PATH_HISTORY        = "/history";
+    public static final String PATH_OBSERVATIONS   = "/observations";
+    public static final String PATH_RESULT         = "/result";
+    public static final String PATH_SCHEMA         = "/schema";
+    public static final String PATH_STATUS         = "/status";
+    public static final String PATH_SYSTEMS        = "/systems";
+    public static final String PATH_SYSTEM_EVENTS  = "/systemEvents";
+
     private static final String ACCEPT_JSON = "application/json, text/html";
 
     public ConnectedSystemsDynamicApi(OpenApiConfiguration config) {
@@ -109,16 +149,16 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
 
     public ServiceRequest<Supplier<DataStreamCollection>> getDataStreams(GetDataStreams parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getQ()));
-        queryParams.addAll(toPairs("phenomenonTime", parameters.getPhenomenonTime()));
-        queryParams.addAll(toPairs("resultTime", parameters.getResultTime()));
-        queryParams.addAll(toPairs("csv", "system", parameters.getSystem()));
-        queryParams.addAll(toPairs("csv", "foi", parameters.getFoi()));
-        queryParams.addAll(toPairs("csv", "observedProperty", parameters.getObservedProperty()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs(PARAM_PHENOMENON_TIME, parameters.getPhenomenonTime()));
+        queryParams.addAll(toPairs(PARAM_RESULT_TIME, parameters.getResultTime()));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, parameters.getSystem()));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, parameters.getFoi()));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, parameters.getObservedProperty()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams", queryParams));
+        request.uri(toUri(PATH_DATASTREAMS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -131,7 +171,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createDataStream");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/datastreams", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_DATASTREAMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -144,7 +184,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'dataStreamId' when calling getDataStream");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()), null));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -157,7 +197,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceDataStream");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -170,7 +210,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'dataStreamId' when calling deleteDataStream");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()), toPairs("cascade", parameters.getCascade())));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()), toPairs(PARAM_CASCADE, parameters.getCascade())));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -184,7 +224,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'obsFormat' when calling getDataStreamSchema");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()) + "/schema", toPairs("obsFormat", parameters.getObsFormat())));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()) + PATH_SCHEMA, toPairs(PARAM_OBS_FORMAT, parameters.getObsFormat())));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -197,7 +237,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceDataStreamSchema");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()) + "/schema", null));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()) + PATH_SCHEMA, null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -210,16 +250,16 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
 
     public ServiceRequest<Supplier<ObservationCollection>> getObservations(GetObservations parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getQ()));
-        queryParams.addAll(toPairs("phenomenonTime", parameters.getPhenomenonTime()));
-        queryParams.addAll(toPairs("resultTime", parameters.getResultTime()));
-        queryParams.addAll(toPairs("csv", "dataStream", parameters.getDataStream()));
-        queryParams.addAll(toPairs("csv", "foi", parameters.getFoi()));
-        queryParams.addAll(toPairs("csv", "observedProperty", parameters.getObservedProperty()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs(PARAM_PHENOMENON_TIME, parameters.getPhenomenonTime()));
+        queryParams.addAll(toPairs(PARAM_RESULT_TIME, parameters.getResultTime()));
+        queryParams.addAll(toPairs("csv", PARAM_DATA_STREAM, parameters.getDataStream()));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, parameters.getFoi()));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, parameters.getObservedProperty()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/observations", queryParams));
+        request.uri(toUri(PATH_OBSERVATIONS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -232,7 +272,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createObservation");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/datastreams/" + urlEncode(parameters.getDataStreamId()) + "/observations", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_DATASTREAMS + '/' + urlEncode(parameters.getDataStreamId()) + PATH_OBSERVATIONS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -245,7 +285,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'obsId' when calling getObservation");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/observations/" + urlEncode(parameters.getObsId()), null));
+        request.uri(toUri(PATH_OBSERVATIONS + '/' + urlEncode(parameters.getObsId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -258,7 +298,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceObservation");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/observations/" + urlEncode(parameters.getObsId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_OBSERVATIONS + '/' + urlEncode(parameters.getObsId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -271,7 +311,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'obsId' when calling deleteObservation");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/observations/" + urlEncode(parameters.getObsId()), null));
+        request.uri(toUri(PATH_OBSERVATIONS + '/' + urlEncode(parameters.getObsId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -286,7 +326,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
                 parameters.getExecutionTime(), parameters.getStatusCode(), parameters.getSender(), parameters.getSystem(),
                 parameters.getFoi(), parameters.getControlledProperty(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams", queryParams));
+        request.uri(toUri(PATH_CONTROLSTREAMS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -299,7 +339,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createControlStream");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/controlstreams", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_CONTROLSTREAMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -312,7 +352,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'controlStreamId' when calling getControlStream");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()), null));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -325,7 +365,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceControlStream");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -338,7 +378,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'controlStreamId' when calling deleteControlStream");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()), toPairs("cascade", parameters.getCascade())));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()), toPairs(PARAM_CASCADE, parameters.getCascade())));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -349,7 +389,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'controlStreamId' when calling getControlStreamSchema");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()) + "/schema", toPairs("cmdFormat", parameters.getCmdFormat())));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()) + PATH_SCHEMA, toPairs(PARAM_CMD_FORMAT, parameters.getCmdFormat())));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -362,7 +402,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceControlStreamSchema");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()) + "/schema", null));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()) + PATH_SCHEMA, null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -378,7 +418,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
                 parameters.getExecutionTime(), parameters.getStatusCode(), parameters.getSender(), parameters.getSystem(),
                 parameters.getFoi(), parameters.getControlledProperty(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands", queryParams));
+        request.uri(toUri(PATH_COMMANDS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -391,7 +431,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createCommand");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/controlstreams/" + urlEncode(parameters.getControlStreamId()) + "/commands", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_CONTROLSTREAMS + '/' + urlEncode(parameters.getControlStreamId()) + PATH_COMMANDS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -404,7 +444,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'cmdId' when calling getCommand");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -417,7 +457,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceCommand");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -430,7 +470,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'cmdId' when calling deleteCommand");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -445,7 +485,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'cmdId' when calling getCommandStatuses");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/status", null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_STATUS, null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -458,7 +498,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createCommandStatus");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/status", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_STATUS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -474,7 +514,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'statusId' when calling getCommandStatus");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/status/" + urlEncode(parameters.getStatusId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_STATUS + '/' + urlEncode(parameters.getStatusId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -490,7 +530,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceCommandStatus");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/status/" + urlEncode(parameters.getStatusId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_STATUS + '/' + urlEncode(parameters.getStatusId()), null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -505,7 +545,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'statusId' when calling deleteCommandStatus");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/status/" + urlEncode(parameters.getStatusId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_STATUS + '/' + urlEncode(parameters.getStatusId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -520,7 +560,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'cmdId' when calling getCommandResults");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/result", null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_RESULT, null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -533,7 +573,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createCommandResult");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/result", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_RESULT, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -549,7 +589,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'resultId' when calling getCommandResult");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/result/" + urlEncode(parameters.getResultId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_RESULT + '/' + urlEncode(parameters.getResultId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -565,7 +605,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceCommandResult");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/result/" + urlEncode(parameters.getResultId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_RESULT + '/' + urlEncode(parameters.getResultId()), null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -580,7 +620,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'resultId' when calling deleteCommandResult");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/commands/" + urlEncode(parameters.getCmdId()) + "/result/" + urlEncode(parameters.getResultId()), null));
+        request.uri(toUri(PATH_COMMANDS + '/' + urlEncode(parameters.getCmdId()) + PATH_RESULT + '/' + urlEncode(parameters.getResultId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -595,13 +635,13 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<SystemEventCollection>> getAllSystemEvents(GetAllSystemEvents parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getEventTime()));
-        queryParams.addAll(toPairs("csv", "eventType", parameters.getEventType()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getQ()));
-        queryParams.addAll(toPairs("csv", "system", parameters.getSystem()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getEventTime()));
+        queryParams.addAll(toPairs("csv", PARAM_EVENT_TYPE, parameters.getEventType()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, parameters.getSystem()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systemEvents", queryParams));
+        request.uri(toUri(PATH_SYSTEM_EVENTS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -613,13 +653,13 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'systemId' when calling getSystemEvents");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getEventTime()));
-        queryParams.addAll(toPairs("csv", "eventType", parameters.getEventType()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getQ()));
-        queryParams.addAll(toPairs("csv", "system", parameters.getSystem()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getEventTime()));
+        queryParams.addAll(toPairs("csv", PARAM_EVENT_TYPE, parameters.getEventType()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, parameters.getSystem()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/events", queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_EVENTS, queryParams));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -632,7 +672,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createSystemEvent");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/events", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_EVENTS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -648,7 +688,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'eventId' when calling getSystemEvent");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/events/" + urlEncode(parameters.getEventId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_EVENTS + '/' + urlEncode(parameters.getEventId()), null));
         request.header("Accept", ACCEPT_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -664,7 +704,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceSystemEvent");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/events/" + urlEncode(parameters.getEventId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_EVENTS + '/' + urlEncode(parameters.getEventId()), null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -679,7 +719,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'eventId' when calling deleteSystemEvent");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/events/" + urlEncode(parameters.getEventId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_EVENTS + '/' + urlEncode(parameters.getEventId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -698,11 +738,11 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'systemId' when calling getSystemHistory");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("validTime", parameters.getValidTime()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getQ()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_VALID_TIME, parameters.getValidTime()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/history", queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_HISTORY, queryParams));
         request.header("Accept", "application/geo+json, application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -720,7 +760,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'revId' when calling getSystemHistoryRevision");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/history/" + urlEncode(parameters.getRevId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_HISTORY + '/' + urlEncode(parameters.getRevId()), null));
         request.header("Accept", "application/geo+json, application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -736,7 +776,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceSystemHistoryRevision");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/history/" + urlEncode(parameters.getRevId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_HISTORY + '/' + urlEncode(parameters.getRevId()), null));
         request.header("Content-Type", parameters.getContentType());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -751,7 +791,7 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'revId' when calling deleteSystemHistoryRevision");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/history/" + urlEncode(parameters.getRevId()), null));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_HISTORY + '/' + urlEncode(parameters.getRevId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -765,16 +805,16 @@ public final class ConnectedSystemsDynamicApi extends AbstractOpenApi {
             List<String> statusCode, List<String> sender, List<String> system, List<String> foi,
             List<String> controlledProperty, Integer limit) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", id));
-        queryParams.addAll(toPairs("csv", "q", q));
-        queryParams.addAll(toPairs("issueTime", issueTime));
-        queryParams.addAll(toPairs("executionTime", executionTime));
-        queryParams.addAll(toPairs("csv", "statusCode", statusCode));
-        queryParams.addAll(toPairs("csv", "sender", sender));
-        queryParams.addAll(toPairs("csv", "system", system));
-        queryParams.addAll(toPairs("csv", "foi", foi));
-        queryParams.addAll(toPairs("csv", "controlledProperty", controlledProperty));
-        queryParams.addAll(toPairs("limit", limit));
+        queryParams.addAll(toPairs("csv", PARAM_ID, id));
+        queryParams.addAll(toPairs("csv", PARAM_Q, q));
+        queryParams.addAll(toPairs(PARAM_ISSUE_TIME, issueTime));
+        queryParams.addAll(toPairs(PARAM_EXECUTION_TIME, executionTime));
+        queryParams.addAll(toPairs("csv", PARAM_STATUS_CODE, statusCode));
+        queryParams.addAll(toPairs("csv", PARAM_SENDER, sender));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, system));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, foi));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, controlledProperty));
+        queryParams.addAll(toPairs(PARAM_LIMIT, limit));
         return queryParams;
     }
 

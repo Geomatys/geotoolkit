@@ -38,6 +38,12 @@ import org.geotoolkit.ogcapi.request.routes.GetRoute;
  */
 public final class RoutesApi extends AbstractOpenApi {
 
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_DEFINITION = "/definition";
+    public static final String PATH_ROUTES     = "/routes";
+
     public RoutesApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -49,7 +55,7 @@ public final class RoutesApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<RouteList>> getRoutes() {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/routes", List.of()));
+        request.uri(toUri(PATH_ROUTES, List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -77,7 +83,7 @@ public final class RoutesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Failed to serialize route definition", e);
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/routes", List.of()));
+        request.uri(toUri(PATH_ROUTES, List.of()));
         request.header("Accept", "application/geo+json");
         request.header("Content-Type", "application/json");
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(bodyBytes));
@@ -97,7 +103,7 @@ public final class RoutesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'routeId' when calling getRoute");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/routes/" + urlEncode(parameters.getRouteId()), List.of()));
+        request.uri(toUri(PATH_ROUTES + '/' + urlEncode(parameters.getRouteId()), List.of()));
         request.header("Accept", "application/geo+json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -116,7 +122,7 @@ public final class RoutesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'routeId' when calling getRouteDefinition");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/routes/" + urlEncode(parameters.getRouteId()) + "/definition", List.of()));
+        request.uri(toUri(PATH_ROUTES + '/' + urlEncode(parameters.getRouteId()) + PATH_DEFINITION, List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -135,7 +141,7 @@ public final class RoutesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'routeId' when calling deleteRoute");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/routes/" + urlEncode(parameters.getRouteId()), null));
+        request.uri(toUri(PATH_ROUTES + '/' + urlEncode(parameters.getRouteId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());

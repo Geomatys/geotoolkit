@@ -43,6 +43,26 @@ import org.geotoolkit.ogcapi.request.tiles.GetTileSetsList;
  */
 public final class TilesApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BGCOLOR     = "bgcolor";
+    public static final String PARAM_COLLECTIONS = "collections";
+    public static final String PARAM_CRS         = "crs";
+    public static final String PARAM_DATETIME    = "datetime";
+    public static final String PARAM_F           = "f";
+    public static final String PARAM_SUBSET      = "subset";
+    public static final String PARAM_SUBSET_CRS  = "subset-crs";
+    public static final String PARAM_TRANSPARENT = "transparent";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS      = "/collections";
+    public static final String PATH_STYLES           = "/styles";
+    public static final String PATH_TILES            = "/tiles";
+    public static final String PATH_TILE_MATRIX_SETS = "/tileMatrixSets";
+
     public TilesApi(OpenApiConfiguration apiClient) {
         super(apiClient);
     }
@@ -73,20 +93,20 @@ public final class TilesApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollections()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("subset-crs", parameters.getSubsetCrs()));
-        queryParams.addAll(toPairs("bgcolor", parameters.getBgColor()));
-        queryParams.addAll(toPairs("transparent", parameters.getTransparency()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollections()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_SUBSET_CRS, parameters.getSubsetCrs()));
+        queryParams.addAll(toPairs(PARAM_BGCOLOR, parameters.getBgColor()));
+        queryParams.addAll(toPairs(PARAM_TRANSPARENT, parameters.getTransparency()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        if (parameters.getStyleId() != null) pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        if (parameters.getStyleId() != null) pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
         pathBuilder.append(parameters.getType().subpath);
-        pathBuilder.append("/tiles/").append(urlEncode(parameters.getTileMatrixSetId()));
+        pathBuilder.append(PATH_TILES + '/').append(urlEncode(parameters.getTileMatrixSetId()));
         pathBuilder.append("/").append(urlEncode(parameters.getTileMatrixId()));
         pathBuilder.append("/").append(urlEncode(parameters.getTileRow().toString()));
         pathBuilder.append("/").append(urlEncode(parameters.getTileCol().toString()));
@@ -113,14 +133,14 @@ public final class TilesApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollections()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollections()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        if (parameters.getStyleId() != null) pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        if (parameters.getStyleId() != null) pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
         pathBuilder.append(parameters.getType().subpath);
-        pathBuilder.append("/tiles/").append(urlEncode(parameters.getTileMatrixSetId()));
+        pathBuilder.append(PATH_TILES + '/').append(urlEncode(parameters.getTileMatrixSetId()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri(pathBuilder.toString(), queryParams));
@@ -139,13 +159,13 @@ public final class TilesApi extends AbstractOpenApi {
     public ServiceRequest<Supplier<GetTileSetsListResponse>> getTileSetsList(GetTileSetsList parameters) {
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        if (parameters.getStyleId() != null) pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        if (parameters.getStyleId() != null) pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
         pathBuilder.append(parameters.getType().subpath);
-        pathBuilder.append("/tiles");
+        pathBuilder.append(PATH_TILES);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri(pathBuilder.toString(), queryParams));
@@ -170,7 +190,7 @@ public final class TilesApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/tileMatrixSets/" + urlEncode(parameters.getTileMatrixSetId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_TILE_MATRIX_SETS + '/' + urlEncode(parameters.getTileMatrixSetId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -187,7 +207,7 @@ public final class TilesApi extends AbstractOpenApi {
     public ServiceRequest<Supplier<GetTileMatrixSetsListResponse>> getTileMatrixSetsList(String f) {
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/tileMatrixSets", toPairs("f", f)));
+        request.uri(toUri(PATH_TILE_MATRIX_SETS, toPairs(PARAM_F, f)));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
