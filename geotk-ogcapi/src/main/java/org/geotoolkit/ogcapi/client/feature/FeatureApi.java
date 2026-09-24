@@ -45,6 +45,26 @@ import org.geotoolkit.ogcapi.request.feature.UpdateItem;
  */
 public final class FeatureApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX        = "bbox";
+    public static final String PARAM_CRS         = "crs";
+    public static final String PARAM_DATETIME    = "datetime";
+    public static final String PARAM_DRY_RUN     = "dry-run";
+    public static final String PARAM_F           = "f";
+    public static final String PARAM_FILTER      = "filter";
+    public static final String PARAM_FILTER_LANG = "filter-lang";
+    public static final String PARAM_LIMIT       = "limit";
+    public static final String PARAM_OFFSET      = "offset";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_FUNCTIONS   = "/functions";
+    public static final String PATH_ITEMS       = "/items";
+
     private static final String ACCEPT_FEATURES = "application/geo+json, application/json, text/html";
 
     public FeatureApi(OpenApiConfiguration config) {
@@ -61,7 +81,7 @@ public final class FeatureApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<Functions>> getFunctions() {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/functions", null));
+        request.uri(toUri(PATH_FUNCTIONS, null));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -80,16 +100,16 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getItems");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("offset", parameters.getOffset()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("filter-lang", parameters.getFilterLang()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_OFFSET, parameters.getOffset()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_FILTER_LANG, parameters.getFilterLang()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -111,10 +131,10 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'itemId' when calling getItem");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getItemId()), queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getItemId()), queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -140,7 +160,7 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'contentType' when calling createItem");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -171,8 +191,8 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'contentType' when calling replaceItem");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getItemId()),
-                toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getItemId()),
+                toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -200,8 +220,8 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling updateItem");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getItemId()),
-                toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getItemId()),
+                toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", "application/merge-patch+json");
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -226,7 +246,7 @@ public final class FeatureApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'itemId' when calling deleteItem");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getItemId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getItemId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());

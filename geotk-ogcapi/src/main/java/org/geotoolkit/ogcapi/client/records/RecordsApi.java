@@ -47,6 +47,31 @@ import org.geotoolkit.ogcapi.request.records.UpdateRecord;
  */
 public final class RecordsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX        = "bbox";
+    public static final String PARAM_CRS         = "crs";
+    public static final String PARAM_DATETIME    = "datetime";
+    public static final String PARAM_DRY_RUN     = "dry-run";
+    public static final String PARAM_EXTERNAL_ID = "externalId";
+    public static final String PARAM_F           = "f";
+    public static final String PARAM_FACETS      = "facets";
+    public static final String PARAM_FILTER      = "filter";
+    public static final String PARAM_FILTER_LANG = "filter-lang";
+    public static final String PARAM_LIMIT       = "limit";
+    public static final String PARAM_OFFSET      = "offset";
+    public static final String PARAM_Q           = "q";
+    public static final String PARAM_SORTBY      = "sortby";
+    public static final String PARAM_TYPE        = "type";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_FACETS      = "/facets";
+    public static final String PATH_ITEMS       = "/items";
+
     private static final String ACCEPT_RECORDS = "application/geo+json, application/json, text/html";
     private static final String ACCEPT_FACETS = "application/facets+json, application/json";
 
@@ -66,20 +91,20 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getRecords");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("q", parameters.getQ()));
-        queryParams.addAll(toPairs("type", parameters.getType()));
-        queryParams.addAll(toPairs("externalId", parameters.getExternalId()));
-        queryParams.addAll(toPairs("filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("filter-lang", parameters.getFilterLang()));
-        queryParams.addAll(toPairs("sortby", parameters.getSortby()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("offset", parameters.getOffset()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_Q, parameters.getQ()));
+        queryParams.addAll(toPairs(PARAM_TYPE, parameters.getType()));
+        queryParams.addAll(toPairs(PARAM_EXTERNAL_ID, parameters.getExternalId()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_FILTER_LANG, parameters.getFilterLang()));
+        queryParams.addAll(toPairs(PARAM_SORTBY, parameters.getSortby()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_OFFSET, parameters.getOffset()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, queryParams));
         request.header("Accept", ACCEPT_RECORDS);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -101,10 +126,10 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'recordId' when calling getRecord");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getRecordId()), queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getRecordId()), queryParams));
         request.header("Accept", ACCEPT_RECORDS);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -123,10 +148,10 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling getFacets");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("facets", parameters.getFacets()));
-        queryParams.addAll(toPairs("f", parameters.getF()));
+        queryParams.addAll(toPairs(PARAM_FACETS, parameters.getFacets()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getF()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/facets", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_FACETS, queryParams));
         request.header("Accept", ACCEPT_FACETS);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -152,7 +177,7 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'contentType' when calling createRecord");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -183,8 +208,8 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'contentType' when calling replaceRecord");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getRecordId()),
-                toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getRecordId()),
+                toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -212,8 +237,8 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling updateRecord");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getRecordId()),
-                toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getRecordId()),
+                toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", "application/merge-patch+json");
         if (parameters.getHandling() != null) {
             request.header("Prefer", parameters.getHandling().headerValue);
@@ -238,7 +263,7 @@ public final class RecordsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'recordId' when calling deleteRecord");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getRecordId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getRecordId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());

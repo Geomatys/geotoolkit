@@ -46,6 +46,24 @@ import org.geotoolkit.wcs.xml.WCSVersion;
  */
 public final class WCPSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WCS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_PROCESS_COVERAGES = "ProcessCoverages";
+
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_QUERY   = "QUERY";
+    public static final String PARAM_REQUEST = "REQUEST";
+    public static final String PARAM_SERVICE = "SERVICE";
+    public static final String PARAM_VERSION = "VERSION";
+
     public WCPSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -82,10 +100,10 @@ public final class WCPSApi extends AbstractService {
         final WCSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WCS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "ProcessCoverages"));
-        queryParams.addAll(toPairs("QUERY", parameters.getQuery()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_PROCESS_COVERAGES));
+        queryParams.addAll(toPairs(PARAM_QUERY, parameters.getQuery()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));

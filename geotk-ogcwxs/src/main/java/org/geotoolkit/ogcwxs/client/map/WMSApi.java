@@ -67,6 +67,57 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class WMSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WMS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_LAYER     = "DescribeLayer";
+    public static final String OP_GET_CAPABILITIES   = "GetCapabilities";
+    public static final String OP_GET_FEATURE_INFO   = "GetFeatureInfo";
+    public static final String OP_GET_LEGEND_GRAPHIC = "GetLegendGraphic";
+    public static final String OP_GET_MAP            = "GetMap";
+
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX           = "BBOX";
+    public static final String PARAM_BGCOLOR        = "BGCOLOR";
+    public static final String PARAM_CRS            = "CRS";
+    public static final String PARAM_DIM_PREFIX     = "DIM_";
+    public static final String PARAM_ELEVATION      = "ELEVATION";
+    public static final String PARAM_EXCEPTIONS     = "EXCEPTIONS";
+    public static final String PARAM_FEATURE_COUNT  = "FEATURE_COUNT";
+    public static final String PARAM_FORMAT         = "FORMAT";
+    public static final String PARAM_HEIGHT         = "HEIGHT";
+    public static final String PARAM_I              = "I";
+    public static final String PARAM_INFO_FORMAT    = "INFO_FORMAT";
+    public static final String PARAM_J              = "J";
+    public static final String PARAM_LAYER          = "LAYER";
+    public static final String PARAM_LAYERS         = "LAYERS";
+    public static final String PARAM_QUERY_LAYERS   = "QUERY_LAYERS";
+    public static final String PARAM_REQUEST        = "REQUEST";
+    public static final String PARAM_RULE           = "RULE";
+    public static final String PARAM_SCALE          = "SCALE";
+    public static final String PARAM_SERVICE        = "SERVICE";
+    public static final String PARAM_SLD            = "SLD";
+    public static final String PARAM_SLD_BODY       = "SLD_BODY";
+    public static final String PARAM_SLD_VERSION    = "SLD_VERSION";
+    public static final String PARAM_SRS            = "SRS";
+    public static final String PARAM_STYLE          = "STYLE";
+    public static final String PARAM_STYLES         = "STYLES";
+    public static final String PARAM_TIME           = "TIME";
+    public static final String PARAM_TRANSPARENT    = "TRANSPARENT";
+    public static final String PARAM_UPDATESEQUENCE = "UPDATESEQUENCE";
+    public static final String PARAM_VERSION        = "VERSION";
+    public static final String PARAM_WIDTH          = "WIDTH";
+    public static final String PARAM_WMTVER         = "WMTVER";
+    public static final String PARAM_X              = "X";
+    public static final String PARAM_Y              = "Y";
+
     public WMSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -82,10 +133,10 @@ public final class WMSApi extends AbstractService {
         final WMSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WMS"));
-        queryParams.addAll(toPairs(version == WMSVersion.v100 ? "WMTVER" : "VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "GetCapabilities"));
-        queryParams.addAll(toPairs("UPDATESEQUENCE", parameters.getUpdateSequence()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(version == WMSVersion.v100 ? PARAM_WMTVER : PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_GET_CAPABILITIES));
+        queryParams.addAll(toPairs(PARAM_UPDATESEQUENCE, parameters.getUpdateSequence()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -102,7 +153,7 @@ public final class WMSApi extends AbstractService {
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> getMap(GetMap parameters) {
-        final List<Pair> queryParams = toGetMapPairs(parameters, "GetMap");
+        final List<Pair> queryParams = toGetMapPairs(parameters, OP_GET_MAP);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -126,12 +177,12 @@ public final class WMSApi extends AbstractService {
         Objects.requireNonNull(parameters.getY(), "Y pixel coordinate must be defined");
 
         final WMSVersion version = version(parameters.getVersion());
-        final List<Pair> queryParams = toGetMapPairs(parameters, "GetFeatureInfo");
-        queryParams.addAll(toPairs("csv", "QUERY_LAYERS", parameters.getQueryLayers()));
-        queryParams.addAll(toPairs("INFO_FORMAT", parameters.getInfoFormat()));
-        queryParams.addAll(toPairs("FEATURE_COUNT", parameters.getFeatureCount()));
-        queryParams.addAll(toPairs(version == WMSVersion.v130 ? "I" : "X", parameters.getX()));
-        queryParams.addAll(toPairs(version == WMSVersion.v130 ? "J" : "Y", parameters.getY()));
+        final List<Pair> queryParams = toGetMapPairs(parameters, OP_GET_FEATURE_INFO);
+        queryParams.addAll(toPairs("csv", PARAM_QUERY_LAYERS, parameters.getQueryLayers()));
+        queryParams.addAll(toPairs(PARAM_INFO_FORMAT, parameters.getInfoFormat()));
+        queryParams.addAll(toPairs(PARAM_FEATURE_COUNT, parameters.getFeatureCount()));
+        queryParams.addAll(toPairs(version == WMSVersion.v130 ? PARAM_I : PARAM_X, parameters.getX()));
+        queryParams.addAll(toPairs(version == WMSVersion.v130 ? PARAM_J : PARAM_Y, parameters.getY()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -151,24 +202,24 @@ public final class WMSApi extends AbstractService {
         final WMSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WMS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "GetLegendGraphic"));
-        queryParams.addAll(toPairs("LAYER", parameters.getLayer()));
-        queryParams.addAll(toPairs("FORMAT", parameters.getFormat()));
-        queryParams.addAll(toPairs("WIDTH", parameters.getWidth()));
-        queryParams.addAll(toPairs("HEIGHT", parameters.getHeight()));
-        queryParams.addAll(toPairs("EXCEPTIONS", parameters.getExceptions()));
-        queryParams.addAll(toPairs("RULE", parameters.getRule()));
-        queryParams.addAll(toPairs("SCALE", parameters.getScale()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_GET_LEGEND_GRAPHIC));
+        queryParams.addAll(toPairs(PARAM_LAYER, parameters.getLayer()));
+        queryParams.addAll(toPairs(PARAM_FORMAT, parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_WIDTH, parameters.getWidth()));
+        queryParams.addAll(toPairs(PARAM_HEIGHT, parameters.getHeight()));
+        queryParams.addAll(toPairs(PARAM_EXCEPTIONS, parameters.getExceptions()));
+        queryParams.addAll(toPairs(PARAM_RULE, parameters.getRule()));
+        queryParams.addAll(toPairs(PARAM_SCALE, parameters.getScale()));
         if (parameters.getSldBody() != null) {
-            queryParams.addAll(toPairs("SLD_BODY", parameters.getSldBody()));
+            queryParams.addAll(toPairs(PARAM_SLD_BODY, parameters.getSldBody()));
         } else if (parameters.getSld() != null) {
-            queryParams.addAll(toPairs("SLD", parameters.getSld()));
+            queryParams.addAll(toPairs(PARAM_SLD, parameters.getSld()));
         } else {
-            queryParams.addAll(toPairs("STYLE", parameters.getStyle()));
+            queryParams.addAll(toPairs(PARAM_STYLE, parameters.getStyle()));
         }
-        queryParams.addAll(toPairs("SLD_VERSION", parameters.getSldVersion()));
+        queryParams.addAll(toPairs(PARAM_SLD_VERSION, parameters.getSldVersion()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -190,10 +241,10 @@ public final class WMSApi extends AbstractService {
         final WMSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WMS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "DescribeLayer"));
-        queryParams.addAll(toPairs("csv", "LAYERS", parameters.getLayers()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_DESCRIBE_LAYER));
+        queryParams.addAll(toPairs("csv", PARAM_LAYERS, parameters.getLayers()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -218,40 +269,40 @@ public final class WMSApi extends AbstractService {
         final WMSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WMS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", requestName));
-        queryParams.addAll(toPairs("csv", "LAYERS", parameters.getLayers()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, requestName));
+        queryParams.addAll(toPairs("csv", PARAM_LAYERS, parameters.getLayers()));
         queryParams.addAll(toPairs(crsParameterName(version), toCrs(parameters.getBbox())));
-        queryParams.addAll(toPairs("csv", "BBOX", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("WIDTH", parameters.getWidth()));
-        queryParams.addAll(toPairs("HEIGHT", parameters.getHeight()));
-        queryParams.addAll(toPairs("FORMAT", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_WIDTH, parameters.getWidth()));
+        queryParams.addAll(toPairs(PARAM_HEIGHT, parameters.getHeight()));
+        queryParams.addAll(toPairs(PARAM_FORMAT, parameters.getFormat()));
         if (parameters.getTransparent() != null) {
-            queryParams.addAll(toPairs("TRANSPARENT", Boolean.toString(parameters.getTransparent()).toUpperCase()));
+            queryParams.addAll(toPairs(PARAM_TRANSPARENT, Boolean.toString(parameters.getTransparent()).toUpperCase()));
         }
-        queryParams.addAll(toPairs("BGCOLOR", toHex(parameters.getBgColor())));
-        queryParams.addAll(toPairs("EXCEPTIONS", parameters.getExceptions()));
-        queryParams.addAll(toPairs("ELEVATION", parameters.getElevation()));
-        queryParams.addAll(toPairs("TIME", parameters.getTime()));
+        queryParams.addAll(toPairs(PARAM_BGCOLOR, toHex(parameters.getBgColor())));
+        queryParams.addAll(toPairs(PARAM_EXCEPTIONS, parameters.getExceptions()));
+        queryParams.addAll(toPairs(PARAM_ELEVATION, parameters.getElevation()));
+        queryParams.addAll(toPairs(PARAM_TIME, parameters.getTime()));
 
         //a single style parameter, in order of precedence
         if (parameters.getSldBody() != null) {
-            queryParams.addAll(toPairs("SLD_BODY", parameters.getSldBody()));
+            queryParams.addAll(toPairs(PARAM_SLD_BODY, parameters.getSldBody()));
         } else if (parameters.getSld() != null) {
-            queryParams.addAll(toPairs("SLD", parameters.getSld()));
+            queryParams.addAll(toPairs(PARAM_SLD, parameters.getSld()));
         } else if (parameters.getStyles() != null && !parameters.getStyles().isEmpty()) {
-            queryParams.addAll(toPairs("csv", "STYLES", parameters.getStyles()));
+            queryParams.addAll(toPairs("csv", PARAM_STYLES, parameters.getStyles()));
         } else {
             //some servers reject a missing STYLES parameter
-            queryParams.addAll(toPairs("STYLES", ""));
+            queryParams.addAll(toPairs(PARAM_STYLES, ""));
         }
-        queryParams.addAll(toPairs("SLD_VERSION", parameters.getSldVersion()));
+        queryParams.addAll(toPairs(PARAM_SLD_VERSION, parameters.getSldVersion()));
 
         final Map<String, String> dimensions = parameters.getDimensions();
         if (dimensions != null) {
             for (Map.Entry<String, String> entry : dimensions.entrySet()) {
-                queryParams.addAll(toPairs("DIM_" + entry.getKey(), entry.getValue()));
+                queryParams.addAll(toPairs(PARAM_DIM_PREFIX + entry.getKey(), entry.getValue()));
             }
         }
 
@@ -277,7 +328,7 @@ public final class WMSApi extends AbstractService {
     }
 
     private static String crsParameterName(WMSVersion version) {
-        return version == WMSVersion.v130 ? "CRS" : "SRS";
+        return version == WMSVersion.v130 ? PARAM_CRS : PARAM_SRS;
     }
 
     private static String toHex(Color color) {

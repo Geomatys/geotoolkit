@@ -61,6 +61,27 @@ import org.geotoolkit.ogcapi.request.movingfeatures.ReplaceCollection;
  */
 public final class MovingFeaturesApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX               = "bbox";
+    public static final String PARAM_DATETIME           = "datetime";
+    public static final String PARAM_LEAF               = "leaf";
+    public static final String PARAM_LIMIT              = "limit";
+    public static final String PARAM_SUB_TEMPORAL_VALUE = "subTemporalValue";
+    public static final String PARAM_SUB_TRAJECTORY     = "subTrajectory";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_ACCELERATION = "/acceleration";
+    public static final String PATH_COLLECTIONS  = "/collections";
+    public static final String PATH_DISTANCE     = "/distance";
+    public static final String PATH_ITEMS        = "/items";
+    public static final String PATH_TGSEQUENCE   = "/tgsequence";
+    public static final String PATH_TPROPERTIES  = "/tproperties";
+    public static final String PATH_VELOCITY     = "/velocity";
+
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String CONTENT_TYPE_GEOJSON = "application/geo+json";
 
@@ -80,7 +101,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling createCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections", null));
+        request.uri(toUri(PATH_COLLECTIONS, null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -103,7 +124,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling replaceCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()), null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -122,7 +143,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'collectionId' when calling deleteCollection");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -143,12 +164,12 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getMovingFeatures");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("subTrajectory", parameters.getSubtrajectory()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_SUB_TRAJECTORY, parameters.getSubtrajectory()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -171,7 +192,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling insertMovingFeatures");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items", null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS, null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -193,7 +214,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'mFeatureId' when calling getMovingFeature");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()), null));
         request.header("Accept", CONTENT_TYPE_GEOJSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -215,7 +236,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'mFeatureId' when calling deleteMovingFeature");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -239,13 +260,13 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getTemporalGeometrySequence");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("csv", "leaf", parameters.getLeaf()));
-        queryParams.addAll(toPairs("subTrajectory", parameters.getSubtrajectory()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_LEAF, parameters.getLeaf()));
+        queryParams.addAll(toPairs(PARAM_SUB_TRAJECTORY, parameters.getSubtrajectory()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()) + "/tgsequence", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()) + PATH_TGSEQUENCE, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -271,7 +292,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling insertTemporalGeometry");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()) + "/tgsequence", null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()) + PATH_TGSEQUENCE, null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -296,8 +317,8 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'tGeometryId' when calling deleteTemporalGeometry");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tgsequence/" + urlEncode(parameters.getTGeometryId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TGSEQUENCE + '/' + urlEncode(parameters.getTGeometryId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -324,12 +345,12 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getDistance");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "leaf", parameters.getLeaf()));
-        queryParams.addAll(toPairs("subTemporalValue", parameters.getSubtemporalvalue()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_LEAF, parameters.getLeaf()));
+        queryParams.addAll(toPairs(PARAM_SUB_TEMPORAL_VALUE, parameters.getSubtemporalvalue()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tgsequence/" + urlEncode(parameters.getTGeometryId()) + "/distance", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TGSEQUENCE + '/' + urlEncode(parameters.getTGeometryId()) + PATH_DISTANCE, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -357,12 +378,12 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getVelocity");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "leaf", parameters.getLeaf()));
-        queryParams.addAll(toPairs("subTemporalValue", parameters.getSubtemporalvalue()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_LEAF, parameters.getLeaf()));
+        queryParams.addAll(toPairs(PARAM_SUB_TEMPORAL_VALUE, parameters.getSubtemporalvalue()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tgsequence/" + urlEncode(parameters.getTGeometryId()) + "/velocity", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TGSEQUENCE + '/' + urlEncode(parameters.getTGeometryId()) + PATH_VELOCITY, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -390,12 +411,12 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getAcceleration");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "leaf", parameters.getLeaf()));
-        queryParams.addAll(toPairs("subTemporalValue", parameters.getSubtemporalvalue()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_LEAF, parameters.getLeaf()));
+        queryParams.addAll(toPairs(PARAM_SUB_TEMPORAL_VALUE, parameters.getSubtemporalvalue()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tgsequence/" + urlEncode(parameters.getTGeometryId()) + "/acceleration", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TGSEQUENCE + '/' + urlEncode(parameters.getTGeometryId()) + PATH_ACCELERATION, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -420,11 +441,11 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getTemporalProperties");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("subTemporalValue", parameters.getSubtemporalvalue()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_SUB_TEMPORAL_VALUE, parameters.getSubtemporalvalue()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()) + "/tproperties", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()) + PATH_TPROPERTIES, queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -450,7 +471,7 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling insertTemporalProperty");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId()) + "/tproperties", null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId()) + PATH_TPROPERTIES, null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -478,12 +499,12 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'datetime' when calling getTemporalProperty");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "leaf", parameters.getLeaf()));
-        queryParams.addAll(toPairs("subTemporalValue", parameters.getSubtemporalvalue()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_LEAF, parameters.getLeaf()));
+        queryParams.addAll(toPairs(PARAM_SUB_TEMPORAL_VALUE, parameters.getSubtemporalvalue()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tproperties/" + urlEncode(parameters.getTPropertyName()), queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TPROPERTIES + '/' + urlEncode(parameters.getTPropertyName()), queryParams));
         request.header("Accept", CONTENT_TYPE_JSON);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -512,8 +533,8 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'content' when calling insertTemporalPrimitiveValue");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tproperties/" + urlEncode(parameters.getTPropertyName()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TPROPERTIES + '/' + urlEncode(parameters.getTPropertyName()), null));
         request.header("Content-Type", CONTENT_TYPE_JSON);
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
         setConfig(request);
@@ -538,8 +559,8 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'tPropertyName' when calling deleteTemporalProperty");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tproperties/" + urlEncode(parameters.getTPropertyName()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TPROPERTIES + '/' + urlEncode(parameters.getTPropertyName()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -566,8 +587,8 @@ public final class MovingFeaturesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'tValueId' when calling deleteTemporalPrimitiveValue");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/items/" + urlEncode(parameters.getMFeatureId())
-                + "/tproperties/" + urlEncode(parameters.getTPropertyName()) + "/" + urlEncode(parameters.getTValueId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_ITEMS + '/' + urlEncode(parameters.getMFeatureId())
+                + PATH_TPROPERTIES + '/' + urlEncode(parameters.getTPropertyName()) + "/" + urlEncode(parameters.getTValueId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());

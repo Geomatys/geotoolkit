@@ -34,6 +34,17 @@ import org.geotoolkit.ogcapi.request.common.GetLandingPage;
  */
 public final class CoreApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_F = "f";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_API         = "/api";
+    public static final String PATH_CONFORMANCE = "/conformance";
+
     public CoreApi(OpenApiConfiguration apiClient) {
         super(apiClient);
     }
@@ -46,7 +57,7 @@ public final class CoreApi extends AbstractOpenApi {
      */
     public ServiceRequest<Void> getApi(GetApi parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/api", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_API, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -62,7 +73,7 @@ public final class CoreApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<ConfClasses>> getConformance(GetConformance parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/conformance", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_CONFORMANCE, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -78,7 +89,7 @@ public final class CoreApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<LandingPage>> getLandingPage(GetLandingPage parameters) {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/", toPairs("f", parameters.getFormat())));
+        request.uri(toUri("/", toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

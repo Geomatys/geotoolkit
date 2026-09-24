@@ -73,6 +73,17 @@ import org.geotoolkit.ogcwxs.request.location.AbstractLocationRequest;
  */
 public final class LocationApi extends AbstractService {
 
+    /**
+     * Operation names.
+     */
+    public static final String OP_DETERMINE_ROUTE_REQUEST              = "DetermineRouteRequest";
+    public static final String OP_DIRECTORY_REQUEST                    = "DirectoryRequest";
+    public static final String OP_GEOCODE_REQUEST                      = "GeocodeRequest";
+    public static final String OP_GET_PORTRAY_MAP_CAPABILITIES_REQUEST = "GetPortrayMapCapabilitiesRequest";
+    public static final String OP_PORTRAY_MAP_REQUEST                  = "PortrayMapRequest";
+    public static final String OP_REVERSE_GEOCODE_REQUEST              = "ReverseGeocodeRequest";
+    public static final String OP_SLIR                                 = "SLIR";
+
     private static final ObjectFactory FACTORY = new ObjectFactory();
 
     public LocationApi(ServiceConfiguration config) {
@@ -89,7 +100,7 @@ public final class LocationApi extends AbstractService {
         final GeocodeRequestType request = new GeocodeRequestType();
         request.getAddress().addAll(parameters.getAddress());
         request.setReturnFreeForm(parameters.getReturnFreeForm());
-        return post(parameters, "GeocodeRequest", FACTORY.createGeocodeRequest(request), GeocodeResponseType.class);
+        return post(parameters, OP_GEOCODE_REQUEST, FACTORY.createGeocodeRequest(request), GeocodeResponseType.class);
     }
 
     /**
@@ -102,7 +113,7 @@ public final class LocationApi extends AbstractService {
         final ReverseGeocodeRequestType request = new ReverseGeocodeRequestType();
         request.setPosition(parameters.getPosition());
         request.getReverseGeocodePreference().addAll(parameters.getReverseGeocodePreference());
-        return post(parameters, "ReverseGeocodeRequest", FACTORY.createReverseGeocodeRequest(request), ReverseGeocodeResponseType.class);
+        return post(parameters, OP_REVERSE_GEOCODE_REQUEST, FACTORY.createReverseGeocodeRequest(request), ReverseGeocodeResponseType.class);
     }
 
     /**
@@ -118,7 +129,7 @@ public final class LocationApi extends AbstractService {
         request.setSortCriteria(parameters.getSortCriteria());
         if (parameters.getSortDirection() != null) request.setSortDirection(parameters.getSortDirection());
         if (parameters.getDistanceUnit() != null) request.setDistanceUnit(parameters.getDistanceUnit());
-        return post(parameters, "DirectoryRequest", FACTORY.createDirectoryRequest(request), DirectoryResponseType.class);
+        return post(parameters, OP_DIRECTORY_REQUEST, FACTORY.createDirectoryRequest(request), DirectoryResponseType.class);
     }
 
     /**
@@ -136,7 +147,7 @@ public final class LocationApi extends AbstractService {
         request.setRouteMapRequest(parameters.getRouteMapRequest());
         request.setProvideRouteHandle(parameters.getProvideRouteHandle());
         if (parameters.getDistanceUnit() != null) request.setDistanceUnit(parameters.getDistanceUnit());
-        return post(parameters, "DetermineRouteRequest", FACTORY.createDetermineRouteRequest(request), DetermineRouteResponseType.class);
+        return post(parameters, OP_DETERMINE_ROUTE_REQUEST, FACTORY.createDetermineRouteRequest(request), DetermineRouteResponseType.class);
     }
 
     /**
@@ -150,7 +161,7 @@ public final class LocationApi extends AbstractService {
         request.getOutput().addAll(parameters.getOutput());
         request.setBasemap(parameters.getBasemap());
         request.getOverlay().addAll(parameters.getOverlay());
-        return post(parameters, "PortrayMapRequest", FACTORY.createPortrayMapRequest(request), PortrayMapResponseType.class);
+        return post(parameters, OP_PORTRAY_MAP_REQUEST, FACTORY.createPortrayMapRequest(request), PortrayMapResponseType.class);
     }
 
     /**
@@ -162,7 +173,7 @@ public final class LocationApi extends AbstractService {
      */
     public ServiceRequest<Supplier<GetPortrayMapCapabilitiesResponseType>> getPortrayMapCapabilities(GetPortrayMapCapabilitiesRequest parameters) {
         final GetPortrayMapCapabilitiesRequestType request = new GetPortrayMapCapabilitiesRequestType();
-        return post(parameters, "GetPortrayMapCapabilitiesRequest", FACTORY.createGetPortrayMapCapabilitiesRequest(request), GetPortrayMapCapabilitiesResponseType.class);
+        return post(parameters, OP_GET_PORTRAY_MAP_CAPABILITIES_REQUEST, FACTORY.createGetPortrayMapCapabilitiesRequest(request), GetPortrayMapCapabilitiesResponseType.class);
     }
 
     /**
@@ -175,7 +186,7 @@ public final class LocationApi extends AbstractService {
     public ServiceRequest<Supplier<SLIAType>> locate(LocateRequest parameters) {
         final SLIRType request = new SLIRType();
         request.setInputGatewayParameters(parameters.getInputGatewayParameters());
-        return post(parameters, "SLIR", FACTORY.createSLIR(request), SLIAType.class);
+        return post(parameters, OP_SLIR, FACTORY.createSLIR(request), SLIAType.class);
     }
 
     /**

@@ -89,6 +89,38 @@ import org.geotoolkit.ogcapi.request.connectedsystems.ReplaceSystem;
  */
 public final class ConnectedSystemsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BASE_PROPERTY       = "baseProperty";
+    public static final String PARAM_BBOX                = "bbox";
+    public static final String PARAM_CASCADE             = "cascade";
+    public static final String PARAM_CONTROLLED_PROPERTY = "controlledProperty";
+    public static final String PARAM_DATETIME            = "datetime";
+    public static final String PARAM_DRY_RUN             = "dry-run";
+    public static final String PARAM_FOI                 = "foi";
+    public static final String PARAM_GEOM                = "geom";
+    public static final String PARAM_ID                  = "id";
+    public static final String PARAM_LIMIT               = "limit";
+    public static final String PARAM_OBJECT_TYPE         = "objectType";
+    public static final String PARAM_OBSERVED_PROPERTY   = "observedProperty";
+    public static final String PARAM_PARENT              = "parent";
+    public static final String PARAM_PROCEDURE           = "procedure";
+    public static final String PARAM_Q                   = "q";
+    public static final String PARAM_RECURSIVE           = "recursive";
+    public static final String PARAM_SYSTEM              = "system";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_DEPLOYMENTS       = "/deployments";
+    public static final String PATH_PROCEDURES        = "/procedures";
+    public static final String PATH_PROPERTIES        = "/properties";
+    public static final String PATH_SAMPLING_FEATURES = "/samplingFeatures";
+    public static final String PATH_SUBDEPLOYMENTS    = "/subdeployments";
+    public static final String PATH_SUBSYSTEMS        = "/subsystems";
+    public static final String PATH_SYSTEMS           = "/systems";
+
     private static final String ACCEPT_FEATURES = "application/geo+json, application/sml+json, application/json, text/html";
     private static final String ACCEPT_PROPERTIES = "application/sml+json, application/json";
 
@@ -112,7 +144,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
                 parameters.getFoi(), parameters.getObservedProperty(), parameters.getControlledProperty(),
                 parameters.getRecursive(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems", queryParams));
+        request.uri(toUri(PATH_SYSTEMS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -130,7 +162,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
     public ServiceRequest<Void> createSystem(CreateSystem parameters) throws IllegalArgumentException {
         requireContent(parameters.getContent(), parameters.getContentType(), "createSystem");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -149,9 +181,9 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         if (parameters.getSystemId() == null) {
             throw new IllegalArgumentException("Missing the required parameter 'systemId' when calling getSystem");
         }
-        final List<Pair> queryParams = toPairs("datetime", parameters.getDatetime());
+        final List<Pair> queryParams = toPairs(PARAM_DATETIME, parameters.getDatetime());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()), queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()), queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -171,7 +203,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceSystem");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -191,7 +223,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'systemId' when calling deleteSystem");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()), toPairs("cascade", parameters.getCascade())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()), toPairs(PARAM_CASCADE, parameters.getCascade())));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -213,7 +245,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
                 parameters.getFoi(), parameters.getObservedProperty(), parameters.getControlledProperty(),
                 parameters.getRecursive(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/subsystems", queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_SUBSYSTEMS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -233,7 +265,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createSubsystem");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/subsystems", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_SUBSYSTEMS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -253,19 +285,19 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<DeploymentCollection>> getDeployments(GetDeployments parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("geom", parameters.getGeom()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getKeyword()));
-        queryParams.addAll(toPairs("csv", "parent", parameters.getParent()));
-        queryParams.addAll(toPairs("csv", "system", parameters.getSystem()));
-        queryParams.addAll(toPairs("csv", "foi", parameters.getFoi()));
-        queryParams.addAll(toPairs("csv", "observedProperty", parameters.getObservedProperty()));
-        queryParams.addAll(toPairs("csv", "controlledProperty", parameters.getControlledProperty()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_GEOM, parameters.getGeom()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getKeyword()));
+        queryParams.addAll(toPairs("csv", PARAM_PARENT, parameters.getParent()));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, parameters.getSystem()));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, parameters.getFoi()));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, parameters.getObservedProperty()));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, parameters.getControlledProperty()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments", queryParams));
+        request.uri(toUri(PATH_DEPLOYMENTS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -282,7 +314,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
     public ServiceRequest<Void> createDeployment(CreateDeployment parameters) throws IllegalArgumentException {
         requireContent(parameters.getContent(), parameters.getContentType(), "createDeployment");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_DEPLOYMENTS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -302,7 +334,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'deploymentId' when calling getDeployment");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments/" + urlEncode(parameters.getDeploymentId()), null));
+        request.uri(toUri(PATH_DEPLOYMENTS + '/' + urlEncode(parameters.getDeploymentId()), null));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -322,7 +354,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceDeployment");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments/" + urlEncode(parameters.getDeploymentId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_DEPLOYMENTS + '/' + urlEncode(parameters.getDeploymentId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -342,7 +374,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'deploymentId' when calling deleteDeployment");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments/" + urlEncode(parameters.getDeploymentId()), null));
+        request.uri(toUri(PATH_DEPLOYMENTS + '/' + urlEncode(parameters.getDeploymentId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -360,20 +392,20 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'deploymentId' when calling getSubdeployments");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("recursive", parameters.getRecursive()));
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("geom", parameters.getGeom()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getKeyword()));
-        queryParams.addAll(toPairs("csv", "parent", parameters.getParent()));
-        queryParams.addAll(toPairs("csv", "system", parameters.getSystem()));
-        queryParams.addAll(toPairs("csv", "foi", parameters.getFoi()));
-        queryParams.addAll(toPairs("csv", "observedProperty", parameters.getObservedProperty()));
-        queryParams.addAll(toPairs("csv", "controlledProperty", parameters.getControlledProperty()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_RECURSIVE, parameters.getRecursive()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_GEOM, parameters.getGeom()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getKeyword()));
+        queryParams.addAll(toPairs("csv", PARAM_PARENT, parameters.getParent()));
+        queryParams.addAll(toPairs("csv", PARAM_SYSTEM, parameters.getSystem()));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, parameters.getFoi()));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, parameters.getObservedProperty()));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, parameters.getControlledProperty()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments/" + urlEncode(parameters.getDeploymentId()) + "/subdeployments", queryParams));
+        request.uri(toUri(PATH_DEPLOYMENTS + '/' + urlEncode(parameters.getDeploymentId()) + PATH_SUBDEPLOYMENTS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -393,7 +425,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createSubdeployment");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/deployments/" + urlEncode(parameters.getDeploymentId()) + "/subdeployments", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_DEPLOYMENTS + '/' + urlEncode(parameters.getDeploymentId()) + PATH_SUBDEPLOYMENTS, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -413,15 +445,15 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'systemId' when calling getSystemDeployments");
         }
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("geom", parameters.getGeom()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getKeyword()));
-        queryParams.addAll(toPairs("csv", "foi", parameters.getFoi()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_GEOM, parameters.getGeom()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getKeyword()));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, parameters.getFoi()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/deployments", queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_DEPLOYMENTS, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -440,14 +472,14 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<ProcedureCollection>> getProcedures(GetProcedures parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getKeyword()));
-        queryParams.addAll(toPairs("csv", "observedProperty", parameters.getObservedProperty()));
-        queryParams.addAll(toPairs("csv", "controlledProperty", parameters.getControlledProperty()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getKeyword()));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, parameters.getObservedProperty()));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, parameters.getControlledProperty()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/procedures", queryParams));
+        request.uri(toUri(PATH_PROCEDURES, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -464,7 +496,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
     public ServiceRequest<Void> createProcedure(CreateProcedure parameters) throws IllegalArgumentException {
         requireContent(parameters.getContent(), parameters.getContentType(), "createProcedure");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/procedures", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_PROCEDURES, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -484,7 +516,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'procedureId' when calling getProcedure");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/procedures/" + urlEncode(parameters.getProcedureId()), null));
+        request.uri(toUri(PATH_PROCEDURES + '/' + urlEncode(parameters.getProcedureId()), null));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -504,7 +536,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceProcedure");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/procedures/" + urlEncode(parameters.getProcedureId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_PROCEDURES + '/' + urlEncode(parameters.getProcedureId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -524,7 +556,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'procedureId' when calling deleteProcedure");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/procedures/" + urlEncode(parameters.getProcedureId()), null));
+        request.uri(toUri(PATH_PROCEDURES + '/' + urlEncode(parameters.getProcedureId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -545,7 +577,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
                 parameters.getDatetime(), parameters.getGeom(), parameters.getKeyword(), parameters.getFoi(),
                 parameters.getObservedProperty(), parameters.getControlledProperty(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/samplingFeatures", queryParams));
+        request.uri(toUri(PATH_SAMPLING_FEATURES, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -564,7 +596,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'featureId' when calling getSamplingFeature");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/samplingFeatures/" + urlEncode(parameters.getFeatureId()), null));
+        request.uri(toUri(PATH_SAMPLING_FEATURES + '/' + urlEncode(parameters.getFeatureId()), null));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -584,7 +616,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceSamplingFeature");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/samplingFeatures/" + urlEncode(parameters.getFeatureId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SAMPLING_FEATURES + '/' + urlEncode(parameters.getFeatureId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -604,7 +636,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'featureId' when calling deleteSamplingFeature");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/samplingFeatures/" + urlEncode(parameters.getFeatureId()), null));
+        request.uri(toUri(PATH_SAMPLING_FEATURES + '/' + urlEncode(parameters.getFeatureId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -625,7 +657,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
                 parameters.getDatetime(), parameters.getGeom(), parameters.getKeyword(), parameters.getFoi(),
                 parameters.getObservedProperty(), parameters.getControlledProperty(), parameters.getLimit());
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/samplingFeatures", queryParams));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_SAMPLING_FEATURES, queryParams));
         request.header("Accept", ACCEPT_FEATURES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -645,7 +677,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "createSystemSamplingFeature");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/systems/" + urlEncode(parameters.getSystemId()) + "/samplingFeatures", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_SYSTEMS + '/' + urlEncode(parameters.getSystemId()) + PATH_SAMPLING_FEATURES, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -665,13 +697,13 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<PropertyCollection>> getProperties(GetProperties parameters) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", parameters.getId()));
-        queryParams.addAll(toPairs("csv", "q", parameters.getKeyword()));
-        queryParams.addAll(toPairs("csv", "baseProperty", parameters.getBaseProperty()));
-        queryParams.addAll(toPairs("csv", "objectType", parameters.getObjectType()));
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
+        queryParams.addAll(toPairs("csv", PARAM_ID, parameters.getId()));
+        queryParams.addAll(toPairs("csv", PARAM_Q, parameters.getKeyword()));
+        queryParams.addAll(toPairs("csv", PARAM_BASE_PROPERTY, parameters.getBaseProperty()));
+        queryParams.addAll(toPairs("csv", PARAM_OBJECT_TYPE, parameters.getObjectType()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/properties", queryParams));
+        request.uri(toUri(PATH_PROPERTIES, queryParams));
         request.header("Accept", ACCEPT_PROPERTIES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -688,7 +720,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
     public ServiceRequest<Void> createProperty(CreateProperty parameters) throws IllegalArgumentException {
         requireContent(parameters.getContent(), parameters.getContentType(), "createProperty");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/properties", toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_PROPERTIES, toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -708,7 +740,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'propId' when calling getProperty");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/properties/" + urlEncode(parameters.getPropId()), null));
+        request.uri(toUri(PATH_PROPERTIES + '/' + urlEncode(parameters.getPropId()), null));
         request.header("Accept", ACCEPT_PROPERTIES);
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -728,7 +760,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
         }
         requireContent(parameters.getContent(), parameters.getContentType(), "replaceProperty");
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/properties/" + urlEncode(parameters.getPropId()), toPairs("dry-run", parameters.getDryRun())));
+        request.uri(toUri(PATH_PROPERTIES + '/' + urlEncode(parameters.getPropId()), toPairs(PARAM_DRY_RUN, parameters.getDryRun())));
         request.header("Content-Type", parameters.getContentType());
         setPrefer(request, parameters.getHandling());
         request.method("PUT", HttpRequest.BodyPublishers.ofByteArray(parameters.getContent()));
@@ -748,7 +780,7 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'propId' when calling deleteProperty");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/properties/" + urlEncode(parameters.getPropId()), null));
+        request.uri(toUri(PATH_PROPERTIES + '/' + urlEncode(parameters.getPropId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
         return request(request, HttpResponse.BodyHandlers.discarding());
@@ -762,18 +794,18 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             String geom, List<String> keyword, List<String> parent, List<String> procedure, List<String> foi,
             List<String> observedProperty, List<String> controlledProperty, Boolean recursive, Integer limit) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", id));
-        queryParams.addAll(toPairs("csv", "bbox", toList(bbox)));
-        queryParams.addAll(toPairs("datetime", datetime));
-        queryParams.addAll(toPairs("geom", geom));
-        queryParams.addAll(toPairs("csv", "q", keyword));
-        queryParams.addAll(toPairs("csv", "parent", parent));
-        queryParams.addAll(toPairs("csv", "procedure", procedure));
-        queryParams.addAll(toPairs("csv", "foi", foi));
-        queryParams.addAll(toPairs("csv", "observedProperty", observedProperty));
-        queryParams.addAll(toPairs("csv", "controlledProperty", controlledProperty));
-        queryParams.addAll(toPairs("recursive", recursive));
-        queryParams.addAll(toPairs("limit", limit));
+        queryParams.addAll(toPairs("csv", PARAM_ID, id));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(bbox)));
+        queryParams.addAll(toPairs(PARAM_DATETIME, datetime));
+        queryParams.addAll(toPairs(PARAM_GEOM, geom));
+        queryParams.addAll(toPairs("csv", PARAM_Q, keyword));
+        queryParams.addAll(toPairs("csv", PARAM_PARENT, parent));
+        queryParams.addAll(toPairs("csv", PARAM_PROCEDURE, procedure));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, foi));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, observedProperty));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, controlledProperty));
+        queryParams.addAll(toPairs(PARAM_RECURSIVE, recursive));
+        queryParams.addAll(toPairs(PARAM_LIMIT, limit));
         return queryParams;
     }
 
@@ -781,15 +813,15 @@ public final class ConnectedSystemsApi extends AbstractOpenApi {
             String geom, List<String> keyword, List<String> foi, List<String> observedProperty,
             List<String> controlledProperty, Integer limit) {
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "id", id));
-        queryParams.addAll(toPairs("csv", "bbox", toList(bbox)));
-        queryParams.addAll(toPairs("datetime", datetime));
-        queryParams.addAll(toPairs("geom", geom));
-        queryParams.addAll(toPairs("csv", "q", keyword));
-        queryParams.addAll(toPairs("csv", "foi", foi));
-        queryParams.addAll(toPairs("csv", "observedProperty", observedProperty));
-        queryParams.addAll(toPairs("csv", "controlledProperty", controlledProperty));
-        queryParams.addAll(toPairs("limit", limit));
+        queryParams.addAll(toPairs("csv", PARAM_ID, id));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(bbox)));
+        queryParams.addAll(toPairs(PARAM_DATETIME, datetime));
+        queryParams.addAll(toPairs(PARAM_GEOM, geom));
+        queryParams.addAll(toPairs("csv", PARAM_Q, keyword));
+        queryParams.addAll(toPairs("csv", PARAM_FOI, foi));
+        queryParams.addAll(toPairs("csv", PARAM_OBSERVED_PROPERTY, observedProperty));
+        queryParams.addAll(toPairs("csv", PARAM_CONTROLLED_PROPERTY, controlledProperty));
+        queryParams.addAll(toPairs(PARAM_LIMIT, limit));
         return queryParams;
     }
 

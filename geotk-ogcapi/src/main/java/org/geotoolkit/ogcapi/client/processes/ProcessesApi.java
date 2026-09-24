@@ -40,6 +40,14 @@ import org.geotoolkit.ogcapi.request.processes.GetProcess;
  */
 public final class ProcessesApi extends AbstractOpenApi {
 
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_EXECUTION = "/execution";
+    public static final String PATH_JOBS      = "/jobs";
+    public static final String PATH_PROCESSES = "/processes";
+    public static final String PATH_RESULTS   = "/results";
+
     public ProcessesApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -51,7 +59,7 @@ public final class ProcessesApi extends AbstractOpenApi {
      */
     public ServiceRequest<Supplier<ProcessList>> getProcesses() {
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/processes", List.of()));
+        request.uri(toUri(PATH_PROCESSES, List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -70,7 +78,7 @@ public final class ProcessesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'processId' when calling getProcess");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/processes/" + urlEncode(parameters.getProcessId()), List.of()));
+        request.uri(toUri(PATH_PROCESSES + '/' + urlEncode(parameters.getProcessId()), List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -116,7 +124,7 @@ public final class ProcessesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Failed to serialize execute body", e);
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/processes/" + urlEncode(parameters.getProcessId()) + "/execution", List.of()));
+        request.uri(toUri(PATH_PROCESSES + '/' + urlEncode(parameters.getProcessId()) + PATH_EXECUTION, List.of()));
         request.header("Accept", "application/json");
         request.header("Content-Type", "application/json");
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(bodyBytes));
@@ -136,7 +144,7 @@ public final class ProcessesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'jobId' when calling getJob");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/jobs/" + urlEncode(parameters.getJobId()), List.of()));
+        request.uri(toUri(PATH_JOBS + '/' + urlEncode(parameters.getJobId()), List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -155,7 +163,7 @@ public final class ProcessesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'jobId' when calling getJobResults");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/jobs/" + urlEncode(parameters.getJobId()) + "/results", List.of()));
+        request.uri(toUri(PATH_JOBS + '/' + urlEncode(parameters.getJobId()) + PATH_RESULTS, List.of()));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -174,7 +182,7 @@ public final class ProcessesApi extends AbstractOpenApi {
             throw new IllegalArgumentException("Missing the required parameter 'jobId' when calling dismissJob");
         }
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/jobs/" + urlEncode(parameters.getJobId()), List.of()));
+        request.uri(toUri(PATH_JOBS + '/' + urlEncode(parameters.getJobId()), List.of()));
         request.header("Accept", "application/json");
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

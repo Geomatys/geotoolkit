@@ -43,6 +43,41 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class MapsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX              = "bbox";
+    public static final String PARAM_BBOX_CRS          = "bbox-crs";
+    public static final String PARAM_BGCOLOR           = "bgcolor";
+    public static final String PARAM_CENTER            = "center";
+    public static final String PARAM_CENTER_CRS        = "center-crs";
+    public static final String PARAM_COLLECTIONS       = "collections";
+    public static final String PARAM_CRS               = "crs";
+    public static final String PARAM_CRS_DATUM         = "crs-datum";
+    public static final String PARAM_CRS_PROJ_CENTER   = "crs-proj-center";
+    public static final String PARAM_CRS_PROJ_METHOD   = "crs-proj-method";
+    public static final String PARAM_CRS_PROJ_PARAMS   = "crs-proj-params";
+    public static final String PARAM_DATETIME          = "datetime";
+    public static final String PARAM_F                 = "f";
+    public static final String PARAM_HEIGHT            = "height";
+    public static final String PARAM_MM_PER_PIXEL      = "mm-per-pixel";
+    public static final String PARAM_ORIENTATION       = "orientation";
+    public static final String PARAM_SCALE_DENOMINATOR = "scale-denominator";
+    public static final String PARAM_SUBSET            = "subset";
+    public static final String PARAM_SUBSET_CRS        = "subset-crs";
+    public static final String PARAM_TRANSPARENT       = "transparent";
+    public static final String PARAM_VOID_COLOR        = "void-color";
+    public static final String PARAM_VOID_TRANSPARENT  = "void-transparent";
+    public static final String PARAM_WIDTH             = "width";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS            = "/collections";
+    public static final String PATH_MAP                    = "/map";
+    public static final String PATH_PROJECTIONS_AND_DATUMS = "/projectionsAndDatums";
+    public static final String PATH_STYLES                 = "/styles";
+
     public MapsApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -71,34 +106,34 @@ public final class MapsApi extends AbstractOpenApi {
     public ServiceRequest<byte[]> getMap(GetMap parameters) {
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("csv", "collections", parameters.getCollections()));
-        queryParams.addAll(toPairs("csv", "subset", parameters.getSubset()));
-        queryParams.addAll(toPairs("crs", parameters.getCrs()));
-        queryParams.addAll(toPairs("bbox-crs", toCrs(parameters.getBbox())));
-        queryParams.addAll(toPairs("subset-crs", parameters.getSubsetCrs()));
-        queryParams.addAll(toPairs("bgcolor", parameters.getBgColor()));
-        queryParams.addAll(toPairs("transparent", parameters.getTransparency()));
-        queryParams.addAll(toPairs("void-color", parameters.getVoidColor()));
-        queryParams.addAll(toPairs("void-transparent", parameters.getVoidTransparent()));
-        queryParams.addAll(toPairs("width", parameters.getWidth()));
-        queryParams.addAll(toPairs("height", parameters.getHeight()));
-        queryParams.addAll(toPairs("csv", "center", toList(parameters.getCenter())));
-        queryParams.addAll(toPairs("center-crs", toCrs(parameters.getCenter())));
-        queryParams.addAll(toPairs("scale-denominator", parameters.getScaleDenominator()));
-        queryParams.addAll(toPairs("mm-per-pixel", parameters.getMmPerPixel()));
-        queryParams.addAll(toPairs("orientation", parameters.getOrientation()));
-        queryParams.addAll(toPairs("crs-proj-method", parameters.getCrsProjMethod()));
-        queryParams.addAll(toPairs("crs-proj-center", parameters.getCrsProjCenter()));
-        queryParams.addAll(toPairs("crs-proj-params", parameters.getCrsProjParams()));
-        queryParams.addAll(toPairs("crs-datum", parameters.getCrsDatum()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs("csv", PARAM_COLLECTIONS, parameters.getCollections()));
+        queryParams.addAll(toPairs("csv", PARAM_SUBSET, parameters.getSubset()));
+        queryParams.addAll(toPairs(PARAM_CRS, parameters.getCrs()));
+        queryParams.addAll(toPairs(PARAM_BBOX_CRS, toCrs(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_SUBSET_CRS, parameters.getSubsetCrs()));
+        queryParams.addAll(toPairs(PARAM_BGCOLOR, parameters.getBgColor()));
+        queryParams.addAll(toPairs(PARAM_TRANSPARENT, parameters.getTransparency()));
+        queryParams.addAll(toPairs(PARAM_VOID_COLOR, parameters.getVoidColor()));
+        queryParams.addAll(toPairs(PARAM_VOID_TRANSPARENT, parameters.getVoidTransparent()));
+        queryParams.addAll(toPairs(PARAM_WIDTH, parameters.getWidth()));
+        queryParams.addAll(toPairs(PARAM_HEIGHT, parameters.getHeight()));
+        queryParams.addAll(toPairs("csv", PARAM_CENTER, toList(parameters.getCenter())));
+        queryParams.addAll(toPairs(PARAM_CENTER_CRS, toCrs(parameters.getCenter())));
+        queryParams.addAll(toPairs(PARAM_SCALE_DENOMINATOR, parameters.getScaleDenominator()));
+        queryParams.addAll(toPairs(PARAM_MM_PER_PIXEL, parameters.getMmPerPixel()));
+        queryParams.addAll(toPairs(PARAM_ORIENTATION, parameters.getOrientation()));
+        queryParams.addAll(toPairs(PARAM_CRS_PROJ_METHOD, parameters.getCrsProjMethod()));
+        queryParams.addAll(toPairs(PARAM_CRS_PROJ_CENTER, parameters.getCrsProjCenter()));
+        queryParams.addAll(toPairs(PARAM_CRS_PROJ_PARAMS, parameters.getCrsProjParams()));
+        queryParams.addAll(toPairs(PARAM_CRS_DATUM, parameters.getCrsDatum()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final StringBuilder pathBuilder = new StringBuilder();
-        if (parameters.getCollectionId() != null) pathBuilder.append("/collections/").append(urlEncode(parameters.getCollectionId()));
-        if (parameters.getStyleId() != null) pathBuilder.append("/styles/").append(urlEncode(parameters.getStyleId()));
-        pathBuilder.append("/map");
+        if (parameters.getCollectionId() != null) pathBuilder.append(PATH_COLLECTIONS + '/').append(urlEncode(parameters.getCollectionId()));
+        if (parameters.getStyleId() != null) pathBuilder.append(PATH_STYLES + '/').append(urlEncode(parameters.getStyleId()));
+        pathBuilder.append(PATH_MAP);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri(pathBuilder.toString(), queryParams));
@@ -118,7 +153,7 @@ public final class MapsApi extends AbstractOpenApi {
     public ServiceRequest<Supplier<Projections>> getProjections(GetProjections parameters) {
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/projectionsAndDatums", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_PROJECTIONS_AND_DATUMS, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

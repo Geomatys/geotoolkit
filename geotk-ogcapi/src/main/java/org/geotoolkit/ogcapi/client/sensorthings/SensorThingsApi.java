@@ -59,6 +59,18 @@ import org.geotoolkit.ogcapi.request.sensorthings.UpdateEntity;
  */
 public final class SensorThingsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_COUNT         = "$count";
+    public static final String PARAM_EXPAND        = "$expand";
+    public static final String PARAM_FILTER        = "$filter";
+    public static final String PARAM_ORDERBY       = "$orderby";
+    public static final String PARAM_RESULT_FORMAT = "$resultFormat";
+    public static final String PARAM_SELECT        = "$select";
+    public static final String PARAM_SKIP          = "$skip";
+    public static final String PARAM_TOP           = "$top";
+
     // Part 1: Sensing entity sets
     public static final String THINGS = "Things";
     public static final String LOCATIONS = "Locations";
@@ -130,14 +142,14 @@ public final class SensorThingsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("$filter", parameters.getFilter()));
-        queryParams.addAll(toPairs("$expand", parameters.getExpand()));
-        queryParams.addAll(toPairs("$select", parameters.getSelect()));
-        queryParams.addAll(toPairs("$orderby", parameters.getOrderby()));
-        queryParams.addAll(toPairs("$top", parameters.getTop()));
-        queryParams.addAll(toPairs("$skip", parameters.getSkip()));
-        queryParams.addAll(toPairs("$count", parameters.getCount()));
-        queryParams.addAll(toPairs("$resultFormat", parameters.getResultFormat()));
+        queryParams.addAll(toPairs(PARAM_FILTER, parameters.getFilter()));
+        queryParams.addAll(toPairs(PARAM_EXPAND, parameters.getExpand()));
+        queryParams.addAll(toPairs(PARAM_SELECT, parameters.getSelect()));
+        queryParams.addAll(toPairs(PARAM_ORDERBY, parameters.getOrderby()));
+        queryParams.addAll(toPairs(PARAM_TOP, parameters.getTop()));
+        queryParams.addAll(toPairs(PARAM_SKIP, parameters.getSkip()));
+        queryParams.addAll(toPairs(PARAM_COUNT, parameters.getCount()));
+        queryParams.addAll(toPairs(PARAM_RESULT_FORMAT, parameters.getResultFormat()));
 
         final String path = buildPath(parameters.getParentEntitySet(), parameters.getParentId(), parameters.getEntitySet(), null);
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -166,8 +178,8 @@ public final class SensorThingsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("$select", parameters.getSelect()));
-        queryParams.addAll(toPairs("$expand", parameters.getExpand()));
+        queryParams.addAll(toPairs(PARAM_SELECT, parameters.getSelect()));
+        queryParams.addAll(toPairs(PARAM_EXPAND, parameters.getExpand()));
 
         final String path;
         if (parameters.getParentEntitySet() != null) {

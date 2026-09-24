@@ -56,6 +56,36 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
  */
 public final class WMTSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WMTS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_GET_CAPABILITIES = "GetCapabilities";
+    public static final String OP_GET_FEATURE_INFO = "GetFeatureInfo";
+    public static final String OP_GET_TILE         = "GetTile";
+
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_FORMAT         = "FORMAT";
+    public static final String PARAM_I              = "I";
+    public static final String PARAM_INFOFORMAT     = "INFOFORMAT";
+    public static final String PARAM_J              = "J";
+    public static final String PARAM_LAYER          = "LAYER";
+    public static final String PARAM_REQUEST        = "REQUEST";
+    public static final String PARAM_SERVICE        = "SERVICE";
+    public static final String PARAM_STYLE          = "STYLE";
+    public static final String PARAM_TILECOL        = "TILECOL";
+    public static final String PARAM_TILEMATRIX     = "TILEMATRIX";
+    public static final String PARAM_TILEMATRIXSET  = "TILEMATRIXSET";
+    public static final String PARAM_TILEROW        = "TILEROW";
+    public static final String PARAM_UPDATESEQUENCE = "UPDATESEQUENCE";
+    public static final String PARAM_VERSION        = "VERSION";
+
     public WMTSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -69,11 +99,11 @@ public final class WMTSApi extends AbstractService {
      */
     public ServiceRequest<Supplier<Capabilities>> getCapabilities(GetCapabilities parameters) {
         final Map<String, String> kvp = new LinkedHashMap<>();
-        kvp.put("SERVICE", "WMTS");
-        kvp.put("VERSION", WMTSVersion.v100.getCode());
-        kvp.put("REQUEST", "GetCapabilities");
+        kvp.put(PARAM_SERVICE, SERVICE_NAME);
+        kvp.put(PARAM_VERSION, WMTSVersion.v100.getCode());
+        kvp.put(PARAM_REQUEST, OP_GET_CAPABILITIES);
         if (parameters.getUpdateSequence() != null) {
-            kvp.put("UPDATESEQUENCE", parameters.getUpdateSequence());
+            kvp.put(PARAM_UPDATESEQUENCE, parameters.getUpdateSequence());
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -91,7 +121,7 @@ public final class WMTSApi extends AbstractService {
      * @return ServiceRequest&lt;byte[]&gt;
      */
     public ServiceRequest<byte[]> getTile(GetTile parameters) {
-        final Map<String, String> kvp = toTileKvp(parameters, "GetTile");
+        final Map<String, String> kvp = toTileKvp(parameters, OP_GET_TILE);
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", toQueryParams(kvp)));
@@ -111,10 +141,10 @@ public final class WMTSApi extends AbstractService {
         Objects.requireNonNull(parameters.getI(), "I pixel coordinate must be defined");
         Objects.requireNonNull(parameters.getJ(), "J pixel coordinate must be defined");
 
-        final Map<String, String> kvp = toTileKvp(parameters, "GetFeatureInfo");
-        kvp.put("I", String.valueOf(parameters.getI()));
-        kvp.put("J", String.valueOf(parameters.getJ()));
-        kvp.put("INFOFORMAT", parameters.getInfoFormat());
+        final Map<String, String> kvp = toTileKvp(parameters, OP_GET_FEATURE_INFO);
+        kvp.put(PARAM_I, String.valueOf(parameters.getI()));
+        kvp.put(PARAM_J, String.valueOf(parameters.getJ()));
+        kvp.put(PARAM_INFOFORMAT, parameters.getInfoFormat());
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", toQueryParams(kvp)));
@@ -134,7 +164,7 @@ public final class WMTSApi extends AbstractService {
      * @return a lazy tile request
      */
     public Request getTileRequest(GetTile parameters, String resourceUrlTemplate) {
-        final Map<String, String> kvp = toTileKvp(parameters, "GetTile");
+        final Map<String, String> kvp = toTileKvp(parameters, OP_GET_TILE);
 
         final String url;
         if (resourceUrlTemplate != null) {
@@ -168,16 +198,16 @@ public final class WMTSApi extends AbstractService {
         Objects.requireNonNull(parameters.getTileCol(), "TileCol must be defined");
 
         final Map<String, String> kvp = new LinkedHashMap<>();
-        kvp.put("SERVICE", "WMTS");
-        kvp.put("REQUEST", requestName);
-        kvp.put("VERSION", WMTSVersion.v100.getCode());
-        kvp.put("LAYER", parameters.getLayer());
-        kvp.put("STYLE", parameters.getStyle() == null ? "" : parameters.getStyle());
-        kvp.put("FORMAT", parameters.getFormat());
-        kvp.put("TILEMATRIXSET", parameters.getTileMatrixSet());
-        kvp.put("TILEMATRIX", parameters.getTileMatrix());
-        kvp.put("TILEROW", String.valueOf(parameters.getTileRow()));
-        kvp.put("TILECOL", String.valueOf(parameters.getTileCol()));
+        kvp.put(PARAM_SERVICE, SERVICE_NAME);
+        kvp.put(PARAM_REQUEST, requestName);
+        kvp.put(PARAM_VERSION, WMTSVersion.v100.getCode());
+        kvp.put(PARAM_LAYER, parameters.getLayer());
+        kvp.put(PARAM_STYLE, parameters.getStyle() == null ? "" : parameters.getStyle());
+        kvp.put(PARAM_FORMAT, parameters.getFormat());
+        kvp.put(PARAM_TILEMATRIXSET, parameters.getTileMatrixSet());
+        kvp.put(PARAM_TILEMATRIX, parameters.getTileMatrix());
+        kvp.put(PARAM_TILEROW, String.valueOf(parameters.getTileRow()));
+        kvp.put(PARAM_TILECOL, String.valueOf(parameters.getTileCol()));
         if (parameters.getDimensions() != null) {
             kvp.putAll(parameters.getDimensions());
         }

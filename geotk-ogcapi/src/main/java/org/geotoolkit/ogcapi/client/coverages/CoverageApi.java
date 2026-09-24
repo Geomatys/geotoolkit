@@ -41,6 +41,23 @@ import org.geotoolkit.ogcapi.request.coverage.GetCoverageRangeType;
  */
 public final class CoverageApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX       = "bbox";
+    public static final String PARAM_BBOX_CRS   = "bbox-crs";
+    public static final String PARAM_DATETIME   = "datetime";
+    public static final String PARAM_F          = "f";
+    public static final String PARAM_PROPERTIES = "properties";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS        = "/collections";
+    public static final String PATH_COVERAGE           = "/coverage";
+    public static final String PATH_COVERAGE_DOMAINSET = "/coverage/domainset";
+    public static final String PATH_COVERAGE_RANGETYPE = "/coverage/rangetype";
+
     public CoverageApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -54,8 +71,8 @@ public final class CoverageApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/coverage/domainset",
-                toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_COVERAGE_DOMAINSET,
+                toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -72,8 +89,8 @@ public final class CoverageApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/coverage/rangetype",
-                toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_COVERAGE_RANGETYPE,
+                toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -90,13 +107,13 @@ public final class CoverageApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", parameters.getBbox()));
-        queryParams.addAll(toPairs("bbox-crs", parameters.getBboxCrs()));
-        queryParams.addAll(toPairs("csv", "properties", parameters.getProperties()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, parameters.getBbox()));
+        queryParams.addAll(toPairs(PARAM_BBOX_CRS, parameters.getBboxCrs()));
+        queryParams.addAll(toPairs("csv", PARAM_PROPERTIES, parameters.getProperties()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
-        final URI uri = toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/coverage", queryParams);
+        final URI uri = toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_COVERAGE, queryParams);
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(uri);
         request.header("Accept", "image/tiff; application=geotiff, application/x-netcdf");

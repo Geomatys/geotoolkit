@@ -50,6 +50,21 @@ import org.geotoolkit.ogcapi.request.joins.JoinFiles;
  */
 public final class JoinsApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_DATETIME = "datetime";
+    public static final String PARAM_F        = "f";
+    public static final String PARAM_LIMIT    = "limit";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_FILEJOIN    = "/filejoin";
+    public static final String PATH_JOINS       = "/joins";
+    public static final String PATH_KEYS        = "/keys";
+
     public JoinsApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -67,7 +82,7 @@ public final class JoinsApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/keys", toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_KEYS, toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -88,12 +103,12 @@ public final class JoinsApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("limit", parameters.getLimit()));
-        queryParams.addAll(toPairs("datetime", parameters.getDatetime()));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs(PARAM_LIMIT, parameters.getLimit()));
+        queryParams.addAll(toPairs(PARAM_DATETIME, parameters.getDatetime()));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/joins", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_JOINS, queryParams));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -138,7 +153,7 @@ public final class JoinsApi extends AbstractOpenApi {
         body.addField("csv-file-data-start-row-number", parameters.getCsvFileDataStartRowNumber());
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/joins", null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_JOINS, null));
         request.header("Content-Type", body.getContentType());
         request.header("Accept", "application/json, text/html");
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(body.build()));
@@ -163,7 +178,7 @@ public final class JoinsApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/joins/" + urlEncode(parameters.getJoinId()), toPairs("f", parameters.getFormat())));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_JOINS + '/' + urlEncode(parameters.getJoinId()), toPairs(PARAM_F, parameters.getFormat())));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -188,7 +203,7 @@ public final class JoinsApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()) + "/joins/" + urlEncode(parameters.getJoinId()), null));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()) + PATH_JOINS + '/' + urlEncode(parameters.getJoinId()), null));
         request.method("DELETE", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
 
@@ -242,7 +257,7 @@ public final class JoinsApi extends AbstractOpenApi {
         body.addField("csv-file-data-start-row-number", parameters.getCsvFileDataStartRowNumber());
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/filejoin", null));
+        request.uri(toUri(PATH_FILEJOIN, null));
         request.header("Content-Type", body.getContentType());
         request.header("Accept", "application/geo+json");
         request.method("POST", HttpRequest.BodyPublishers.ofByteArray(body.build()));

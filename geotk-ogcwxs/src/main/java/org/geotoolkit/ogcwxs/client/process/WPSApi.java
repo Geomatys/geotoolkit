@@ -70,6 +70,34 @@ import org.geotoolkit.wps.xml.v200.StatusInfo;
  */
 public final class WPSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WPS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_PROCESS = "DescribeProcess";
+    public static final String OP_DISMISS          = "Dismiss";
+    public static final String OP_EXECUTE          = "Execute";
+    public static final String OP_GET_CAPABILITIES = "GetCapabilities";
+    public static final String OP_GET_RESULT       = "GetResult";
+    public static final String OP_GET_STATUS       = "GetStatus";
+
+    /**
+     * Parameter names. This client builds its key-value requests through the {@code toKVP()}
+     * methods of {@code org.geotoolkit.wps.xml.v200}, so these names are declared here for the
+     * benefit of readers of this class and of servers reading the requests back.
+     */
+    public static final String PARAM_ACCEPTVERSIONS = "ACCEPTVERSIONS";
+    public static final String PARAM_IDENTIFIER     = "IDENTIFIER";
+    public static final String PARAM_JOBID          = "JOBID";
+    public static final String PARAM_REQUEST        = "REQUEST";
+    public static final String PARAM_SERVICE        = "SERVICE";
+    public static final String PARAM_UPDATESEQUENCE = "UPDATESEQUENCE";
+    public static final String PARAM_VERSION        = "VERSION";
+
     public WPSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -84,7 +112,7 @@ public final class WPSApi extends AbstractService {
     public ServiceRequest<Supplier<Capabilities>> getCapabilities(GetCapabilities parameters) {
         final String version = version(parameters.getVersion());
         final org.geotoolkit.wps.xml.v200.GetCapabilities req = new org.geotoolkit.wps.xml.v200.GetCapabilities(
-                new AcceptVersionsType(version), null, null, parameters.getUpdateSequence(), "WPS", null);
+                new AcceptVersionsType(version), null, null, parameters.getUpdateSequence(), SERVICE_NAME, null);
         return get(req.toKVP(), Capabilities.class);
     }
 
@@ -104,7 +132,7 @@ public final class WPSApi extends AbstractService {
             identifiers.add(new CodeType(identifier));
         }
         final org.geotoolkit.wps.xml.v200.DescribeProcess req =
-                new org.geotoolkit.wps.xml.v200.DescribeProcess("WPS", version, null, identifiers);
+                new org.geotoolkit.wps.xml.v200.DescribeProcess(SERVICE_NAME, version, null, identifiers);
         return get(req.toKVP(), ProcessOfferings.class);
     }
 
@@ -119,7 +147,7 @@ public final class WPSApi extends AbstractService {
         Objects.requireNonNull(parameters.getJobId(), "Job id must be defined");
         final String version = version(parameters.getVersion());
         final org.geotoolkit.wps.xml.v200.GetStatus req =
-                new org.geotoolkit.wps.xml.v200.GetStatus("WPS", version, parameters.getJobId());
+                new org.geotoolkit.wps.xml.v200.GetStatus(SERVICE_NAME, version, parameters.getJobId());
         return get(req.toKVP(), StatusInfo.class);
     }
 
@@ -134,7 +162,7 @@ public final class WPSApi extends AbstractService {
         Objects.requireNonNull(parameters.getJobId(), "Job id must be defined");
         final String version = version(parameters.getVersion());
         final org.geotoolkit.wps.xml.v200.GetResult req =
-                new org.geotoolkit.wps.xml.v200.GetResult("WPS", version, parameters.getJobId());
+                new org.geotoolkit.wps.xml.v200.GetResult(SERVICE_NAME, version, parameters.getJobId());
         return get(req.toKVP(), Result.class);
     }
 
@@ -149,7 +177,7 @@ public final class WPSApi extends AbstractService {
         Objects.requireNonNull(parameters.getJobId(), "Job id must be defined");
         final String version = version(parameters.getVersion());
         final org.geotoolkit.wps.xml.v200.Dismiss req =
-                new org.geotoolkit.wps.xml.v200.Dismiss("WPS", version, parameters.getJobId());
+                new org.geotoolkit.wps.xml.v200.Dismiss(SERVICE_NAME, version, parameters.getJobId());
         return get(req.toKVP(), StatusInfo.class);
     }
 
@@ -167,7 +195,7 @@ public final class WPSApi extends AbstractService {
         final String version = version(parameters.getVersion());
 
         final org.geotoolkit.wps.xml.v200.Execute req = new org.geotoolkit.wps.xml.v200.Execute(
-                "WPS", version, null, new CodeType(parameters.getIdentifier()),
+                SERVICE_NAME, version, null, new CodeType(parameters.getIdentifier()),
                 parameters.getInputs(), parameters.getOutputs(), parameters.getResponse());
         if (parameters.getMode() != null) {
             req.setMode(parameters.getMode());

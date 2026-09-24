@@ -74,6 +74,29 @@ import org.opengis.filter.Filter;
  */
 public final class CSWApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "CSW";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_GET_CAPABILITIES = "GetCapabilities";
+    public static final String OP_GET_RECORDS      = "GetRecords";
+    public static final String OP_GET_RECORD_BY_ID = "GetRecordById";
+
+    /**
+     * Parameter names. This client posts its requests as XML documents, so it writes none of
+     * these; they are declared here for servers reading the key-value form of the requests,
+     * which the specification also defines.
+     */
+    public static final String PARAM_ACCEPTVERSIONS = "ACCEPTVERSIONS";
+    public static final String PARAM_REQUEST        = "REQUEST";
+    public static final String PARAM_SERVICE        = "SERVICE";
+    public static final String PARAM_UPDATESEQUENCE = "UPDATESEQUENCE";
+    public static final String PARAM_VERSION        = "VERSION";
+
     public CSWApi(ServiceConfiguration config) {
         super(config);
     }
@@ -92,7 +115,7 @@ public final class CSWApi extends AbstractService {
     public ServiceRequest<Supplier<AbstractCapabilities>> getCapabilities(GetCapabilities parameters) {
         final CSWVersion version = version(parameters.getVersion());
         final org.geotoolkit.csw.xml.GetCapabilities request = CswXmlFactory.createGetCapabilities(
-                version.getCode(), null, null, null, parameters.getUpdateSequence(), "CSW");
+                version.getCode(), null, null, null, parameters.getUpdateSequence(), SERVICE_NAME);
         return post(request, in -> unmarshal(in, AbstractCapabilities.class));
     }
 
@@ -119,7 +142,7 @@ public final class CSWApi extends AbstractService {
         final ElementSetName elementSet = CswXmlFactory.createElementSetName(code, parameters.getElementSetName());
         final QueryConstraint constraint = toQueryConstraint(parameters.getFilter(), version);
         final Query query = CswXmlFactory.createQuery(code, parameters.getTypeNames(), elementSet, null, constraint);
-        return CswXmlFactory.createGetRecord(code, "CSW", parameters.getResultType(), null, parameters.getOutputFormat(),
+        return CswXmlFactory.createGetRecord(code, SERVICE_NAME, parameters.getResultType(), null, parameters.getOutputFormat(),
                 parameters.getOutputSchema(), parameters.getStartPosition(), parameters.getMaxRecords(), query, null);
     }
 
@@ -147,7 +170,7 @@ public final class CSWApi extends AbstractService {
         final CSWVersion version = version(parameters.getVersion());
         final String code = version.getCode();
         final ElementSetName elementSet = CswXmlFactory.createElementSetName(code, parameters.getElementSetName());
-        final org.geotoolkit.csw.xml.GetRecordById request = CswXmlFactory.createGetRecordById(code, "CSW",
+        final org.geotoolkit.csw.xml.GetRecordById request = CswXmlFactory.createGetRecordById(code, SERVICE_NAME,
                 elementSet, parameters.getOutputFormat(), parameters.getOutputSchema(), parameters.getIds());
         return post(request, in -> {
             if (version == CSWVersion.v300) {

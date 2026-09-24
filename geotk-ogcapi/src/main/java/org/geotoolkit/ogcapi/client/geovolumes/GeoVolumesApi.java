@@ -44,6 +44,18 @@ import org.opengis.geometry.Envelope;
  */
 public final class GeoVolumesApi extends AbstractOpenApi {
 
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX = "bbox";
+    public static final String PARAM_F    = "f";
+
+    /**
+     * Path fragments.
+     */
+    public static final String PATH_COLLECTIONS = "/collections";
+    public static final String PATH_MODELS      = "/models";
+
     public GeoVolumesApi(OpenApiConfiguration config) {
         super(config);
     }
@@ -57,11 +69,11 @@ public final class GeoVolumesApi extends AbstractOpenApi {
     public ServiceRequest<Supplier<GeoVolumes>> getCollections(GetCollectionList parameters) {
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections", queryParams));
+        request.uri(toUri(PATH_COLLECTIONS, queryParams));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -81,11 +93,11 @@ public final class GeoVolumesApi extends AbstractOpenApi {
         }
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("csv", "bbox", toList(parameters.getBbox())));
-        queryParams.addAll(toPairs("f", parameters.getFormat()));
+        queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(parameters.getBbox())));
+        queryParams.addAll(toPairs(PARAM_F, parameters.getFormat()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/collections/" + urlEncode(parameters.getCollectionId()), queryParams));
+        request.uri(toUri(PATH_COLLECTIONS + '/' + urlEncode(parameters.getCollectionId()), queryParams));
         request.header("Accept", "application/json, text/html");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);
@@ -106,7 +118,7 @@ public final class GeoVolumesApi extends AbstractOpenApi {
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
-        request.uri(toUri("/models/" + urlEncode(parameters.getModelId()), null));
+        request.uri(toUri(PATH_MODELS + '/' + urlEncode(parameters.getModelId()), null));
         request.header("Accept", "*/*");
         request.method("GET", HttpRequest.BodyPublishers.noBody());
         setConfig(request);

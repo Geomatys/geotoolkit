@@ -59,6 +59,43 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class WCSApi extends AbstractService {
 
+    /**
+     * Service name.
+     */
+    public static final String SERVICE_NAME = "WCS";
+
+    /**
+     * Operation names.
+     */
+    public static final String OP_DESCRIBE_COVERAGE = "DescribeCoverage";
+    public static final String OP_GET_CAPABILITIES  = "GetCapabilities";
+    public static final String OP_GET_COVERAGE      = "GetCoverage";
+
+    /**
+     * Parameter names.
+     */
+    public static final String PARAM_BBOX           = "BBOX";
+    public static final String PARAM_COVERAGE       = "COVERAGE";
+    public static final String PARAM_COVERAGEID     = "COVERAGEID";
+    public static final String PARAM_CRS            = "CRS";
+    public static final String PARAM_DEPTH          = "DEPTH";
+    public static final String PARAM_EXCEPTIONS     = "EXCEPTIONS";
+    public static final String PARAM_FORMAT         = "FORMAT";
+    public static final String PARAM_HEIGHT         = "HEIGHT";
+    public static final String PARAM_OUTPUT_CRS     = "OUTPUTCRS";
+    public static final String PARAM_REQUEST        = "REQUEST";
+    public static final String PARAM_RESPONSECRS    = "RESPONSECRS";
+    public static final String PARAM_RESX           = "RESX";
+    public static final String PARAM_RESY           = "RESY";
+    public static final String PARAM_RESZ           = "RESZ";
+    public static final String PARAM_SERVICE        = "SERVICE";
+    public static final String PARAM_SUBSET         = "SUBSET";
+    public static final String PARAM_SUBSETTING_CRS = "SUBSETTINGCRS";
+    public static final String PARAM_TIME           = "TIME";
+    public static final String PARAM_UPDATESEQUENCE = "UPDATESEQUENCE";
+    public static final String PARAM_VERSION        = "VERSION";
+    public static final String PARAM_WIDTH          = "WIDTH";
+
     public WCSApi(ServiceConfiguration config) {
         super(config);
     }
@@ -74,10 +111,10 @@ public final class WCSApi extends AbstractService {
         final WCSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WCS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "GetCapabilities"));
-        queryParams.addAll(toPairs("UPDATESEQUENCE", parameters.getUpdateSequence()));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_GET_CAPABILITIES));
+        queryParams.addAll(toPairs(PARAM_UPDATESEQUENCE, parameters.getUpdateSequence()));
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
         request.uri(toUri("", queryParams));
@@ -97,13 +134,13 @@ public final class WCSApi extends AbstractService {
         final WCSVersion version = version(parameters.getVersion());
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WCS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "DescribeCoverage"));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_DESCRIBE_COVERAGE));
         if (isV2(version)) {
-            queryParams.addAll(toPairs("csv", "coverageid", parameters.getCoverages()));
+            queryParams.addAll(toPairs("csv", PARAM_COVERAGEID, parameters.getCoverages()));
         } else {
-            queryParams.addAll(toPairs("csv", "COVERAGE", parameters.getCoverages()));
+            queryParams.addAll(toPairs("csv", PARAM_COVERAGE, parameters.getCoverages()));
         }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder();
@@ -129,9 +166,9 @@ public final class WCSApi extends AbstractService {
         final Envelope envelope = parameters.getEnvelope();
 
         final List<Pair> queryParams = new ArrayList<>();
-        queryParams.addAll(toPairs("SERVICE", "WCS"));
-        queryParams.addAll(toPairs("VERSION", version.getCode()));
-        queryParams.addAll(toPairs("REQUEST", "GetCoverage"));
+        queryParams.addAll(toPairs(PARAM_SERVICE, SERVICE_NAME));
+        queryParams.addAll(toPairs(PARAM_VERSION, version.getCode()));
+        queryParams.addAll(toPairs(PARAM_REQUEST, OP_GET_COVERAGE));
 
         if (isV2(version)) {
             if (parameters.getDimension() != null || parameters.getResX() != null || parameters.getResY() != null
@@ -140,43 +177,43 @@ public final class WCSApi extends AbstractService {
                         "dimension/resX/resY/resZ/depth/time are not supported by the WCS 2.x core KVP binding " +
                         "(Scaling/Interpolation extensions are not implemented)");
             }
-            queryParams.addAll(toPairs("coverageid", parameters.getCoverage()));
-            queryParams.addAll(toPairs("multi", "subset", toSubsets(envelope)));
-            queryParams.addAll(toPairs("format", parameters.getFormat()));
-            queryParams.addAll(toPairs("exceptions", parameters.getExceptions()));
+            queryParams.addAll(toPairs(PARAM_COVERAGEID, parameters.getCoverage()));
+            queryParams.addAll(toPairs("multi", PARAM_SUBSET, toSubsets(envelope)));
+            queryParams.addAll(toPairs(PARAM_FORMAT, parameters.getFormat()));
+            queryParams.addAll(toPairs(PARAM_EXCEPTIONS, parameters.getExceptions()));
             final String subsettingCrs = toUrn(envelope.getCoordinateReferenceSystem());
             if (subsettingCrs != null) {
-                queryParams.addAll(toPairs("subsettingCrs", subsettingCrs));
+                queryParams.addAll(toPairs(PARAM_SUBSETTING_CRS, subsettingCrs));
             }
             final CoordinateReferenceSystem responseCRS = parameters.getResponseCRS();
             if (responseCRS != null) {
                 final String outputCrs = toUrn(responseCRS);
                 if (outputCrs != null) {
-                    queryParams.addAll(toPairs("outputCrs", outputCrs));
+                    queryParams.addAll(toPairs(PARAM_OUTPUT_CRS, outputCrs));
                 }
             }
         } else {
-            queryParams.addAll(toPairs("COVERAGE", parameters.getCoverage()));
-            queryParams.addAll(toPairs("csv", "BBOX", toList(envelope)));
-            queryParams.addAll(toPairs("CRS", toCrs(envelope)));
-            queryParams.addAll(toPairs("FORMAT", parameters.getFormat()));
-            queryParams.addAll(toPairs("TIME", parameters.getTime()));
-            queryParams.addAll(toPairs("EXCEPTIONS", parameters.getExceptions()));
+            queryParams.addAll(toPairs(PARAM_COVERAGE, parameters.getCoverage()));
+            queryParams.addAll(toPairs("csv", PARAM_BBOX, toList(envelope)));
+            queryParams.addAll(toPairs(PARAM_CRS, toCrs(envelope)));
+            queryParams.addAll(toPairs(PARAM_FORMAT, parameters.getFormat()));
+            queryParams.addAll(toPairs(PARAM_TIME, parameters.getTime()));
+            queryParams.addAll(toPairs(PARAM_EXCEPTIONS, parameters.getExceptions()));
 
             final Dimension dimension = parameters.getDimension();
             if (dimension != null) {
-                queryParams.addAll(toPairs("WIDTH", dimension.width));
-                queryParams.addAll(toPairs("HEIGHT", dimension.height));
-                queryParams.addAll(toPairs("DEPTH", parameters.getDepth()));
+                queryParams.addAll(toPairs(PARAM_WIDTH, dimension.width));
+                queryParams.addAll(toPairs(PARAM_HEIGHT, dimension.height));
+                queryParams.addAll(toPairs(PARAM_DEPTH, parameters.getDepth()));
             } else if (parameters.getResX() != null && parameters.getResY() != null) {
-                queryParams.addAll(toPairs("RESX", parameters.getResX()));
-                queryParams.addAll(toPairs("RESY", parameters.getResY()));
-                queryParams.addAll(toPairs("RESZ", parameters.getResZ()));
+                queryParams.addAll(toPairs(PARAM_RESX, parameters.getResX()));
+                queryParams.addAll(toPairs(PARAM_RESY, parameters.getResY()));
+                queryParams.addAll(toPairs(PARAM_RESZ, parameters.getResZ()));
             }
 
             final CoordinateReferenceSystem responseCRS = parameters.getResponseCRS();
             if (responseCRS != null) {
-                queryParams.addAll(toPairs("RESPONSECRS", IdentifiedObjects.getIdentifierOrName(responseCRS)));
+                queryParams.addAll(toPairs(PARAM_RESPONSECRS, IdentifiedObjects.getIdentifierOrName(responseCRS)));
             }
         }
 
