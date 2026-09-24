@@ -2,17 +2,19 @@
 package org.geotoolkit.pending.demo.datamodel.shapefile;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.shapefile.ShapefileProvider;
+import org.apache.sis.storage.shapefile.ShapefileStore;
 
 
 public class CreateShapefileDemo {
@@ -20,7 +22,7 @@ public class CreateShapefileDemo {
     public static void main(String[] args) throws Exception {
 
         //create a featurestore toward the wanted path
-        final ShapefileFeatureStore store = new ShapefileFeatureStore(URI.create("file:/tmp/test.shp"));
+        final ShapefileStore store = new ShapefileStore(ShapefileProvider.provider(), new StorageConnector(URI.create("file:/tmp/test.shp")));
 
         //create the feature type needed
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -30,15 +32,15 @@ public class CreateShapefileDemo {
         final FeatureType type = ftb.build();
 
         //add this model in the datastore
-        store.createFeatureType(type);
+        store.updateType(type);
 
         //create and store a feature
         final List<Feature> features = new ArrayList<>();
         final Feature f = type.newInstance();
-        f.setPropertyValue("the_geom",org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(15, 20)));
-        f.setPropertyValue("name","long river");
+        f.setPropertyValue(AttributeConvention.GEOMETRY, org.geotoolkit.geometry.jts.JTS.getFactory().createPoint(new Coordinate(15, 20)));
+        f.setPropertyValue("name", "long river");
         features.add(f);
-        store.addFeatures(type.getName().toString(), features);
+        store.add(features.iterator());
 
     }
 

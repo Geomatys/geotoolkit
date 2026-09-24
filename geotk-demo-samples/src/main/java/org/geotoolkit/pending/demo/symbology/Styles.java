@@ -18,7 +18,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.shapefile.ShapefileProvider;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -711,7 +712,7 @@ public class Styles {
         DataStore store;
         FeatureSet fs;
 
-        store = new ShapefileFeatureStore(Styles.class.getResource("/data/world/Countries.shp").toURI());
+        store = ShapefileProvider.provider().open(new StorageConnector(Styles.class.getResource("/data/world/Countries.shp").toURI()));
         fs = (FeatureSet) store.findResource("Countries");
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
@@ -733,7 +734,7 @@ public class Styles {
         DataStore store;
         FeatureSet fs;
 
-        store = new ShapefileFeatureStore(Styles.class.getResource("/data/world/city.shp").toURI());
+        store = ShapefileProvider.provider().open(new StorageConnector(Styles.class.getResource("/data/world/city.shp").toURI()));
         fs = (FeatureSet) store.findResource("city");
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));

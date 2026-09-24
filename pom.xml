@@ -981,7 +981,6 @@
     <module>geotk-feature-csv</module>
     <module>geotk-feature-gml</module>
     <module>geotk-feature-kml</module>
-    <module>geotk-feature-shapefile</module>
     <module>geotk-feature-om</module>
     <module>geotk-feature-osm</module>
     <module>geotk-feature-geojson</module>

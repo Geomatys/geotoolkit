@@ -10,7 +10,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.shapefile.ShapefileProvider;
+import org.apache.sis.storage.shapefile.ShapefileProvider;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
@@ -60,24 +60,13 @@ public class FeatureStoreReadingDemo {
         }
     }
 
-    private static DataStore createUsingMap() throws DataStoreException, URISyntaxException {
-
-        //we must know the parameters
-        final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
-        String pathId = ShapefileProvider.PATH.getName().getCode();
-        parameters.put(pathId, FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
-
-        return DataStores.open(parameters);
-    }
-
     private static DataStore createUsingParameterGroup() throws DataStoreException, URISyntaxException {
 
         //find out how to describe things
-        System.out.println(ShapefileProvider.PARAMETERS_DESCRIPTOR);
+        System.out.println(ShapefileProvider.provider().getOpenParameters());
 
-        final ParameterValueGroup parameters = ShapefileProvider.PARAMETERS_DESCRIPTOR.createValue();
-        String pathId = ShapefileProvider.PATH.getName().getCode();
-        parameters.parameter(pathId).setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
+        final ParameterValueGroup parameters = ShapefileProvider.provider().getOpenParameters().createValue();
+        parameters.parameter(ShapefileProvider.LOCATION).setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         return DataStores.open(parameters);
     }
