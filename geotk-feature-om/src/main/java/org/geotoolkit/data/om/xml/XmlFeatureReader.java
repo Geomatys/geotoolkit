@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.xml.bind.JAXBException;
+import java.util.Iterator;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -45,7 +45,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  */
-class XmlFeatureReader implements FeatureReader {
+class XmlFeatureReader implements Iterator<Feature> {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
@@ -74,7 +74,6 @@ class XmlFeatureReader implements FeatureReader {
         }
     }
 
-    @Override
     public FeatureType getFeatureType() {
         return type;
     }
@@ -132,11 +131,6 @@ class XmlFeatureReader implements FeatureReader {
             LOGGER.warning("unable to find a valid feature of interest in the observation");
         }
         return null;
-    }
-
-    @Override
-    public void close() {
-        // do nothing
     }
 
     @Override

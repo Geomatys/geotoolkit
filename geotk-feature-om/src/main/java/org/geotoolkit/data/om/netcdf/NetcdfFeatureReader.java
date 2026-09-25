@@ -3,11 +3,11 @@ package org.geotoolkit.data.om.netcdf;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.geometry.jts.JTS;
@@ -24,7 +24,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  */
-class NetcdfFeatureReader implements FeatureReader {
+class NetcdfFeatureReader implements Iterator<Feature> {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
@@ -44,7 +44,6 @@ class NetcdfFeatureReader implements FeatureReader {
         }
     }
 
-    @Override
     public FeatureType getFeatureType() {
         return type;
     }
@@ -87,12 +86,6 @@ class NetcdfFeatureReader implements FeatureReader {
             LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
         }
         return null;
-    }
-
-
-    @Override
-    public void close() {
-        // do nothing
     }
 
     @Override

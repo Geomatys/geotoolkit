@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.ext.pie;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +188,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
             }
             return Stream.empty();
 
-        } catch (DataStoreException | IOException ex) {
+        } catch (DataStoreException ex) {
             ExceptionPresentation ep = new ExceptionPresentation(ex);
             ep.setLayer(layer);
             ep.setResource(resource);

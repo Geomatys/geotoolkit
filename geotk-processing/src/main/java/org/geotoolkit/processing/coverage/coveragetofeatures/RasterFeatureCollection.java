@@ -17,9 +17,9 @@
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.util.AbstractCollection;
+import java.util.Iterator;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 
@@ -102,7 +102,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @return Iterator
      */
     @Override
-    public FeatureIterator iterator() {
+    public Iterator<Feature> iterator() {
         return new RasterFeatureIterator();
     }
 
@@ -125,7 +125,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @author Quentin Boileau
      * @module
      */
-    protected class RasterFeatureIterator implements FeatureIterator {
+    protected class RasterFeatureIterator implements Iterator<Feature> {
 
         private int iter;
 
@@ -147,13 +147,6 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
             long y = (int) iter / (maxX - minX);
             iter++;
             return create(x, y);
-        }
-
-        /**
-         * Close iterator
-         */
-        @Override
-        public void close() {
         }
 
         /**
