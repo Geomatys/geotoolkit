@@ -104,46 +104,6 @@ public class GenericQueryFeatureIterator {
         return reader;
     }
 
-    public static FeatureCollection wrap(final FeatureCollection col, final Query query){
-        return new AbstractFeatureCollection("wrap", col.getSession()) {
-
-            private FeatureType type = null;
-
-            @Override
-            public FeatureType getType() {
-                if(type==null){
-                    try (FeatureReader ite = iterator(null)) {
-                        type = ite.getFeatureType();
-                    }
-                }
-                return type;
-            }
-
-            @Override
-            public boolean isWritable() {
-                return false;
-            }
-
-            @Override
-            public FeatureReader iterator(Hints hints) throws FeatureStoreRuntimeException {
-                final FeatureReader ite = (FeatureReader) col.iterator();
-                try {
-                    return wrap(ite, query);
-                } catch (DataStoreException | RuntimeException ex) {
-                    try {
-                        ite.close();
-                    } catch (Exception bis) {
-                        ex.addSuppressed(bis);
-                    }
-
-                    if (ex instanceof RuntimeException) throw (RuntimeException) ex;
-                    throw new FeatureStoreRuntimeException(ex);
-                }
-            }
-
-        };
-    }
-
     public static Stream<Feature> wrap(Stream<Feature> stream, FeatureType type, Query query) throws DataStoreException {
         final FeatureReader reader = FeatureStreams.asReader(stream.iterator(),type);
         return FeatureStreams.asStream(wrap(reader, query));

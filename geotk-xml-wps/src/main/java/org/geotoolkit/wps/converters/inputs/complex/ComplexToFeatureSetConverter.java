@@ -18,12 +18,9 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Stream;
-import org.apache.sis.storage.base.StoreResource;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.storage.feature.FeatureSetWrapper;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**

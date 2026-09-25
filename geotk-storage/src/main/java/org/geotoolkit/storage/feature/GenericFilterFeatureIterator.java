@@ -18,8 +18,6 @@
 package org.geotoolkit.storage.feature;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
-import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -154,27 +152,6 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
         }
     }
 
-    private static final class GenericFilterFeatureCollection extends WrapFeatureCollection{
-
-        private final Filter filter;
-
-        private GenericFilterFeatureCollection(final FeatureCollection original, final Filter filter){
-            super(original);
-            this.filter = filter;
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return wrap(getOriginalFeatureCollection().iterator(hints), filter);
-        }
-
-        @Override
-        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-            throw new UnsupportedOperationException("should not have been called.");
-        }
-
-    }
-
     /**
      * Wrap a FeatureIterator with a filter.
      */
@@ -202,10 +179,4 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
         return new GenericFilterFeatureWriter(writer, filter);
     }
 
-    /**
-     * Create an filtered FeatureCollection wrapping the given collection.
-     */
-    public static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
-        return new GenericFilterFeatureCollection(original, filter);
-    }
 }

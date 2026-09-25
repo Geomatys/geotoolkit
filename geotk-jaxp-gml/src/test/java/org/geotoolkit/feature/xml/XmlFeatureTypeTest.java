@@ -38,7 +38,6 @@ import static org.geotoolkit.feature.xml.GMLConvention.NILLABLE_CHARACTERISTIC;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
-import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.DomCompare;
@@ -58,6 +57,16 @@ import org.xml.sax.SAXException;
  * @module
  */
 public class XmlFeatureTypeTest {
+
+    /**
+     * Static variables refering to GML model.
+     */
+    public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_32_NAMESPACE = "http://www.opengis.net/gml/3.2";
+    public static final String GML_NAME = "name";
+    public static final String GML_DESCRIPTION = "description";
+
+    protected static final String NO_NAMESPACE = "no namespace";
 
     private static void removeGMLBaseTypes(List<FeatureType> types){
         for(int i=types.size()-1;i>=0;i--){

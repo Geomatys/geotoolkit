@@ -18,8 +18,6 @@
 package org.geotoolkit.storage.feature;
 
 import java.util.NoSuchElementException;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -88,37 +86,12 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
 
     }
 
-    private static final class GenericEmptyFeatureCollection extends WrapFeatureCollection{
-
-        private GenericEmptyFeatureCollection(final FeatureCollection original){
-            super(original);
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return createReader(getOriginalFeatureCollection().getType());
-        }
-
-        @Override
-        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-            throw new UnsupportedOperationException("should not have been called.");
-        }
-
-    }
-
     /**
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
      */
     public static FeatureReader createReader(final FeatureType type){
         return new GenericEmptyFeatureReader(type);
-    }
-
-    /**
-     * Create an empty FeaturCollection wrapping the collection.
-     */
-    public static FeatureCollection wrap(final FeatureCollection original){
-        return new GenericEmptyFeatureCollection(original);
     }
 
 }

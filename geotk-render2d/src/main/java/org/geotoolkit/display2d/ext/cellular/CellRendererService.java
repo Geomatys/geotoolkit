@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -38,7 +39,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.MapBuilder;
 import org.apache.sis.map.MapLayer;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.PointSymbolizer;
 
@@ -179,7 +180,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             FeatureSet fs = (FeatureSet) resource;
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType( fs.getType(),null);
-                layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
+                layer = MapBuilder.createLayer(new InMemoryFeatureSet(new NamedIdentifier(sft.getName()), sft, List.of(), false));
                 layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
@@ -189,7 +190,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             final GridCoverageResource gcr = (GridCoverageResource) resource;
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType(gcr);
-                layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
+                layer = MapBuilder.createLayer(new InMemoryFeatureSet(new NamedIdentifier(sft.getName()), sft, List.of(), false));
                 layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important

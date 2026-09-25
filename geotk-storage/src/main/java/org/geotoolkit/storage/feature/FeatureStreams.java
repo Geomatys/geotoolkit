@@ -18,31 +18,24 @@ package org.geotoolkit.storage.feature;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
-import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.SortProperty;
-import org.opengis.geometry.Envelope;
 
 /**
  * Feature stream utility functions.
@@ -78,16 +71,6 @@ public final class FeatureStreams {
     }
 
     /**
-     * Create an empty FeaturCollection wrapping the collection.
-     *
-     * @param col source collection to mimic
-     * @return empty collection
-     */
-    public static FeatureCollection emptyCollection(final FeatureCollection col){
-        return GenericEmptyFeatureIterator.wrap(col);
-    }
-
-    /**
      * Decorate a feature reader.
      *
      * @param reader source reader
@@ -97,28 +80,6 @@ public final class FeatureStreams {
      */
     public static FeatureReader decorate(final FeatureReader reader, final FeatureSetMapper mask, Hints hints){
         return GenericMappedFeatureIterator.wrap(reader, mask, hints);
-    }
-
-    /**
-     * Decorate a FeatureCollection.
-     *
-     * @param col source collection
-     * @param mask FeatureType mask
-     * @return decorated collection
-     */
-    public static FeatureCollection decorate(final FeatureCollection col, final FeatureSetMapper mask){
-        return GenericMappedFeatureIterator.wrap(col, mask);
-    }
-
-    /**
-     * Wrap a FeatureIterator with a filter.
-     * @param iterator source iterator
-     * @param filter filter used to select matching features
-     * @return filtered iterator
-     */
-    public static FeatureIterator filter(final FeatureIterator iterator, final Filter filter){
-        if (filter==null || Filter.include().equals(filter)) return iterator;
-        return GenericFilterFeatureIterator.wrap(iterator, filter);
     }
 
     /**
@@ -145,18 +106,6 @@ public final class FeatureStreams {
     }
 
     /**
-     * Create an filtered FeatureCollection wrapping the given collection.
-     *
-     * @param col source collection
-     * @param filter filter used to select matching features
-     * @return filtered collection
-     */
-    public static FeatureCollection filter(final FeatureCollection col, final Filter filter){
-        if (filter==null || Filter.include().equals(filter)) return col;
-        return GenericFilterFeatureIterator.wrap(col, filter);
-    }
-
-    /**
      * Wrap a FeatureReader with a max limit.
      *
      * @param reader source reader
@@ -179,17 +128,6 @@ public final class FeatureStreams {
     }
 
     /**
-     * Create an limited FeatureCollection wrapping the given collection.
-     *
-     * @param col source collection
-     * @param limit maximum number of features to return
-     * @return reduced collection
-     */
-    public static FeatureCollection limit(final FeatureCollection col, final int limit){
-        return GenericMaxFeatureIterator.wrap(col, limit);
-    }
-
-    /**
      * View a subset of given data.
      *
      * @param reader source reader
@@ -198,29 +136,6 @@ public final class FeatureStreams {
      */
     public static FeatureReader subset(FeatureReader reader, final Query query) throws DataStoreException{
         return GenericQueryFeatureIterator.wrap(reader, query);
-    }
-
-    /**
-     * View a subset of given data.
-     *
-     * @param col source collection
-     * @param query query used to filter and transform the collection
-     * @return collection subset
-     */
-    public static FeatureCollection subset(final FeatureCollection col, final Query query){
-        return GenericQueryFeatureIterator.wrap(col, query);
-    }
-
-    /**
-     * View a subset of given data stream.
-     *
-     * @param stream source feature stream
-     * @param type Type of features in the stream
-     * @param query query used to filter and transform the stream
-     * @return collection subset
-     */
-    public static Stream<Feature> subset(final Stream<Feature> stream, final FeatureType type, final Query query) throws DataStoreException{
-        return GenericQueryFeatureIterator.wrap(stream, type, query);
     }
 
     /**
@@ -243,17 +158,6 @@ public final class FeatureStreams {
      */
     public static FeatureReader sort(final FeatureReader reader, final SortProperty ... orders){
         return GenericSortByFeatureIterator.wrap(reader, orders);
-    }
-
-    /**
-     * Wrap a FeatureCollection will a sort by order.
-     *
-     * @param col source collection
-     * @param orders sorting order
-     * @return sorted collection
-     */
-    public static FeatureCollection sort(final FeatureCollection col, final SortProperty ... orders){
-        return GenericSortByFeatureIterator.wrap(col, orders);
     }
 
     /**
@@ -287,17 +191,6 @@ public final class FeatureStreams {
      */
     public static FeatureWriter skip(final FeatureWriter writer, final int offset){
         return GenericStartIndexFeatureIterator.wrap(writer, offset);
-    }
-
-    /**
-     * Create an differed start index FeatureCollection wrapping the given collection.
-     *
-     * @param col source collection
-     * @param offset number of features to skip
-     * @return collection
-     */
-    public static FeatureCollection skip(final FeatureCollection col, final int offset){
-        return GenericStartIndexFeatureIterator.wrap(col, offset);
     }
 
     /**
@@ -335,21 +228,6 @@ public final class FeatureStreams {
     }
 
     /**
-     * Provide a {@link FeatureReader reader} that decorate given dataset. It means that a stream is immediately opened
-     * on given dataset. Its lifecycle will be delegated to the returned reader.
-     *
-     * @param dataset The {@link FeatureSet} to expose as a {@link FeatureReader}. Must <em>not</em> be null.
-     * @return A reader that decorate a data stream opened on input dataset.
-     * @throws DataStoreException If querying dataset {@link FeatureSet#getType() data type} or acquiring its
-     * {@link FeatureSet#features(boolean) data stream} fails, the error is propagated.
-     */
-    public static FeatureReader asReader(final FeatureSet dataset) throws DataStoreException {
-        final FeatureType datatype = dataset.getType();
-        final Stream<Feature> stream = dataset.features(false);
-        return asReader(stream, datatype);
-    }
-
-    /**
      * Decorate a given data stream.
      *
      * @param stream The stream to expose as a feature reader. Its {@link Stream#close()} operation will be called by
@@ -368,17 +246,6 @@ public final class FeatureStreams {
 
             throw e;
         }
-    }
-
-    /**
-     * Wrap an Iterator as a FeatureWriter.
-     *
-     * @param writer source writer
-     * @param type writer declared feature type
-     * @return feature writer
-     */
-    public static FeatureWriter asWriter(final Iterator<? extends Feature> writer, final FeatureType type){
-        return GenericWrapFeatureIterator.wrapToWriter(writer, type);
     }
 
     /**
@@ -406,29 +273,6 @@ public final class FeatureStreams {
     }
 
     /**
-     * Wrap a FeatureIterator with a modification set.
-     *
-     * @param reader source reader
-     * @param filter filter used to indicate which features will be updated
-     * @param values new properties values
-     * @return updated iterator
-     */
-    public static FeatureIterator update(final FeatureIterator reader, final Filter filter, final Map<String, ?> values){
-        return GenericModifyFeatureIterator.wrap(reader, filter, values);
-    }
-
-    /**
-     * Create a view collection which iterates over all children collection.
-     *
-     * @param id new collection identifier
-     * @param collections children collections
-     * @return view of all collection
-     */
-    public static FeatureCollection sequence(final String id, final FeatureCollection... collections) {
-        return new FeatureCollectionSequence(id, collections);
-    }
-
-    /**
      * Create a view iterator which iterates over all children iterators.
      *
      * @param iterators children iterators
@@ -436,16 +280,6 @@ public final class FeatureStreams {
      */
     public static FeatureIterator sequence(final FeatureIterator ... iterators){
         return new FeatureIteratorSequence(iterators);
-    }
-
-    /**
-     * Create a view iterator which iterates over all children readers.
-     *
-     * @param readers children readers
-     * @return view of all readers.
-     */
-    public static FeatureReader sequence(final FeatureReader ... readers){
-        return new FeatureReaderSequence(readers);
     }
 
     /**
@@ -485,172 +319,6 @@ public final class FeatureStreams {
         }
 
         return ite;
-    }
-
-
-    /**
-     * Provide a collection that link several collections in one.
-     * All collection are appended in the order they are given like a sequence.
-     * This implementation doesn't copy the features, it will call each wraped
-     * collection one after the other.
-     *
-     * @author Johann Sorel (Geomatys)
-     * @module
-     */
-    private static class FeatureCollectionSequence extends AbstractFeatureCollection {
-
-        private final FeatureCollection[] wrapped;
-
-        private FeatureCollectionSequence(final String id, final FeatureCollection[] wrapped) {
-            this(new NamedIdentifier(Names.createLocalName(null,null,id)), wrapped);
-        }
-
-        private FeatureCollectionSequence(final NamedIdentifier id, final FeatureCollection[] wrapped) {
-            super(id, null);
-
-            if(wrapped.length == 1){
-                throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");
-            }
-
-            //check all collection types are the same
-            final FeatureType type = wrapped[0].getType();
-            for (int i=1;i<wrapped.length;i++) {
-                if (!wrapped[i].getType().equals(type)) {
-                    throw new IllegalArgumentException("Collections must have the same type.");
-                }
-            }
-
-            this.wrapped = wrapped;
-        }
-
-        @Override
-        public int size() {
-            int size = 0;
-            for (FeatureCollection c : wrapped) {
-                size += c.size();
-            }
-            return size;
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return new SequenceIterator(hints);
-        }
-
-        @Override
-        public Optional<Envelope> getEnvelope() throws DataStoreException {
-            GeneralEnvelope bbox = null;
-            for (FeatureCollection c : wrapped) {
-                Envelope e = c.getEnvelope().orElse(null);
-                if (e != null) {
-                    if (bbox != null) {
-                        bbox.add(e);
-                    } else {
-                      bbox = new GeneralEnvelope(e);
-                    }
-                }
-            }
-            return Optional.ofNullable(bbox);
-        }
-
-        public static FeatureCollection sequence(final FeatureCollection... cols) {
-            return new FeatureCollectionSequence("collection-1", cols);
-        }
-
-        public static FeatureCollection sequence(final String id, final FeatureCollection... cols) {
-            return new FeatureCollectionSequence(id, cols);
-        }
-
-        @Override
-        public boolean isWritable() {
-            return false;
-        }
-
-        @Override
-        public Session getSession() {
-            return null;
-        }
-
-        @Override
-        public FeatureType getType() {
-            return wrapped[0].getType();
-        }
-
-        @Override
-        public FeatureCollection subset(final Query query) throws DataStoreException {
-            FeatureCollection[] subs = new FeatureCollection[wrapped.length];
-            for(int i=0;i<subs.length;i++){
-                subs[i] = wrapped[i].subset(query);
-            }
-            return new FeatureCollectionSequence("subid", subs);
-        }
-
-        private class SequenceIterator implements FeatureIterator {
-
-            private final Hints hints;
-            private int currentCollection = -1;
-            private FeatureIterator ite = null;
-
-            public SequenceIterator(final Hints hints) {
-                this.hints = hints;
-                currentCollection = 0;
-                ite = wrapped[currentCollection].iterator(hints);
-            }
-
-            @Override
-            public void close() {
-                if (ite != null) {
-                    ite.close();
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-
-                if (ite == null) {
-                    return false;
-                }
-
-                if (ite.hasNext()) {
-                    return true;
-                } else {
-                    ite.close();
-                }
-
-                currentCollection++;
-                while (currentCollection < wrapped.length) {
-                    ite = wrapped[currentCollection].iterator(hints);
-
-                    if (ite.hasNext()) {
-                        return true;
-                    } else {
-                        ite.close();
-                    }
-
-                    currentCollection++;
-                }
-
-                return false;
-            }
-
-            @Override
-            public Feature next() {
-                if (ite == null) {
-                    throw new NoSuchElementException("No more elements");
-                } else {
-                    return ite.next();
-                }
-            }
-
-            @Override
-            public void remove() {
-                if (ite == null) {
-                    throw new NoSuchElementException("No more elements");
-                } else {
-                    ite.remove();
-                }
-            }
-        }
     }
 
     /**

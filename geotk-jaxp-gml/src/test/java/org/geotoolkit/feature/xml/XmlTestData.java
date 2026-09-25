@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +33,6 @@ import org.apache.sis.storage.FeatureSet;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_32_NAMESPACE;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
@@ -60,6 +58,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  */
 public class XmlTestData {
+
+    /**
+     * Static variables refering to GML model.
+     */
+    public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_32_NAMESPACE = "http://www.opengis.net/gml/3.2";
+    public static final String GML_NAME = "name";
+    public static final String GML_DESCRIPTION = "description";
+
+    protected static final String NO_NAMESPACE = "no namespace";
 
     public static final FilterFactory FF = FilterUtilities.FF;
 

@@ -18,15 +18,9 @@
 
 package org.geotoolkit.storage.feature;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
-import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -142,27 +136,6 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
         }
     }
 
-    private static final class GenericMaxFeatureCollection extends WrapFeatureCollection{
-
-        private final int max;
-
-        private GenericMaxFeatureCollection(final FeatureCollection original, final int max){
-            super(original);
-            this.max = max;
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return wrap(getOriginalFeatureCollection().iterator(hints), max);
-        }
-
-        @Override
-        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-            throw new UnsupportedOperationException("should not have been called.");
-        }
-
-    }
-
     /**
      * Wrap a FeatureReader with a max limit.
      */
@@ -191,14 +164,6 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
         if(limit==Integer.MAX_VALUE) return writer;
         return new GenericMaxFeatureWriter(writer, limit);
-    }
-
-    /**
-     * Create an limited FeatureCollection wrapping the given collection.
-     */
-    public static FeatureCollection wrap(final FeatureCollection original, final int max){
-        if(max==Integer.MAX_VALUE) return original;
-        return new GenericMaxFeatureCollection(original, max);
     }
 
 }

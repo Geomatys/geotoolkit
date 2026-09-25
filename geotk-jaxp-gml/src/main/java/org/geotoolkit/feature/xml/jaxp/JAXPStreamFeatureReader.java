@@ -39,6 +39,7 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -61,7 +62,6 @@ import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -416,9 +416,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
                         if (featureTypes.getNames().size() == 1) {
-                            return FeatureStoreUtilities.collection(id, featureTypes.getValues().iterator().next());
+                            return new InMemoryFeatureSet(id, featureTypes.getValues().iterator().next());
                         } else {
-                            return FeatureStoreUtilities.collection(id, null);
+                            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                            ftb.setName("null");
+                            ftb.setAbstract(true);
+                            final FeatureType type = ftb.build();
+                            return new InMemoryFeatureSet(id, type);
                         }
                     }
                     return coll;
