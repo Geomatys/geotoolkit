@@ -17,11 +17,11 @@
 package org.geotoolkit.processing.vector.intersection;
 
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import static org.geotoolkit.processing.vector.intersection.IntersectionDescriptor.*;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.coordinate.MismatchedDimensionException;
@@ -48,13 +48,16 @@ public class IntersectionProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList               = inputParameters.getValue(FEATURE_IN);
-        final FeatureCollection inputFeatureIntersectionList   = inputParameters.getValue(FEATURE_INTER);
-        final String inputGeometryName                         = inputParameters.getValue(GEOMETRY_NAME);
-
-        final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
-
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList               = inputParameters.getValue(FEATURE_IN);
+        final FeatureSet inputFeatureIntersectionList   = inputParameters.getValue(FEATURE_INTER);
+        final String inputGeometryName                  = inputParameters.getValue(GEOMETRY_NAME);
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
@@ -65,8 +68,8 @@ public class IntersectionProcess extends AbstractProcess {
      * @param featureClippingList FeatureCollection used to clip
      * @return Feature
      */
-    public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
-            final FeatureCollection featureClippingList, final String geometryName)
+    public static FeatureSet intersetFeature(final Feature oldFeature, final FeatureType newType,
+            final FeatureSet featureClippingList, final String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException, ProcessException, DataStoreException {
 
         return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);

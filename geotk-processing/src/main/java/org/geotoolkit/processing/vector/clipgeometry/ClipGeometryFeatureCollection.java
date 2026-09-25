@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.processing.vector.clipgeometry;
 
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -31,7 +32,7 @@ import org.opengis.feature.FeatureType;
  * @author Quentin Boileau
  * @module
  */
-public class ClipGeometryFeatureCollection extends WrapFeatureCollection {
+public class ClipGeometryFeatureCollection extends WrapFeatureSet {
 
     private final FeatureType newFeatureType;
     private final Geometry clipGeometry;
@@ -40,7 +41,7 @@ public class ClipGeometryFeatureCollection extends WrapFeatureCollection {
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public ClipGeometryFeatureCollection(final FeatureCollection originalFC, final Geometry inputClipGeometry) {
+    public ClipGeometryFeatureCollection(final FeatureSet originalFC, final Geometry inputClipGeometry) throws DataStoreException {
         super(originalFC);
         this.clipGeometry = inputClipGeometry;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Geometry.class);

@@ -16,35 +16,34 @@
  */
 package org.geotoolkit.processing.vector.union;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.processing.vector.VectorProcessUtils;
+import java.util.stream.Stream;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.geotoolkit.processing.vector.VectorProcessUtils;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-import org.opengis.feature.AttributeType;
 
 
 /**
@@ -70,12 +69,17 @@ public class UnionProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
-        final FeatureCollection unionFeatureList  = inputParameters.getValue(UnionDescriptor.FEATURE_UNION);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureSet unionFeatureList  = inputParameters.getValue(UnionDescriptor.FEATURE_UNION);
         final String inputGeometryName            = inputParameters.getValue(UnionDescriptor.INPUT_GEOMETRY_NAME);
         final String unionGeometryName            = inputParameters.getValue(UnionDescriptor.UNION_GEOMETRY_NAME);
-        final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 
@@ -90,12 +94,12 @@ public class UnionProcess extends AbstractProcess {
      * @param featureList Set of already created Features (it's used in order to remove duplicate Features)
      * @return the result FeatureCollection of an union between a Feature and a FeatureCollection
      */
-    static FeatureCollection unionFeatureToFC(final Feature inputFeature, final FeatureType newFeatureType, final FeatureCollection unionFC,
+    static List<Feature> unionFeatureToFC(final Feature inputFeature, final FeatureType newFeatureType, final FeatureSet unionFC,
             final String inputGeomName, final String unionGeomName, final boolean firstPass, final Set<String> featureList)
-            throws TransformException, FactoryException
+            throws TransformException, FactoryException, DataStoreException
     {
-        final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getIdentifier(), newFeatureType);
+
+        final List<Feature> resultFeatureList = new ArrayList<>();
         /*
          * In order to get all part of Feature, add a second pass with the diffenrence between the FeatureGeometry
          * and united intersections. if return nothing we have all the geometry feature, else we add the difference
@@ -113,7 +117,8 @@ public class UnionProcess extends AbstractProcess {
         Geometry remainingGeometry = inputGeometry;
         boolean isIntersected = false;
         //Check if each union Features intersect inputFeature. if yes, create a new Feature which is union of both
-        try (final FeatureIterator unionIter = unionFC.iterator()) {
+        try (Stream<Feature> stream = unionFC.features(false)) {
+            final Iterator<Feature> unionIter = stream.iterator();
             while (unionIter.hasNext()) {
                 final Feature unionFeature = unionIter.next();
                 final String featureID;

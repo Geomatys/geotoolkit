@@ -18,7 +18,6 @@ package org.geotoolkit.processing.vector.clipgeometry;
 
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
@@ -28,6 +27,9 @@ import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessException;
 
 import static org.geotoolkit.processing.vector.clipgeometry.ClipGeometryDescriptor.*;
 import org.opengis.feature.AttributeType;
@@ -50,10 +52,15 @@ public class ClipGeometryProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList  = inputParameters.getValue(FEATURE_IN);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList  = inputParameters.getValue(FEATURE_IN);
         final Geometry inputClippingGeometry      = inputParameters.getValue(CLIP_GEOMETRY_IN);
-        final FeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this);
+        }
         outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 

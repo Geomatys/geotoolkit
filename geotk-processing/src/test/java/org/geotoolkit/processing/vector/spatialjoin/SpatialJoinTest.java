@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.vector.spatialjoin;
 
+import java.util.List;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
@@ -26,8 +27,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -172,57 +173,51 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("Target", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("Target", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-1");
         feature1.setPropertyValue("name","Human1");
         feature1.setPropertyValue("age",20);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 2)));
-        featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
         feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-2");
         feature2.setPropertyValue("name","Human2");
         feature2.setPropertyValue("age",10);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 5)));
-        featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
         feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-3");
         feature3.setPropertyValue("name","Human3");
         feature3.setPropertyValue("age",35);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 6)));
-        featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-4");
         feature4.setPropertyValue("name","Human4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
-        featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
         feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-5");
         feature5.setPropertyValue("name","Human5");
         feature5.setPropertyValue("age",23);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 4)));
-        featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
         feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-6");
         feature6.setPropertyValue("name","Human6");
         feature6.setPropertyValue("age",32);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 4)));
-        featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
         feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-7");
         feature7.setPropertyValue("name","Human7");
         feature7.setPropertyValue("age",28);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 1)));
-        featureList.add(feature7);
 
+        featureList.add(List.of(feature1, feature2, feature3, feature4, feature5, feature6, feature7).iterator());
         return featureList;
     }
 
@@ -230,56 +225,51 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType2();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("source", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("source", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
         feature1.setPropertyValue("type","Tree1");
         feature1.setPropertyValue("age",220);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(2, 1)));
-        featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
         feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
         feature2.setPropertyValue("type","Tree2");
         feature2.setPropertyValue("age",100);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 6)));
-        featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
         feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
         feature3.setPropertyValue("type","Tree3");
         feature3.setPropertyValue("age",5);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 5)));
-        featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
         feature4.setPropertyValue("type","Tree4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
-        featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
         feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
         feature5.setPropertyValue("type","Tree5");
         feature5.setPropertyValue("age",57);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 5)));
-        featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
         feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-16");
         feature6.setPropertyValue("type","Tree6");
         feature6.setPropertyValue("age",68);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 3)));
-        featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
         feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-17");
         feature7.setPropertyValue("type","Tree7");
         feature7.setPropertyValue("age",94);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(11, 2)));
-        featureList.add(feature7);
+
+        featureList.add(List.of(feature1, feature2, feature3, feature4, feature5, feature6, feature7).iterator());
 
         return featureList;
     }
@@ -288,7 +278,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("target", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
@@ -304,7 +294,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
                 });
 
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature1);
+        featureList.add(List.of(feature1).iterator());
 
         return featureList;
     }
@@ -313,7 +303,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("target", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
@@ -329,7 +319,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
                 });
 
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature1);
+        featureList.add(List.of(feature1).iterator());
 
         return featureList;
     }
@@ -337,7 +327,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
     private static FeatureSet buildFeatureListInter2() throws FactoryException {
 
         type = createSimpleType2();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("source", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("source", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
@@ -351,7 +341,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
                     new Coordinate(1, 3)
                 });
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
         feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
@@ -365,7 +354,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
                     new Coordinate(3, 2)
                 });
         feature2.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
         feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
@@ -379,7 +367,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
                     new Coordinate(6, 4)
                 });
         feature3.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
@@ -393,7 +380,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
                     new Coordinate(7, 2)
                 });
         feature4.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        featureList.add(feature4);
+
+        featureList.add(List.of(feature1, feature2, feature3, feature4).iterator());
 
         return featureList;
     }
@@ -401,7 +389,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
     private static FeatureSet buildResultNear() throws FactoryException {
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-1_id-11");
@@ -410,7 +398,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 2)));
         feature1.setPropertyValue("type","Tree1");
         feature1.setPropertyValue("age_SJ_Type2",220);
-        featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
         feature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-2_id-12");
@@ -419,7 +406,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 5)));
         feature2.setPropertyValue("type","Tree2");
         feature2.setPropertyValue("age_SJ_Type2",100);
-        featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
         feature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-3_id-13");
@@ -428,7 +414,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 6)));
         feature3.setPropertyValue("type","Tree3");
         feature3.setPropertyValue("age_SJ_Type2",5);
-        featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-4_id-14");
@@ -437,7 +422,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
         feature4.setPropertyValue("type","Tree4");
         feature4.setPropertyValue("age_SJ_Type2",40);
-        featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
         feature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-5_id-13");
@@ -446,7 +430,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 4)));
         feature5.setPropertyValue("type","Tree3");
         feature5.setPropertyValue("age_SJ_Type2",5);
-        featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
         feature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-6_id-16");
@@ -455,7 +438,6 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 4)));
         feature6.setPropertyValue("type","Tree6");
         feature6.setPropertyValue("age_SJ_Type2",68);
-        featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
         feature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-7_id-16");
@@ -464,7 +446,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 1)));
         feature7.setPropertyValue("type","Tree6");
         feature7.setPropertyValue("age_SJ_Type2",68);
-        featureList.add(feature7);
+
+        featureList.add(List.of(feature1, feature2, feature3, feature4, feature5, feature6, feature7).iterator());
 
         return featureList;
     }
@@ -473,7 +456,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01_id-12");
@@ -491,7 +474,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
         feature1.setPropertyValue("type","something2");
         feature1.setPropertyValue("age_SJ_Type2",2);
-        featureList.add(feature1);
+
+        featureList.add(List.of(feature1).iterator());
 
         return featureList;
     }
@@ -500,7 +484,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
@@ -518,7 +502,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
         feature1.setPropertyValue("type",null);
         feature1.setPropertyValue("age_SJ_Type2",null);
-        featureList.add(feature1);
+
+        featureList.add(List.of(feature1).iterator());
 
         return featureList;
     }

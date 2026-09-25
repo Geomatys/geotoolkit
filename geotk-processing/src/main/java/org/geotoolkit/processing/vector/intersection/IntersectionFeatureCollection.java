@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.processing.vector.intersection;
 
-import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.Hints;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.coordinate.MismatchedDimensionException;
@@ -36,10 +34,10 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module
  */
-public class IntersectionFeatureCollection extends WrapFeatureCollection {
+public class IntersectionFeatureCollection extends WrapFeatureSet {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection intersList;
+    private final FeatureSet intersList;
     private final String geometryName;
 
     /**
@@ -47,8 +45,8 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param intersList FeatureCollection
      */
-    public IntersectionFeatureCollection(final FeatureCollection originalFC, final FeatureCollection intersList,
-            final String geometryName) {
+    public IntersectionFeatureCollection(final FeatureSet originalFC, final FeatureSet intersList,
+            final String geometryName) throws DataStoreException {
         super(originalFC);
         this.intersList = intersList;
         this.geometryName = geometryName;
@@ -64,6 +62,10 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         return newFeatureType;
     }
 
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        return originalFC.features(parallel).flatMap(this::modify2);
+    }
     /**
      *  {@inheritDoc }
      */
@@ -72,10 +74,10 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         throw new UnsupportedOperationException("Function didn't used");
     }
 
-    private FeatureCollection modify2(final Feature original) {
+    private Stream<Feature> modify2(final Feature original) {
 
         try {
-            return IntersectionProcess.intersetFeature(original, newFeatureType, intersList, geometryName);
+            return IntersectionProcess.intersetFeature(original, newFeatureType, intersList, geometryName).features(false);
 
         } catch (FactoryException ex) {
             throw new FeatureStoreRuntimeException(ex);
@@ -90,107 +92,4 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         }
     }
 
-    /**
-     *  {@inheritDoc }
-     */
-    @Override
-    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator());
-    }
-
-    /**
-     * Implementation of FeatureIterator
-     * @author Quentin Boileau
-     * @module
-     */
-    private class IntersectionFeatureIterator implements FeatureIterator {
-
-        private final FeatureIterator originalFI;
-        private Feature nextFeature;
-        private FeatureCollection nextFC;
-        private FeatureIterator ite;
-
-        /**
-         * Connect to the original FeatureIterator
-         * @param originalFI FeatureIterator
-         */
-        public IntersectionFeatureIterator(final FeatureIterator originalFI) {
-            this.originalFI = originalFI;
-            nextFeature = null;
-            nextFC = null;
-            ite = null;
-        }
-
-        /**
-         * Return the Feature modify by the process
-         * @return Feature
-         */
-        @Override
-        public Feature next() {
-            findNext();
-
-            if (nextFeature == null) {
-                throw new NoSuchElementException("No more Feature.");
-            }
-
-            final Feature feat = nextFeature;
-            nextFeature = null;
-            return feat;
-        }
-
-        /**
-         * Close the original FeatureIterator
-         */
-        @Override
-        public void close() {
-            originalFI.close();
-        }
-
-        /**
-         * Return hasNext() result from the original FeatureIterator
-         */
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return nextFeature != null;
-        }
-
-        /**
-         * Useless because current FeatureCollection can't be modified
-         */
-        @Override
-        public void remove() {
-            throw new FeatureStoreRuntimeException("Unmodifiable collection");
-        }
-
-        /**
-         * Find the next feature
-         */
-        private void findNext() {
-            if (nextFeature != null) {
-                return;
-            }
-
-            while (nextFeature == null) {
-
-                if (nextFC != null) {
-                    if (ite.hasNext()) {
-                        nextFeature = ite.next();
-                        continue;
-                    } else {
-                        nextFC = null;
-                        ite = null;
-                    }
-                } else {
-                    if (originalFI.hasNext()) {
-                        nextFC = modify2(originalFI.next());
-                        ite = nextFC.iterator();
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-        }
-    }
 }

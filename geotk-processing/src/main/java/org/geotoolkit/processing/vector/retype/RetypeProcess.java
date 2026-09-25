@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.vector.retype;
 
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.FeatureType;
@@ -43,9 +43,9 @@ public class RetypeProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureSet inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
         final FeatureType mask = inputParameters.getValue(RetypeDescriptor.MASK_IN);
-        final FeatureCollection resultFeatureList;
+        final FeatureSet resultFeatureList;
         if(mask instanceof ViewMapper){
             resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewMapper) mask);
         }else{

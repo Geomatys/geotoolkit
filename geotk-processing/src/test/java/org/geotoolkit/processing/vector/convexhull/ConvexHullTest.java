@@ -16,34 +16,32 @@
  */
 package org.geotoolkit.processing.vector.convexhull;
 
+import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPoint;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of ConvexHull process
@@ -64,7 +62,7 @@ public class ConvexHullTest extends AbstractProcessTest {
     public void testConvexHull() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:convexhull");
 
@@ -108,11 +106,11 @@ public class ConvexHullTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -128,7 +126,6 @@ public class ConvexHullTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -150,7 +147,6 @@ public class ConvexHullTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -170,8 +166,8 @@ public class ConvexHullTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
 
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
         return featureList;
     }
 

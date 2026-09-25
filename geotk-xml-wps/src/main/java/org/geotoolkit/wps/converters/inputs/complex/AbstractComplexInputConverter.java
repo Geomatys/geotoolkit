@@ -35,7 +35,7 @@ import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.converters.inputs.references.ReferenceToFeatureCollectionConverter;
+import org.geotoolkit.wps.converters.inputs.references.ReferenceToFeatureSetConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
@@ -150,7 +150,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
                         throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
                     }
                 })
-                .map(ReferenceToFeatureCollectionConverter::castOrWrap);
+                .map(ReferenceToFeatureSetConverter::castOrWrap);
         return result.onClose(() -> fcollReader.dispose());
     }
 }

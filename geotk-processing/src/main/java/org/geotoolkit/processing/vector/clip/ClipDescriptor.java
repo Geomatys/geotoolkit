@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.clip;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,11 +49,11 @@ public final class ClipDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_CLIP = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_CLIP = new ParameterBuilder()
             .addName("feature_clip")
             .setRemarks("Inpute FeatureCollection for clipping")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

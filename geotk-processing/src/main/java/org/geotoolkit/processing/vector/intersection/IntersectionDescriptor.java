@@ -17,11 +17,10 @@
 package org.geotoolkit.processing.vector.intersection;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.vector.VectorDescriptor;
-
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,11 +49,11 @@ public final class IntersectionDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_INTER = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_INTER = new ParameterBuilder()
             .addName("feature_inter")
             .setRemarks("Inpute FeatureCollection for the intersection")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
     /**
      * Optional - Geometry property name. Refer to the geometry to use for the intersection process

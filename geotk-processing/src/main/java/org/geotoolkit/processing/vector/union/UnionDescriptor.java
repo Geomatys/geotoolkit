@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.union;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -50,11 +50,11 @@ public final class UnionDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Union Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_UNION = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_UNION = new ParameterBuilder()
             .addName("feature_union")
             .setRemarks("Input FeatureCollection used for Union process")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
     /**
      * Optional - Input geometry property name. Refer to the geometry form FEATURE_IN used for the union process
      */

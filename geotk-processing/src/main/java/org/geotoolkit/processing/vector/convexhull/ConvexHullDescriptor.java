@@ -18,8 +18,8 @@ package org.geotoolkit.processing.vector.convexhull;
 
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.SimpleInternationalString;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -51,11 +51,11 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_IN = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_IN = new ParameterBuilder()
             .addName("feature_in")
             .setRemarks("Inpute Feature")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
     /**
      * Optional - GeometryAttribute name used to compute convex hull
      */

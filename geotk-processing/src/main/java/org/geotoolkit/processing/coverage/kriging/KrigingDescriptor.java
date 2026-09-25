@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.kriging;
 import java.awt.Dimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -95,11 +95,11 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     /**
      * Output lines.
      */
-    public static final ParameterDescriptor<FeatureCollection> OUT_LINES = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> OUT_LINES = new ParameterBuilder()
             .addName("lines")
             .setRemarks("Isolines as a featureCollection")
             .setRequired(false)
-            .create(FeatureCollection.class,null);
+            .create(FeatureSet.class,null);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =

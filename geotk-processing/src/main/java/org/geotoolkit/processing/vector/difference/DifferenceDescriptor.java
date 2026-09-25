@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.difference;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,11 +49,11 @@ public final class DifferenceDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_DIFF = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_DIFF = new ParameterBuilder()
             .addName("feature_diff")
             .setRemarks("Input FeatureCollection used for compute the difference")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

@@ -42,8 +42,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
@@ -258,8 +258,8 @@ public final class VectorProcessUtils {
      * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "inputFeatureID-intersection"
      * The Feature returned ID will look like "inputFeatureID<->intersectionFeatureID"
      */
-    public static FeatureCollection intersectionFeatureToColl(final Feature inputFeature,
-            final FeatureCollection featureList, String geometryName)
+    public static FeatureSet intersectionFeatureToColl(final Feature inputFeature,
+            final FeatureSet featureList, String geometryName)
             throws FactoryException, TransformException, ProcessException, DataStoreException {
 
         //if the wanted feature geometry is null, we use the default geometry
@@ -271,8 +271,7 @@ public final class VectorProcessUtils {
         final FeatureType newType = VectorProcessUtils.oneGeometryFeatureType(inputFeature.getType(), geometryName);
 
         //name of the new collection "<inputFeatureID>-intersection"
-        final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getIdentifier() + "-intersection", newType);
+        final InMemoryFeatureSet resultFeatureList = new InMemoryFeatureSet(FeatureExt.getId(inputFeature).getIdentifier() + "-intersection", newType);
 
         Geometry inputGeometry = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
@@ -369,7 +368,7 @@ public final class VectorProcessUtils {
                             resultFeature.setPropertyValue(name, inputFeature.getPropertyValue(name));
                         }
                     }
-                    resultFeatureList.add(resultFeature);
+                    resultFeatureList.add(List.of(resultFeature).iterator());
                 }
             }
         }

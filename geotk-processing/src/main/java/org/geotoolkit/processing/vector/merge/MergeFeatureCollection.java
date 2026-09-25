@@ -17,16 +17,13 @@
 package org.geotoolkit.processing.vector.merge;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
-
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.UnconvertibleObjectException;
+import java.util.stream.Stream;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ObjectConverter;
-
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
@@ -36,10 +33,10 @@ import org.opengis.util.GenericName;
  * @author Quentin Boileau
  * @module
  */
-public class MergeFeatureCollection extends WrapFeatureCollection {
+public class MergeFeatureCollection extends WrapFeatureSet {
 
 
-    private final FeatureCollection[] fcList;
+    private final FeatureSet[] fcList;
     private final FeatureType newFeatureType;
 
     /**
@@ -47,7 +44,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      * @param fcList array of FeatureCollection
      * @param firstFC
      */
-    public MergeFeatureCollection(final FeatureCollection[] fcList, final FeatureCollection firstFC) {
+    public MergeFeatureCollection(final FeatureSet[] fcList, final FeatureSet firstFC) throws DataStoreException {
         super(firstFC);
         this.fcList = fcList;
         this.newFeatureType = firstFC.getType();
@@ -84,131 +81,14 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         }
     }
 
-     @Override
-    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        try {
-            return new MergeFeatureIterator(fcList);
-        } catch (UnconvertibleObjectException ex) {
-           throw new FeatureStoreRuntimeException(ex);
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        Stream<Feature> stream = Stream.empty();
+        for (FeatureSet fs : fcList) {
+            final Map<GenericName,ObjectConverter> conversionMap = MergeProcess.createConversionMap(newFeatureType, fs.getType());
+            stream = Stream.concat(stream, fs.features(parallel).map(f -> modify2(f, conversionMap)));
         }
+        return stream;
     }
 
-
-    /**
-     * Implementation of FeatureIterator which iterate from many FeatureCollection
-     * @author Quentin Boileau
-     * @module
-     */
-    private class MergeFeatureIterator implements FeatureIterator {
-
-        private final FeatureCollection[] fcList;
-        private int fcIter;
-        private int nbFC; /* Number of FeatureCollection*/
-
-        private FeatureCollection nextFC;
-        private FeatureIterator ite;
-
-        private Feature nextFeature;
-        private Map<GenericName,ObjectConverter> conversionMap;
-
-        /**
-         * Connect to the original FeatureIterator
-         * @param originalFI FeatureIterator
-         */
-        public MergeFeatureIterator(final FeatureCollection[] fcListIter) throws UnconvertibleObjectException {
-
-            this.fcList = fcListIter;
-            this.fcIter = 0;
-            this.nbFC = fcList.length;
-
-            if(nbFC > 0){
-                nextFC = fcList[0];
-                ite = nextFC.iterator();
-                conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getType());
-            }else{
-                nextFC = null;
-                ite = null;
-            }
-            nextFeature = null;
-        }
-
-        /**
-         * Return the Feature modify by the process
-         * @return Feature
-         */
-        @Override
-        public Feature next() {
-            findNext();
-
-            if (nextFeature == null) {
-                throw new NoSuchElementException("No more Feature.");
-            }
-
-            final Feature feat = nextFeature;
-            nextFeature = null;
-            return feat;
-        }
-
-        /**
-         * Close the original FeatureIterator
-         */
-        @Override
-        public void close() {
-            ite.close();
-        }
-
-        /**
-         * Return hasNext() result from the original FeatureIterator
-         */
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return nextFeature != null;
-        }
-
-        /**
-         * Useless because current FeatureCollection can't be modified
-         */
-        @Override
-        public void remove() {
-            throw new FeatureStoreRuntimeException("Unmodifiable collection");
-        }
-
-        /**
-         * Find the next feature
-         */
-        private void findNext() {
-            if (nextFeature != null) {
-                return;
-            }
-
-            while (nextFeature == null) {
-
-                if (nextFC != null) {
-                    if (ite.hasNext()) {
-                        nextFeature = modify2(ite.next(),conversionMap);
-                        continue;
-                    } else {
-                        nextFC = null;
-                    }
-                } else {
-                    if (fcIter < nbFC-1) {
-                        try {
-                            fcIter++;
-                            nextFC = fcList[fcIter];
-                            ite = nextFC.iterator();
-                            conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getType());
-
-
-                        } catch (UnconvertibleObjectException ex) {
-                           throw new FeatureStoreRuntimeException(ex);
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-        }
-    }
 }

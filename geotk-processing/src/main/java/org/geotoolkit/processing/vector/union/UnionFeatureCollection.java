@@ -17,24 +17,22 @@
 package org.geotoolkit.processing.vector.union;
 
 import java.util.HashSet;
-import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Set;
-
-import org.opengis.feature.AttributeType;
+import java.util.stream.Stream;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
-
+import org.geotoolkit.storage.memory.WrapFeatureSet;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 
 /**
@@ -42,10 +40,10 @@ import org.apache.sis.feature.internal.shared.AttributeConvention;
  *
  * @author Quentin Boileau
  */
-public class UnionFeatureCollection extends WrapFeatureCollection {
+public class UnionFeatureCollection extends WrapFeatureSet {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection unionFC;
+    private final FeatureSet unionFC;
 
     /** Geometry attribute name form inputFC used to compute intersections */
     private final String inputGeomName;
@@ -56,8 +54,8 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
     /**
      * Connect to the original FeatureConnection
      */
-    public UnionFeatureCollection(final FeatureCollection inputFC, final FeatureCollection unionFC,
-            final String inputGeomName, final String unionGeomName)
+    public UnionFeatureCollection(final FeatureSet inputFC, final FeatureSet unionFC,
+            final String inputGeomName, final String unionGeomName) throws DataStoreException
     {
         super(inputFC);
         this.unionFC = unionFC;
@@ -106,140 +104,35 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         throw new UnsupportedOperationException("Function didn't used");
     }
 
-    private FeatureCollection modify2(final Feature original, final boolean firstPass, final Set<String> featureList) {
+    private List<Feature> modify2(final Feature original, final boolean firstPass, final Set<String> featureList) {
         try {
             if (firstPass) {
                 return UnionProcess.unionFeatureToFC(original, newFeatureType, unionFC, inputGeomName, unionGeomName, firstPass, featureList);
             } else {
                 return UnionProcess.unionFeatureToFC(original, newFeatureType, getOriginalFeatureCollection(), unionGeomName, inputGeomName, firstPass, featureList);
             }
-        } catch (TransformException | FactoryException ex) {
+        } catch (TransformException | FactoryException | DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }
 
-    /**
-     *  {@inheritDoc }
-     */
     @Override
-    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator(), unionFC.iterator());
-    }
-
-    /**
-     * Implementation of FeatureIterator
-     * @author Quentin Boileau
-     * @module
-     */
-    private class IntersectionFeatureIterator implements FeatureIterator {
-
-        private final FeatureIterator originalFI;
-        private final FeatureIterator unionFI;
-        private Feature nextFeature;
-        private FeatureCollection nextFC;
-        private FeatureIterator ite;
-
-        /*
-         * This boolean if used to do a second pass on the process in inverting FeatureCollection input and union.
-         * During the second pass, duplicates entries are removed and Features form union FeatureCollection without
-         * intersection with input FeatureCollection Features and remaining Features are added.
-         */
-        private boolean firstPass;
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
 
         /*
          * This Set contain all features already created, it is used in order to remove
          * duplicates features during the second pass
          */
-        private final Set<String> featureList;
+        final Set<String> featureList = new HashSet<>();
 
-        /**
-         * Connect to the original FeatureIterator
-         */
-        public IntersectionFeatureIterator(final FeatureIterator originalFI, final FeatureIterator unionFI) {
-            this.originalFI = originalFI;
-            this.unionFI = unionFI;
-            nextFeature = null;
-            nextFC = null;
-            ite = null;
-            firstPass = true;
-            featureList = new HashSet<>();
-        }
+        //first stream on the first collection
+        Stream<Feature> stream1 = originalFC.features(false);
+        stream1 = stream1.flatMap(f -> modify2(f, true, featureList).stream());
+         //second pass iterate on the union FeatureCollection
+        Stream<Feature> stream2 = unionFC.features(false);
+        stream2 = stream2.flatMap(f -> modify2(f, false, featureList).stream());
 
-        /**
-         * Return the Feature modify by the process
-         */
-        @Override
-        public Feature next() {
-            findNext();
-
-            if (nextFeature == null) {
-                throw new NoSuchElementException("No more Feature.");
-            }
-
-            final Feature feat = nextFeature;
-            nextFeature = null;
-            return feat;
-        }
-
-        /**
-         * Close the original FeatureIterator
-         */
-        @Override
-        public void close() {
-            originalFI.close();
-        }
-
-        /**
-         * Return hasNext() result from the original FeatureIterator
-         */
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return nextFeature != null;
-        }
-
-        /**
-         * Useless because current FeatureCollection can't be modified
-         */
-        @Override
-        public void remove() {
-            throw new FeatureStoreRuntimeException("Unmodifiable collection");
-        }
-
-        /**
-         * Find the next feature
-         */
-        private void findNext() {
-            if (nextFeature != null) {
-                return;
-            }
-            while (nextFeature == null) {
-                if (nextFC != null) {
-                    if (ite.hasNext()) {
-                        nextFeature = ite.next();
-                        continue;
-                    } else {
-                        nextFC = null;
-                        ite = null;
-                    }
-                } else {
-                    if (firstPass) { //first pass iterate on the original FeatureCollection
-                        if (originalFI.hasNext()) {
-                            nextFC = modify2(originalFI.next(), firstPass, featureList);
-                            ite = nextFC.iterator();
-                        } else {
-                            firstPass = false;
-                        }
-                    } else {
-                        if (unionFI.hasNext()) { //second pass iterate on the union FeatureCollection
-                            nextFC = modify2(unionFI.next(), firstPass, featureList);
-                            ite = nextFC.iterator();
-                        } else {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        return Stream.concat(stream1, stream2);
     }
+
 }

@@ -16,21 +16,20 @@
  */
 package org.geotoolkit.processing.vector.differencegeometry;
 
-import org.locationtech.jts.geom.Geometry;
-
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-import org.opengis.feature.AttributeType;
 
 
 /**
@@ -50,11 +49,15 @@ public class DifferenceGeometryProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
         final Geometry inputDifferenceGeometry    = inputParameters.getValue(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN);
-        final FeatureCollection resultFeatureList =
-                new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 

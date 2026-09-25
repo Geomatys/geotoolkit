@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.vector.intersect;
 
+import java.util.List;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
@@ -26,8 +27,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -93,8 +94,7 @@ public class IntersectTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
-
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -109,7 +109,6 @@ public class IntersectTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -132,7 +131,6 @@ public class IntersectTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -152,18 +150,17 @@ public class IntersectTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         return featureList;
     }
 
     private static FeatureSet buildResultList() throws FactoryException {
 
-
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("IntersectTest", type);
-
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("IntersectTest", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -178,7 +175,6 @@ public class IntersectTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -201,7 +197,8 @@ public class IntersectTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
+
+        featureList.add(List.of(myFeature1, myFeature2).iterator());
 
         return featureList;
     }
