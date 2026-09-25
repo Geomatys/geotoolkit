@@ -1,4 +1,5 @@
-# Perform Sonar analysis on main branch
+# Perform Sonar analysis on main branch only, as we have only a free license of the tools.
+# For branch and MR analysis, see qodana inspection below
 sonar:
   # If we cannot post analysis to Sonar, that's not a fatal error, as long as the build step succeed
   allow_failure: true
@@ -11,7 +12,12 @@ sonar:
     variables: 
       - $SONAR_TOKEN
   script:
-    - mvn install sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+    - >-
+      mvn install 
+      org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      -s $MAVEN_SETTINGS 
+      -Dsonar.host.url=$SONAR_HOST_URL 
+      -Dsonar.token=$SONAR_TOKEN
 
 include:
   - component: $CI_SERVER_FQDN/amanin/qodana-inspection/qodana-inspection@0.1.2
