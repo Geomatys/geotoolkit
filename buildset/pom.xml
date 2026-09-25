@@ -23,7 +23,6 @@
         It ensures we can import it after SIS will migrate to Gradle build system.
         -->
         <sis.build.helper.version>1.3</sis.build.helper.version>
-        <sis.non-free.version>2.0-M0132</sis.non-free.version>
         <geotoolkit.version>5.0-SNAPSHOT</geotoolkit.version>
     </properties>
 
