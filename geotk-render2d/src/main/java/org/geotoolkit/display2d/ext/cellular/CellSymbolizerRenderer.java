@@ -216,7 +216,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     }
                 }
             }
-        } catch (DataStoreException | IOException | TransformException ex) {
+        } catch (DataStoreException | TransformException ex) {
             ExceptionPresentation ep = new ExceptionPresentation(ex);
             ep.setLayer(layer);
             ep.setResource(fs);

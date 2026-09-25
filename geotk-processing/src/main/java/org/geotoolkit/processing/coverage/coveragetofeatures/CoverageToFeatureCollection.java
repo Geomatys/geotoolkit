@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
+import java.util.Iterator;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -66,7 +66,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator iterator() throws FeatureStoreRuntimeException {
+    public Iterator<Feature> iterator() throws FeatureStoreRuntimeException {
         return new RasterFeatureIterator();
     }
 

@@ -255,8 +255,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Agg
             try {
                 final XmlFeatureReader reader = new XmlFeatureReader(xmlFile, type);
                 final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
-                final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-                return stream.onClose(reader::close);
+                return StreamSupport.stream(spliterator, false);
             } catch (JAXBException | IOException ex) {
                 throw new DataStoreException(ex);
             }

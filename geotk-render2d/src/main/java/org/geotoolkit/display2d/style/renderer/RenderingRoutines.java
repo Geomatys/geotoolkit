@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.RenderingHints;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,8 +61,6 @@ import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.geometry.GeometryFunctionFactory;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -576,35 +573,20 @@ public final class RenderingRoutines {
     public static GraphicIterator getIterator(final FeatureSet features,
             final RenderingContext2D renderingContext) throws DataStoreException {
 
-        final FeatureIterator iterator;
         final Stream<Feature> stream = features.features(false);
-        final Iterator<Feature> i = stream.iterator();
-        iterator = new FeatureIterator() {
-            @Override
-            public Feature next() throws FeatureStoreRuntimeException {
-                return i.next();
-            }
-            @Override
-            public boolean hasNext() throws FeatureStoreRuntimeException {
-                return i.hasNext();
-            }
-            @Override
-            public void close() {
-                stream.close();
-            }
-        };
         final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
-        return new GraphicIterator(iterator, projectedFeature);
+        return new GraphicIterator(stream, projectedFeature);
     }
-
 
     public static class GraphicIterator implements Iterator<ProjectedObject>,Closeable {
 
-        private final FeatureIterator ite;
+        private final Stream<Feature> stream;
+        private final Iterator<Feature> ite;
         private final ProjectedFeature projected;
 
-        public GraphicIterator(final FeatureIterator ite, final ProjectedFeature projected) {
-            this.ite = ite;
+        GraphicIterator(final Stream<Feature> stream, final ProjectedFeature projected) {
+            this.stream = stream;
+            this.ite = stream.iterator();
             this.projected = projected;
         }
 
@@ -625,8 +607,8 @@ public final class RenderingRoutines {
         }
 
         @Override
-        public void close() throws IOException {
-            ite.close();
+        public void close() {
+            stream.close();
         }
     }
 }

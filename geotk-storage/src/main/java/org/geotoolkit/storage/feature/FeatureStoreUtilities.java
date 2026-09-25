@@ -16,32 +16,22 @@
  */
 package org.geotoolkit.storage.feature;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.Features;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.ContentInformation;
@@ -57,56 +47,7 @@ import org.opengis.util.GenericName;
  */
 public class FeatureStoreUtilities {
 
-    static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data");
-
     private FeatureStoreUtilities() {
-    }
-
-    /**
-     * Iterate on the given iterator and calculate count.
-     * @throws FeatureStoreRuntimeException
-     */
-    public static long calculateCount(final CloseableIterator reader) throws FeatureStoreRuntimeException {
-        long count = 0;
-
-        try {
-            while (reader.hasNext()) {
-                reader.next();
-                count++;
-            }
-        } finally {
-            reader.close();
-        }
-
-        return count;
-    }
-
-    /**
-     * Iterate on the given iterator and calculate the envelope.
-     * @throws FeatureStoreRuntimeException
-     */
-    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException {
-        ensureNonNull("iterator", iterator);
-
-        GeneralEnvelope env = null;
-
-        try {
-            while (iterator.hasNext()) {
-                final Feature f = iterator.next();
-                final Envelope bbox = FeatureExt.getEnvelope(f);
-                if (bbox != null) {
-                    if (env != null) {
-                        env.add(bbox);
-                    } else {
-                        env = new GeneralEnvelope(bbox);
-                    }
-                }
-            }
-        } finally {
-            iterator.close();
-        }
-
-        return env;
     }
 
     /**

@@ -216,8 +216,7 @@ public class NetcdfObservationStore extends AbstractObservationStore implements 
             try {
                 final NetcdfFeatureReader reader = new NetcdfFeatureReader(dataFile, type);
                 final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
-                final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-                return stream.onClose(reader::close);
+                return StreamSupport.stream(spliterator, false);
             } catch (NetCDFParsingException ex) {
                 throw new DataStoreException(ex);
             }
