@@ -16,29 +16,15 @@
  */
 package org.geotoolkit.storage.feature.query;
 
-import java.util.Collections;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureQuery;
-import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
-import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.SortOrder;
 import org.opengis.filter.SortProperty;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
@@ -109,36 +95,4 @@ public class QueryTest {
         query2 = query;
     }
 
-    @Test
-    public void reprojectTest() throws DataStoreException {
-
-        CoordinateReferenceSystem inCrs = CommonCRS.WGS84.normalizedGeographic();
-        CoordinateReferenceSystem outCrs = CommonCRS.WGS84.geographic();
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName("test");
-        ftb.addAttribute(Point.class).setName("geom").setCRS(inCrs).addRole(AttributeRole.DEFAULT_GEOMETRY);
-        final FeatureType type = ftb.build();
-
-        final Point geometry = GF.createPoint(new Coordinate(10, 30));
-        geometry.setUserData(inCrs);
-        final Feature feature = type.newInstance();
-        feature.setPropertyValue("geom", geometry);
-
-        FeatureSet fs = new InMemoryFeatureSet(type, Collections.singleton(feature));
-
-        final FeatureQuery query = Query.reproject(type, outCrs);
-        final FeatureSet rfs = fs.subset(query);
-        final Feature rfeature = rfs.features(false).findFirst().get();
-
-        Point geom1 = (Point) rfeature.getPropertyValue("sis:geometry");
-        Point geom2 = (Point) rfeature.getPropertyValue("geom");
-
-        assertEquals(outCrs, geom1.getUserData());
-        assertEquals(outCrs, geom2.getUserData());
-        Assert.assertEquals(30.0, geom1.getX(), 0.0);
-        Assert.assertEquals(10.0, geom1.getY(), 0.0);
-        Assert.assertEquals(30.0, geom2.getX(), 0.0);
-        Assert.assertEquals(10.0, geom2.getY(), 0.0);
-    }
 }

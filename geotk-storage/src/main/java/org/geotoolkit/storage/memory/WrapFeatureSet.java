@@ -24,6 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.feature.FeatureSetMapper;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
@@ -91,4 +92,17 @@ public abstract class WrapFeatureSet extends AbstractFeatureSet {
         return sb.toString();
     }
 
+    public static FeatureSet decorate(FeatureSet fs, FeatureSetMapper mask) {
+        return new WrapFeatureSet(fs) {
+            @Override
+            public FeatureType getType() throws DataStoreException {
+                return mask.getMappedType();
+            }
+
+            @Override
+            protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
+                return mask.apply(original);
+            }
+        };
+    }
 }

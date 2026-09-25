@@ -43,7 +43,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -168,14 +167,14 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Fea
                             // get first gml file only
                             if (gmlPaths.hasNext()) {
                                 final Path gmlPath = gmlPaths.next();
-                                try (FeatureReader ite = reader.readAsStream(gmlPath)) {
+                                try (JAXPStreamFeatureReader.JAXPStreamIterator ite = reader.readAsIterator(gmlPath)) {
                                     catalog = reader.getFeatureTypes();
                                     featureType = ite.getFeatureType();
                                 }
                             }
                         }
                     } else {
-                        try (FeatureReader ite = reader.readAsStream(file)) {
+                        try (JAXPStreamFeatureReader.JAXPStreamIterator ite = reader.readAsIterator(file)) {
                             catalog = reader.getFeatureTypes();
                             featureType = ite.getFeatureType();
                         }
@@ -283,7 +282,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Fea
 
         protected final FeatureType type;
         protected final JAXPStreamFeatureReader xmlReader;
-        protected FeatureReader featureReader;
+        protected JAXPStreamFeatureReader.JAXPStreamIterator featureReader;
         protected Feature currentFeature = null;
         protected Path currentFile = null;
         protected Feature nextFeature = null;
@@ -351,7 +350,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Fea
                         return;
                     }
                     xmlReader.reset();
-                    featureReader = xmlReader.readAsStream(files.get(index));
+                    featureReader = xmlReader.readAsIterator(files.get(index));
                 }
 
                 if(featureReader.hasNext()){

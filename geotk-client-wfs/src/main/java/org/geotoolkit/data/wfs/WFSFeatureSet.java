@@ -31,15 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.feature.AbstractOperation;
@@ -57,6 +54,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
@@ -73,8 +71,6 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.storage.FeatureMapUpdate;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
@@ -227,7 +223,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
         final FeatureType sft = getType();
 
-        FeatureReader reader;
+        Stream<Feature> reader;
         final GenericName gName = sft.getName();
         final String namespace = NamesExt.getNamespace(gName);
         final QName q;
@@ -242,8 +238,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             throw new DataStoreException(ex);
         }
 
-        final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
-        return stream.onClose(reader::close);
+        return reader;
     }
 
     @Override
@@ -397,7 +392,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         }
     }
 
-    private FeatureReader requestFeature(final QName typeName, final Query query) throws XMLStreamException, DataStoreException, IOException {
+    private Stream<Feature> requestFeature(final QName typeName, final Query query) throws XMLStreamException, DataStoreException, IOException {
         if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
@@ -491,12 +486,26 @@ public class WFSFeatureSet implements WritableFeatureSet {
             stream = url.openStream();
         }
 
-        FeatureReader streamReader = reader.readAsStream(stream);
         if (remainingQuery != null) {
-            streamReader = FeatureStreams.subset(streamReader, remainingQuery);
+            final FeatureType ft = type;
+            final FeatureSet fs = new AbstractFeatureSet(null) {
+                @Override
+                public FeatureType getType() throws DataStoreException {
+                    return ft;
+                }
+                @Override
+                public Stream<Feature> features(boolean bln) throws DataStoreException {
+                    try {
+                        return reader.readAsStream(stream);
+                    } catch (IOException | XMLStreamException ex) {
+                        throw new DataStoreException(ex);
+                    }
+                }
+            };
+            return fs.subset(remainingQuery).features(false);
+        } else {
+            return reader.readAsStream(stream);
         }
-
-        return streamReader;
     }
 
     private static class PropertyNameReplacement extends DuplicatingFilterVisitor {

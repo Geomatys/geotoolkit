@@ -20,10 +20,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 
 import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -54,7 +54,7 @@ public class AffineTransformProcess extends AbstractProcess {
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        final FeatureSet resultFeatureList = FeatureStreams.decorate(inputFeatureList,ttype);
+        final FeatureSet resultFeatureList = WrapFeatureSet.decorate(inputFeatureList,ttype);
         outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

@@ -23,39 +23,37 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
-import org.apache.sis.coverage.Category;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.measure.Units;
+import org.apache.sis.feature.Features;
+import org.apache.sis.filter.base.XPath;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.WritableAggregate;
-import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.tiling.TileMatrixSet;
-import org.apache.sis.storage.tiling.TiledResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
-import org.geotoolkit.storage.multires.ProgressiveResource;
-import org.geotoolkit.storage.multires.TileFormat;
-import org.geotoolkit.util.StringUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Expression;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Literal;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 
@@ -357,5 +355,42 @@ public final class DataStores {
         default ErrorOption errorOccured(Aggregate aggregate, Exception ex) {
             return ErrorOption.ERROR;
         }
+    }
+
+    /**
+     * Create a simple query with columns which transform all geometric types to the given crs.
+     */
+    public static FeatureQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
+        final FilterFactory<Feature, Object, Object> ff = FilterUtilities.FF;
+        final Literal<Feature, CoordinateReferenceSystem> crsLiteral = ff.literal(crs);
+
+        final FeatureQuery query = new FeatureQuery();
+        final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
+
+        for (PropertyType pt : type.getProperties(true)) {
+            final GenericName name = pt.getName();
+            Expression<Feature,?> property = ff.property(XPath.toString(null, null, name.toString()));
+            /*
+             * Do not reproject links. If the link is referencing another property of this feature instance,
+             * that property will already be reprojected by this loop. By skipping links, we avoid to project
+             * the same geometry twice. It also avoids complication in the code creating features with a subset
+             * of the properties.
+             */
+            if (Features.getLinkTarget(pt).isEmpty()) {
+                IdentifiedType result = pt;
+                while (result instanceof Operation) {
+                    // Unroll operation
+                    result = ((Operation) result).getResult();
+                }
+                if (result instanceof AttributeType<?> at) {
+                    if (Geometry.class.isAssignableFrom(at.getValueClass())) {
+                        property = ff.function("ST_Transform", property, crsLiteral);
+                    }
+                }
+            }
+            columns.add(new FeatureQuery.NamedExpression(property, name));
+        }
+        query.setProjection(columns.toArray(new FeatureQuery.NamedExpression[0]));
+        return query;
     }
 }

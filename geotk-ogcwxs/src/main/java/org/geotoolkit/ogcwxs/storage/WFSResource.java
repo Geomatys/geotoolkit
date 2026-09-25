@@ -20,10 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import javax.xml.namespace.QName;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
@@ -42,7 +39,6 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.ogcwxs.request.feature.DescribeFeatureType;
 import org.geotoolkit.ogcwxs.request.feature.GetFeature;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
@@ -158,14 +154,14 @@ public final class WFSResource extends AbstractFeatureSet {
 
         final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(ft);
         reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
-        final FeatureReader fr;
+        final Stream<Feature> fr;
         try {
             fr = reader.readAsStream(in);
         } catch (Exception ex) {
             throw new DataStoreException(ex);
         }
 
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fr, Spliterator.ORDERED), false).onClose(fr::close);
+        return fr;
     }
 
     private static String toEpsgCode(String defaultCRS) {

@@ -54,15 +54,14 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.JAXPStreamIterator;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.storage.FeatureCatalogue;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -173,7 +172,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, FeatureCa
                 final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
                 reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
                 reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
-                try (FeatureReader ite = reader.readAsStream(file)) {
+                try (JAXPStreamIterator ite = reader.readAsIterator(file)) {
                     catalog = reader.getFeatureTypes();
                     rootType = ite.getFeatureType();
                 } catch (IOException | XMLStreamException ex) {
@@ -210,7 +209,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, FeatureCa
         if (Files.exists(file)) {
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(getType());
             reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-            final CloseableIterator ite;
+            final Stream<Feature> ite;
             try {
                 MAINLOCK.readLock().lock();
                 ite = reader.readAsStream(file);
@@ -223,11 +222,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, FeatureCa
                 //reader.dispose();
             }
 
-            final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED);
-            final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-            return stream
-                    .onClose(ite::close)
-                    .onClose(MAINLOCK.readLock()::unlock);
+            return ite.onClose(MAINLOCK.readLock()::unlock);
         } else {
             //file may not exist yet if it's a new file.
             final Spliterator<Feature> empty = Spliterators.emptySpliterator();

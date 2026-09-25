@@ -206,9 +206,6 @@ public class QueryUtilities {
 
         qb.setSortBy(sorts.toArray(new SortProperty[sorts.size()]));
 
-        //hints of the second query---------------------------------------------
-        qb.setHints(second.getHints());
-
         //mix versions, second query version takes precedence.
         if(original.getVersionDate()!=null) qb.setVersionDate(original.getVersionDate());
         if(original.getVersionLabel()!=null) qb.setVersionLabel(original.getVersionLabel());

@@ -63,58 +63,6 @@ public class FeatureStoreUtilities {
     }
 
     /**
-     * Write the features from the given collection and return the list of generated FeatureID
-     * send by the writer.
-     *
-     * @param writer, writer will not be closed
-     * @return List of generated FeatureId. Can be empty if output data type has
-     * no identifier property.
-     * @throws FeatureStoreRuntimeException
-     */
-    public static List<ResourceId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
-            throws FeatureStoreRuntimeException {
-        final List<ResourceId> ids = new ArrayList<>();
-        boolean withId = false;
-        // Check if there's identifiers to report.
-        try {
-            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER);
-            withId = true;
-        } catch (PropertyNotFoundException e) {
-            LOGGER.log(Level.FINE, "No identifier available at copy", e);
-        }
-
-        RuntimeException error = null;
-        final Iterator<? extends Feature> ite = collection.iterator();
-        try {
-            while (ite.hasNext()) {
-                final Feature f = ite.next();
-                final Feature candidate = writer.next();
-                FeatureExt.copy(f, candidate, false);
-                writer.write();
-                if (withId) {
-                    ids.add(FeatureExt.getId(candidate));
-                }
-            }
-        } catch (RuntimeException e) {
-            error = e;
-            throw error;
-        } finally {
-            if (ite instanceof AutoCloseable) {
-                try {
-                    ((AutoCloseable) ite).close();
-                } catch (Exception ex) {
-                    if (error == null)
-                        throw new FeatureStoreRuntimeException(ex);
-                    else
-                        error.addSuppressed(ex);
-                }
-            }
-        }
-
-        return ids;
-    }
-
-    /**
      * Iterate on the given iterator and calculate count.
      * @throws FeatureStoreRuntimeException
      */

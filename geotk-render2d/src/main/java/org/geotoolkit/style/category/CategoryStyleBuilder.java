@@ -28,12 +28,12 @@ import java.util.stream.Stream;
 import org.apache.sis.feature.Features;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -285,13 +285,8 @@ public class CategoryStyleBuilder {
         final ValueReference property = currentProperty;
         final FeatureSet resource = (FeatureSet) layer.getData();
 
-        final Query query = new Query();
-        try {
-            query.setTypeName(resource.getType().getName());
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.FINE, "Error while accessing data", ex);
-        }
-        query.setProperties(new String[]{property.getXPath()});
+        final FeatureQuery query = new FeatureQuery();
+        query.setProjection(property.getXPath());
 
         try (Stream<Feature> stream = resource.subset(query).features(false)){
             final Iterator<Feature> features = stream.iterator();

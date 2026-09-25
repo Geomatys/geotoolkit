@@ -20,9 +20,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -50,7 +50,7 @@ public class ReprojectProcess extends AbstractProcess {
 
         final FeatureSet resultFeatureList;
         try {
-            resultFeatureList = FeatureStreams.decorate(inputFeatureList,
+            resultFeatureList = WrapFeatureSet.decorate(inputFeatureList,
                     new ReprojectMapper(inputFeatureList.getType(), targetCRS));
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

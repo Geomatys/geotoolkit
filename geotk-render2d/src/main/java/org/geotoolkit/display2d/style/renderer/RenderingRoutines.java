@@ -436,8 +436,7 @@ public final class RenderingRoutines {
         //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter, Feature.class, expected);
 
-        final org.geotoolkit.storage.feature.query.Query qb = new org.geotoolkit.storage.feature.query.Query();
-        qb.setTypeName(schema.getName());
+        final FeatureQuery qb = new FeatureQuery();
         qb.setSelection(filter);
         qb.setProjection(projection);
 
