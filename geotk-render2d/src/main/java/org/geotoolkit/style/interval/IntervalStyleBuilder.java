@@ -28,12 +28,12 @@ import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
 import org.apache.sis.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureQuery;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -361,7 +361,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         }
 
         //search the extreme values
-        final Query query = new Query(schema.getName().toString());
+        final FeatureQuery query = new FeatureQuery();
 
         if(classification == null || layer == null) return;
         if(!properties.contains(classification)) return;
@@ -371,7 +371,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         if(normalize != null && !normalize.equals(noValue)){
             qp.add(normalize.getXPath());
         }
-        query.setProperties(qp.toArray(new String[0]));
+        query.setProjection(qp.toArray(String[]::new));
 
         Iterator<Feature> features = null;
         try(Stream<Feature> stream = data.subset(query).features(false)){

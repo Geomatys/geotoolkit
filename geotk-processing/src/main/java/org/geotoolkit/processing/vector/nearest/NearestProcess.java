@@ -31,7 +31,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-import org.geotoolkit.storage.feature.query.Query;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;

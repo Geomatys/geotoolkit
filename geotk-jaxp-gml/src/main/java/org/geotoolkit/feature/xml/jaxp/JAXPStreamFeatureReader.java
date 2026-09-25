@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import java.util.stream.StreamSupport;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
@@ -60,7 +61,6 @@ import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
-import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
@@ -342,11 +342,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         }
     }
 
-
-    @Override
-    public FeatureReader readAsStream(final Object xml) throws IOException, XMLStreamException {
+    public JAXPStreamIterator readAsIterator(final Object xml) throws IOException, XMLStreamException {
         setInput(xml);
         return new JAXPStreamIterator();
+    }
+
+    @Override
+    public Stream<Feature> readAsStream(final Object xml) throws IOException, XMLStreamException {
+        setInput(xml);
+        final JAXPStreamIterator ite = new JAXPStreamIterator();
+        final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ite, Spliterator.ORDERED), false);
+        return stream.onClose(ite::close);
     }
 
     @Override
@@ -925,7 +931,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, readEmbeddedFeatureType);
     }
 
-    private final class JAXPStreamIterator implements FeatureReader {
+    public final class JAXPStreamIterator implements Iterator<Feature>, AutoCloseable {
 
         private boolean singleFeature = false;
         private FeatureType type = null;
@@ -985,7 +991,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        @Override
         public FeatureType getFeatureType() {
             findNext();
             if (type == null) {
@@ -1086,7 +1091,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        @Override
         public void close() {
             dispose();
         }

@@ -77,7 +77,6 @@ public final class Query extends FeatureQuery {
     public static final String GEOTK_QOM = "GEOTK-QOM";
 
     private String typeName;
-    private Hints hints;
     private Object version;
 
 
@@ -85,7 +84,6 @@ public final class Query extends FeatureQuery {
      * Query with typeName.
      */
     public Query() {
-        this.hints = new Hints();
     }
 
     /**
@@ -119,12 +117,11 @@ public final class Query extends FeatureQuery {
                 0,
                 -1,
                 null,
-                null,
                 null);
     }
 
     Query(final String typeName, Filter filter, final String[] attributs, final SortProperty[] sort,
-            final long startIndex, final long maxFeatures, Quantity<Length> linearResolution, final Object version, final Hints hints){
+            final long startIndex, final long maxFeatures, Quantity<Length> linearResolution, final Object version){
 
         ensureNonNull("query source", typeName);
         if (filter == null) {
@@ -148,12 +145,6 @@ public final class Query extends FeatureQuery {
         }
         this.typeName = typeName;
         this.version = version;
-
-        if (hints == null) {
-            this.hints = new Hints();
-        } else {
-            this.hints = hints;
-        }
     }
 
     /**
@@ -168,8 +159,7 @@ public final class Query extends FeatureQuery {
              query.getOffset(),
              query.getLimit().orElse(-1),
              query.getLinearResolution(),
-             (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
-             query.getHints());
+             (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel());
     }
 
     /**
@@ -311,27 +301,6 @@ public final class Query extends FeatureQuery {
     }
 
     /**
-     * Specifies some hints to drive the query execution and results build-up.
-     * Hints examples can be the GeometryFactory to be used, a generalization
-     * distance to be applied right in the data store, to data store specific
-     * things such as the fetch size to be used in JDBC queries.
-     * The set of hints supported can be fetched by calling
-     * {@link FeatureSource#getSupportedHints()}.
-     * Depending on the actual values of the hints, the data store is free to ignore them.
-     * No mechanism is in place, at the moment, to figure out which hints where
-     * actually used during the query execution.
-     * @return the Hints the data store should try to use when executing the query
-     *         (eventually empty but never null).
-     */
-    public Hints getHints() {
-        return hints;
-    }
-
-    public void setHints(final Hints hints) {
-        this.hints = hints;
-    }
-
-    /**
      * {@inheritDoc }
      */
     @Override
@@ -349,9 +318,6 @@ public final class Query extends FeatureQuery {
         if (this.typeName != other.typeName && (this.typeName == null || !this.typeName.equals(other.typeName))) {
             return false;
         }
-        if (this.hints != other.hints && (this.hints == null || !this.hints.equals(other.hints))) {
-            return false;
-        }
         return true;
     }
 
@@ -362,7 +328,6 @@ public final class Query extends FeatureQuery {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
-        hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);
         return hash;
     }
 
@@ -372,57 +337,9 @@ public final class Query extends FeatureQuery {
         setProjection(query.getProjection());
         setSortBy(query.getSortBy());
         setOffset(query.getOffset());
-        this.hints = query.getHints();
         this.typeName = query.getTypeName();
         this.version = query.getVersionDate();
         if (this.version == null) this.version = query.getVersionLabel();
     }
 
-    /**
-     * Create a simple query with only a filter parameter.
-     *
-     * @return Immutable query
-     */
-    public static Query filtered(final String name, final Filter filter){
-        final Query query = new Query(name);
-        query.setSelection(filter);
-        return query;
-    }
-
-    /**
-     * Create a simple query with columns which transform all geometric types to the given crs.
-     */
-    public static FeatureQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
-        final FilterFactory<Feature, Object, Object> ff = FilterUtilities.FF;
-        final Literal<Feature, CoordinateReferenceSystem> crsLiteral = ff.literal(crs);
-
-        final FeatureQuery query = new FeatureQuery();
-        final List<FeatureQuery.NamedExpression> columns = new ArrayList<>();
-
-        for (PropertyType pt : type.getProperties(true)) {
-            final GenericName name = pt.getName();
-            Expression<Feature,?> property = ff.property(XPath.toString(null, null, name.toString()));
-            /*
-             * Do not reproject links. If the link is referencing another property of this feature instance,
-             * that property will already be reprojected by this loop. By skipping links, we avoid to project
-             * the same geometry twice. It also avoids complication in the code creating features with a subset
-             * of the properties.
-             */
-            if (Features.getLinkTarget(pt).isEmpty()) {
-                IdentifiedType result = pt;
-                while (result instanceof Operation) {
-                    // Unroll operation
-                    result = ((Operation) result).getResult();
-                }
-                if (result instanceof AttributeType<?> at) {
-                    if (Geometry.class.isAssignableFrom(at.getValueClass())) {
-                        property = ff.function("ST_Transform", property, crsLiteral);
-                    }
-                }
-            }
-            columns.add(new FeatureQuery.NamedExpression(property, name));
-        }
-        query.setProjection(columns.toArray(new FeatureQuery.NamedExpression[0]));
-        return query;
-    }
 }

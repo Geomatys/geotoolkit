@@ -18,10 +18,10 @@ package org.geotoolkit.processing.vector.retype;
 
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -47,7 +47,7 @@ public class RetypeProcess extends AbstractProcess {
         final FeatureType mask = inputParameters.getValue(RetypeDescriptor.MASK_IN);
         final FeatureSet resultFeatureList;
         if(mask instanceof ViewMapper){
-            resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewMapper) mask);
+            resultFeatureList = WrapFeatureSet.decorate(inputFeatureList, (ViewMapper) mask);
         }else{
             resultFeatureList = inputFeatureList;
         }

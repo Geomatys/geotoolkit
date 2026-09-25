@@ -43,7 +43,6 @@ import org.geotoolkit.geometry.jts.coordinatesequence.GridAlignedFilter;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.util.StringUtilities;
@@ -162,7 +161,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
         final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(source.getType());
         final FeatureQuery query;
         if (!CRS.equivalent(baseCrs, tileCrs)) {
-            query = Query.reproject(source.getType(), tileCrs);
+            query = DataStores.reproject(source.getType(), tileCrs);
             query.setSelection(filter);
         } else {
             query = new FeatureQuery();

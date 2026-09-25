@@ -19,8 +19,9 @@ package org.geotoolkit.feature.xml;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.storage.feature.FeatureReader;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -48,7 +49,7 @@ public interface XmlFeatureReader extends Configurable {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public FeatureReader readAsStream(Object xml) throws IOException, XMLStreamException;
+    public Stream<Feature> readAsStream(Object xml) throws IOException, XMLStreamException;
 
     /**
      * Extract the mapping between namespaces and prefix from an xml document;
