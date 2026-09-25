@@ -12,9 +12,12 @@ build:
   extends: .update-cache
   stage: build
   script:
-    - mvn clean install -B -ntp -s $MAVEN_SETTINGS
+    # Parallel modules mean parallel surefire forks sharing one $SIS_DATA. Install the
+    # EPSG database once and mark it read-only, so the forks can open it without locking.
+    - .gitlab/CI/init-sis-data.sh
+    - mvnd clean install -B -ntp -s $MAVEN_SETTINGS $MAVEN_OPTS
     - mvn -B -ntp jacoco:report-aggregate
-    - mvn -B -ntp javadoc:jar
+    - mvnd -B -ntp javadoc:jar $MAVEN_OPTS
   artifacts:
     paths:
       - "target/"
