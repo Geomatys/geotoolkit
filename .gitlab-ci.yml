@@ -29,7 +29,11 @@ stages:
   - release
   - publish
 
-image: images.geomatys.com/build/maven:3.9.12-25.0.2-tem
+image:
+  name: images.geomatys.com/build/maven:3.9.16-25.0.4-tem
+  pull_policy: always
+  kubernetes:
+    user: 1001:build
 
 before_script:
   - mkdir -p "$SIS_DATA"
