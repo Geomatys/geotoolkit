@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ISEA4RTest extends AbstractDggrsTest {
+public class ISEA4RTest extends DGGALTest {
 
     public ISEA4RTest() {
         super(DGGALDggrs.ISEA4R_INSTANCE);

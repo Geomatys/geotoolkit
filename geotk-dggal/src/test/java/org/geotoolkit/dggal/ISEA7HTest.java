@@ -22,7 +22,7 @@ import org.geotoolkit.dggs.AbstractDggrsTest;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ISEA7HTest extends AbstractDggrsTest {
+public class ISEA7HTest extends DGGALTest {
 
     public ISEA7HTest() {
         super(DGGALDggrs.ISEA7H_INSTANCE);

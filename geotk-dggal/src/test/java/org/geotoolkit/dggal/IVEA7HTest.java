@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IVEA7HTest extends AbstractDggrsTest {
+public class IVEA7HTest extends DGGALTest {
 
     public IVEA7HTest() {
         super(DGGALDggrs.IVEA7H_INSTANCE);

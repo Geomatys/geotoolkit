@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
 import org.junit.jupiter.api.Disabled;
 
 /**
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Disabled;
  * @author Johann Sorel (Geomatys)
  */
 @Disabled //still has bugs
-public class RTEA7HZ7Test extends AbstractDggrsTest {
+public class RTEA7HZ7Test extends DGGALTest {
 
     public RTEA7HZ7Test() {
         super(DGGALDggrs.RTEA7H_Z7_INSTANCE);

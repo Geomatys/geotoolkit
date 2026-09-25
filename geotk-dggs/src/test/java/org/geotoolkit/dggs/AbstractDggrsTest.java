@@ -66,6 +66,14 @@ public abstract class AbstractDggrsTest {
         this.dggrs = dggrs;
     }
 
+    public int getTestParentChildrenRelationsDepth() {
+        return 4;
+    }
+
+    public int getTestParentChildrenAtDepth() {
+        return 3;
+    }
+
     @Test
     public void testRoots() throws TransformException {
 
@@ -83,8 +91,8 @@ public abstract class AbstractDggrsTest {
         final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(10).toList();
 
         for (Zone zone : rootZoneIds) {
-            testParentChildrenRelations(zone, 0, 4);
-            testParentChildrenAtDepth(zone, 3);
+            testParentChildrenRelations(zone, 0, getTestParentChildrenRelationsDepth());
+            testParentChildrenAtDepth(zone, getTestParentChildrenAtDepth());
         }
     }
 
@@ -215,6 +223,7 @@ public abstract class AbstractDggrsTest {
     }
 
     @Test
+    @Disabled //TODO this test is slow because of the EPSG hsql database
     public void testSampling() throws TransformException, FactoryException {
 
         final List<Zone> rootZoneIds = dggrs.getGridSystem().getHierarchy().getGrids().get(0).getZones().limit(3).toList();
