@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class rHEALPixTest extends AbstractDggrsTest {
+public class rHEALPixTest extends DGGALTest {
 
     public rHEALPixTest() {
         super(DGGALDggrs.RHEALPIX_INSTANCE);

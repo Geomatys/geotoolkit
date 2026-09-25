@@ -29,7 +29,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -39,6 +38,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -82,9 +82,9 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     /**
      * Execute process now.
      */
-    public FeatureCollection executeNow() throws ProcessException {
+    public FeatureSet executeNow() throws ProcessException {
         execute();
-        return (FeatureCollection) outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).getValue();
+        return (FeatureSet) outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).getValue();
     }
 
     /**

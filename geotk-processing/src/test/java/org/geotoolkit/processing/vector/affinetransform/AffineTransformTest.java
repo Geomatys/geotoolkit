@@ -16,34 +16,32 @@
  */
 package org.geotoolkit.processing.vector.affinetransform;
 
+import java.awt.geom.AffineTransform;
+import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPoint;
-import java.awt.geom.AffineTransform;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.junit.Ignore;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 import org.opengis.util.NoSuchIdentifierException;
 
 
@@ -66,7 +64,7 @@ public class AffineTransformTest extends AbstractProcessTest {
     public void testAffineTransform() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         final AffineTransform transform = new AffineTransform();
         transform.setToTranslation(100, 100);
 
@@ -79,10 +77,10 @@ public class AffineTransformTest extends AbstractProcessTest {
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
         compare(featureListResult,featureListOut);
     }
 
@@ -98,14 +96,13 @@ public class AffineTransformTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
-
-        Feature myFeature1;
+        final Feature myFeature1;
         LinearRing ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 3.0),
@@ -121,9 +118,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("type", "church");
         myFeature1.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", GF.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
-        Feature myFeature2;
+        final Feature myFeature2;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(5.0, 6.0),
@@ -146,9 +142,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("type", "office");
         myFeature2.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
-        Feature myFeature3;
+        final Feature myFeature3;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(9.0, 4.0),
@@ -169,9 +164,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("type", "office");
         myFeature3.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
 
-        Feature myFeature4;
+        final Feature myFeature4;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(2.0, 2.0),
@@ -187,9 +181,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature4.setPropertyValue("type", "post office");
         myFeature4.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature4.setPropertyValue("geom2", GF.createPoint(new Coordinate(10, 5)));
-        featureList.add(myFeature4);
 
-        Feature myFeature5;
+        final Feature myFeature5;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                    new Coordinate(6.0, 7.0),
@@ -210,9 +203,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature5.setPropertyValue("type", "office");
         myFeature5.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature5.setPropertyValue("geom2", line);
-        featureList.add(myFeature5);
 
-        Feature myFeature6;
+        final Feature myFeature6;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                      new Coordinate(15.0, 10.0),
@@ -235,18 +227,19 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature6.setPropertyValue("type", "church");
         myFeature6.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature6.setPropertyValue("geom2",GF.createPolygon(ring2, null));
-        featureList.add(myFeature6);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5, myFeature6).iterator());
 
         return featureList;
     }
 
 
-    private static FeatureCollection buildResultList() throws FactoryException {
+    private static FeatureSet buildResultList() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
-        Feature myFeature1;
+        final Feature myFeature1;
         LinearRing ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(103.0, 103.0),
@@ -262,9 +255,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("type", "church");
         myFeature1.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", GF.createPoint(new Coordinate(103.5, 103.5)));
-        featureList.add(myFeature1);
 
-        Feature myFeature2;
+        final Feature myFeature2;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(105.0, 106.0),
@@ -287,9 +279,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("type", "office");
         myFeature2.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
-        Feature myFeature3;
+        final Feature myFeature3;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(109.0, 104.0),
@@ -310,9 +301,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("type", "office");
         myFeature3.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
 
-        Feature myFeature4;
+        final Feature myFeature4;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(102.0, 102.0),
@@ -328,9 +318,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature4.setPropertyValue("type", "post office");
         myFeature4.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature4.setPropertyValue("geom2", GF.createPoint(new Coordinate(110, 105)));
-        featureList.add(myFeature4);
 
-        Feature myFeature5;
+        final Feature myFeature5;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                    new Coordinate(106.0, 107.0),
@@ -351,9 +340,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature5.setPropertyValue("type", "office");
         myFeature5.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature5.setPropertyValue("geom2", line);
-        featureList.add(myFeature5);
 
-        Feature myFeature6;
+        final Feature myFeature6;
         ring = GF.createLinearRing(
                 new Coordinate[]{
                      new Coordinate(115.0, 110.0),
@@ -376,7 +364,8 @@ public class AffineTransformTest extends AbstractProcessTest {
         myFeature6.setPropertyValue("type", "church");
         myFeature6.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature6.setPropertyValue("geom2",GF.createPolygon(ring2, null));
-        featureList.add(myFeature6);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5, myFeature6).iterator());
 
         return featureList;
     }

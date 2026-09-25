@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.processing.vector.difference;
 
-import org.locationtech.jts.geom.Geometry;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -33,17 +33,17 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module
  */
-public class DifferenceFeatureCollection extends WrapFeatureCollection {
+public class DifferenceFeatureCollection extends WrapFeatureSet {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection clippingList;
+    private final FeatureSet clippingList;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      * @param clippingList
      */
-    public DifferenceFeatureCollection(final FeatureCollection originalFC, final FeatureCollection clippingList) {
+    public DifferenceFeatureCollection(final FeatureSet originalFC, final FeatureSet clippingList) throws DataStoreException {
         super(originalFC);
         this.clippingList = clippingList;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Geometry.class);
@@ -65,12 +65,7 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
     protected Feature modify(final Feature original) {
         try {
             return DifferenceProcess.clipFeature(original, newFeatureType, clippingList);
-
-        } catch (MismatchedDimensionException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        } catch (TransformException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        } catch (FactoryException ex) {
+        } catch (MismatchedDimensionException | TransformException | FactoryException | DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }

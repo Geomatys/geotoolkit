@@ -56,8 +56,6 @@ public class WPSConverterRegistry {
         //ComplexDataType -> Object converters
         register(ComplexToAffineTransformConverter          .getInstance());
         register(ComplexToFeatureArrayConverter             .getInstance());
-        register(ComplexToFeatureCollectionArrayConverter   .getInstance());
-        register(ComplexToFeatureCollectionConverter        .getInstance());
         register(ComplexToFeatureSetArrayConverter          .getInstance());
         register(ComplexToFeatureSetConverter               .getInstance());
         register(ComplexToFeatureConverter                  .getInstance());
@@ -71,7 +69,6 @@ public class WPSConverterRegistry {
 
         //ReferenceType -> Object Converters
         register(ReferenceToAffineTransformConverter        .getInstance());
-        register(ReferenceToFeatureCollectionConverter      .getInstance());
         register(ReferenceToFeatureSetConverter             .getInstance());
         register(ReferenceToFeatureConverter                .getInstance());
         register(ReferenceToFeatureTypeConverter            .getInstance());
@@ -88,7 +85,6 @@ public class WPSConverterRegistry {
         register(ReferenceToUrlConnectionConverter          .getInstance());
 
         //Object -> ComplexData converters
-        register(FeatureCollectionToComplexConverter        .getInstance());
         register(FeatureSetToComplexConverter               .getInstance());
         register(FeatureToComplexConverter                  .getInstance());
         register(FeatureTypeToComplexConverter              .getInstance());
@@ -102,7 +98,6 @@ public class WPSConverterRegistry {
         //Object -> Reference converters
         register(CoverageToReferenceConverter               .getInstance());
         register(FeatureToReferenceConverter                .getInstance());
-        register(FeatureCollectionToReferenceConverter      .getInstance());
         register(FeatureSetToReferenceConverter             .getInstance());
         register(FeatureTypeToReferenceConverter            .getInstance());
         register(GeometryToReferenceConverter               .getInstance());

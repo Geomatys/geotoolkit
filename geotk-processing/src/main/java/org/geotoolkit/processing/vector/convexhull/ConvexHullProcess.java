@@ -16,20 +16,21 @@
  */
 package org.geotoolkit.processing.vector.convexhull;
 
-import org.geotoolkit.geometry.jts.JTS;
-import org.locationtech.jts.geom.Geometry;
 import java.util.Collections;
-
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
+import java.util.Iterator;
+import java.util.stream.Stream;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter
@@ -50,10 +51,15 @@ public class ConvexHullProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList = inputParameters.getValue(ConvexHullDescriptor.FEATURE_IN);
-        final String geometryName                = inputParameters.getValue(ConvexHullDescriptor.GEOMETRY_NAME);
-        final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList = inputParameters.getValue(ConvexHullDescriptor.FEATURE_IN);
+        final String geometryName         = inputParameters.getValue(ConvexHullDescriptor.GEOMETRY_NAME);
+        final Geometry hull;
+        try {
+            hull = computeConvexHull(inputFeatureList, geometryName);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(ConvexHullDescriptor.GEOMETRY_OUT).setValue(hull);
     }
 
@@ -62,10 +68,11 @@ public class ConvexHullProcess extends AbstractProcess {
      *
      * @return the convex hull geometry
      */
-    private Geometry computeConvexHull(final FeatureCollection inputFeatureList, String geometryName) {
+    private Geometry computeConvexHull(final FeatureSet inputFeatureList, String geometryName) throws DataStoreException {
         Geometry convexHull = JTS.getFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem crs = null;
-        try (final FeatureIterator iter = inputFeatureList.iterator()) {
+        try (final Stream<Feature> stream = inputFeatureList.features(false)) {
+            final Iterator<Feature> iter = stream.iterator();
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
 

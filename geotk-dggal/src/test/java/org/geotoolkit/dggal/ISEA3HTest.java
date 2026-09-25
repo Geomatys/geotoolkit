@@ -17,7 +17,6 @@
 package org.geotoolkit.dggal;
 
 import org.apache.sis.geometries.surface.Polygon;
-import org.geotoolkit.dggs.AbstractDggrsTest;
 import org.apache.sis.referencing.dggs.Zone;
 import org.apache.sis.storage.dggs.DiscreteGlobalGridSystems;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ISEA3HTest extends AbstractDggrsTest {
+public class ISEA3HTest extends DGGALTest {
 
     public ISEA3HTest() {
         super(DGGALDggrs.ISEA3H_INSTANCE);

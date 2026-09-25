@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GnosisGlobalGridTest extends AbstractDggrsTest {
+public class GnosisGlobalGridTest extends DGGALTest {
 
     public GnosisGlobalGridTest() {
         super(DGGALDggrs.GNOSISGLOBALGRID_INSTANCE);

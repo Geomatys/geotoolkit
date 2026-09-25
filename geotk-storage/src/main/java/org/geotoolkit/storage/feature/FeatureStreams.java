@@ -37,6 +37,7 @@ import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -51,6 +52,20 @@ import org.opengis.geometry.Envelope;
 public final class FeatureStreams {
 
     private FeatureStreams(){}
+
+    public static FeatureSet decorate(FeatureSet fs, FeatureSetMapper mask) {
+        return new WrapFeatureSet(fs) {
+            @Override
+            public FeatureType getType() throws DataStoreException {
+                return mask.getMappedType();
+            }
+
+            @Override
+            protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
+                return mask.apply(original);
+            }
+        };
+    }
 
     /**
      * Create an empty FeatureReader of the given type.

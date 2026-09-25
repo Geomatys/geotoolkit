@@ -26,7 +26,7 @@ import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -55,11 +55,16 @@ public class RegroupProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList  = inputParameters.getValue(FEATURE_IN);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList  = inputParameters.getValue(FEATURE_IN);
         final String inputAttributeName           = inputParameters.getValue(REGROUP_ATTRIBUTE);
         final String inputGeometryName            = inputParameters.getValue(GEOMETRY_NAME);
-        final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 

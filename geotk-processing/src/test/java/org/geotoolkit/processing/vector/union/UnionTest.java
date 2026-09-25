@@ -16,33 +16,31 @@
  */
 package org.geotoolkit.processing.vector.union;
 
+import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of Union process
@@ -63,8 +61,8 @@ public class UnionTest extends AbstractProcessTest {
     public void testUnion() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
-        final FeatureCollection featureUnionList = buildFeatureUnionList();
+        final FeatureSet featureList = buildFeatureList();
+        final FeatureSet featureUnionList = buildFeatureUnionList();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:union");
@@ -76,10 +74,10 @@ public class UnionTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
 
         compare(featureListResult,featureListOut);
     }
@@ -116,11 +114,10 @@ public class UnionTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
-
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -134,7 +131,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -148,7 +144,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -163,7 +158,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
-        featureList.add(myFeature3);
 
         Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -177,16 +171,17 @@ public class UnionTest extends AbstractProcessTest {
         myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
         myFeature4.setPropertyValue("name", "feature4");
         myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature4);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4).iterator());
 
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureUnionList() throws FactoryException {
+    private static FeatureSet buildFeatureUnionList() throws FactoryException {
 
         type = createSimpleType2();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -203,7 +198,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("color", "red");
         myFeature1.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("att", 20);
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -219,7 +213,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("att", 20);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -235,7 +228,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("color", "grey");
         myFeature3.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("att", 10);
-        featureList.add(myFeature3);
 
         Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -251,7 +243,6 @@ public class UnionTest extends AbstractProcessTest {
         myFeature4.setPropertyValue("color", "grey");
         myFeature4.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature4.setPropertyValue("att", 12);
-        featureList.add(myFeature4);
 
         Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -267,19 +258,20 @@ public class UnionTest extends AbstractProcessTest {
         myFeature5.setPropertyValue("color", "grey");
         myFeature5.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature5.setPropertyValue("att", 12);
-        featureList.add(myFeature5);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5).iterator());
 
         return featureList;
     }
 
-    private static FeatureCollection buildResultList() throws FactoryException {
+    private static FeatureSet buildResultList() throws FactoryException {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
-        Feature myFeature = type.newInstance();
+        final Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 7),
@@ -288,27 +280,25 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(4, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-11");
-        myFeature.setPropertyValue("name", "feature1");
-        myFeature.setPropertyValue("color", "red");
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature.setPropertyValue("att", 20);
-        featureList.add(myFeature);
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-11");
+        myFeature1.setPropertyValue("name", "feature1");
+        myFeature1.setPropertyValue("color", "red");
+        myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature1.setPropertyValue("att", 20);
 
-        myFeature = type.newInstance();
+        final Feature myFeature2 = type.newInstance();
         LineString str = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(3, 5),
                     new Coordinate(3, 6)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-15");
-        myFeature.setPropertyValue("name", "feature1");
-        myFeature.setPropertyValue("color", "grey");
-        myFeature.setPropertyValue("geom1", str);
-        myFeature.setPropertyValue("att", 12);
-        featureList.add(myFeature);
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01-id-15");
+        myFeature2.setPropertyValue("name", "feature1");
+        myFeature2.setPropertyValue("color", "grey");
+        myFeature2.setPropertyValue("geom1", str);
+        myFeature2.setPropertyValue("att", 12);
 
-        myFeature = type.newInstance();
+        final Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3, 5),
@@ -318,14 +308,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(3, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
-        myFeature.setPropertyValue("name", "feature1");
-        myFeature.setPropertyValue("color", null);
-        myFeature.setPropertyValue("att", null);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-01");
+        myFeature3.setPropertyValue("name", "feature1");
+        myFeature3.setPropertyValue("color", null);
+        myFeature3.setPropertyValue("att", null);
+        myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(7, 5),
@@ -334,14 +323,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(7, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-12");
-        myFeature.setPropertyValue("name", "feature3");
-        myFeature.setPropertyValue("color", "blue");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-12");
+        myFeature4.setPropertyValue("name", "feature3");
+        myFeature4.setPropertyValue("color", "blue");
+        myFeature4.setPropertyValue("att", 20);
+        myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 4),
@@ -350,14 +338,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(6, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-11");
-        myFeature.setPropertyValue("name", "feature3");
-        myFeature.setPropertyValue("color", "red");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-11");
+        myFeature5.setPropertyValue("name", "feature3");
+        myFeature5.setPropertyValue("color", "red");
+        myFeature5.setPropertyValue("att", 20);
+        myFeature5.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature6 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 2),
@@ -366,14 +353,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(6, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-13");
-        myFeature.setPropertyValue("name", "feature3");
-        myFeature.setPropertyValue("color", "grey");
-        myFeature.setPropertyValue("att", 10);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER, "id-03-id-13");
+        myFeature6.setPropertyValue("name", "feature3");
+        myFeature6.setPropertyValue("color", "grey");
+        myFeature6.setPropertyValue("att", 10);
+        myFeature6.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature7 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(7, 7),
@@ -382,14 +368,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(7, 7)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-12");
-        myFeature.setPropertyValue("name", "feature2");
-        myFeature.setPropertyValue("color", "blue");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature7.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-12");
+        myFeature7.setPropertyValue("name", "feature2");
+        myFeature7.setPropertyValue("color", "blue");
+        myFeature7.setPropertyValue("att", 20);
+        myFeature7.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature8 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 5),
@@ -398,14 +383,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(6, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-11");
-        myFeature.setPropertyValue("name", "feature2");
-        myFeature.setPropertyValue("color", "red");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature8.setPropertyValue(AttributeConvention.IDENTIFIER, "id-02-id-11");
+        myFeature8.setPropertyValue("name", "feature2");
+        myFeature8.setPropertyValue("color", "red");
+        myFeature8.setPropertyValue("att", 20);
+        myFeature8.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature9 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(2, 3),
@@ -414,14 +398,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3, 3),
                     new Coordinate(2, 3)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
-        myFeature.setPropertyValue("name", "feature4");
-        myFeature.setPropertyValue("color", null);
-        myFeature.setPropertyValue("att", null);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature9.setPropertyValue(AttributeConvention.IDENTIFIER, "id-04");
+        myFeature9.setPropertyValue("name", "feature4");
+        myFeature9.setPropertyValue("color", null);
+        myFeature9.setPropertyValue("att", null);
+        myFeature9.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature10 = type.newInstance();
         //POLYGON ((8 5, 8 7, 7 7, 7 8, 9 8, 9 4, 8 4, 8 5))
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
@@ -434,14 +417,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 4),
                     new Coordinate(8, 5)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
-        myFeature.setPropertyValue("name", "feature12");
-        myFeature.setPropertyValue("color", "blue");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature10.setPropertyValue(AttributeConvention.IDENTIFIER, "id-12");
+        myFeature10.setPropertyValue("name", "feature12");
+        myFeature10.setPropertyValue("color", "blue");
+        myFeature10.setPropertyValue("att", 20);
+        myFeature10.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature11 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8, 4),
@@ -450,14 +432,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(8, 4)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
-        myFeature.setPropertyValue("name", "feature13");
-        myFeature.setPropertyValue("color", "grey");
-        myFeature.setPropertyValue("att", 10);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature11.setPropertyValue(AttributeConvention.IDENTIFIER, "id-13");
+        myFeature11.setPropertyValue("name", "feature13");
+        myFeature11.setPropertyValue("color", "grey");
+        myFeature11.setPropertyValue("att", 10);
+        myFeature11.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature12 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 2),
@@ -466,14 +447,13 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(5, 2),
                     new Coordinate(4, 2)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
-        myFeature.setPropertyValue("name", "feature14");
-        myFeature.setPropertyValue("color", "grey");
-        myFeature.setPropertyValue("att", 12);
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature);
+        myFeature12.setPropertyValue(AttributeConvention.IDENTIFIER, "id-14");
+        myFeature12.setPropertyValue("name", "feature14");
+        myFeature12.setPropertyValue("color", "grey");
+        myFeature12.setPropertyValue("att", 12);
+        myFeature12.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
 
-        myFeature = type.newInstance();
+        final Feature myFeature13 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 4),
@@ -493,14 +473,13 @@ public class UnionTest extends AbstractProcessTest {
                 });
         Polygon poly1 = geometryFactory.createPolygon(ring, null);
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
-        myFeature.setPropertyValue("name", "feature11");
-        myFeature.setPropertyValue("color", "red");
-        myFeature.setPropertyValue("att", 20);
-        myFeature.setPropertyValue("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
-        featureList.add(myFeature);
+        myFeature13.setPropertyValue(AttributeConvention.IDENTIFIER, "id-11");
+        myFeature13.setPropertyValue("name", "feature11");
+        myFeature13.setPropertyValue("color", "red");
+        myFeature13.setPropertyValue("att", 20);
+        myFeature13.setPropertyValue("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
 
-        myFeature = type.newInstance();
+        final Feature myFeature14 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(2.0, 5.0),
@@ -509,12 +488,15 @@ public class UnionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 5.0),
                     new Coordinate(2.0, 5.0)
                 });
-        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
-        myFeature.setPropertyValue("name", "feature15");
-        myFeature.setPropertyValue("color", "grey");
-        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature.setPropertyValue("att", 12);
-        featureList.add(myFeature);
+        myFeature14.setPropertyValue(AttributeConvention.IDENTIFIER, "id-15");
+        myFeature14.setPropertyValue("name", "feature15");
+        myFeature14.setPropertyValue("color", "grey");
+        myFeature14.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature14.setPropertyValue("att", 12);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5,
+                myFeature6, myFeature7, myFeature8, myFeature9, myFeature10, myFeature11,
+                myFeature12, myFeature13, myFeature14).iterator());
 
         return featureList;
     }

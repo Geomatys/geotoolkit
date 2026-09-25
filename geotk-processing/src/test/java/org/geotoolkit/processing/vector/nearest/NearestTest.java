@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.vector.nearest;
 
+import java.util.List;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
@@ -26,8 +27,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -61,7 +61,7 @@ public class NearestTest extends AbstractProcessTest {
     public void testNearest() throws FactoryException, ProcessException, NoSuchIdentifierException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         final Geometry geom = buildIntersectionGeometry();
 
         // Process
@@ -90,75 +90,68 @@ public class NearestTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("nearest", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER,"id-1");
         feature1.setPropertyValue("name","feature1");
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(2, 2)));
-        featureList.add(feature1);
 
         final Feature feature2 = type.newInstance();
         feature2.setPropertyValue(AttributeConvention.IDENTIFIER,"id-2");
         feature2.setPropertyValue("name","feature2");
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 1)));
-        featureList.add(feature2);
 
         final Feature feature3 = type.newInstance();
         feature3.setPropertyValue(AttributeConvention.IDENTIFIER,"id-3");
         feature3.setPropertyValue("name","feature3");
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 4)));
-        featureList.add(feature3);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER,"id-4");
         feature4.setPropertyValue("name","feature4");
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 4)));
-        featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
         feature5.setPropertyValue(AttributeConvention.IDENTIFIER,"id-5");
         feature5.setPropertyValue("name","feature5");
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
-        featureList.add(feature5);
 
         final Feature feature6 = type.newInstance();
         feature6.setPropertyValue(AttributeConvention.IDENTIFIER,"id-6");
         feature6.setPropertyValue("name","feature6");
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 1)));
-        featureList.add(feature6);
 
         final Feature feature7 = type.newInstance();
         feature7.setPropertyValue(AttributeConvention.IDENTIFIER,"id-7");
         feature7.setPropertyValue("name","feature7");
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 3)));
-        featureList.add(feature7);
 
+        featureList.add(List.of(feature1, feature2, feature3, feature4, feature5, feature6, feature7).iterator());
         return featureList;
     }
 
-    private static FeatureCollection buildResultList() throws FactoryException {
+    private static FeatureSet buildResultList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("IntersectTest", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("IntersectTest", type);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER,"id-4");
         feature4.setPropertyValue("name","feature4");
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(5, 4)));
-        featureList.add(feature4);
 
         final Feature feature5 = type.newInstance();
         feature5.setPropertyValue(AttributeConvention.IDENTIFIER,"id-5");
         feature5.setPropertyValue("name","feature5");
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
-        featureList.add(feature5);
 
+        featureList.add(List.of(feature4, feature5).iterator());
         return featureList;
     }
 

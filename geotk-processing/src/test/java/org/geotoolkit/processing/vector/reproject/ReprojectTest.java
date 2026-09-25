@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.processing.vector.reproject;
 
+import java.util.List;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
@@ -30,7 +31,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
 
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
@@ -40,7 +40,10 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
@@ -62,9 +65,9 @@ public class ReprojectTest extends AbstractProcessTest {
     }
 
     @Test
-    public void testReprojection() throws FactoryException, ProcessException, NoSuchIdentifierException {
+    public void testReprojection() throws FactoryException, ProcessException, NoSuchIdentifierException, DataStoreException {
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:reproject");
 
@@ -74,10 +77,10 @@ public class ReprojectTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //FeatureCollection out
-        final FeatureCollection resultFC = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet resultFC = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         assertEquals(featureList.getIdentifier(), resultFC.getIdentifier());
-        assertEquals(resultFC.size(), resultFC.size());
+        assertEquals(resultFC.features(true).count(), featureList.features(true).count());
     }
 
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
@@ -90,11 +93,11 @@ public class ReprojectTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -110,7 +113,7 @@ public class ReprojectTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
+        featureList.add(List.of(myFeature1).iterator());
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -132,7 +135,7 @@ public class ReprojectTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", multPt);
-        featureList.add(myFeature2);
+        featureList.add(List.of(myFeature2).iterator());
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -152,7 +155,7 @@ public class ReprojectTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
-        featureList.add(myFeature3);
+        featureList.add(List.of(myFeature3).iterator());
 
         return featureList;
     }

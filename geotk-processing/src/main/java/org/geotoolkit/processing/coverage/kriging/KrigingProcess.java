@@ -35,8 +35,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
 import org.geotoolkit.processing.image.MarchingSquares;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -188,7 +187,7 @@ public class KrigingProcess extends AbstractProcess {
         ftb.addAttribute(Double.class).setName("value");
         final FeatureType type = ftb.build();
 
-        final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
+        final InMemoryFeatureSet col = new InMemoryFeatureSet("id", type);
         int inc = 0;
 
         final PixelIterator rit = PixelIterator.create(renderedImage);
@@ -205,7 +204,7 @@ public class KrigingProcess extends AbstractProcess {
             f.setPropertyValue(AttributeConvention.IDENTIFIER, String.valueOf(inc++));
             f.setPropertyValue("geometry", geometry);
             f.setPropertyValue("value", value);
-            col.add(f);
+            col.add(java.util.List.of(f).iterator());
         }
 
 //        ///////////////  debug///////////////////////

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
 import org.junit.Ignore;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -25,7 +24,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class HealPixTest extends AbstractDggrsTest {
+public class HealPixTest extends DGGALTest {
 
     public HealPixTest() {
         super(DGGALDggrs.HEALPIX_INSTANCE);

@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.dggal;
 
-import org.geotoolkit.dggs.AbstractDggrsTest;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class RTEA9RTest extends AbstractDggrsTest {
+public class RTEA9RTest extends DGGALTest {
 
     public RTEA9RTest() {
         super(DGGALDggrs.RTEA9R_INSTANCE);

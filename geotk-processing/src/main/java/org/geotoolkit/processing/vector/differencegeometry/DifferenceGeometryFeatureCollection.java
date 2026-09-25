@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.processing.vector.differencegeometry;
 
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
+import org.geotoolkit.storage.memory.WrapFeatureSet;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -30,7 +31,7 @@ import org.opengis.feature.FeatureType;
  * @author Quentin Boileau
  * @module
  */
-public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
+public class DifferenceGeometryFeatureCollection extends WrapFeatureSet {
 
     private final FeatureType newFeatureType;
     private final Geometry diffGeometry;
@@ -39,7 +40,7 @@ public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public DifferenceGeometryFeatureCollection(final FeatureCollection originalFC, final Geometry diffGeometry) {
+    public DifferenceGeometryFeatureCollection(final FeatureSet originalFC, final Geometry diffGeometry) throws DataStoreException {
         super(originalFC);
         this.diffGeometry = diffGeometry;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Geometry.class);

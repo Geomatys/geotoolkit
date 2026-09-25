@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.processing.vector.reproject;
 
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -42,12 +44,17 @@ public class ReprojectProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
         final CoordinateReferenceSystem targetCRS = inputParameters.getValue(ReprojectDescriptor.CRS_IN);
 
-        final FeatureCollection resultFeatureList = FeatureStreams.decorate(inputFeatureList,
-                new ReprojectMapper(inputFeatureList.getType(), targetCRS));
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = FeatureStreams.decorate(inputFeatureList,
+                    new ReprojectMapper(inputFeatureList.getType(), targetCRS));
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
 
         outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }

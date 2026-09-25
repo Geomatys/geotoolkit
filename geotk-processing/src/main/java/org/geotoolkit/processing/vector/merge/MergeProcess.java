@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opengis.feature.AttributeType;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.processing.AbstractProcess;
 import org.apache.sis.util.ObjectConverters;
@@ -39,6 +38,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessException;
 
 import static org.geotoolkit.processing.vector.merge.MergeDescriptor.*;
 
@@ -61,12 +63,15 @@ public class MergeProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection[] inputFeaturesList = inputParameters.getValue(FEATURES_IN);
-        final FeatureCollection firstFC = inputFeaturesList[0];
-
-        final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
-
+    protected void execute() throws ProcessException {
+        final FeatureSet[] inputFeaturesList = inputParameters.getValue(FEATURES_IN);
+        final FeatureSet firstFC = inputFeaturesList[0];
+        final FeatureSet resultFeatureList;
+        try {
+            resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
         outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 

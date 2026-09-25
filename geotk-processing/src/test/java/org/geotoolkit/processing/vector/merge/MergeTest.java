@@ -16,8 +16,19 @@
  */
 package org.geotoolkit.processing.vector.merge;
 
+import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -25,26 +36,12 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Polygon;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of merge process
@@ -70,12 +67,12 @@ public class MergeTest extends AbstractProcessTest {
     public void testMerge() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList1 = buildFeatureList1();
-        final FeatureCollection featureList2 = buildFeatureList2();
-        final FeatureCollection featureList3 = buildFeatureList3();
-        final FeatureCollection featureList4 = buildFeatureList4();
+        final FeatureSet featureList1 = buildFeatureList1();
+        final FeatureSet featureList2 = buildFeatureList2();
+        final FeatureSet featureList3 = buildFeatureList3();
+        final FeatureSet featureList4 = buildFeatureList4();
 
-        FeatureCollection[] FCList = new FeatureCollection[4];
+        FeatureSet[] FCList = new FeatureSet[4];
         FCList[0] = featureList1;
         FCList[1] = featureList2;
         FCList[2] = featureList3;
@@ -89,9 +86,9 @@ public class MergeTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
         compare(featureListResult,featureListOut);
     }
 
@@ -126,11 +123,11 @@ public class MergeTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList1() throws FactoryException {
+    private static FeatureSet buildFeatureList1() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -146,7 +143,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -168,7 +164,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -188,15 +183,16 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureList2() throws FactoryException {
+    private static FeatureSet buildFeatureList2() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -218,7 +214,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -238,7 +233,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", line);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -253,16 +247,17 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureList3() throws FactoryException {
+    private static FeatureSet buildFeatureList3() throws FactoryException {
 
         type = createSimpleType2();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -285,7 +280,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom3", multPt);
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -306,7 +300,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("color", "red");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom3", line);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -322,16 +315,16 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("color", "blue");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom3", null);
-        featureList.add(myFeature3);
 
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureList4() throws FactoryException {
+    private static FeatureSet buildFeatureList4() throws FactoryException {
 
         type = createSimpleType3();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -347,7 +340,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("height", 31);
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -362,7 +354,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("height", 32);
         myFeature2.setPropertyValue("color", "red");
         myFeature2.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -377,17 +368,17 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("height", 33);
         myFeature3.setPropertyValue("color", "blue");
         myFeature3.setPropertyValue("geom4", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         return featureList;
     }
 
-    private static FeatureCollection buildResultList() throws FactoryException {
-
+    private static FeatureSet buildResultList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -403,7 +394,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -425,7 +415,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -445,7 +434,8 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", line);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         ///////////////////////////////////////////////////////////// 2nd FeatureCollection
         myFeature1 = type.newInstance();
@@ -467,7 +457,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "feature11");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", multPt);
-        featureList.add(myFeature1);
 
         myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -487,7 +476,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "feature12");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", line);
-        featureList.add(myFeature2);
 
         myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -502,7 +490,9 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "feature13");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
+
         ////////////////////////////////////////////////////////////////////// 3rd FeatureCollection
         myFeature1 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -517,7 +507,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "21");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("geom2", null);
-        featureList.add(myFeature1);
 
         myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -532,7 +521,6 @@ public class MergeTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "22");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("geom2", null);
-        featureList.add(myFeature2);
 
         myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -547,7 +535,9 @@ public class MergeTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "23");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("geom2", null);
-        featureList.add(myFeature3);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
+
         ////////////////////////////////////////////////////////////////////// 4th FeatureCollection
 
         myFeature1 = type.newInstance();
@@ -555,22 +545,20 @@ public class MergeTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", null);
         myFeature1.setPropertyValue("geom1", null);
         myFeature1.setPropertyValue("geom2", null);
-        featureList.add(myFeature1);
 
         myFeature2 = type.newInstance();
         myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER, "id-32");
         myFeature2.setPropertyValue("name", null);
         myFeature2.setPropertyValue("geom1", null);
         myFeature2.setPropertyValue("geom2", null);
-        featureList.add(myFeature2);
 
         myFeature3 = type.newInstance();
         myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER, "id-33");
         myFeature3.setPropertyValue("name", null);
         myFeature3.setPropertyValue("geom1", null);
         myFeature3.setPropertyValue("geom2", null);
-        featureList.add(myFeature3);
 
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3).iterator());
 
         return featureList;
     }

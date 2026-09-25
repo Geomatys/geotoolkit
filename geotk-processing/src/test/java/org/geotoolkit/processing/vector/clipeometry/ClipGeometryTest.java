@@ -16,32 +16,30 @@
  */
 package org.geotoolkit.processing.vector.clipeometry;
 
+import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.internal.shared.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.opengis.util.NoSuchIdentifierException;
-import org.locationtech.jts.geom.Geometry;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.internal.shared.AttributeConvention;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of clip with a geometry process
@@ -62,7 +60,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
     public void testClipGeometry() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         final Geometry geometryClip = buildGeometryClip();
 
         // Process
@@ -74,10 +72,10 @@ public class ClipGeometryTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
 
         compare(featureListResult,featureListOut);
 
@@ -103,13 +101,13 @@ public class ClipGeometryTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
-        Feature myFeature1 = type.newInstance();
+        final Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, 3.0),
@@ -122,9 +120,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "Building1");
         myFeature1.setPropertyValue("height", 12);
         myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature1);
 
-        Feature myFeature2 = type.newInstance();
+        final Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8.0, 4.0),
@@ -137,9 +134,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature2);
 
-        Feature myFeature3 = type.newInstance();
+        final Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, -2.0),
@@ -152,9 +148,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature3);
 
-        Feature myFeature4 = type.newInstance();
+        final Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 6.0),
@@ -167,9 +162,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature4);
 
-        Feature myFeature5 = type.newInstance();
+        final Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-4.0, 1.0),
@@ -182,8 +176,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature5.setPropertyValue("name", "Building5");
         myFeature5.setPropertyValue("height", 12);
         myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature5);
 
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5).iterator());
 
         return featureList;
     }
@@ -203,13 +197,13 @@ public class ClipGeometryTest extends AbstractProcessTest {
         return clip;
     }
 
-    private static FeatureCollection buildResultList() throws FactoryException {
+    private static FeatureSet buildResultList() throws FactoryException {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
-        Feature myFeature1 = type.newInstance();
+        final Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, 3.0),
@@ -222,9 +216,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature1.setPropertyValue("name", "Building1");
         myFeature1.setPropertyValue("height", 12);
         myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature1);
 
-        Feature myFeature2 = type.newInstance();
+        final Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(10.0, 4.0),
@@ -237,9 +230,8 @@ public class ClipGeometryTest extends AbstractProcessTest {
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature2);
 
-        Feature myFeature3 = type.newInstance();
+        final Feature myFeature3 = type.newInstance();
         myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
@@ -248,14 +240,14 @@ public class ClipGeometryTest extends AbstractProcessTest {
                     new Coordinate(10.0, 1.0),
                     new Coordinate(6.0, 1.0)
                 }));
-        featureList.add(myFeature3);
 
-        Feature myFeature4 = type.newInstance();
+        final Feature myFeature4 = type.newInstance();
         myFeature4.setPropertyValue("sis:identifier", "id-04");
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(3.0, 6.0)));
-        featureList.add(myFeature4);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4).iterator());
 
         return featureList;
     }
