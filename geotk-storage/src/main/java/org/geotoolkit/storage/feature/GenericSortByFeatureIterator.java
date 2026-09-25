@@ -23,9 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.storage.feature.query.SortByComparator;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -143,27 +141,6 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
 
     }
 
-    private static final class GenericSortByFeatureCollection extends WrapFeatureCollection{
-
-        private final SortProperty[] order;
-
-        private GenericSortByFeatureCollection(final FeatureCollection original, final SortProperty[] order){
-            super(original);
-            this.order = order;
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return wrap(getOriginalFeatureCollection().iterator(hints), order);
-        }
-
-        @Override
-        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-            throw new UnsupportedOperationException("should not have been called.");
-        }
-
-    }
-
     /**
      * Wrap a FeatureReader will a sort by order.
      */
@@ -180,13 +157,6 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
         }else{
             return new GenericSortByFeatureIterator(reader, orders);
         }
-    }
-
-    /**
-     * Wrap a FeatureCollection will a sort by order.
-     */
-    public static FeatureCollection wrap(final FeatureCollection original, final SortProperty[] orders){
-        return new GenericSortByFeatureCollection(original,orders);
     }
 
 }

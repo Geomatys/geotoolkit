@@ -18,12 +18,6 @@
 package org.geotoolkit.storage.feature;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStreams;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureSetMapper;
 import org.opengis.feature.Feature;
@@ -103,36 +97,6 @@ public abstract class GenericMappedFeatureIterator<R extends FeatureIterator> im
         }
     }
 
-    private static final class GenericMappedFeatureCollection extends WrapFeatureCollection{
-
-        private final FeatureSetMapper mask;
-
-        private GenericMappedFeatureCollection(final FeatureCollection original, final FeatureSetMapper mask){
-            super(original);
-            this.mask = mask;
-        }
-
-        @Override
-        public FeatureType getType() {
-            return mask.getMappedType();
-        }
-
-        @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
-            if(!(ite instanceof FeatureReader)){
-                ite = FeatureStreams.asReader(ite, getOriginalFeatureCollection().getType());
-            }
-            return wrap((FeatureReader)ite, mask, hints);
-        }
-
-        @Override
-        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-            throw new UnsupportedOperationException("should not have been called.");
-        }
-
-    }
-
     /**
      * Decorate a feature reader.
      */
@@ -144,13 +108,6 @@ public abstract class GenericMappedFeatureIterator<R extends FeatureIterator> im
         } else {
             return new GenericMappedFeatureReader(reader,mask);
         }
-    }
-
-    /**
-     * Decorate a FeatureCollection.
-     */
-    public static FeatureCollection wrap(final FeatureCollection original, final FeatureSetMapper mask){
-        return new GenericMappedFeatureCollection(original, mask);
     }
 
 }

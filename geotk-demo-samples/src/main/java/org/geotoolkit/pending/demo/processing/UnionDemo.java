@@ -1,6 +1,7 @@
 
 package org.geotoolkit.pending.demo.processing;
 
+import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -8,14 +9,14 @@ import org.locationtech.jts.geom.LinearRing;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,11 +35,11 @@ public class UnionDemo {
 
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
         System.out.println("Input FeatureCollection 1 : "+featureList);
         System.out.println("----------------------------------------------------------------------------------------");
 
-        final FeatureCollection featureUnionList = buildFeatureUnionList();
+        final FeatureSet featureUnionList = buildFeatureUnionList();
         System.out.println("Input FeatureCollection 2 : "+featureUnionList);
 
 
@@ -57,7 +58,7 @@ public class UnionDemo {
         org.geotoolkit.process.Process process = descriptor.createProcess(in);
 
         //get the result
-        final FeatureCollection featuresOut = (FeatureCollection) process.call().parameter("feature_out").getValue();
+        final FeatureSet featuresOut = (FeatureSet) process.call().parameter("feature_out").getValue();
 
         System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("Resulting FeatureCollection : "+featuresOut);
@@ -102,7 +103,7 @@ public class UnionDemo {
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
-    private static FeatureCollection buildFeatureList() {
+    private static FeatureSet buildFeatureList() {
 
         try {
             type = createSimpleType();
@@ -110,8 +111,7 @@ public class UnionDemo {
             Logger.getLogger("org.geotoolkit.pending.demo.processing").log(Level.WARNING, null, ex);
         }
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
-
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
         Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
@@ -125,7 +125,6 @@ public class UnionDemo {
         myFeature1.setPropertyValue("id", "id-01");
         myFeature1.setPropertyValue("name", "feature1");
         myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -139,7 +138,6 @@ public class UnionDemo {
         myFeature2.setPropertyValue("id", "id-02");
         myFeature2.setPropertyValue("name", "feature2");
         myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -154,7 +152,6 @@ public class UnionDemo {
         myFeature3.setPropertyValue("name", "feature3");
         myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
-        featureList.add(myFeature3);
 
         Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -168,7 +165,8 @@ public class UnionDemo {
         myFeature4.setPropertyValue("id", "id-04");
         myFeature4.setPropertyValue("name", "feature4");
         myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        featureList.add(myFeature4);
+
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4).iterator());
 
         return featureList;
     }
@@ -178,7 +176,7 @@ public class UnionDemo {
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
-    private static FeatureCollection buildFeatureUnionList() {
+    private static FeatureSet buildFeatureUnionList() {
 
         try {
             type = createSimpleType2();
@@ -186,7 +184,7 @@ public class UnionDemo {
             Logger.getLogger("org.geotoolkit.pending.demo.processing").log(Level.SEVERE, null, ex);
         }
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final InMemoryFeatureSet featureList = new InMemoryFeatureSet("noname", type);
 
 
         Feature myFeature1 = type.newInstance();
@@ -203,7 +201,6 @@ public class UnionDemo {
         myFeature1.setPropertyValue("color", "red");
         myFeature1.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature1.setPropertyValue("att",20);
-        featureList.add(myFeature1);
 
         Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -219,7 +216,6 @@ public class UnionDemo {
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature2.setPropertyValue("att", 20);
-        featureList.add(myFeature2);
 
         Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -235,7 +231,6 @@ public class UnionDemo {
         myFeature3.setPropertyValue("color", "grey");
         myFeature3.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature3.setPropertyValue("att", 10);
-        featureList.add(myFeature3);
 
         Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -251,7 +246,6 @@ public class UnionDemo {
         myFeature4.setPropertyValue("color", "grey");
         myFeature4.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature4.setPropertyValue("att", 12);
-        featureList.add(myFeature4);
 
         Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
@@ -267,8 +261,8 @@ public class UnionDemo {
         myFeature5.setPropertyValue("color", "grey");
         myFeature5.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
         myFeature5.setPropertyValue("att", 12);
-        featureList.add(myFeature5);
 
+        featureList.add(List.of(myFeature1, myFeature2, myFeature3, myFeature4, myFeature5).iterator());
         return featureList;
     }
 

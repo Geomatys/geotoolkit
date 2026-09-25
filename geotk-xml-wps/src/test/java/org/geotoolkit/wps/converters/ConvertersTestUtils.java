@@ -48,7 +48,6 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.feature.FeatureSetWrapper;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
@@ -214,7 +213,7 @@ public final class ConvertersTestUtils {
             testResource = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
         else if ("/inputs/featurecollection.json".equals(resourcePath)) {
             FeatureSet fs = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-            testResource = new FeatureSetWrapper(fs, null);
+            testResource = fs;
         } else
             fail("Unknown test resource : " + resourcePath);
 

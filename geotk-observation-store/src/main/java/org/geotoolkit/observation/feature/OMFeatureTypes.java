@@ -19,7 +19,6 @@ package org.geotoolkit.observation.feature;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.iso.Names;
-import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -32,6 +31,16 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  */
 public class OMFeatureTypes {
+
+    /**
+     * Static variables refering to GML model.
+     */
+    public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_32_NAMESPACE = "http://www.opengis.net/gml/3.2";
+    public static final String GML_NAME = "name";
+    public static final String GML_DESCRIPTION = "description";
+
+    protected static final String NO_NAMESPACE = "no namespace";
 
     public static final String GEOTK_NAMESPACE = "http://geotoolkit.org/";
     public static final GenericName SENSOR_TN = NamesExt.create(GEOTK_NAMESPACE, "Sensor");
