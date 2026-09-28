@@ -25,18 +25,18 @@ package org.geotoolkit.dggs.healpix;
 final class FitsSerialization {
 
     /**
-     * @param order depth order, starting at 1.
+     * @param order depth order, starting at 0.
      * @param pixel pixel number
      * @return unique cell identifier
      */
     public static long getHash(int order, long pixel) {
-        if (order < 1) throw new IllegalArgumentException("Order must be at least 1");
+        if (order < 0) throw new IllegalArgumentException("Order must be at least 1");
         return (long)(4 * (Math.pow(4, order))) + pixel;
     }
 
     /**
      * @param hash
-     * @return order starting at 1.
+     * @return order starting at 0.
      */
     public static int getOrder(long hash) {
         return (int) (log2(hash / 4) / 2);

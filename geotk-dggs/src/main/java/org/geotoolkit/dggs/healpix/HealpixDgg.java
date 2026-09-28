@@ -52,18 +52,18 @@ final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
 
         if (level == 0) {
             roots = List.of(
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 0)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 1)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 2)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 3)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 4)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 5)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 6)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 7)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 8)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 9)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 10)),
-                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(1, 11)));
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 0)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 1)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 2)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 3)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 4)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 5)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 6)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 7)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 8)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 9)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 10)),
+                new HealpixZone(hierarchy.dggrs, FitsSerialization.getHash(0, 11)));
         } else {
             roots = null;
         }
@@ -88,7 +88,7 @@ final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
         if (lon < 0) lon += Math.PI + Math.PI;
 
         final long hash = hashComputer.hash(lon, lat);
-        final long zid = FitsSerialization.getHash(level+1, hash);
+        final long zid = FitsSerialization.getHash(level, hash);
         return new HealpixZone(hierarchy.dggrs, zid);
     }
 
@@ -156,7 +156,7 @@ final class HealpixDgg extends AbstractDiscreteGlobalGrid<HealpixDggh> {
         double lat = Math.toRadians(source[soffset+1]);
         if (lon < 0) lon += Math.PI + Math.PI;
         final long hash = hashComputer.hash(lon, lat);
-        return FitsSerialization.getHash(level+1, hash);
+        return FitsSerialization.getHash(level, hash);
     }
 
     @Override
