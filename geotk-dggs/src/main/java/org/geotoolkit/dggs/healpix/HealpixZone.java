@@ -62,13 +62,13 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
     public HealpixZone(HealpixDggrs dggrs, long hash) {
         super(dggrs);
         this.hash = hash;
-        this.level = FitsSerialization.getOrder(hash)-1;
+        this.level = FitsSerialization.getOrder(hash);
         this.npixel = FitsSerialization.getPixel(hash);
     }
 
     public HealpixZone(HealpixDggrs dggrs, int level, long npixel) {
         super(dggrs);
-        this.hash = FitsSerialization.getHash(level+1, npixel);
+        this.hash = FitsSerialization.getHash(level, npixel);
         this.level = level;
         this.npixel = npixel;
     }
@@ -106,7 +106,7 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
         final double surfaceArea = DiscreteGlobalGridSystems.computeSurface((GeographicCRS) dggrs.getGridSystem().getCrs());
         switch (level) {
             case 0 : return surfaceArea / 12; // root cells
-            default : return (surfaceArea / 12) / Math.pow(4, level-1);
+            default : return (surfaceArea / 12) / Math.pow(4, level);
         }
     }
 

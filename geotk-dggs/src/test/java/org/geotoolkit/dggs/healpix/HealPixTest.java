@@ -18,9 +18,11 @@ package org.geotoolkit.dggs.healpix;
 
 import com.google.common.geometry.S2LatLng;
 import com.google.common.geometry.S2Polygon;
+import java.util.List;
 import org.apache.sis.geometries.surface.Polygon;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.dggs.DiscreteGlobalGrid;
 import org.geotoolkit.dggs.AbstractDggrsTest;
 import org.apache.sis.referencing.dggs.DiscreteGlobalGridHierarchy;
 import org.apache.sis.referencing.dggs.DiscreteGlobalGridSystem;
@@ -44,6 +46,59 @@ public class HealPixTest extends AbstractDggrsTest {
         super(new HealpixDggrs());
     }
 
+    @Test
+    public void testBaseCells() throws TransformException {
+        final HealpixDggrs dggrs = new HealpixDggrs();
+
+        final DiscreteGlobalGridHierarchy hierarchy = dggrs.getGridSystem().getHierarchy();
+        final DiscreteGlobalGrid grid = hierarchy.getGrids().get(0);
+        final List<Zone> zones = grid.getZones().toList();
+        assertEquals(12, zones.size());
+        assertEquals(4l, (long)zones.get(0).getIdentifier());
+        assertEquals(5l, (long)zones.get(1).getIdentifier());
+        assertEquals(6l, (long)zones.get(2).getIdentifier());
+        assertEquals(7l, (long)zones.get(3).getIdentifier());
+        assertEquals(8l, (long)zones.get(4).getIdentifier());
+        assertEquals(9l, (long)zones.get(5).getIdentifier());
+        assertEquals(10l, (long)zones.get(6).getIdentifier());
+        assertEquals(11l, (long)zones.get(7).getIdentifier());
+        assertEquals(12l, (long)zones.get(8).getIdentifier());
+        assertEquals(13l, (long)zones.get(9).getIdentifier());
+        assertEquals(14l, (long)zones.get(10).getIdentifier());
+        assertEquals(15l, (long)zones.get(11).getIdentifier());
+
+        {
+            long hash = FitsSerialization.getHash(0, 0);
+            assertEquals(0, FitsSerialization.getOrder(hash));
+            assertEquals(0, FitsSerialization.getPixel(hash));
+        }
+
+        {
+            long hash = 11;
+            assertEquals(0, FitsSerialization.getOrder(hash));
+            assertEquals(7, FitsSerialization.getPixel(hash));
+        }
+        {
+            long hash = 17;
+            assertEquals(1, FitsSerialization.getOrder(hash));
+            assertEquals(1, FitsSerialization.getPixel(hash));
+        }
+    }
+
+    @Test
+    public void testArea() throws TransformException {
+        final HealpixDggrs dggrs = new HealpixDggrs();
+        final DiscreteGlobalGridHierarchy hierarchy = dggrs.getGridSystem().getHierarchy();
+        final DiscreteGlobalGrid grid = hierarchy.getGrids().get(0);
+        final List<Zone> zones = grid.getZones().toList();
+        final Zone z = zones.get(0);
+        Double area = z.getAreaMetersSquare();
+
+        for(Zone child : z.getChildren()) {
+            assertEquals(area/4, child.getAreaMetersSquare(), 0.0);
+        }
+    }
+
     /**
      * Check the antimeridian zone has a proper envelope
      */
@@ -51,7 +106,7 @@ public class HealPixTest extends AbstractDggrsTest {
     public void testAntimeridian() throws TransformException {
 
         final HealpixDggrs dggrs = new HealpixDggrs();
-        final Zone zone = dggrs.createCoder().decode("11");
+        final Zone zone = dggrs.createCoder().decode("5");
 
         final GeographicExtent extent = zone.getGeographicExtent();
         final GeographicExtent extent10 = zone.getGeographicExtent(10);
@@ -80,9 +135,9 @@ public class HealPixTest extends AbstractDggrsTest {
         final DiscreteGlobalGridSystem dggs = dggrs.getGridSystem();
         final DiscreteGlobalGridHierarchy dggh = dggs.getHierarchy();
 
-        final Zone zone19 = dggh.getZone(19l);
-        final Zone zone21 = dggh.getZone(21l);
-        final Zone zone23 = dggh.getZone(23l);
+        final Zone zone19 = dggh.getZone(7l);
+        final Zone zone21 = dggh.getZone(9l);
+        final Zone zone23 = dggh.getZone(11l);
 
         final S2Polygon geometry19 = DiscreteGlobalGridSystems.toS2Polygon(zone19.getGeographicExtent(10));
         final S2Polygon geometry21 = DiscreteGlobalGridSystems.toS2Polygon(zone21.getGeographicExtent(10));

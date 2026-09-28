@@ -88,7 +88,7 @@ final class HealpixCoder extends DiscreteGlobalGridReferenceSystem.Coder{
         if (lon < 0) lon += Math.PI + Math.PI;
 
         final long hash = hashComputer.hash(lon, lat);
-        return FitsSerialization.getHash(level+1, hash);
+        return FitsSerialization.getHash(level, hash);
     }
 
 }
