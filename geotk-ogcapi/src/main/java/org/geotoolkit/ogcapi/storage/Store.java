@@ -36,6 +36,7 @@ import org.geotoolkit.ogcapi.client.common.CoreApi;
 import org.geotoolkit.ogcapi.dto.Conformance;
 import org.geotoolkit.ogcapi.dto.common.ConfClasses;
 import org.geotoolkit.ogcapi.request.common.GetConformance;
+import org.geotoolkit.process.ProcessingRegistry;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -49,6 +50,8 @@ public final class Store extends DataStore implements Aggregate {
     private final OpenApiConfiguration configuration;
     private final URI uri;
     private List<Resource> roots;
+    private ConfClasses conformance;
+    private OgcApiProcessingRegistry processingRegistry;
     private final String id;
 
     Store(Provider provider, StorageConnector connector) throws DataStoreException {
@@ -98,36 +101,68 @@ public final class Store extends DataStore implements Aggregate {
     @Override
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
         if (roots == null) {
+            final ConfClasses conformance = getConformance();
+            final List<Resource> newRoots = new ArrayList<>();
+            if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
+               || conformance.isConformTo(Conformance.COLLECTIONS_v1)
+               || conformance.isConformTo(Conformance.DGGS_COLLECTION)
+               || conformance.isConformTo(Conformance.RECORD_CRAWLABLE_CATALOG)
+               || conformance.isConformTo(Conformance.RECORD_SEARCHABLE_CATALOG)
+               || conformance.isConformTo(Conformance.RECORD_LOCAL_RESOURCES_CATALOG)) {
+                newRoots.add(new CollectionResource(configuration));
+            }
+            if (conformance.isConformTo(Conformance.ROUTES_CORE)) {
+                newRoots.add(new RoutesResource(configuration));
+            }
+            if (newRoots.isEmpty()) {
+                newRoots.add(new UndefinedResource(configuration));
+            }
+            roots = newRoots;
+        }
+
+        return Collections.unmodifiableList(roots);
+    }
+
+    /**
+     * Get the processing registry of this service.
+     *
+     * @return processing registry, empty if the service does not declare OGC API - Processes conformance
+     * @throws DataStoreException if the service conformance can not be retrieved
+     */
+    public synchronized Optional<ProcessingRegistry> getProcessingRegistry() throws DataStoreException {
+        if (processingRegistry == null) {
+            if (!getConformance().isConformTo(Conformance.PROCESSES_CORE)) {
+                return Optional.empty();
+            }
+            processingRegistry = new OgcApiProcessingRegistry(configuration);
+        }
+        return Optional.of(processingRegistry);
+    }
+
+    private synchronized ConfClasses getConformance() throws DataStoreException {
+        if (conformance == null) {
             try (CoreApi core = new CoreApi(configuration)) {
-                final ConfClasses conformance = core.getConformance(new GetConformance().format("json")).send().body().get();
-                final List<Resource> newRoots = new ArrayList<>();
-                if (conformance.isConformTo(Conformance.COLLECTIONS_v0)
-                   || conformance.isConformTo(Conformance.COLLECTIONS_v1)
-                   || conformance.isConformTo(Conformance.DGGS_COLLECTION)
-                   || conformance.isConformTo(Conformance.RECORD_CRAWLABLE_CATALOG)
-                   || conformance.isConformTo(Conformance.RECORD_SEARCHABLE_CATALOG)
-                   || conformance.isConformTo(Conformance.RECORD_LOCAL_RESOURCES_CATALOG)) {
-                    newRoots.add(new CollectionResource(configuration));
-                }
-                if (conformance.isConformTo(Conformance.ROUTES_CORE)) {
-                    newRoots.add(new RoutesResource(configuration));
-                }
-                if (newRoots.isEmpty()) {
-                    newRoots.add(new UndefinedResource(configuration));
-                }
-                roots = newRoots;
+                conformance = core.getConformance(new GetConformance().format("json")).send().body().get();
             } catch (ServiceException ex) {
                 throw new DataStoreException(ex);
             } catch (Exception ex) {
                 throw new DataStoreException(ex);
             }
         }
-
-        return Collections.unmodifiableList(roots);
+        return conformance;
     }
 
     @Override
-    public void close() throws DataStoreException {
+    public synchronized void close() throws DataStoreException {
+        if (processingRegistry != null) {
+            try {
+                processingRegistry.close();
+            } catch (Exception ex) {
+                throw new DataStoreException(ex);
+            } finally {
+                processingRegistry = null;
+            }
+        }
     }
 
 }
