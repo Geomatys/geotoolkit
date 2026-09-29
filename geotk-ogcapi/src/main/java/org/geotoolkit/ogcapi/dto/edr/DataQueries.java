@@ -42,185 +42,185 @@ import org.geotoolkit.ogcapi.dto.DataTransferObject;
 public final class DataQueries extends DataTransferObject {
 
     public static final String JSON_PROPERTY_POSITION = "position";
-    private DataQueryLink position;
+    private EdrQueryObject position;
 
     public static final String JSON_PROPERTY_RADIUS = "radius";
-    private DataQueryLink radius;
+    private EdrQueryObject radius;
 
     public static final String JSON_PROPERTY_AREA = "area";
-    private DataQueryLink area;
+    private EdrQueryObject area;
 
     public static final String JSON_PROPERTY_CUBE = "cube";
-    private DataQueryLink cube;
+    private EdrQueryObject cube;
 
     public static final String JSON_PROPERTY_TRAJECTORY = "trajectory";
-    private DataQueryLink trajectory;
+    private EdrQueryObject trajectory;
 
     public static final String JSON_PROPERTY_CORRIDOR = "corridor";
-    private DataQueryLink corridor;
+    private EdrQueryObject corridor;
 
     public static final String JSON_PROPERTY_LOCATIONS = "locations";
-    private DataQueryLink locations;
+    private EdrQueryObject locations;
 
     public static final String JSON_PROPERTY_ITEMS = "items";
-    private DataQueryLink items;
+    private EdrQueryObject items;
 
     public static final String JSON_PROPERTY_INSTANCES = "instances";
-    private DataQueryLink instances;
+    private EdrQueryObject instances;
 
     public DataQueries() {
     }
 
-    public DataQueries position(DataQueryLink position) {
+    public DataQueries position(EdrQueryObject position) {
         this.position = position;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_POSITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getPosition() {
+    public EdrQueryObject getPosition() {
         return position;
     }
 
     @JsonProperty(JSON_PROPERTY_POSITION)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setPosition(DataQueryLink position) {
+    public void setPosition(EdrQueryObject position) {
         this.position = position;
     }
 
-    public DataQueries radius(DataQueryLink radius) {
+    public DataQueries radius(EdrQueryObject radius) {
         this.radius = radius;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_RADIUS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getRadius() {
+    public EdrQueryObject getRadius() {
         return radius;
     }
 
     @JsonProperty(JSON_PROPERTY_RADIUS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setRadius(DataQueryLink radius) {
+    public void setRadius(EdrQueryObject radius) {
         this.radius = radius;
     }
 
-    public DataQueries area(DataQueryLink area) {
+    public DataQueries area(EdrQueryObject area) {
         this.area = area;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_AREA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getArea() {
+    public EdrQueryObject getArea() {
         return area;
     }
 
     @JsonProperty(JSON_PROPERTY_AREA)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setArea(DataQueryLink area) {
+    public void setArea(EdrQueryObject area) {
         this.area = area;
     }
 
-    public DataQueries cube(DataQueryLink cube) {
+    public DataQueries cube(EdrQueryObject cube) {
         this.cube = cube;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getCube() {
+    public EdrQueryObject getCube() {
         return cube;
     }
 
     @JsonProperty(JSON_PROPERTY_CUBE)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setCube(DataQueryLink cube) {
+    public void setCube(EdrQueryObject cube) {
         this.cube = cube;
     }
 
-    public DataQueries trajectory(DataQueryLink trajectory) {
+    public DataQueries trajectory(EdrQueryObject trajectory) {
         this.trajectory = trajectory;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_TRAJECTORY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getTrajectory() {
+    public EdrQueryObject getTrajectory() {
         return trajectory;
     }
 
     @JsonProperty(JSON_PROPERTY_TRAJECTORY)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setTrajectory(DataQueryLink trajectory) {
+    public void setTrajectory(EdrQueryObject trajectory) {
         this.trajectory = trajectory;
     }
 
-    public DataQueries corridor(DataQueryLink corridor) {
+    public DataQueries corridor(EdrQueryObject corridor) {
         this.corridor = corridor;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_CORRIDOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getCorridor() {
+    public EdrQueryObject getCorridor() {
         return corridor;
     }
 
     @JsonProperty(JSON_PROPERTY_CORRIDOR)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setCorridor(DataQueryLink corridor) {
+    public void setCorridor(EdrQueryObject corridor) {
         this.corridor = corridor;
     }
 
-    public DataQueries locations(DataQueryLink locations) {
+    public DataQueries locations(EdrQueryObject locations) {
         this.locations = locations;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_LOCATIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getLocations() {
+    public EdrQueryObject getLocations() {
         return locations;
     }
 
     @JsonProperty(JSON_PROPERTY_LOCATIONS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setLocations(DataQueryLink locations) {
+    public void setLocations(EdrQueryObject locations) {
         this.locations = locations;
     }
 
-    public DataQueries items(DataQueryLink items) {
+    public DataQueries items(EdrQueryObject items) {
         this.items = items;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_ITEMS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getItems() {
+    public EdrQueryObject getItems() {
         return items;
     }
 
     @JsonProperty(JSON_PROPERTY_ITEMS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setItems(DataQueryLink items) {
+    public void setItems(EdrQueryObject items) {
         this.items = items;
     }
 
-    public DataQueries instances(DataQueryLink instances) {
+    public DataQueries instances(EdrQueryObject instances) {
         this.instances = instances;
         return this;
     }
 
     @JsonProperty(JSON_PROPERTY_INSTANCES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public DataQueryLink getInstances() {
+    public EdrQueryObject getInstances() {
         return instances;
     }
 
     @JsonProperty(JSON_PROPERTY_INSTANCES)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setInstances(DataQueryLink instances) {
+    public void setInstances(EdrQueryObject instances) {
         this.instances = instances;
     }
 
