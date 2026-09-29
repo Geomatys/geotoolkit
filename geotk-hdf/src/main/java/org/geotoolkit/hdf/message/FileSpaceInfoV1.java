@@ -28,9 +28,11 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * Status: Optional; may not be repeated.
  * <p>
- * Description : See specification
+ * Description: This message stores the file space management strategy, the
+ * paged aggregation settings and the addresses of the free-space managers.
+ * This is version 1 of the message.
  *
- * @see IV.A.2.x. The File Space Info Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_fsinfo">IV.A.2.x. The File Space Info Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FileSpaceInfoV1 extends Message {
@@ -38,16 +40,15 @@ public final class FileSpaceInfoV1 extends Message {
     /**
      * This is the file space strategy used to manage file space. There are
      * four types:
-     * Value Description
-     * 0 : H5F_FSPACE_STRATEGY_FSM_AGGR
-     * 1 : H5F_FSPACE_STRATEGY_PAGE
-     * 2 : H5F_FSPACE_STRATEGY_AGGR
-     * 3 : H5F_FSPACE_STRATEGY_NONE
+     * <ul>
+     *   <li>0 : {@code H5F_FSPACE_STRATEGY_FSM_AGGR}</li>
+     *   <li>1 : {@code H5F_FSPACE_STRATEGY_PAGE}</li>
+     *   <li>2 : {@code H5F_FSPACE_STRATEGY_AGGR}</li>
+     *   <li>3 : {@code H5F_FSPACE_STRATEGY_NONE}</li>
+     * </ul>
      */
     private int strategy;
-    /**
-     * True or false in persisting free-space.
-     */
+    /** True or false in persisting free-space. */
     private int persistingFreespace;
     /**
      * This is the smallest free-space section size that the free-space manager
@@ -69,7 +70,7 @@ public final class FileSpaceInfoV1 extends Message {
      * The EOA before the allocation of free-space manager header and section
      * info for the self-referential free-space managers when persisting
      * free-space.
-     *
+     * <p>
      * Note that self-referential free-space managers are managers that
      * involve file space allocation for the managers' free-space header and
      * section info.
@@ -77,14 +78,10 @@ public final class FileSpaceInfoV1 extends Message {
     private long eoa;
     /**
      * These are the addresses of the six small-sized free-space managers for
-     * the six file space allocation types:
-     * H5FD_MEM_SUPER
-     * H5FD_MEM_BTREE
-     * H5FD_MEM_DRAW
-     * H5FD_MEM_GHEAP
-     * H5FD_MEM_LHEAP
-     * H5FD_MEM_OHDR
-     *
+     * the six file space allocation types: {@code H5FD_MEM_SUPER}, {@code H5FD_MEM_BTREE},
+     * {@code H5FD_MEM_DRAW}, {@code H5FD_MEM_GHEAP}, {@code H5FD_MEM_LHEAP}
+     * and {@code H5FD_MEM_OHDR}.
+     * <p>
      * Note that these six fields exist only if the value for the field
      * “Persisting free-space” is true.
      */
@@ -96,14 +93,10 @@ public final class FileSpaceInfoV1 extends Message {
     private long addressOfSmallSizedFreeSpaceManagerForH5FD_MEM_OHDR;
     /**
      * These are the addresses of the six large-sized free-space managers for
-     * the six file space allocation types:
-     * H5FD_MEM_SUPER
-     * H5FD_MEM_BTREE
-     * H5FD_MEM_DRAW
-     * H5FD_MEM_GHEAP
-     * H5FD_MEM_LHEAP
-     * H5FD_MEM_OHDR
-     *
+     * the six file space allocation types: {@code H5FD_MEM_SUPER}, {@code H5FD_MEM_BTREE},
+     * {@code H5FD_MEM_DRAW}, {@code H5FD_MEM_GHEAP}, {@code H5FD_MEM_LHEAP}
+     * and {@code H5FD_MEM_OHDR}.
+     * <p>
      * Note that these six fields exist only if the value for the field
      * “Persisting free-space” is true.
      */
@@ -113,6 +106,10 @@ public final class FileSpaceInfoV1 extends Message {
     private long addressOfLargeSizedFreeSpaceManagerForH5FD_MEM_GHEAP;
     private long addressOfLargeSizedFreeSpaceManagerForH5FD_MEM_LHEAP;
     private long addressOfLargeSizedFreeSpaceManagerForH5FD_MEM_OHDR;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public FileSpaceInfoV1() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

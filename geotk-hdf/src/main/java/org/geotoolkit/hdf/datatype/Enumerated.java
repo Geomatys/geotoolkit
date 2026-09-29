@@ -25,7 +25,10 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.util.StringUtilities;
 
 /**
+ * Enumeration datatype : a set of name and value pairs, the values being of
+ * a base type, usually an integer. Values are decoded as those of the base type.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class Enumerated extends DataType {
@@ -48,6 +51,16 @@ public final class Enumerated extends DataType {
      */
     private final Object[] values;
 
+    /**
+     * Reads the datatype properties : the base type, then the member names and values.
+     *
+     * @param byteSize element size in bytes.
+     * @param version datatype message version.
+     * @param classBitFields class bit fields (number of members).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred or the version is unexpected.
+     * @throws DataStoreException if the base datatype is invalid or unsupported.
+     */
     public Enumerated(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         final int numberOfMembers = classBitFields & 0b1111111111111111;
@@ -75,14 +88,29 @@ public final class Enumerated extends DataType {
         }
     }
 
+    /**
+     * Returns the datatype of the values, usually an integer type.
+     *
+     * @return the datatype of the values, usually an integer type
+     */
     public DataType getBaseType() {
         return baseType;
     }
 
+    /**
+     * Returns the member names, in the order of {@link #getValues()}; not a copy.
+     *
+     * @return the member names, in the order of {@link #getValues()}; not a copy
+     */
     public String[] getNames() {
         return names;
     }
 
+    /**
+     * Returns the member values, in the order of {@link #getNames()}; not a copy.
+     *
+     * @return the member values, in the order of {@link #getNames()}; not a copy
+     */
     public Object[] getValues() {
         return values;
     }
@@ -92,9 +120,40 @@ public final class Enumerated extends DataType {
         return baseType.getValueClass();
     }
 
+    /**
+     * Returns the name declared for the given value, or {@code null} if none.
+     * <p>
+     * Values are decoded as those of the base type rather than as names, because
+     * the name would change the class of the arrays {@code Dataset} returns.
+     *
+     * @param value a value decoded with the base type.
+     * @return the name declared for the given value, or {@code null} if none
+     */
+    public String nameOf(Object value) {
+        for (int i = 0; i < values.length; i++) {
+            if (java.util.Objects.deepEquals(values[i], value)) {
+                return names[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a new map from member value to name, in declaration order.
+     *
+     * @return a new map from member value to name, in declaration order
+     */
+    public java.util.Map<Object,String> getMapping() {
+        final java.util.Map<Object,String> mapping = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < values.length; i++) {
+            mapping.put(values[i], names[i]);
+        }
+        return mapping;
+    }
+
     @Override
     public Object readData(HDF5DataInput input, int ... compoundindexes) throws IOException, DataStoreException {
-        return baseType.readData(input);
+        return baseType.readData(input, compoundindexes);
     }
 
     @Override
@@ -104,7 +163,7 @@ public final class Enumerated extends DataType {
 
     @Override
     public Object readData(HDF5DataInput input, int[] dimensions, int ... compoundindexes) throws IOException, DataStoreException {
-        return baseType.readData(input, dimensions);
+        return baseType.readData(input, dimensions, compoundindexes);
     }
 
     @Override

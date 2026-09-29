@@ -22,7 +22,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 /**
  * Header Message Name: Link Info
  * <p>
- * Header Message Type: 0x002
+ * Header Message Type: 0x0002
  * <p>
  * Length: Varies
  * <p>
@@ -33,16 +33,18 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * information will be stored in this message and constant information will be
  * stored in the Group Info message.
  *
- * @see IV.A.2.c. The Link Info Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_linkinfo">IV.A.2.c. The Link Info Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class LinkInfo extends Message {
 
     /**
      * This field determines various optional aspects of the link info message:
-     * 0 : If set, creation order for the links is tracked.
-     * 1 : If set, creation order for the links is indexed.
-     * 2-7 : Reserved
+     * <ul>
+     *   <li>Bit 0 : If set, creation order for the links is tracked.</li>
+     *   <li>Bit 1 : If set, creation order for the links is indexed.</li>
+     *   <li>Bits 2-7 : Reserved</li>
+     * </ul>
      */
     private int flags;
     /**
@@ -54,7 +56,7 @@ public final class LinkInfo extends Message {
     /**
      * This is the address of the fractal heap to store dense links. Each link
      * stored in the fractal heap is stored as a Link Message.
-     *
+     * <p>
      * If there are no links in the group, or the group’s links are stored
      * “compactly” (as object header messages), this value will be the undefined address.
      */
@@ -68,13 +70,75 @@ public final class LinkInfo extends Message {
     private long addressOfv2btreeNameIndex;
     /**
      * This is the address of the version 2 B-tree to index creation order of links.
-     *
+     * <p>
      * If there are no links in the group, or the group’s links are stored
      * “compactly” (as object header messages), this value will be the undefined address.
-     *
+     * <p>
      * This field exists if bit 1 of flags is set.
      */
     private long addressOfv2btreeCreationOrderIndex;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public LinkInfo() {
+    }
+
+    /**
+     * Returns whether creation order for the links is tracked.
+     *
+     * @return whether creation order for the links is tracked
+     */
+    public boolean isCreationOrderTracked() {
+        return (flags & 1) != 0;
+    }
+
+    /**
+     * Returns whether creation order for the links is indexed.
+     *
+     * @return whether creation order for the links is indexed
+     */
+    public boolean isCreationOrderIndexed() {
+        return (flags & 2) != 0;
+    }
+
+    /**
+     * Returns the address of the fractal heap storing dense links.
+     * Undefined when the group has no link or stores them compactly as object header messages.
+     *
+     * @return the address of the fractal heap storing dense links
+     */
+    public long getFractalHeapAddress() {
+        return fractalHeapAddress;
+    }
+
+    /**
+     * Returns the address of the version 2 B-tree indexing link names.
+     * Undefined when the group has no link or stores them compactly.
+     *
+     * @return the address of the version 2 B-tree indexing link names
+     */
+    public long getV2BtreeNameIndexAddress() {
+        return addressOfv2btreeNameIndex;
+    }
+
+    /**
+     * Returns the address of the version 2 B-tree indexing link creation order.
+     * Only meaningful when {@link #isCreationOrderIndexed()}.
+     *
+     * @return the address of the version 2 B-tree indexing link creation order
+     */
+    public long getV2BtreeCreationOrderIndexAddress() {
+        return addressOfv2btreeCreationOrderIndex;
+    }
+
+    /**
+     * Returns the maximum creation order index of the links in this group.
+     * Only meaningful when {@link #isCreationOrderTracked()}.
+     *
+     * @return the maximum creation order index of the links in this group
+     */
+    public long getMaximumCreationIndex() {
+        return maximumCreationIndex;
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

@@ -20,8 +20,10 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Record of a version 2 B-tree of type 5, used for indexing the ‘name’ field of the
+ * links in indexed groups.
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2_Type5_IndexedGroupLinkName {
@@ -37,6 +39,34 @@ public final class BTreeV2_Type5_IndexedGroupLinkName {
      */
     private byte[] id;
 
+    /** Creates an empty record, filled by {@link #read(HDF5DataInput)}. */
+    public BTreeV2_Type5_IndexedGroupLinkName() {
+    }
+
+    /**
+     * Returns the Jenkins lookup3 hash of the link name.
+     *
+     * @return the Jenkins lookup3 hash of the link name
+     */
+    public int getHash() {
+        return hash;
+    }
+
+    /**
+     * Returns the 7 bytes heap ID of the Link message in the group fractal heap.
+     *
+     * @return the 7 bytes heap ID of the Link message in the group fractal heap
+     */
+    public byte[] getId() {
+        return id;
+    }
+
+    /**
+     * Reads the record.
+     *
+     * @param channel channel positioned on the record
+     * @throws IOException if an I/O error occurred.
+     */
     public void read(HDF5DataInput channel) throws IOException {
 
         hash = channel.readInt();

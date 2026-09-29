@@ -18,77 +18,132 @@ package org.geotoolkit.hdf.heap;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Indirect block of a fractal heap. It holds no object data, only the addresses
+ * of the direct and indirect blocks one level below.
+ * <p>
+ * The number of entries is derived from the number of rows this block spans and
+ * from the heap header, so this block can not be decoded without both.
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeapIndirectBlock extends IOStructure {
 
     /**
      * The ASCII character string “FHIB” is used to indicate the beginning of a
-     * fractal heap indirect block. This gives file consistency checking
-     * utilities a better chance of reconstructing a damaged file.
+     * fractal heap indirect block.
      */
     public static final byte[] SIGNATURE = "FHIB".getBytes(StandardCharsets.US_ASCII);
 
-    /**
-     * This is the address for the fractal heap header that this block belongs to.
-     * This field is principally used for file integrity checking.
-     */
     private long heapHeaderAddress;
     /**
-     * This is the offset of the block within the fractal heap’s address space
-     * (in bytes). The number of bytes used to encode this field is the Maximum
-     * Heap Size (in the heap’s header) divided by 8 and rounded up to the next
-     * highest integer, for values that are not a multiple of 8. This value is
-     * principally used for file integrity checking.
-     */
-    private int blockOffset;
-    /**
-     * This field is the address of the child direct block. The size of the
-     * [uncompressed] direct block can be computed by its offset in the heap’s
+     * Offset of the first byte of the range this block indexes, in the heap
      * linear address space.
      */
-    public List<Integer> childDirectBlocks;
+    private long blockOffset;
     /**
-     * This is the size of the child direct block after passing through the I/O
-     * filters defined for this heap (in bytes). If no I/O filters are present
-     * for this heap, this field is not present.
+     * Addresses of the direct blocks, K entries.
      */
-    public List<Integer> sizeOfFilteredDirectBlocks;
+    private long[] childDirectBlockAddresses;
     /**
-     * This is the I/O filter mask for the filtered direct block. This mask has
-     * the same format as that used for the filter mask in chunked raw data
-     * records in a v1 B-tree. If no I/O filters are present for this heap,
-     * this field is not present.
+     * Addresses of the indirect blocks one level below, N entries.
      */
-    public List<Integer> filterMaskForDirectBlocks;
-    /**
-     * This field is the address of the child indirect block. The size of the
-     * indirect block can be computed by its offset in the heap’s linear
-     * address space.
-     */
-    public List<Integer> childIndirectBlockAdresses;
+    private long[] childIndirectBlockAddresses;
 
+    /** Creates an empty indirect block, filled by {@link #read(HDF5DataInput, FractalHeap, int)}. */
+    public FractalHeapIndirectBlock() {
+    }
+
+    /**
+     * Returns the offset of the first byte of the range this block indexes, in the heap linear address space.
+     *
+     * @return the offset of the first byte of the range this block indexes, in the heap linear address space
+     */
+    public long getBlockOffset() {
+        return blockOffset;
+    }
+
+    /**
+     * Returns the addresses of the K child direct blocks, row by row.
+     * Unallocated blocks have the undefined address.
+     *
+     * @return the addresses of the K child direct blocks, row by row
+     */
+    public long[] getChildDirectBlockAddresses() {
+        return childDirectBlockAddresses;
+    }
+
+    /**
+     * Returns the addresses of the N child indirect blocks, row by row, following the direct block entries.
+     *
+     * @return the addresses of the N child indirect blocks, row by row, following the direct block entries
+     */
+    public long[] getChildIndirectBlockAddresses() {
+        return childIndirectBlockAddresses;
+    }
+
+    /**
+     * Returns the number K of direct block entries, which is also the index of the first indirect block
+     * entry.
+     *
+     * @return the number K of direct block entries, which is also the index of the first indirect block entry
+     */
+    public int getDirectBlockCount() {
+        return childDirectBlockAddresses.length;
+    }
+
+    /**
+     * An indirect block can not be decoded without its heap header and row count.
+     *
+     * @throws UnsupportedOperationException always
+     * @see #read(HDF5DataInput, FractalHeap, int)
+     */
     @Override
     public void read(HDF5DataInput channel) throws IOException {
+        throw new UnsupportedOperationException("A fractal heap indirect block requires"
+                + " its heap header and row count to be decoded, use read(channel, heap, nrows).");
+    }
 
+    /**
+     * Reads the block prefix and the addresses of the child direct and indirect blocks.
+     *
+     * @param channel channel positioned on the block signature
+     * @param heap owning heap header, not null
+     * @param nrows number of rows this block spans
+     * @throws IOException if an I/O error occurred or the signature or version is invalid.
+     */
+    public void read(HDF5DataInput channel, FractalHeap heap, int nrows) throws IOException {
         channel.ensureSignature(SIGNATURE);
-        /*
-        This document describes version 0.
-        */
         channel.ensureVersion(0);
         heapHeaderAddress = channel.readOffset();
+        blockOffset = channel.readUnsignedInteger(heap.getHeapOffsetSize());
 
         /*
-        all lists
-        checksum
+        Rows up to the maximum direct block row point at direct blocks, the rows
+        beyond that point at further indirect blocks.
         */
-        throw new IOException("TODO");
+        final int width = heap.getTableWidth();
+        final int k = Math.min(nrows, heap.getMaximumDirectRows()) * width;
+        final int n = nrows > heap.getMaximumDirectRows()
+                ? (nrows - heap.getMaximumDirectRows()) * width : 0;
+
+        childDirectBlockAddresses = new long[k];
+        for (int i = 0; i < k; i++) {
+            childDirectBlockAddresses[i] = channel.readOffset();
+            if (heap.isFiltered()) {
+                //filtered size and filter mask of the direct block
+                channel.readLength();
+                channel.readInt();
+            }
+        }
+        childIndirectBlockAddresses = new long[n];
+        for (int i = 0; i < n; i++) {
+            childIndirectBlockAddresses[i] = channel.readOffset();
+        }
+        final int checksum = channel.readInt();
     }
 }

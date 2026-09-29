@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Input stream returning a byte pattern repeated up to a given size.
+ * Used for dataset regions which are not stored in the file and must be
+ * filled with the fill value.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -28,8 +31,11 @@ public class ConstantInputStream extends InputStream {
 
     private static final byte[] ZEROS = new byte[4096];
 
+    /** Total number of bytes of the stream. */
     protected final long size;
+    /** Bytes repeated over the whole stream. */
     protected final byte[] pattern;
+    /** Number of bytes already read or skipped. */
     protected long position = 0;
 
     private ConstantInputStream(long size, byte[] pattern) {
@@ -70,6 +76,14 @@ public class ConstantInputStream extends InputStream {
         return Math.toIntExact(size - position);
     }
 
+    /**
+     * Returns a stream repeating the given pattern.
+     * Patterns made of a single repeated byte use a faster implementation.
+     *
+     * @param size total number of bytes of the stream
+     * @param pattern bytes to repeat, not empty
+     * @return a stream repeating the given pattern
+     */
     public static ConstantInputStream create(long size, byte[] pattern) {
         reduce:
         if (pattern.length > 1) {

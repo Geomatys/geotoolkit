@@ -33,7 +33,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * last modification of an object. The time is updated when any object header
  * message changes according to the system clock where the change was posted.
  *
- * @see IV.A.2.s. The Object Modification Time Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_mod">IV.A.2.s. The Object Modification Time Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class ObjectModificationTimeMessage extends Message {
@@ -44,6 +44,10 @@ public final class ObjectModificationTimeMessage extends Message {
      * Time.
      */
     private int secondsAfterUnixEpoch;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public ObjectModificationTimeMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

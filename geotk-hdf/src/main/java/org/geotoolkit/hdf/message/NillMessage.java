@@ -33,10 +33,14 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * reading the header messages for a data object. [Possibly one which has
  * been deleted for some reason.]
  *
- * @see IV.A.2.a. The NIL Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_nil">IV.A.2.a. The NIL Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class NillMessage extends Message {
+
+    /** Creates a NIL message, which has no content. */
+    public NillMessage() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

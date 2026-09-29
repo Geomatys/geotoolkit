@@ -21,7 +21,11 @@ import java.nio.ByteOrder;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Fixed-point datatype : signed or unsigned integers. Only the 8, 16, 32 and
+ * 64 bits integers without bit offset are decoded, as Java primitive values
+ * large enough to hold unsigned values.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FixedPoint extends DataType {
@@ -57,7 +61,7 @@ public final class FixedPoint extends DataType {
     public final int bytePrecision;
 
     //detect if the fixed point type is a standard one.
-    private static enum KnownType {
+    private enum KnownType {
         EMPTY,
         INT8,
         INT16,
@@ -66,10 +70,18 @@ public final class FixedPoint extends DataType {
         UINT8,
         UINT16,
         UINT32,
-        OTHER;
+        OTHER
     }
     private KnownType knownType = KnownType.OTHER;
 
+    /**
+     * Reads the datatype properties.
+     *
+     * @param byteSize element size in bytes.
+     * @param classBitFields class bit fields (byte order, padding type, sign).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred or the precision is not supported.
+     */
     public FixedPoint(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
         byteOrder = (classBitFields & 0b1) == 0 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
@@ -113,7 +125,12 @@ public final class FixedPoint extends DataType {
                 case INT8 :
                     return input.readByte();
                 case INT16 :
-                    return input.readShort();
+                    /*
+                    readShort returns an int, which would box to an Integer and be
+                    rejected by the short[] array that getValueClass announces.
+                    The value is already sign extended, so the cast is lossless.
+                    */
+                    return (short) input.readShort();
                 case INT32 :
                     return input.readInt();
                 case INT64 :

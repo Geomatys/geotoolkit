@@ -25,10 +25,16 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**
+ * Deflate filter (filter identifier 1) : chunk bytes are compressed with the
+ * zlib format, see <a href="https://www.rfc-editor.org/rfc/rfc1950">RFC 1950</a>.
  *
  * @author Johann Sorel (Geomatys)
  */
 public class Deflate implements Filter {
+
+    /** Creates a new deflate filter, encoding with the default compression level. */
+    public Deflate() {
+    }
 
     @Override
     public byte[] decode(byte[] chunkdata) throws IOException {
@@ -56,15 +62,6 @@ public class Deflate implements Filter {
             os.finish();
             return out.toByteArray();
         }
-    }
-
-    @Override
-    public long uncompressedSize(byte[] chunkdata) throws IOException {
-        int b4 = chunkdata[chunkdata.length - 4] & 0xFF;
-        int b3 = chunkdata[chunkdata.length - 3] & 0xFF;
-        int b2 = chunkdata[chunkdata.length - 2] & 0xFF;
-        int b1 = chunkdata[chunkdata.length - 1] & 0xFF;
-        return (b1 << 24) | (b2 << 16) + (b3 << 8) + b4;
     }
 
 }

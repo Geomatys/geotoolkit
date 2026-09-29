@@ -29,6 +29,11 @@ import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_4;
 import static org.geotoolkit.hdf.io.HDF5DataInput.UNDEFINED_8;
 
 /**
+ * Access point to an HDF-5 file.
+ * <p>
+ * The connector reads the {@link SuperBlock} once at creation, then creates
+ * new independent {@link HDF5DataInput} channels on the file on request,
+ * configured with the offset and length sizes declared by the superblock.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -37,14 +42,32 @@ public final class Connector implements AutoCloseable {
     private final SuperBlock superblock;
     private final Path path;
 
+    /**
+     * Returns the HDF-5 file path.
+     *
+     * @return the HDF-5 file path
+     */
     public Path getPath() {
         return path;
     }
 
+    /**
+     * Returns the superblock read at creation.
+     *
+     * @return the superblock read at creation
+     */
     public SuperBlock getSuperblock() {
         return superblock;
     }
 
+    /**
+     * Opens the given file and reads its superblock.
+     *
+     * @param path HDF-5 file
+     * @throws IllegalArgumentException if the path can not be opened as a channel.
+     * @throws DataStoreException if the storage could not be opened.
+     * @throws IOException if an error occurred while reading the superblock.
+     */
     public Connector(Path path) throws IllegalArgumentException, DataStoreException, IOException {
         this.path = path;
 
@@ -58,6 +81,14 @@ public final class Connector implements AutoCloseable {
         }
     }
 
+    /**
+     * Creates a new channel on the file, configured with the superblock offset and length sizes.
+     * The caller is responsible for closing it.
+     *
+     * @return a new channel positioned at the beginning of the file
+     * @throws IllegalArgumentException if the path can not be opened as a channel.
+     * @throws DataStoreException if the storage could not be opened.
+     */
     public HDF5DataInput createChannel() throws IllegalArgumentException, DataStoreException {
         final StorageConnector cnx = new StorageConnector(path);
         final ChannelDataInput c = cnx.getStorageAs(ChannelDataInput.class);
@@ -75,54 +106,70 @@ public final class Connector implements AutoCloseable {
 
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given address is defined, for the superblock offset size.
+     *
+     * @return whether the given address is defined, for the superblock offset size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param offset tested address
-     * @return true if offset in undefined
      */
     public boolean isDefinedOffset(long offset) {
         return !isUndefinedOffset(offset);
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given address has all bits set, for the superblock offset size.
+     *
+     * @return whether the given address has all bits set, for the superblock offset size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param offset tested address
-     * @return true if offset in undefined
      */
     public boolean isUndefinedOffset(long offset) {
         return isUndefinedOffset(offset, superblock.getSizeOfOffsets());
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given length is defined, for the superblock length size.
+     *
+     * @return whether the given length is defined, for the superblock length size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param length tested length
-     * @return true if offset in undefined
      */
     public boolean isDefinedLength(long length) {
         return !isUndefinedLength(length);
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given length has all bits set, for the superblock length size.
+     *
+     * @return whether the given length has all bits set, for the superblock length size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param length tested length
-     * @return true if offset in undefined
      */
     public boolean isUndefinedLength(long length) {
         return isUndefinedLength(length, superblock.getSizeOfLengths());
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given address is defined, for the given offset size.
+     *
+     * @return whether the given address is defined, for the given offset size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param offset tested address
-     * @return true if offset in undefined
+     * @param offsetSize 1, 2, 4 or 8 bytes
+     * @throws IllegalArgumentException if the offset size is not supported.
      */
     public static boolean isDefinedOffset(long offset, int offsetSize) {
         return !isUndefinedOffset(offset, offsetSize);
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given address has all bits set, for the given offset size.
+     *
+     * @return whether the given address has all bits set, for the given offset size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param offset tested address
-     * @return true if offset in undefined
+     * @param offsetSize 1, 2, 4 or 8 bytes
+     * @throws IllegalArgumentException if the offset size is not supported.
      */
     public static boolean isUndefinedOffset(long offset, int offsetSize) {
         return switch (offsetSize) {
@@ -135,18 +182,26 @@ public final class Connector implements AutoCloseable {
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given length is defined, for the given length size.
+     *
+     * @return whether the given length is defined, for the given length size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param length tested length
-     * @return true if offset in undefined
+     * @param lengthSize 1, 2, 4 or 8 bytes
+     * @throws IllegalArgumentException if the length size is not supported.
      */
     public static boolean isDefinedLength(long length, int lengthSize) {
         return !isUndefinedLength(length, lengthSize);
     }
 
     /**
-     * @see V. Appendix A: Definitions
+     * Returns whether the given length has all bits set, for the given length size.
+     *
+     * @return whether the given length has all bits set, for the given length size
+     * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#sec_fmt3_appendixa">V. Appendix A: Definitions</a>
      * @param length tested length
-     * @return true if offset in undefined
+     * @param lengthSize 1, 2, 4 or 8 bytes
+     * @throws IllegalArgumentException if the length size is not supported.
      */
     public static boolean isUndefinedLength(long length, int lengthSize) {
         return switch (lengthSize) {

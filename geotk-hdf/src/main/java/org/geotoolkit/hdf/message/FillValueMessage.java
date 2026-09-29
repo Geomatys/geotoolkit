@@ -30,9 +30,9 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * Description: The fill value message stores a single data value which
  * is returned to the application when an uninitialized data element is read from
- * a dataset. The fill value is interpreted with the same datatype as the dataset
- * .
- * @see IV.A.2.f. The Data Storage - Fill Value Message
+ * a dataset. The fill value is interpreted with the same datatype as the dataset.
+ *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_fvmessage">IV.A.2.f. The Data Storage - Fill Value Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FillValueMessage extends Message {
@@ -40,27 +40,31 @@ public final class FillValueMessage extends Message {
     /**
      * When the storage space for the dataset’s raw data will be allocated. The
      * allowed values are:
-     * 0 : Not used.
-     * 1 : Early allocation. Storage space for the entire dataset should be
-     * allocated in the file when the dataset is created.
-     * 2 : Late allocation. Storage space for the entire dataset should not be
-     * allocated until the dataset is written to.
-     * 3 : Incremental allocation. Storage space for the dataset should not be
-     * allocated until the portion of the dataset is written to. This is
-     * currently used in conjunction with chunked data storage for datasets.
+     * <ul>
+     *   <li>0 : Not used.</li>
+     *   <li>1 : Early allocation. Storage space for the entire dataset should be
+     *   allocated in the file when the dataset is created.</li>
+     *   <li>2 : Late allocation. Storage space for the entire dataset should not be
+     *   allocated until the dataset is written to.</li>
+     *   <li>3 : Incremental allocation. Storage space for the dataset should not be
+     *   allocated until the portion of the dataset is written to. This is
+     *   currently used in conjunction with chunked data storage for datasets.</li>
+     * </ul>
      */
     private int spaceAllocationTime;
     /**
      * At the time that storage space for the dataset’s raw data is allocated,
      * this value indicates whether the fill value should be written to the raw
      * data storage elements. The allowed values are:
-     * 0 : On allocation. The fill value is always written to the raw data
-     * storage when the storage space is allocated.
-     * 1 : Never. The fill value should never be written to the raw data storage.
-     * 2 : Fill value written if set by user. The fill value will be written to
-     * the raw data storage when the storage space is allocated only if the user
-     * explicitly set the fill value. If the fill value is the library default
-     * or is undefined, it will not be written to the raw data storage.
+     * <ul>
+     *   <li>0 : On allocation. The fill value is always written to the raw data
+     *   storage when the storage space is allocated.</li>
+     *   <li>1 : Never. The fill value should never be written to the raw data storage.</li>
+     *   <li>2 : Fill value written if set by user. The fill value will be written to
+     *   the raw data storage when the storage space is allocated only if the user
+     *   explicitly set the fill value. If the fill value is the library default
+     *   or is undefined, it will not be written to the raw data storage.</li>
+     * </ul>
      */
     private int fillValueWriteTime;
     /**
@@ -81,10 +85,15 @@ public final class FillValueMessage extends Message {
      */
     private byte[] fillValue;
 
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public FillValueMessage() {
+    }
+
     /**
-     * The fill value. The bytes of the fill value are interpreted using the
-     * same datatype as for the dataset. This field is not present if the Version
-     * field is greater than 1, and the Fill Value Defined field is set to 0.
+     * Returns the fill value bytes, interpreted with the dataset datatype.
+     * May be {@code null} if the message version is greater than 1 and no fill value is defined.
+     *
+     * @return the fill value bytes, interpreted with the dataset datatype
      */
     public byte[] getFillValue() {
         return fillValue;

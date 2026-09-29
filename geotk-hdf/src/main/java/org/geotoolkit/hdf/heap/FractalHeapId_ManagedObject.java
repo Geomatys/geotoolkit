@@ -21,8 +21,10 @@ import org.geotoolkit.hdf.IOStructure;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Fractal heap ID of a managed object, stored in a direct block of the heap.
+ * The ID holds the object offset and length in the heap linear address space.
  *
- * @see III.G. Disk Format: Level 1G - Fractal Heap
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_fractalheap">III.G. Disk Format: Level 1G - Fractal Heap</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FractalHeapId_ManagedObject extends IOStructure {
@@ -53,6 +55,10 @@ public final class FractalHeapId_ManagedObject extends IOStructure {
      * of bytes needed to encode that value is used for the size of this field.
      */
     private int length;
+
+    /** Creates an empty heap ID, filled by {@link #read(HDF5DataInput)}. */
+    public FractalHeapId_ManagedObject() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

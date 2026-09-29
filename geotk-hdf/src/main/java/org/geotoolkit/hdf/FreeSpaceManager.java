@@ -37,7 +37,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * within the heap. There are 4 types of section records for the fractal heap,
  * each of which has its own format.
  *
- * @see III.H. Disk Format: Level 1H - Free-space Manager
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_freespaceindex">III.H. Disk Format: Level 1H - Free-space Index</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FreeSpaceManager extends IOStructure {
@@ -116,6 +116,10 @@ public final class FreeSpaceManager extends IOStructure {
      * (in bytes).
      */
     private long allocatedSizeOfSerializedSectionList;
+
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public FreeSpaceManager() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

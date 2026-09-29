@@ -20,8 +20,11 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Record of a version 2 B-tree of type 7, used for indexing shared object header
+ * messages, for a message stored in the shared message index heap
+ * (message location 0).
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2_Type7_SharedObjectHeaderMessage_Subtype0_MessageInHeap {
@@ -49,6 +52,16 @@ public final class BTreeV2_Type7_SharedObjectHeaderMessage_Subtype0_MessageInHea
      */
     private byte[] heapId;
 
+    /** Creates an empty record, filled by {@link #read(HDF5DataInput)}. */
+    public BTreeV2_Type7_SharedObjectHeaderMessage_Subtype0_MessageInHeap() {
+    }
+
+    /**
+     * Reads the record.
+     *
+     * @param channel channel positioned on the record
+     * @throws IOException if an I/O error occurred.
+     */
     public void read(HDF5DataInput channel) throws IOException {
 
         messageLocation = channel.readUnsignedByte();

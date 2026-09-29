@@ -30,7 +30,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * Objects within a local heap should be aligned on an 8-byte boundary.
  *
- * @see III.D. Disk Format: Level 1D - Local Heaps
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_localheap">III.D. Disk Format: Level 1D - Local Heaps</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class LocalHeap extends IOStructure {
@@ -67,11 +67,18 @@ public final class LocalHeap extends IOStructure {
      */
     public long addressOfDataSegment;
 
+    /** Creates an empty local heap, filled by {@link #read(HDF5DataInput)}. */
+    public LocalHeap() {
+    }
+
     /**
-     * Read a null terminated string from the local heap.
-     * @param channel to read from
-     * @param offset offset of the string in the heap
-     * @return string value
+     * Returns the null terminated string at the given offset.
+     * The channel position is restored on return.
+     *
+     * @param channel channel to read from
+     * @param offset offset of the string in the heap data segment
+     * @return the null terminated string at the given offset
+     * @throws IOException if an I/O error occurred.
      */
     public String getString(HDF5DataInput channel, long offset) throws IOException {
         channel.mark();

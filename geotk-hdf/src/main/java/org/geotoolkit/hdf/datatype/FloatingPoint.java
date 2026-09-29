@@ -21,18 +21,23 @@ import java.nio.ByteOrder;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Floating-point datatype. Only the IEEE 754 single and double precision
+ * layouts, in little or big endian byte order, are decoded.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FloatingPoint extends DataType {
 
     /**
      * Byte Order. These two non-contiguous bits specify the “endianness” of the bytes in the datatype element.
-     * Bit 6 Bit 0 Description
-     * 0 0 Byte order is little-endian
-     * 0 1 Byte order is big-endian
-     * 1 0 Reserved
-     * 1 1 Byte order is VAX-endian
+     * This field stores bit 6 of the class bit fields as bit 1, and bit 0 as bit 0:
+     * <ul>
+     *   <li>0 : Byte order is little-endian</li>
+     *   <li>1 : Byte order is big-endian</li>
+     *   <li>2 : Reserved</li>
+     *   <li>3 : Byte order is VAX-endian</li>
+     * </ul>
      */
     public int byteOrder;
     /**
@@ -44,12 +49,13 @@ public final class FloatingPoint extends DataType {
     public int paddingType;
     /**
      * Mantissa Normalization. This 2-bit bit field specifies how the most
-     * significant bit of the mantissa is managed.
-     * Value Description
-     * 0 : No normalization
-     * 1 : The most significant bit of the mantissa is always set (except for 0.0).
-     * 2 : The most significant bit of the mantissa is not stored, but is implied to be set.
-     * 3 : Reserved.
+     * significant bit of the mantissa is managed:
+     * <ul>
+     *   <li>0 : No normalization</li>
+     *   <li>1 : The most significant bit of the mantissa is always set (except for 0.0).</li>
+     *   <li>2 : The most significant bit of the mantissa is not stored, but is implied to be set.</li>
+     *   <li>3 : Reserved.</li>
+     * </ul>
      */
     public int mantissaNormalisation;
     /**
@@ -73,33 +79,35 @@ public final class FloatingPoint extends DataType {
      * least significant bit number zero.
      */
     public int exponentLocation;
-    /**
-     * The size of the exponent field in bits.
-     */
+    /** The size of the exponent field in bits. */
     public int exponentSize;
     /**
      * The bit position of the mantissa field. Bits are numbered with the
      * least significant bit number zero.
      */
     public int mantissaLocation;
-    /**
-     * The size of the mantissa field in bits.
-     */
+    /** The size of the mantissa field in bits. */
     public int mantissaSize;
-    /**
-     * The bias of the exponent field.
-     */
+    /** The bias of the exponent field. */
     public int exponentBias;
 
 
     //detect if the floating point type is a standard one.
-    private static enum KnownType {
+    private enum KnownType {
         FLOAT32,
         FLOAT64,
-        OTHER;
+        OTHER
     }
     private KnownType knownType = KnownType.OTHER;
 
+    /**
+     * Reads the datatype properties.
+     *
+     * @param byteSize element size in bytes.
+     * @param classBitFields class bit fields (byte order, padding, mantissa normalization, sign location).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred.
+     */
     public FloatingPoint(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
         byteOrder = (classBitFields & 0b1) | ((classBitFields & 0b1000000) >> 5);

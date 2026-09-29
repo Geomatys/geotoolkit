@@ -16,11 +16,17 @@
  */
 package org.geotoolkit.hdf.filter;
 
-import java.io.IOException;
-
 /**
  * This filter is in reality something like interleaved to band sample model.
  * it reorders bytes.
+ * <p>
+ * Shuffling groups together the bytes having the same rank within an element :
+ * all the first bytes, then all the second bytes, and so on. It compresses
+ * better because bytes of equal significance correlate. Un-shuffling puts the
+ * elements back together.
+ * <p>
+ * Trailing bytes that do not fill a whole element take no part in the reordering
+ * and are copied as they are.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -28,43 +34,114 @@ public final class Shuffle implements Filter {
 
     private final int dataSize;
 
+    /**
+     * Creates a shuffle filter for elements of the given size.
+     *
+     * @param dataSize element size in bytes, values lower than 2 disable the filter
+     */
     public Shuffle(int dataSize) {
         this.dataSize = dataSize;
     }
 
+    /**
+     * Group the bytes of equal rank together.
+     */
     @Override
-    public byte[] encode(byte[] data) throws IOException {
-        //same algo
-        return decode(data);
-    }
+    public byte[] encode(byte[] data) {
+        final int size = dataSize;
+        if (size < 2) return data;
+        final int length = data.length;
+        final int count = length / size;
+        if (count == 0) return data;
 
-    @Override
-    public byte[] decode(byte[] data) throws IOException {
-        if (dataSize < 2) return data;
-
-        final int nbData = data.length / dataSize;
-        //copies all bytes, if any extra byte is set, they remain unchanged
-        final byte[] out = data.clone();
-        final int[] offsets = new int[dataSize];
-        offsets[0] = 0;
-        for (int i = 1; i < dataSize; i++) {
-            offsets[i] = offsets[i-1] + nbData;
-        }
-
-        for (int x = 0, xp = 0; x < nbData; x++) {
-            for (int i = 0; i < dataSize; i++, xp++) {
-                out[xp] = data[offsets[i] + x];
+        final byte[] out = new byte[length];
+        final int reordered = count * size;
+        /*
+        Read one byte rank at a time, with the stride of an element, and write
+        the resulting plane sequentially.
+        */
+        for (int i = 0, dst = 0; i < size; i++) {
+            for (int src = i; src < reordered; src += size, dst++) {
+                out[dst] = data[src];
             }
         }
+        copyTrailingBytes(data, out, reordered);
         return out;
     }
 
     /**
-     * Shuffle do not change data size.
+     * Put the bytes of each element back together.
      */
     @Override
-    public long uncompressedSize(byte[] chunkdata) throws IOException {
-        return chunkdata.length;
+    public byte[] decode(byte[] data) {
+        final int size = dataSize;
+        if (size < 2) return data;
+        final int length = data.length;
+        final int count = length / size;
+        if (count == 0) return data;
+
+        final byte[] out = new byte[length];
+        /*
+        One element is written per iteration, so the output is written once from
+        start to end. The inputs are one sequential stream per byte rank, which
+        the hardware prefetcher follows well.
+        */
+        switch (size) {
+            case 2: {
+                final int p1 = count;
+                for (int x = 0, dst = 0; x < count; x++, dst += 2) {
+                    out[dst    ] = data[x];
+                    out[dst + 1] = data[p1 + x];
+                }
+                break;
+            }
+            case 4: {
+                final int p1 = count, p2 = p1 + count, p3 = p2 + count;
+                for (int x = 0, dst = 0; x < count; x++, dst += 4) {
+                    out[dst    ] = data[x];
+                    out[dst + 1] = data[p1 + x];
+                    out[dst + 2] = data[p2 + x];
+                    out[dst + 3] = data[p3 + x];
+                }
+                break;
+            }
+            case 8: {
+                final int p1 = count,    p2 = p1 + count, p3 = p2 + count,
+                          p4 = p3 + count, p5 = p4 + count, p6 = p5 + count,
+                          p7 = p6 + count;
+                for (int x = 0, dst = 0; x < count; x++, dst += 8) {
+                    out[dst    ] = data[x];
+                    out[dst + 1] = data[p1 + x];
+                    out[dst + 2] = data[p2 + x];
+                    out[dst + 3] = data[p3 + x];
+                    out[dst + 4] = data[p4 + x];
+                    out[dst + 5] = data[p5 + x];
+                    out[dst + 6] = data[p6 + x];
+                    out[dst + 7] = data[p7 + x];
+                }
+                break;
+            }
+            default: {
+                /*
+                Uncommon element sizes read one plane at a time, which keeps a
+                single sequential input stream without needing a cursor per rank.
+                */
+                final int reordered = count * size;
+                for (int i = 0, src = 0; i < size; i++) {
+                    for (int dst = i; dst < reordered; dst += size, src++) {
+                        out[dst] = data[src];
+                    }
+                }
+                break;
+            }
+        }
+        copyTrailingBytes(data, out, count * size);
+        return out;
     }
 
+    private static void copyTrailingBytes(byte[] data, byte[] out, int reordered) {
+        if (reordered < data.length) {
+            System.arraycopy(data, reordered, out, reordered, data.length - reordered);
+        }
+    }
 }

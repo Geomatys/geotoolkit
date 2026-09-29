@@ -23,6 +23,7 @@ import java.nio.channels.NonWritableChannelException;
 import java.nio.channels.SeekableByteChannel;
 
 /**
+ * Read only channel over the concatenation of two channels.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -34,6 +35,14 @@ public final class SequenceSeekableByteChannel implements SeekableByteChannel {
     private long position = 0;
     private boolean open = true;
 
+    /**
+     * Creates a channel reading {@code first} then {@code second}.
+     * Both channels are closed when this channel is closed.
+     *
+     * @param first channel read first, its size is taken at construction time
+     * @param second channel read after the end of {@code first}
+     * @throws IOException if the size of the first channel could not be obtained.
+     */
     public SequenceSeekableByteChannel(SeekableByteChannel first, SeekableByteChannel second) throws IOException {
         this.first = first;
         this.second = second;

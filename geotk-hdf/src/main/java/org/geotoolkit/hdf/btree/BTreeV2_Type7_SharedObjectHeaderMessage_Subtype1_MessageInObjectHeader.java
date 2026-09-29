@@ -20,8 +20,10 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Record of a version 2 B-tree of type 7, used for indexing shared object header
+ * messages, for a message stored in an object header (message location 1).
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2_Type7_SharedObjectHeaderMessage_Subtype1_MessageInObjectHeader {
@@ -53,13 +55,27 @@ public final class BTreeV2_Type7_SharedObjectHeaderMessage_Subtype1_MessageInObj
      */
     private long objectHeaderAddress;
 
+    /** Creates an empty record, filled by {@link #read(HDF5DataInput)}. */
+    public BTreeV2_Type7_SharedObjectHeaderMessage_Subtype1_MessageInObjectHeader() {
+    }
+
+    /**
+     * Reads the record.
+     *
+     * @param channel channel positioned on the record
+     * @throws IOException if an I/O error occurred.
+     */
     public void read(HDF5DataInput channel) throws IOException {
 
         messageLocation = channel.readUnsignedByte();
         hash = channel.readInt();
-        channel.skipFully(1);
-        messageType = channel.readInt();
-        objectHeaderIndex = channel.readInt();
+        channel.skipFully(1); //reserved
+        /*
+        The message type is one byte and the object header index two, so that this
+        record is the same 17 bytes as the subtype 0 record it shares a B-tree with.
+        */
+        messageType = channel.readUnsignedByte();
+        objectHeaderIndex = channel.readUnsignedShort();
         objectHeaderAddress = channel.readOffset();
     }
 }

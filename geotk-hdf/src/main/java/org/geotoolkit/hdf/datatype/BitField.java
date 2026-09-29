@@ -21,7 +21,9 @@ import java.nio.ByteOrder;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Bit field datatype : a sequence of bits, decoded as a {@code long}.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BitField extends DataType {
@@ -43,11 +45,17 @@ public final class BitField extends DataType {
      * the value.
      */
     public final int bitOffset;
-    /**
-     * The number of bits of precision of the bit field within the datatype.
-     */
+    /** The number of bits of precision of the bit field within the datatype. */
     public final int bitPrecision;
 
+    /**
+     * Reads the datatype properties.
+     *
+     * @param byteSize element size in bytes.
+     * @param classBitFields class bit fields (byte order, padding type).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred.
+     */
     public BitField(int byteSize, int classBitFields, HDF5DataInput channel) throws IOException {
         super(byteSize);
         byteOrder = (classBitFields & 0b1) == 0 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;

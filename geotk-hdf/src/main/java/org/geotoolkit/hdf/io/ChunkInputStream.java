@@ -23,6 +23,10 @@ import java.io.InputStream;
 import org.geotoolkit.hdf.filter.Filter;
 
 /**
+ * Input stream over the decoded content of a chunk.
+ * <p>
+ * The stored bytes are read and the filters reversed lazily, on the first
+ * read operation; the whole decoded chunk is then kept in memory.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -37,6 +41,11 @@ public class ChunkInputStream extends InputStream {
     private boolean finished = false;
 
     /**
+     * Creates a stream over the chunk stored at the given address.
+     *
+     * @param channel file channel
+     * @param address file address of the stored chunk
+     * @param compressedSize stored size in bytes
      * @param filters applied in reversed order on the chunk datas.
      */
     public ChunkInputStream(HDF5DataInput channel, long address, long compressedSize, Filter... filters) {
@@ -46,6 +55,13 @@ public class ChunkInputStream extends InputStream {
         this.filters = filters;
     }
 
+    /**
+     * Returns the size in bytes of the decoded chunk.
+     * If there are filters, this requires reading and decoding the chunk.
+     *
+     * @return the size in bytes of the decoded chunk
+     * @throws IOException if an error occurred while reading or decoding the chunk.
+     */
     public long getUncompressedSize() throws IOException {
         if (uncompressedSize == -1) {
             if (filters.length == 0) {

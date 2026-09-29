@@ -22,16 +22,20 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.NonWritableChannelException;
 import java.nio.channels.SeekableByteChannel;
 import java.util.List;
-import org.geotoolkit.hdf.btree.BTreeV1Chunk;
+import org.geotoolkit.hdf.chunk.Chunk;
 import org.geotoolkit.hdf.message.FilterPipelineMessage;
 
 /**
+ * Read only channel over the decoded content of a {@link Chunk}.
+ * <p>
+ * The stored bytes are read and the filter pipeline reversed lazily, on the
+ * first read operation; the whole decoded chunk is then kept in memory.
  *
  * @author Johann Sorel (Geomatys)
  */
 public class ChunkSeekableByteChannel implements SeekableByteChannel{
 
-    private final BTreeV1Chunk chunk;
+    private final Chunk chunk;
     private final HDF5DataInput channel;
     private final List<FilterPipelineMessage.FilterDescription> filters;
     private byte[] back;
@@ -39,27 +43,51 @@ public class ChunkSeekableByteChannel implements SeekableByteChannel{
     private boolean open = true;
 
     /**
+     * Creates a channel over the given chunk.
+     *
+     * @param chunk chunk to read
+     * @param channel file channel
      * @param filters applied in reversed order on the chunk datas.
      */
-    public ChunkSeekableByteChannel(BTreeV1Chunk chunk, HDF5DataInput channel, List<FilterPipelineMessage.FilterDescription> filters) {
+    public ChunkSeekableByteChannel(Chunk chunk, HDF5DataInput channel, List<FilterPipelineMessage.FilterDescription> filters) {
         this.chunk = chunk;
         this.channel = channel;
         this.filters = filters;
     }
 
+    /**
+     * Read a chunk from the file and reverse its filter pipeline.
+     *
+     * @param chunk chunk to read
+     * @param channel file channel
+     * @param filters filter pipeline of the dataset, applied in reverse order
+     * @return the decoded chunk bytes
+     * @throws IOException if an error occurred while reading or decoding the chunk.
+     */
+    public static byte[] decode(Chunk chunk, HDF5DataInput channel,
+            List<FilterPipelineMessage.FilterDescription> filters) throws IOException {
+        byte[] array;
+        synchronized (channel) {
+            channel.seek(chunk.address);
+            array = channel.readNBytes(Math.toIntExact(chunk.size));
+        }
+        /*
+        Filters are reversed in the opposite order they were applied, and a
+        filter whose bit is set in the chunk filter mask was skipped when
+        writing this particular chunk, so it must not be reversed. This
+        happens for partial edge chunks.
+        */
+        for (int i = filters.size() - 1; i >= 0; i--) {
+            if (chunk.isFilterSkipped(i)) continue;
+            array = filters.get(i).getFilter().decode(array);
+        }
+        chunk.uncompressedSize = array.length;
+        return array;
+    }
+
     private byte[] getBack() throws IOException {
         if (back == null) {
-            byte[] array;
-            synchronized (channel) {
-                channel.seek(chunk.address);
-                array = channel.readNBytes(Math.toIntExact(chunk.size));
-            }
-            //apply filters
-            for (int i = filters.size() - 1; i >= 0; i--) {
-                array = filters.get(i).getFilter().decode(array);
-            }
-            chunk.uncompressedSize = array.length;
-            back = array;
+            back = decode(chunk, channel, filters);
         }
         return back;
     }
@@ -82,7 +110,8 @@ public class ChunkSeekableByteChannel implements SeekableByteChannel{
         final byte[] array = getBack();
         final int offset = (int) position;
         final int remaining = back.length - offset;
-        if (remaining == 0) return -1;
+        //a position past the end must report the end, not compute a negative length
+        if (remaining <= 0) return -1;
         final int nb = Math.min(remaining, dst.remaining());
         dst.put(array, offset, nb);
         position += nb;
@@ -98,7 +127,7 @@ public class ChunkSeekableByteChannel implements SeekableByteChannel{
     @Override
     public SeekableByteChannel position(long newPosition) throws IOException {
         if (!open) throw new ClosedChannelException();
-        if (position < 0) throw new IllegalArgumentException("Position is negative");
+        if (newPosition < 0) throw new IllegalArgumentException("Position is negative");
         this.position = newPosition;
         return this;
     }

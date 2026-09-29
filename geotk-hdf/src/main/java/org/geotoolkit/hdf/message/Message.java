@@ -19,16 +19,25 @@ package org.geotoolkit.hdf.message;
 import org.geotoolkit.hdf.IOStructure;
 
 /**
- * Parent class of all messages.
+ * Parent class of all messages. A message is a piece of metadata stored in a
+ * data object header, identified by its message type code.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_dataobject_hdr_msg">IV.A.2. Disk Format: Level 2A2 - Data Object Header Messages</a>
  * @author Johann Sorel (Geomatys)
  */
 public abstract class Message extends IOStructure {
 
+    /** Creates an empty message, filled by {@link #read(org.geotoolkit.hdf.io.HDF5DataInput)}. */
+    public Message() {
+    }
+
     /**
-     * @param code message code
-     * @param version message version
-     * @return message class
+     * Creates an empty message of the given type, still to be {@linkplain #read(org.geotoolkit.hdf.io.HDF5DataInput) read}.
+     *
+     * @param code message type code.
+     * @param version message version.
+     * @return a new, empty message.
+     * @throws IllegalArgumentException if the message type or version is unknown.
      */
     public static Message forCode(int code, int version) {
         return switch (code) {
@@ -56,7 +65,7 @@ public abstract class Message extends IOStructure {
                     default -> throw new IllegalArgumentException("Unknowned message type " + code +" version " + version);
                 };
             case 0x0008 -> switch (version) {
-                    case 1,2,3,4 -> new DataLayoutMessage();
+                    case 1,2,3,4,5 -> new DataLayoutMessage();
                     default -> throw new IllegalArgumentException("Unknowned message type " + code +" version " + version);
                 };
             case 0x0009 -> new BogusMessage();

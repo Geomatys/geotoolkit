@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.hdf.filter.Deflate;
+import org.geotoolkit.hdf.filter.Fletcher32;
 import org.geotoolkit.hdf.filter.Filter;
 import org.geotoolkit.hdf.filter.Shuffle;
 import org.geotoolkit.hdf.io.HDF5DataInput;
@@ -45,7 +46,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Currently, only datasets using chunked data storage use the filter pipeline
  * on their raw data.
  *
- * @see IV.A.2.l. The Data Storage - Filter Pipeline Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_filter">IV.A.2.l. The Data Storage - Filter Pipeline Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FilterPipelineMessage extends Message {
@@ -63,11 +64,18 @@ public final class FilterPipelineMessage extends Message {
     /** scaleoffset : Scale and offset encoded values */
     public static final int SCALEOFFSET = 6;
 
-    /**
-     * A description of each filter.
-     */
+    /** A description of each filter. */
     private List<FilterDescription> filters;
 
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public FilterPipelineMessage() {
+    }
+
+    /**
+     * Returns the filters, in writing order; decoding applies them in reverse order.
+     *
+     * @return the filters, in writing order; decoding applies them in reverse order
+     */
     public List<FilterDescription> getFilters() {
         return filters;
     }
@@ -125,10 +133,11 @@ public final class FilterPipelineMessage extends Message {
 
     }
 
+    /** Description of a filter of the pipeline. */
     public static class FilterDescription {
 
         /**
-         *  This value, often referred to as a filter identifier, is designed to
+         * This value, often referred to as a filter identifier, is designed to
          * be a unique identifier for the filter. Values from zero through
          * 32,767 are reserved for filters supported by The HDF Group in the
          * HDF5 Library and for filters requested and supported by third parties.
@@ -139,9 +148,11 @@ public final class FilterPipelineMessage extends Message {
          * To request a filter identifier, please contact The HDF Group’s Help
          * Desk at The HDF Group Help Desk. You will be asked to provide the
          * following information:
-         * Contact information for the developer requesting the new identifier
-         * A short description of the new filter
-         * Links to any relevant information, including licensing information
+         * <ul>
+         *   <li>Contact information for the developer requesting the new identifier</li>
+         *   <li>A short description of the new filter</li>
+         *   <li>Links to any relevant information, including licensing information</li>
+         * </ul>
          * <p>
          * Values from 32768 to 65535 are reserved for non-distributed uses
          * (for example, internal company usage) or for application usage when
@@ -149,13 +160,15 @@ public final class FilterPipelineMessage extends Message {
          * of the filters with identifiers from this range.
          * <p>
          * The filters currently in library version 1.8.0 are listed below:
-         * 0 : N/A : Reserved
-         * 1 : deflate : GZIP deflate compression
-         * 2 : shuffle : Data element shuffling
-         * 3 : fletcher32 : Fletcher32 checksum
-         * 4 : szip : SZIP compression
-         * 5 : nbit : N-bit packing
-         * 6 : scaleoffset : Scale and offset encoded values
+         * <ul>
+         *   <li>0 : N/A : Reserved</li>
+         *   <li>1 : deflate : GZIP deflate compression</li>
+         *   <li>2 : shuffle : Data element shuffling</li>
+         *   <li>3 : fletcher32 : Fletcher32 checksum</li>
+         *   <li>4 : szip : SZIP compression</li>
+         *   <li>5 : nbit : N-bit packing</li>
+         *   <li>6 : scaleoffset : Scale and offset encoded values</li>
+         * </ul>
          */
         public int filteridentificationValue;
         /**
@@ -168,10 +181,12 @@ public final class FilterPipelineMessage extends Message {
         /**
          * The flags indicate certain properties for a filter. The bit values
          * defined so far are:
-         * 0 : If set then the filter is an optional filter. During output,
-         * if an optional filter fails it will be silently skipped in the
-         * pipeline.
-         * 1-15 : Reserved (zero)
+         * <ul>
+         *   <li>Bit 0 : If set then the filter is an optional filter. During output,
+         *   if an optional filter fails it will be silently skipped in the
+         *   pipeline.</li>
+         *   <li>Bits 1-15 : Reserved (zero)</li>
+         * </ul>
          */
         private int flags;
         /**
@@ -196,12 +211,31 @@ public final class FilterPipelineMessage extends Message {
 
         private Filter filter;
 
+        /** Creates an empty description, filled when the enclosing message is read. */
+        public FilterDescription() {
+        }
+
+        /**
+         * Returns the filter implementation, created on first call.
+         *
+         * @return the filter implementation, created on first call
+         * @throws IOException if the filter is unsupported or its client data are incomplete.
+         */
         public Filter getFilter() throws IOException {
             if (filter == null) {
                 filter = switch (filteridentificationValue) {
                     case FilterPipelineMessage.DEFLATE -> new Deflate();
-                    case FilterPipelineMessage.SHUFFLE -> new Shuffle(clientData[0]);
-                    default -> throw new IOException("Unsupported filter " + filteridentificationValue);
+                    case FilterPipelineMessage.SHUFFLE -> {
+                        if (clientData == null || clientData.length == 0) {
+                            throw new IOException("Shuffle filter declares no element size");
+                        }
+                        yield new Shuffle(clientData[0]);
+                    }
+                    case FilterPipelineMessage.FLETCHER32 -> new Fletcher32();
+                    case FilterPipelineMessage.SZIP -> throw new IOException(
+                            "SZIP compressed data is not supported by this pure Java reader");
+                    default -> throw new IOException("Unsupported filter "
+                            + filteridentificationValue + " (" + name + ").");
                 };
             }
             return filter;

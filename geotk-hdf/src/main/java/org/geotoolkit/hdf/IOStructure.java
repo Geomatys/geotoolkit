@@ -26,22 +26,31 @@ import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.btree.BTreeV2;
-import org.geotoolkit.hdf.btree.BTreeV2InternalNode;
-import org.geotoolkit.hdf.btree.BTreeV2LeafNode;
 import org.geotoolkit.hdf.heap.FractalHeap;
-import org.geotoolkit.hdf.heap.FractalHeapDirectBlock;
-import org.geotoolkit.hdf.heap.FractalHeapIndirectBlock;
 import org.geotoolkit.hdf.heap.GlobalHeap;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.util.StringUtilities;
 
 /**
+ * Base class of all HDF-5 structures which are read from the file.
+ * Subclasses populate their fields from the binary content in {@link #read(HDF5DataInput)}.
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class IOStructure {
 
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public IOStructure() {
+    }
+
+    /**
+     * Reads this structure from the current channel position.
+     *
+     * @param channel channel positioned on the structure.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the content is invalid or unsupported.
+     */
     public abstract void read(HDF5DataInput channel) throws IOException, DataStoreException;
 
     @Override
@@ -49,6 +58,14 @@ public abstract class IOStructure {
         return reflectionToString(this);
     }
 
+    /**
+     * Reads the structure at the current channel position, its type being identified by its 4 bytes signature.
+     *
+     * @param channel channel positioned on the structure signature.
+     * @return the structure read.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the signature is unknown or the content is invalid.
+     */
     public static IOStructure loadIdentifiedObject(HDF5DataInput channel) throws IOException, DataStoreException{
         channel.mark();
         final byte[] signature = channel.readNBytes(4);
@@ -58,8 +75,6 @@ public abstract class IOStructure {
             structure = new FreeSpaceManager();
         } else if (Arrays.equals(FreeSpaceSectionList.SIGNATURE, signature)) {
             structure = new FreeSpaceSectionList();
-        } else if (Arrays.equals(ObjectHeaderContinuationBlockV2.SIGNATURE, signature)) {
-            structure = new ObjectHeaderContinuationBlockV2();
         } else if (Arrays.equals(ObjectHeaderV2.SIGNATURE, signature)) {
             structure = new ObjectHeaderV2();
         } else if (Arrays.equals(SharedMessageRecordList.SIGNATURE, signature)) {
@@ -74,16 +89,8 @@ public abstract class IOStructure {
             structure = new BTreeV1();
         } else if (Arrays.equals(BTreeV2.SIGNATURE, signature)) {
             structure = new BTreeV2();
-        } else if (Arrays.equals(BTreeV2InternalNode.SIGNATURE, signature)) {
-            structure = new BTreeV2InternalNode();
-        } else if (Arrays.equals(BTreeV2LeafNode.SIGNATURE, signature)) {
-            structure = new BTreeV2LeafNode();
         } else if (Arrays.equals(FractalHeap.SIGNATURE, signature)) {
             structure = new FractalHeap();
-        } else if (Arrays.equals(FractalHeapDirectBlock.SIGNATURE, signature)) {
-            structure = new FractalHeapDirectBlock();
-        } else if (Arrays.equals(FractalHeapIndirectBlock.SIGNATURE, signature)) {
-            structure = new FractalHeapIndirectBlock();
         } else if (Arrays.equals(GlobalHeap.SIGNATURE, signature)) {
             structure = new GlobalHeap();
         } else if (Arrays.equals(LocalHeap.SIGNATURE, signature)) {
@@ -96,6 +103,12 @@ public abstract class IOStructure {
         return structure;
     }
 
+    /**
+     * Formats all non-static fields (including inherited ones) of the given object as a tree, using reflection.
+     *
+     * @param object object to format.
+     * @return tree representation of the object fields.
+     */
     public static String reflectionToString(Object object) {
         final List<String> list = new ArrayList<>();
         final List<Field> fields = new ArrayList<>();
@@ -142,6 +155,13 @@ public abstract class IOStructure {
         return StringUtilities.toStringTree(name, list);
     }
 
+    /**
+     * Collects the fields declared by the given type and all its super classes.
+     *
+     * @param fields list where to add the fields.
+     * @param type class to inspect.
+     * @return the given {@code fields} list.
+     */
     public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
 

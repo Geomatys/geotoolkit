@@ -34,7 +34,8 @@ import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
- * Decorate as HDF Group as Aggregate.
+ * Decorate an HDF Group as an Aggregate.
+ * The components are the resources decorating the group children, added by the store.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -44,13 +45,21 @@ public final class GroupAsAggregate implements Aggregate, StoreResource{
     private final Group group;
     private final List<Resource> components = new ArrayList<>();
 
+    /**
+     * Creates an aggregate view of the given group, initially without components.
+     *
+     * @param store store owning the group.
+     * @param group group to decorate.
+     */
     public GroupAsAggregate(HDF5Store store, Group group) {
         this.store = store;
         this.group = group;
     }
 
     /**
-     * List of modifiable internal resources.
+     * Returns the modifiable list of components of this aggregate.
+     *
+     * @return the modifiable list of components of this aggregate
      */
     public List<Resource> resources() {
         return components;

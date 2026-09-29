@@ -23,7 +23,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * The driver information block is an optional region of the file which contains
  * information needed by the file driver to reopen a file.
  *
- * @see II.B. Disk Format: Level 0B - File Driver Info
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_boot_driver">II.B. Disk Format: Level 0B - File Driver Info</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DriverInformationBlock extends IOStructure {
@@ -50,8 +50,10 @@ public final class DriverInformationBlock extends IOStructure {
      */
     private byte[] driverInformation;
 
-    /**
-     */
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public DriverInformationBlock() {
+    }
+
     @Override
     public void read(HDF5DataInput channel) throws IOException {
         /*

@@ -25,7 +25,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * <p>
  * Header Message Type: 0x0001
  * <p>
- * Length: Varies according to the number of dimensions, as described in the following table.
+ * Length: Varies according to the number of dimensions.
  * <p>
  * Status: Required for dataset objects; may not be repeated.
  * <p>
@@ -37,14 +37,12 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * Version 2 of the dataspace message dropped the optional permutation index
  * value support, as it was never implemented in the HDF5 Library.
  *
- * @see IV.A.2.b. The Dataspace Message
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_simple">IV.A.2.b. The Dataspace Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class DataspaceMessage extends Message {
 
-    /**
-     * This value is the number of dimensions that the data object has.
-     */
+    /** This value is the number of dimensions that the data object has. */
     private int dimensionality;
     /**
      * This field is used to store flags to indicate the presence of parts of
@@ -55,12 +53,13 @@ public final class DataspaceMessage extends Message {
     private int flags;
     /**
      * This field indicates the type of the dataspace:
-     * 0 : A scalar dataspace; in other words, a dataspace with a single,
-     *   dimensionless element.
-     * 1 : A simple dataspace; in other words, a dataspace with a rank greater
-     *   than 0 and an appropriate number of dimensions.
-     * 2 : A null dataspace; in other words, a dataspace with no elements.
-     * <p>
+     * <ul>
+     *   <li>0 : A scalar dataspace; in other words, a dataspace with a single,
+     *   dimensionless element.</li>
+     *   <li>1 : A simple dataspace; in other words, a dataspace with a rank greater
+     *   than 0 and an appropriate number of dimensions.</li>
+     *   <li>2 : A null dataspace; in other words, a dataspace with no elements.</li>
+     * </ul>
      * Only in version 2.
      */
     private int type;
@@ -85,16 +84,21 @@ public final class DataspaceMessage extends Message {
      * values are not stored, the first dimension stored in the list of dimensions
      * is the slowest changing dimension and the last dimension stored is the
      * fastest changing dimension.
-     *
+     * <p>
      * This property has never been implemented by libhdf.
      */
     private long[] permutationIndexes;
 
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public DataspaceMessage() {
+    }
+
     /**
-     * This value is the current size of the dimension of the data as stored in
-     * the file. The first dimension stored in the list of dimensions is the
-     * slowest changing dimension and the last dimension stored is the fastest
-     * changing dimension.
+     * Returns a new array of the current dimension sizes, empty for a scalar dataspace.
+     * The first dimension is the slowest changing one.
+     *
+     * @return a new array of the current dimension sizes, empty for a scalar dataspace
+     * @throws ArithmeticException if a size does not fit in an {@code int}.
      */
     public int[] getDimensionSizes() {
         final int[] size = new int[dimensionSizes.length];
@@ -104,16 +108,21 @@ public final class DataspaceMessage extends Message {
         return size;
     }
 
+    /**
+     * Returns the current dimension sizes as a grid extent starting at 0.
+     *
+     * @return the current dimension sizes as a grid extent starting at 0
+     */
     public GridExtent getDimensionExtent() {
         return new GridExtent(null, null, dimensionSizes, false);
     }
 
     /**
-     * This value is the maximum size of the dimension of the data as stored in
-     * the file. This value may be the special “unlimited” size which indicates
-     * that the data may expand along this dimension indefinitely. If these
-     * values are not stored, the maximum size of each dimension is assumed to
-     * be the dimension’s current size.
+     * Returns a new array of the maximum dimension sizes.
+     *
+     * @return a new array of the maximum dimension sizes
+     * @throws NullPointerException if the maximum sizes are not stored in this message.
+     * @throws ArithmeticException if a size, for example “unlimited”, does not fit in an {@code int}.
      */
     public int[] getDimensionMaximumSizes() {
         final int[] maxs = new int[dimensionMaximumSizes.length];
@@ -124,8 +133,9 @@ public final class DataspaceMessage extends Message {
     }
 
     /**
-     * The dataspace is completly empty and contains no even a single data.
-     * This can be true only with version 2.
+     * Returns whether this is a null dataspace, without any element (version 2 only).
+     *
+     * @return whether this is a null dataspace, without any element (version 2 only)
      */
     public boolean isNull() {
         return type == 2;

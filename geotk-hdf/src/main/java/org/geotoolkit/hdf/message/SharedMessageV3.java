@@ -20,18 +20,22 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Shared message, version 3 : locates a message stored in another object header
+ * or in the shared object header message heap.
  *
- * @see IV.A.2. Disk Format: Level 2A2 - Data Object Header Messages
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_dataobject_hdr_msg">IV.A.2. Disk Format: Level 2A2 - Data Object Header Messages</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedMessageV3 extends Message {
 
     /**
      * The type of shared message location:
-     * 0 : Message is not shared and is not shareable.
-     * 1 : Message stored in file’s shared object header message heap (a shared message).
-     * 2 : Message stored in another object’s header (a committed message).
-     * 3 : Message stored is not shared, but is shareable.
+     * <ul>
+     *   <li>0 : Message is not shared and is not shareable.</li>
+     *   <li>1 : Message stored in file’s shared object header message heap (a shared message).</li>
+     *   <li>2 : Message stored in another object’s header (a committed message).</li>
+     *   <li>3 : Message stored is not shared, but is shareable.</li>
+     * </ul>
      */
     private int type;
     /**
@@ -40,6 +44,10 @@ public final class SharedMessageV3 extends Message {
      * for the message in the file’s shared object header message heap.
      */
     private Object location;
+
+    /** Creates an empty message, filled by {@link #read(HDF5DataInput)}. */
+    public SharedMessageV3() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

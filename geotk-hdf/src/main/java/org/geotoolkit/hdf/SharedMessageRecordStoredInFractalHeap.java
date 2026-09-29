@@ -20,8 +20,9 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Shared message record of an index node, for a message stored in the fractal heap of the index.
  *
- * @see III.I. Disk Format: Level 1I - Shared Object Header Message Table
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_sohm">III.I. Disk Format: Level 1I - Shared Object Header Message Table</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedMessageRecordStoredInFractalHeap extends IOStructure {
@@ -43,6 +44,10 @@ public final class SharedMessageRecordStoredInFractalHeap extends IOStructure {
      */
     public Object fractalHeapId;
 
+
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public SharedMessageRecordStoredInFractalHeap() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

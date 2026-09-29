@@ -28,22 +28,37 @@ import org.geotoolkit.util.StringUtilities;
  * of the compound datatype. The member definitions appear one after another
  * with no intervening bytes. The member types are described with a (recursively)
  * encoded datatype message.
- *
+ * <p>
  * Note that the property descriptions are different for different versions
  * of the datatype version. Additionally note that the version 0 datatype
  * encoding is deprecated and has been replaced with later encodings in versions
  * of the HDF5 Library from the 1.4 release onward.
+ * <p>
+ * Values are decoded as a {@code double[]} when all members are {@code double},
+ * or as an {@code Object[]} otherwise, with one entry per requested member.
  *
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_dataobject_hdr_msg_dtmessage">IV.A.2.d. The Datatype Message</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class Compound extends DataType {
 
+    /** Member definitions, in declaration order. */
     public final Member[] members;
 
     private final Class componentClass;
     private final Class valueClass;
     private final int[] allMembers;
 
+    /**
+     * Reads the datatype properties, which are the member definitions.
+     *
+     * @param byteSize size in bytes of a whole compound element.
+     * @param version datatype message version (1, 2 or 3).
+     * @param classBitFields class bit fields (number of members).
+     * @param channel input positioned on the datatype properties.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the version is unexpected or a member datatype is invalid.
+     */
     public Compound(int byteSize, int version, int classBitFields, HDF5DataInput channel) throws IOException, DataStoreException {
         super(byteSize);
         /*
@@ -83,10 +98,6 @@ public final class Compound extends DataType {
         return valueClass;
     }
 
-    /**
-     * Read a strip of datatype values.
-     * @param input to read from, not null
-     */
     @Override
     public Object readData(HDF5DataInput input, int size, int ... compoundindexes) throws IOException, DataStoreException {
         if (double.class.equals(componentClass)) {
@@ -136,28 +147,30 @@ public final class Compound extends DataType {
         return StringUtilities.toStringTree(this.getClass().getSimpleName(), Arrays.asList(members));
     }
 
+    /** Member of a compound datatype : name, offset and datatype. */
     public static class Member {
        /**
-        * This NUL-terminated string provides a description for the opaque type.
+        * This NUL-terminated string is the name of the member, which must be
+        * unique within the compound datatype.
         */
        public String name;
-       /**
-        * This is the byte offset of the member within the datatype.
-        */
+       /** This is the byte offset of the member within the datatype. */
        public int byteOffsetOfMember;
        /**
         * This field is the size of a dimension of the array field as stored in
         * the file. The first dimension stored in the list of dimensions is the
         * slowest changing dimension and the last dimension stored is the fastest
         * changing dimension.
-        *
-        * Defined int version 1 only.
+        * <p>
+        * Defined in version 1 only.
         */
        public int[] dimensionSizes;
-       /**
-        * This field is a datatype message describing the datatype of the member.
-        */
+       /** This field is a datatype message describing the datatype of the member. */
        public DataType memberType;
+
+       /** Creates an empty member, filled when the enclosing compound is read. */
+       public Member() {
+       }
 
        private void read(int version, int size, HDF5DataInput channel) throws IOException, DataStoreException {
            if (version == 1) {

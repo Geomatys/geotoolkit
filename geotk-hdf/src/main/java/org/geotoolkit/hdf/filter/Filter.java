@@ -19,20 +19,31 @@ package org.geotoolkit.hdf.filter;
 import java.io.IOException;
 
 /**
+ * A filter of the HDF-5 filter pipeline, applied on the bytes of each chunk.
+ * <p>
+ * Filters are applied in pipeline order when writing, and reversed in the
+ * opposite order when reading.
  *
  * @author Johann Sorel (Geomatys)
+ * @see org.geotoolkit.hdf.message.FilterPipelineMessage
  */
 public interface Filter {
 
-    long uncompressedSize(byte[] chunkdata) throws IOException;
-
     /**
-     * Decode datas.
+     * Reverses this filter on the bytes of a chunk as stored in the file.
+     *
+     * @param chunkdata filtered chunk bytes
+     * @return decoded bytes, may be the given array if the filter has no effect
+     * @throws IOException if the bytes could not be decoded.
      */
     byte[] decode(byte[] chunkdata) throws IOException;
 
     /**
-     * Encode datas.
+     * Applies this filter on the raw bytes of a chunk.
+     *
+     * @param chunkdata raw chunk bytes
+     * @return encoded bytes, may be the given array if the filter has no effect
+     * @throws IOException if the bytes could not be encoded.
      */
     byte[] encode(byte[] chunkdata) throws IOException;
 

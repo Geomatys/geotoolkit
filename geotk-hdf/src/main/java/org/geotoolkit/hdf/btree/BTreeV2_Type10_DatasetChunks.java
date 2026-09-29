@@ -20,8 +20,10 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Record of a version 2 B-tree of type 10, used for indexing the chunks of datasets
+ * with no filters and with more than one dimension of unlimited extent.
  *
- * @see III.A.2. Disk Format: Level 1A2 - Version 2 B-trees
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsubsec_fmt3_infra_btrees_v2">III.A.2. Disk Format: Level 1A2 - Version 2 B-trees</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class BTreeV2_Type10_DatasetChunks {
@@ -39,6 +41,35 @@ public final class BTreeV2_Type10_DatasetChunks {
      */
     private long[] dimensionScaledOffsets;
 
+    /** Creates an empty record, filled by {@link #read(HDF5DataInput, int)}. */
+    public BTreeV2_Type10_DatasetChunks() {
+    }
+
+    /**
+     * Returns the address of the chunk in the file.
+     *
+     * @return the address of the chunk in the file
+     */
+    public long getAddress() {
+        return address;
+    }
+
+    /**
+     * Returns the position of the chunk on the chunk grid, slowest changing dimension first.
+     *
+     * @return the position of the chunk on the chunk grid, slowest changing dimension first
+     */
+    public long[] getDimensionScaledOffsets() {
+        return dimensionScaledOffsets;
+    }
+
+    /**
+     * Reads the record.
+     *
+     * @param channel channel positioned on the record
+     * @param datasetNumberOfDimensions number of dataset dimensions
+     * @throws IOException if an I/O error occurred.
+     */
     public void read(HDF5DataInput channel, int datasetNumberOfDimensions) throws IOException {
 
         address = channel.readOffset();

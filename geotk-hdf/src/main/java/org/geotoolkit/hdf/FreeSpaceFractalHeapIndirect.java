@@ -20,8 +20,10 @@ import java.io.IOException;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
 /**
+ * Free-space section record data for a fractal heap "indirect" section,
+ * describing a range of empty blocks in an indirect block of a fractal heap.
  *
- * @see III.H. Disk Format: Level 1H - Free-space Manager
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_freespaceindex">III.H. Disk Format: Level 1H - Free-space Index</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class FreeSpaceFractalHeapIndirect extends IOStructure {
@@ -47,6 +49,10 @@ public final class FreeSpaceFractalHeapIndirect extends IOStructure {
      * This is the number of empty blocks covered by the section.
      */
     private int numberOfBlocks;
+
+    /** Creates an empty structure, filled by {@link #read(HDF5DataInput)}. */
+    public FreeSpaceFractalHeapIndirect() {
+    }
 
     @Override
     public void read(HDF5DataInput channel) throws IOException {

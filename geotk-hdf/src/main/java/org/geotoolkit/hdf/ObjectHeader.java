@@ -23,20 +23,39 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
 import org.geotoolkit.hdf.message.Message;
 
 /**
+ * An object header contains the information needed to interpret an object (group, dataset, named datatype),
+ * stored as a list of header messages. Two formats exist: version 1 ({@link ObjectHeaderV1})
+ * and version 2 ({@link ObjectHeaderV2}).
  *
  * @author Johann Sorel (Geomatys)
  */
 public interface ObjectHeader {
 
     /**
-     * Get all header messages.
-     * @return messages in this header
+     * Returns all messages in this header.
+     *
+     * @return all messages in this header
      */
     List<Message> getMessages();
 
+    /**
+     * Reads this object header from the current channel position.
+     *
+     * @param channel channel positioned on the object header.
+     * @throws IOException if an I/O error occurred.
+     * @throws DataStoreException if the content is invalid or unsupported.
+     */
     void read(HDF5DataInput channel) throws IOException, DataStoreException;
 
-    public static ObjectHeader forVersion(int version) {
+    /**
+     * Creates an empty object header, to be filled by {@link #read(HDF5DataInput)}.
+     *
+     * @param version first byte of the object header: 1 for version 1, or 79
+     *        (ASCII {@code 'O'} of the {@code "OHDR"} signature) for version 2.
+     * @return the new object header.
+     * @throws IllegalArgumentException if the version is not supported.
+     */
+    static ObjectHeader forVersion(int version) {
         return switch (version) {
             case 1 -> new ObjectHeaderV1();
             case 79 -> new ObjectHeaderV2();

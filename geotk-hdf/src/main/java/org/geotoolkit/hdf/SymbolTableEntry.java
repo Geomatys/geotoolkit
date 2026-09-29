@@ -18,8 +18,6 @@ package org.geotoolkit.hdf;
 
 import java.io.IOException;
 import java.util.Optional;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.hdf.btree.BTreeV1;
 import org.geotoolkit.hdf.heap.LocalHeap;
 import org.geotoolkit.hdf.io.HDF5DataInput;
 
@@ -28,7 +26,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * fast browsing of stored objects. Toward that design goal, the symbol table
  * entries include space for caching certain constant metadata from the object header.
  *
- * @see III.C. Disk Format: Level 1C - Symbol Table Entry
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_symboltableentry">III.C. Disk Format: Level 1C - Symbol Table Entry</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SymbolTableEntry extends IOStructure {
@@ -82,9 +80,10 @@ public final class SymbolTableEntry extends IOStructure {
 
     //cache values
     private String name;
-    private ObjectHeader objectHeader;
-    private BTreeV1 btree;
-    private LocalHeap localHeap;
+
+    /** Creates an empty entry, filled by {@link #read(HDF5DataInput)}. */
+    public SymbolTableEntry() {
+    }
 
     /**
      * The cache type is determined from the object header.
@@ -98,6 +97,8 @@ public final class SymbolTableEntry extends IOStructure {
      * scratch-pad space are the offset into the local heap for the link value.
      * The object header address will be undefined.</li>
      * </ul>
+     *
+     * @return the cache type, 0, 1 or 2.
      */
     public int getCacheType() {
         return cacheType;
@@ -107,30 +108,21 @@ public final class SymbolTableEntry extends IOStructure {
      * Every object has an object header which serves as a permanent location
      * for the object’s metadata. In addition to appearing in the object header,
      * some of the object’s metadata can be cached in the scratch-pad space.
+     *
+     * @return address of the object header of the object this entry refers to.
      */
     public long getObjectHeaderAddress() {
         return objectHeaderAddress;
     }
 
-    public synchronized ObjectHeader getHeader(HDF5DataInput channel) throws IOException, DataStoreException {
-        if (objectHeader == null && channel.isDefinedOffset(objectHeaderAddress)) {
-            channel.mark();
-            channel.seek(objectHeaderAddress);
-            final int objectHeaderVersion = channel.readUnsignedByte();
-            objectHeader = ObjectHeader.forVersion(objectHeaderVersion);
-            channel.seek(channel.getStreamPosition() - 1);
-            objectHeader.read(channel);
-            channel.reset();
-        }
-        return objectHeader;
-    }
-
     /**
+     * Returns the link name, or empty if the name offset is undefined or no heap is given.
+     * The name is read from the heap on first call and cached.
      *
-     * @param channel
-     * @param heap this must be the heap of the parent group
-     * @return
-     * @throws IOException
+     * @param channel channel on the file.
+     * @param heap local heap of the parent group.
+     * @return the link name, or empty if the name offset is undefined or no heap is given
+     * @throws IOException if an I/O error occurred.
      */
     public synchronized Optional<String> getName(HDF5DataInput channel, LocalHeap heap) throws IOException {
         if (name == null && channel.isDefinedOffset(linkNameOffset)) {
@@ -139,26 +131,6 @@ public final class SymbolTableEntry extends IOStructure {
             }
         }
         return Optional.ofNullable(name);
-    }
-
-    public synchronized Optional<BTreeV1> getBTree(HDF5DataInput channel) throws IOException, DataStoreException {
-        if (btree == null && cacheType == 1) {
-            channel.mark();
-            channel.seek(addressOfBtree);
-            btree = (BTreeV1) IOStructure.loadIdentifiedObject(channel);
-            channel.reset();
-        }
-        return Optional.ofNullable(btree);
-    }
-
-    public synchronized Optional<LocalHeap> getLocalHeap(HDF5DataInput channel) throws IOException, DataStoreException {
-        if (btree == null && cacheType == 1) {
-            channel.mark();
-            channel.seek(addressOfNameHeap);
-            localHeap = (LocalHeap) IOStructure.loadIdentifiedObject(channel);
-            channel.reset();
-        }
-        return Optional.ofNullable(localHeap);
     }
 
     @Override

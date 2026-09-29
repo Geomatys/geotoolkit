@@ -54,7 +54,7 @@ import org.geotoolkit.hdf.io.HDF5DataInput;
  * records in the shared message record list is determined in the index’s entry
  * in the shared object header message table.
  *
- * @see III.I. Disk Format: Level 1I - Shared Object Header Message Table
+ * @see <a href="https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html#subsec_fmt3_infra_sohm">III.I. Disk Format: Level 1I - Shared Object Header Message Table</a>
  * @author Johann Sorel (Geomatys)
  */
 public final class SharedObjectHeaderMessageTable extends IOStructure {
@@ -66,11 +66,17 @@ public final class SharedObjectHeaderMessageTable extends IOStructure {
      */
     public static final byte[] SIGNATURE = "SMTB".getBytes(StandardCharsets.US_ASCII);
 
+    /** Shared message index headers of this table. */
     public List<Index> indexes;
+
+    /** Creates an empty table, filled by {@link #read(HDF5DataInput)}. */
+    public SharedObjectHeaderMessageTable() {
+    }
 
     public void read(HDF5DataInput channel) throws IOException {
 
         channel.ensureSignature(SIGNATURE);
+        //TODO : skipping entries, decoding bug, will have to investigate
         int nbEntries = 0;
         indexes = new ArrayList<>(nbEntries);
         for (int i = 0; i < nbEntries; i++) {
@@ -94,7 +100,13 @@ public final class SharedObjectHeaderMessageTable extends IOStructure {
         int checksum = channel.readInt();
     }
 
+    /** Shared message index header, locating the list or v2 B-tree indexing some types of shared messages. */
     public static class Index {
+
+        /** Creates an empty index header, filled when the enclosing table is read. */
+        public Index() {
+        }
+
         /**
          * The type of index can be an unsorted list or a v2 B-tree.
          */
