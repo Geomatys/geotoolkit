@@ -13,10 +13,11 @@ sonar:
       - $SONAR_TOKEN
   script:
     - >-
-      mvn install 
+      mvn 
       org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       -s $MAVEN_SETTINGS 
-      -Dsonar.host.url=$SONAR_HOST_URL 
+      -Dsonar.userHome="$CI_PROJECT_DIR"
+      -Dsonar.host.url=$SONAR_HOST_URL
       -Dsonar.token=$SONAR_TOKEN
 
 include:
