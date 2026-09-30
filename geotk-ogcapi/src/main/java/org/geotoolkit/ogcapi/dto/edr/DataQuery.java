@@ -38,7 +38,10 @@ import org.geotoolkit.ogcapi.dto.coveragejson.CrsObject;
     DataQuery.JSON_PROPERTY_DESCRIPTION,
     DataQuery.JSON_PROPERTY_OUTPUT_FORMATS,
     DataQuery.JSON_PROPERTY_DEFAULT_OUTPUT_FORMAT,
-    DataQuery.JSON_PROPERTY_CRS_DETAILS
+    DataQuery.JSON_PROPERTY_CRS_DETAILS,
+    DataQuery.JSON_PROPERTY_WITHIN_UNITS,
+    DataQuery.JSON_PROPERTY_WIDTH_UNITS,
+    DataQuery.JSON_PROPERTY_HEIGHT_UNITS
 })
 public final class DataQuery extends DataTransferObject {
 
@@ -59,6 +62,15 @@ public final class DataQuery extends DataTransferObject {
 
     public static final String JSON_PROPERTY_CRS_DETAILS = "crs_details";
     private List<CrsObject> crsDetails;
+
+    public static final String JSON_PROPERTY_WITHIN_UNITS = "within_units";
+    private List<String> withinUnits;
+
+    public static final String JSON_PROPERTY_WIDTH_UNITS = "width_units";
+    private List<String> widthUnits;
+
+    public static final String JSON_PROPERTY_HEIGHT_UNITS = "height_units";
+    private List<String> heightUnits;
 
     public DataQuery() {
     }
@@ -165,6 +177,72 @@ public final class DataQuery extends DataTransferObject {
         this.crsDetails = crsDetails;
     }
 
+    public DataQuery withinUnits(List<String> withinUnits) {
+        this.withinUnits = withinUnits;
+        return this;
+    }
+
+    /**
+     * Distance units accepted by the {@code within-units} parameter of a radius query. (optional)
+     *
+     * @return withinUnits
+     */
+    @JsonProperty(JSON_PROPERTY_WITHIN_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public List<String> getWithinUnits() {
+        return withinUnits;
+    }
+
+    @JsonProperty(JSON_PROPERTY_WITHIN_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public void setWithinUnits(List<String> withinUnits) {
+        this.withinUnits = withinUnits;
+    }
+
+    public DataQuery widthUnits(List<String> widthUnits) {
+        this.widthUnits = widthUnits;
+        return this;
+    }
+
+    /**
+     * Distance units accepted by the {@code width-units} parameter of a corridor query. (optional)
+     *
+     * @return widthUnits
+     */
+    @JsonProperty(JSON_PROPERTY_WIDTH_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public List<String> getWidthUnits() {
+        return widthUnits;
+    }
+
+    @JsonProperty(JSON_PROPERTY_WIDTH_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public void setWidthUnits(List<String> widthUnits) {
+        this.widthUnits = widthUnits;
+    }
+
+    public DataQuery heightUnits(List<String> heightUnits) {
+        this.heightUnits = heightUnits;
+        return this;
+    }
+
+    /**
+     * Units accepted by the {@code height-units} parameter of a corridor query. (optional)
+     *
+     * @return heightUnits
+     */
+    @JsonProperty(JSON_PROPERTY_HEIGHT_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public List<String> getHeightUnits() {
+        return heightUnits;
+    }
+
+    @JsonProperty(JSON_PROPERTY_HEIGHT_UNITS)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public void setHeightUnits(List<String> heightUnits) {
+        this.heightUnits = heightUnits;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -179,12 +257,16 @@ public final class DataQuery extends DataTransferObject {
                 && Objects.equals(this.description, other.description)
                 && Objects.equals(this.outputFormats, other.outputFormats)
                 && Objects.equals(this.defaultOutputFormat, other.defaultOutputFormat)
-                && Objects.equals(this.crsDetails, other.crsDetails);
+                && Objects.equals(this.crsDetails, other.crsDetails)
+                && Objects.equals(this.withinUnits, other.withinUnits)
+                && Objects.equals(this.widthUnits, other.widthUnits)
+                && Objects.equals(this.heightUnits, other.heightUnits);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(queryType, title, description, outputFormats, defaultOutputFormat, crsDetails);
+        return Objects.hash(queryType, title, description, outputFormats, defaultOutputFormat, crsDetails,
+                withinUnits, widthUnits, heightUnits);
     }
 
 }

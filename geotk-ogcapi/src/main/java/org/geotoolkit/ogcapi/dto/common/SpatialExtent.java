@@ -32,6 +32,7 @@ import java.util.Objects;
     SpatialExtent.JSON_PROPERTY_CRS,
     SpatialExtent.JSON_PROPERTY_GRID
 })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class SpatialExtent {
 
     public static final String CRS84 = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";

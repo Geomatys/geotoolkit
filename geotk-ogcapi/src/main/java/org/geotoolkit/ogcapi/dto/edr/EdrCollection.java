@@ -49,6 +49,9 @@ public final class EdrCollection extends CollectionDescription {
     private List<String> outputFormats;
 
     public EdrCollection() {
+        // defaults inherited from OGC API Common / Features, which are not part of the EDR collection schema.
+        setItemType(null);
+        setStorageCrs(null);
     }
 
     public EdrCollection dataQueries(DataQueries dataQueries) {
