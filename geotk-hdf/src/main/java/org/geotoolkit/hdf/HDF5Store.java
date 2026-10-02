@@ -18,10 +18,17 @@ package org.geotoolkit.hdf;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
+import org.apache.sis.io.stream.IOUtilities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
@@ -29,6 +36,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.api.Group;
 import org.geotoolkit.hdf.api.Node;
@@ -40,6 +48,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import ucar.nc2.constants.CF;
 
 /**
  * Data store for HDF-5 files.
@@ -54,6 +63,7 @@ public final class HDF5Store extends DataStore implements Aggregate {
     private final Connector cnx;
     private final Group root;
     private final Resource decorate;
+    private final String name;
 
     /**
      * Opens the HDF-5 file at the given path and reads its root group.
@@ -79,6 +89,7 @@ public final class HDF5Store extends DataStore implements Aggregate {
         }
         root = g;
         decorate = decorate(root);
+        name = IOUtilities.filenameWithoutExtension(path.toUri().toString());
     }
 
     @Override
@@ -109,7 +120,7 @@ public final class HDF5Store extends DataStore implements Aggregate {
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.empty();
+        return Optional.of(Names.createLocalName(null, null, name));
     }
 
     @Override
@@ -144,15 +155,79 @@ public final class HDF5Store extends DataStore implements Aggregate {
                 }
             }
             final GroupAsAggregate gaa = new GroupAsAggregate(this, group);
-            for (Node n : group.components()) {
+
+            //search for siblings
+            final List<DatasetAsFeatureSet> siblings = findSiblings(group);
+            final List<Node> remaining = new ArrayList<>(group.components());
+            for (DatasetAsFeatureSet set : siblings) {
+                gaa.resources().add(set);
+                remaining.removeAll(List.of(set.getDatasets()));
+            }
+
+            //create single dataset for the remaining
+            for (Node n : remaining) {
                 gaa.resources().add(decorate(n));
             }
             return gaa;
         } else if (node instanceof Dataset ds) {
-            return new DatasetAsFeatureSet(this, ds);
+            final String baseName = createName(ds);
+            return new DatasetAsFeatureSet(this, Names.createLocalName(null, null, baseName), ds);
         } else {
             throw new IllegalArgumentException("Unexpected node type " + node);
         }
     }
 
+    private List<DatasetAsFeatureSet> findSiblings(Group group) {
+
+        final String baseName = createName(group);
+
+        //group by coordinates
+        final Map<String,List<Dataset>> candidates = new LinkedHashMap();
+        for (Node n : group.components()) {
+            if (n instanceof Dataset dataset) {
+                final String coordinates = (String) dataset.getAttributes().getOrDefault(CF.COORDINATES, null);
+                if (coordinates != null) {
+                    List<Dataset> lst = candidates.get(coordinates);
+                    if (lst == null) {
+                        lst = new ArrayList<>();
+                        candidates.put(coordinates, lst);
+                    }
+                    lst.add(dataset);
+                }
+            }
+        }
+
+        //remove lists with a single value
+        Iterator<Entry<String, List<Dataset>>> ite = candidates.entrySet().iterator();
+        while (ite.hasNext()) {
+            Entry<String, List<Dataset>> entry = ite.next();
+            if (entry.getValue().size() == 1) {
+                ite.remove();
+            }
+        }
+
+        //build resource
+        int inc = 0;
+        final List<DatasetAsFeatureSet> result = new ArrayList<>();
+        for (Entry<String,List<Dataset>> candidate : candidates.entrySet()) {
+            final GenericName name = Names.createLocalName(null, null, baseName+"_"+inc++);
+            final List<Dataset> lst = candidate.getValue();
+            final DatasetAsFeatureSet ds = new DatasetAsFeatureSet(this, name, lst.toArray(Dataset[]::new));
+            result.add(ds);
+        }
+
+        return result;
+    }
+
+    private String createName(Node node) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(node.getName());
+        Node p = node;
+        while (p.getParent() != null) {
+            p = p.getParent();
+            sb.insert(0, p.getName()+".");
+        }
+
+        return name + "." + sb.toString();
+    }
 }

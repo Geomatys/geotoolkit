@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,19 +31,15 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import javax.measure.Unit;
 import ucar.nc2.constants.CF;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.storage.base.StoreResource;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStore;
@@ -52,23 +49,24 @@ import org.geotoolkit.hdf.HDF5Provider;
 import org.geotoolkit.hdf.HDF5Store;
 import org.geotoolkit.hdf.api.Dataset;
 import org.geotoolkit.hdf.datatype.Compound;
-import org.geotoolkit.hdf.datatype.Compound.Member;
 import org.geotoolkit.hdf.datatype.DataType;
 import org.geotoolkit.hdf.message.DataspaceMessage;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
- * View a HDF Dataset as a FeatureSet.
+ * View multiple HDF Datasets as a FeatureSet.
  * Each element of the dataset becomes a feature, identified by its index in the dataspace.
+ * Each dataset becomes a feature attribute.
  * Compound datatype members become feature attributes, and datasets listed in the CF
  * {@code coordinates} attribute (limited to longitude and latitude) are combined into a point geometry.
  *
@@ -77,18 +75,16 @@ import org.opengis.util.FactoryException;
 public final class DatasetAsFeatureSet extends AbstractFeatureSet implements StoreResource{
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final String HDF_INDEX = "hdf-index";
 
     private final HDF5Store store;
-    private final Dataset dataset;
+    private final Dataset[] datasets;
+    private final GenericName name;
+    private final Map<String,Dataset> index = new LinkedHashMap<>();
 
     //featureset
     private FeatureType featureType;
     private boolean is1D;
     private boolean isEmpty;
-    private final Map<String,Function<Object, Instant>> timeAttributes = new HashMap<>();
-    private double scaleFactor = 1.0;
-    private Class valueClass;
 
     //geometry type info
     private CoordinateReferenceSystem crs;
@@ -98,21 +94,27 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
      * Creates a feature set view of the given dataset.
      *
      * @param store store owning the dataset.
-     * @param dataset dataset to expose as features.
+     * @param datasets dataset to expose as features.
      */
-    public DatasetAsFeatureSet(HDF5Store store, Dataset dataset) {
+    public DatasetAsFeatureSet(HDF5Store store, GenericName name, Dataset ... datasets) {
         super(null, false);
         this.store = store;
-        this.dataset = dataset;
+        this.name = name;
+        this.datasets = datasets;
+
+        for (Dataset ds : datasets) {
+            index.put(ds.getName(), ds);
+        }
+
     }
 
     /**
-     * Returns the dataset viewed as a feature set.
+     * Returns the datasets viewed as a feature set.
      *
      * @return the dataset viewed as a feature set
      */
-    public Dataset getDataset() {
-        return dataset;
+    public Dataset[] getDatasets() {
+        return datasets.clone();
     }
 
     @Override
@@ -134,105 +136,69 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
     public synchronized FeatureType getType() throws DataStoreException {
         if (featureType != null) return featureType;
 
-        final DataType datatype = dataset.getDataType();
-        final DataspaceMessage dataspace = dataset.getDataspace();
-
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(dataset.getIdentifier().orElseThrow(() -> new IllegalStateException("Dataset name should never be null")));
+        ftb.setName(name);
 
-        valueClass = datatype.getValueClass();
-
-        //check if we have a CF scale factor
-        this.scaleFactor = getScale(dataset);
-        if (this.scaleFactor != 1.0) {
-            valueClass = double.class;
-        }
-
-        //check if we have CF related coordinates
-        final String coordinates = (String) dataset.getAttributes().getOrDefault(CF.COORDINATES, null);
-        if (coordinates != null) {
-            final String[] parts = coordinates.split(" ");
+        {
+            //check if we have CF related coordinates
+            final Dataset dataset = datasets[0];
+            final String coordinates = (String) dataset.getAttributes().getOrDefault(CF.COORDINATES, null);
+            if (coordinates != null) {
+                final String[] parts = coordinates.split(" ");
 
 
-            this.coordinates = new Dataset[parts.length];
-            for (int i = 0; i < parts.length; i++) {
-                this.coordinates[i] = (Dataset) dataset.getParent().resolve(parts[i].trim());
-            }
+                this.coordinates = new Dataset[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    this.coordinates[i] = (Dataset) dataset.getParent().resolve(parts[i].trim());
+                }
 
-            if (parts.length == 2) {
-                if (CF.LONGITUDE.equals(this.coordinates[0].getName())) {
-                    crs = CommonCRS.WGS84.normalizedGeographic();
+                if (parts.length == 2) {
+                    if (CF.LONGITUDE.equals(this.coordinates[0].getName())) {
+                        crs = CommonCRS.WGS84.normalizedGeographic();
+                    } else {
+                        crs = CommonCRS.WGS84.geographic();
+                    }
+                    crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
+
+                    ftb.addAttribute(Point.class).setName(CF.COORDINATES).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
                 } else {
-                    crs = CommonCRS.WGS84.geographic();
+                    HDF5Provider.LOGGER.log(Level.WARNING, "Dataset " + dataset.getName() +" has " + parts.length + "dimensions, it is not supported yet");
+                    this.coordinates = null;
                 }
-                crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.POSITIVE_RANGE);
+            }
+        }
 
-                ftb.addAttribute(Point.class).setName(CF.COORDINATES).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        for (Dataset dataset : datasets) {
+            final DataType datatype = dataset.getDataType();
+            final DataspaceMessage dataspace = dataset.getDataspace();
+
+            Class valueClass = datatype.getValueClass();
+
+            //check if we have a CF scale factor
+            double scaleFactor = getScale(dataset);
+            if (scaleFactor != 1.0) {
+                valueClass = double.class;
+            }
+
+            final int[] dimensionSizes = dataspace.getDimensionSizes();
+            if (dimensionSizes == null || dimensionSizes.length < 1) {
+                isEmpty = true;
+                is1D = true;
             } else {
-                HDF5Provider.LOGGER.log(Level.WARNING, "Dataset " + dataset.getName() +" has " + parts.length + "dimensions, it is not supported yet");
-                this.coordinates = null;
-            }
-        }
-
-        final int[] dimensionSizes = dataspace.getDimensionSizes();
-        if (dimensionSizes == null || dimensionSizes.length < 1) {
-            isEmpty = true;
-            is1D = true;
-        } else {
-            for (int i = 0; i < dimensionSizes.length; i++) {
-                if (dimensionSizes[i] == 0) {
-                    isEmpty = true;
-                    break;
-                }
-            }
-            is1D = dimensionSizes.length == 1;
-        }
-
-        if (is1D) {
-            ftb.addAttribute(Long.class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        } else {
-            ftb.addAttribute(long[].class).setName(HDF_INDEX).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        }
-
-        if (datatype instanceof Compound cmp) {
-            for (Member member : cmp.members) {
-                final Entry<Unit,CoordinateReferenceSystem> unitAndCrs;
-                try {
-                    unitAndCrs = dataset.getAttributeUnit(member.name);
-                } catch (FactoryException ex) {
-                    throw new DataStoreException("Failed to parse unit and crs.", ex);
-                }
-                final String description = dataset.getAttributeDescription(member.name);
-
-                final AttributeTypeBuilder atb = ftb.addAttribute(member.memberType.getValueClass()).setName(member.name);
-                if (description != null) {
-                    atb.setDescription(description);
-                }
-                if (unitAndCrs != null) {
-                    atb.setUnit(unitAndCrs.getKey());
-                    if (unitAndCrs.getValue() != null) {
-                        CoordinateReferenceSystem crs = unitAndCrs.getValue();
-                        atb.setCRS(crs);
-                        if (crs instanceof TemporalCRS tcrs) {
-                            atb.setValueClass(Instant.class);
-
-                            final var defaultTemporalCrs = DefaultTemporalCRS.castOrCopy(tcrs);
-                            final Function<Object, Instant> converter = obj -> {
-                                if (obj == null) return null;
-                                else if (obj instanceof Number value) {
-                                    double decimalValue = value.doubleValue();
-                                    return defaultTemporalCrs.toInstant(decimalValue);
-                                } else {
-                                    throw new IllegalStateException("Input value is not a number, but a "+obj.getClass().getCanonicalName());
-                                }
-                            };
-                            timeAttributes.put(member.name, converter);
-                        }
+                for (int i = 0; i < dimensionSizes.length; i++) {
+                    if (dimensionSizes[i] == 0) {
+                        isEmpty = true;
+                        break;
                     }
                 }
+                is1D = dimensionSizes.length == 1;
             }
-        } else {
-            ftb.addAttribute(valueClass).setName("value");
+
+            if (datatype instanceof Compound cmp) {
+                throw new IllegalStateException("Compound type not supported in aggregated datasets");
+            } else {
+                ftb.addAttribute(valueClass).setName(dataset.getName());
+            }
         }
         featureType = ftb.build();
 
@@ -244,8 +210,8 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
         if (isEmpty) return Stream.empty();
 
         //limited to 1D dataset
-        final int[] dimensionSizes = dataset.getDataspace().getDimensionSizes();
-        final GridExtent area = dataset.getDataspace().getDimensionExtent();
+        final int[] dimensionSizes = datasets[0].getDataspace().getDimensionSizes();
+        final GridExtent area = datasets[0].getDataspace().getDimensionExtent();
 
         //read by blocks of 1000
         final int blockSize = 1000;
@@ -271,7 +237,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
             @Override
             public Stream<Feature> apply(GridExtent t) {
                 try {
-                    return toFeatures(t);
+                    return toFeatures(getType(), t);
                 } catch (IOException | DataStoreException | TransformException ex) {
                     throw new BackingStoreException(ex.getMessage(), ex);
                 }
@@ -279,9 +245,7 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
         });
     }
 
-    private Stream<Feature> toFeatures(GridExtent extent) throws DataStoreException, IOException, TransformException {
-        final FeatureType type = getType();
-        final Object rawData = readScaled(dataset, extent);
+    private Stream<Feature> toFeatures(FeatureType type, GridExtent extent) throws DataStoreException, IOException, TransformException {
 
         //read coordinates
         Object coord0 = null;
@@ -291,39 +255,25 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
             coord1 = readScaled(coordinates[1],extent);
         }
 
+        final Map<String,Object> rawDatas = new LinkedHashMap<>();
+        for (PropertyType pt : type.getProperties(true)) {
+            if (pt instanceof AttributeType at) {
+                final String dsName = at.getName().toString();
+                final Dataset ds = index.get(dsName);
+                if (ds != null) {
+                    rawDatas.put(dsName, readScaled(ds, extent));
+                }
+            }
+        }
+
         final long[] low = extent.getLow().getCoordinateValues();
         final List<Feature> features = new ArrayList<>();
 
         final Iterator<long[]> iterator = extent.latticePointStream(false).iterator();
         while (iterator.hasNext()) {
             final long[] location = iterator.next();
-            Object rawRecord = Array.get(rawData, Math.toIntExact(location[0] - low[0]));
-            if (!is1D) {
-                for (int i = 1; i < low.length; i++) {
-                    rawRecord = Array.get(rawRecord, Math.toIntExact(location[i] - low[i]));
-                }
-            }
 
             final Feature feature = type.newInstance();
-            if (is1D) {
-                feature.setPropertyValue(HDF_INDEX, location[0]);
-            } else {
-                feature.setPropertyValue(HDF_INDEX, location);
-            }
-            if (dataset.getDataType() instanceof Compound cmp) {
-                for (int k = 0; k < cmp.members.length; k++) {
-                    final String name = cmp.members[k].name;
-                    Object value = Array.get(rawRecord, k);
-                    if (value != null) {
-                        Function<Object, Instant> converter = timeAttributes.get(name);
-                        if (converter != null) value = converter.apply(value);
-                    }
-                    feature.setPropertyValue(name, value);
-                }
-            } else {
-                feature.setPropertyValue("value", rawRecord);
-            }
-
             //rebuild geometry
             if (crs != null) {
                 Number x = (Number) Array.get(coord0, Math.toIntExact(location[0] - low[0]));
@@ -332,8 +282,16 @@ public final class DatasetAsFeatureSet extends AbstractFeatureSet implements Sto
                 pt.setUserData(crs);
                 feature.setPropertyValue(CF.COORDINATES, pt);
             }
-
-
+            //read properties
+            for (Entry<String,Object> entry : rawDatas.entrySet()) {
+                Object rawRecord = Array.get(entry.getValue(), Math.toIntExact(location[0] - low[0]));
+                if (!is1D) {
+                    for (int i = 1; i < low.length; i++) {
+                        rawRecord = Array.get(rawRecord, Math.toIntExact(location[i] - low[i]));
+                    }
+                }
+                feature.setPropertyValue(entry.getKey(), rawRecord);
+            }
             features.add(feature);
         }
 
