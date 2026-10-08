@@ -30,7 +30,7 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometries.curve.LinearRing;
 import org.apache.sis.geometries.DataPoints;
 import org.apache.sis.geometries.surface.Polygon;
-import org.apache.sis.maths.Tuple;
+import org.apache.sis.maths.Vector;
 import org.apache.sis.maths.Vector2D;
 import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.maths.NDArrays;
@@ -200,7 +200,7 @@ public abstract class AbstractDggrsTest {
                 final LinearRing exterior = (LinearRing) geometry.getExteriorRing();
                 final DataPoints ps = exterior.getDataPoints();
                 for (int i = 0; i < ps.size(); i++) {
-                    final Tuple corner = ps.getPosition(i);
+                    final Vector corner = ps.getPosition(i);
 
                     calculator.setStartPoint(center);
                     calculator.setEndPoint(Vectors.asDirectPostion(corner));
