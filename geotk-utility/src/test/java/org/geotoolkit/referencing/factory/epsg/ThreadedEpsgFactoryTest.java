@@ -58,6 +58,8 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
      */
     @Test
     public final void testCreationOperations() throws FactoryException {
+        assumeNotNull(factory);
+
         final var opf = DefaultCoordinateOperationFactory.provider();
         CoordinateReferenceSystem sourceCRS, targetCRS;
         CoordinateOperation operation;
@@ -118,6 +120,8 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore
     public final void testSerialization() throws FactoryException, IOException, ClassNotFoundException {
+        assumeNotNull(factory);
+
         CoordinateReferenceSystem crs1 = factory.createCoordinateReferenceSystem("4326");
         CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem("4322");
         var opf = DefaultCoordinateOperationFactory.provider();
