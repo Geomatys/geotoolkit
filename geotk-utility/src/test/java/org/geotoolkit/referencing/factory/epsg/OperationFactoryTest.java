@@ -62,6 +62,8 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore("CachingCoordinateOperationFactory is (for now) hidden by SIS factory.")
     public final void testGeographicBacked() throws FactoryException {
+        assumeNotNull(factory);
+
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
@@ -86,6 +88,8 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
      */
     @Test
     public final void testGeographicUnbacked() throws FactoryException {
+        assumeNotNull(factory);
+
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
@@ -118,6 +122,8 @@ public final class OperationFactoryTest extends EpsgFactoryTestBase {
     @Test
     @Ignore
     public final void testProjected() throws FactoryException {
+        assumeNotNull(factory);
+
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;
         final CoordinateOperation        operation;
