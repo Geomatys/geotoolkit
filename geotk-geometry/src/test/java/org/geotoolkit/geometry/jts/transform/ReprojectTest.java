@@ -28,7 +28,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
@@ -134,7 +134,10 @@ public class ReprojectTest {
             parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
             int centralMeridian  = (int) Math.floor(central_meridan);
             int latitudeOfOrigin = (int) Math.floor(latitude_of_origin);
-            DefiningConversion conversion = new DefiningConversion("My conversion", parameters);
+            DefiningConversion conversion = new DefiningConversion(
+                    Map.of(DefiningConversion.NAME_KEY, "My conversion"),
+                    builder.getMethod().orElseThrow(),
+                    null, parameters);
             CRSFactory crsFactory = GeodeticObjectFactory.provider();
             final Map<String, Object> properties = new HashMap<>();
             properties.put(ProjectedCRS.NAME_KEY, "LambertCC_" + latitudeOfOrigin + "_" + centralMeridian);

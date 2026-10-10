@@ -118,8 +118,8 @@ public final class ConvertedCoverageResource extends AbstractGridCoverageResourc
     }
 
     @Override
-    public List<double[]> getResolutions() throws DataStoreException {
-        return base.getResolutions();
+    public List<double[]> getAvailableResolutions() throws DataStoreException {
+        return base.getAvailableResolutions();
     }
 
     @Override
