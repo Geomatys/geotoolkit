@@ -44,7 +44,6 @@ import org.apache.sis.referencing.operation.provider.Affine;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultDerivedCRS;
-import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.display.canvas.CanvasUtilities;
@@ -71,6 +70,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -546,7 +546,7 @@ public class RenderingContext2D implements RenderingContext{
         final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
         final Map<String,?> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Derived - "+objCRS2D.getName().toString());
         this.displayCRS = DefaultDerivedCRS.create(name, objCRS2D,
-                new DefaultConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
+                new DefiningConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
                 objCRS2D.getCoordinateSystem());
 
         //calculate canvas shape/bounds values ---------------------------------

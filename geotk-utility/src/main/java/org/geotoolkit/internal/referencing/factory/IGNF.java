@@ -47,7 +47,7 @@ import org.apache.sis.metadata.simple.SimpleCitation;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
@@ -189,7 +189,11 @@ public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthority
         properties.put(ProjectedCRS.IDENTIFIERS_KEY, identifiers);
         final ProjectedCRS crs = factories.getCRSFactory().createProjectedCRS(properties,
                 new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, null, CommonCRS.defaultGeographic().getCoordinateSystem()),
-                new DefiningConversion("Miller", param), PredefinedCS.PROJECTED);
+                new DefiningConversion(
+                        Map.of(DefiningConversion.NAME_KEY, "Miller"),
+                        builder.getMethod().orElseThrow(),
+                        null, param),
+                PredefinedCS.PROJECTED);
         crsMap.put(key, crs);
         return crs;
     }

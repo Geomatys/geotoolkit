@@ -52,7 +52,7 @@ import org.geotoolkit.lang.Builder;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.datum.DatumOrEnsemble;
-import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -366,7 +366,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             builder.setSourceAxes(baseCRS.getCoordinateSystem(), DatumOrEnsemble.getEllipsoid(baseCRS).orElse(null));
             builder.setTargetAxes(derivedCS, null);
             final MathTransform tr = builder.create();
-            return new DefaultConversion(properties, builder.getMethod().orElseThrow(), tr, parameters);
+            return new DefiningConversion(properties, builder.getMethod().orElseThrow(), tr, parameters);
         }
         return getDefault("getBaseToCRS", cvAccessor, Conversion.class);
     }

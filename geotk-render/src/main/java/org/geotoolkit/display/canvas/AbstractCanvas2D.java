@@ -56,7 +56,6 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultDerivedCRS;
-import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -82,6 +81,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.apache.sis.coverage.grid.PixelInCell;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -320,7 +320,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
         final Map<String,?> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Derived - "+objCRS2D.getName().toString());
         final CoordinateReferenceSystem displayCRS = DefaultDerivedCRS.create(name, objCRS2D,
-                new DefaultConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
+                new DefiningConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
                 objCRS2D.getCoordinateSystem());
         return displayCRS;
     }

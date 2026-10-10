@@ -76,7 +76,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.ValueMap;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.apache.sis.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.apache.sis.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
@@ -121,7 +121,7 @@ final class GeoTiffCRSReader {
      * Cached {@link MathTransformFactory} for building {@link MathTransform}
      * objects.
      */
-    private final static MathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
+    private final static DefaultMathTransformFactory mtFactory = DefaultMathTransformFactory.provider();
 
     /**
      * Logger to diffuse no blocking error message.
@@ -441,7 +441,10 @@ final class GeoTiffCRSReader {
                 throw new IOException("Projection is not supported.");
             }
             parameters = builder.parameters();
-            projection = new DefiningConversion(projectionName, parameters);
+            projection = new DefiningConversion(
+                    Map.of(DefiningConversion.NAME_KEY, projectionName),
+                    builder.getMethod().orElseThrow(),
+                    null, parameters);
 
         } else {
             parameters = null;

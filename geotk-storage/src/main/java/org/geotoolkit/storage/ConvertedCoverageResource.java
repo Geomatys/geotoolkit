@@ -124,8 +124,8 @@ final class ConvertedCoverageResource extends DerivedGridCoverageResource {
     }
 
     @Override
-    public List<double[]> getResolutions() throws DataStoreException {
-        return source.getResolutions();
+    public List<double[]> getAvailableResolutions() throws DataStoreException {
+        return source.getAvailableResolutions();
     }
 
     @Override
