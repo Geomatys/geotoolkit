@@ -162,6 +162,17 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.vector.retype.RetypeDescriptor.INSTANCE,
                 //regridding
                 org.geotoolkit.processing.regridding.SwathRegridderDescriptor.INSTANCE,
+                //resource
+                org.geotoolkit.processing.resource.CoverageAggregateDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageAggregateRangesDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageAppendDimensionDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageAppendDimensionsDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageAppendTemporalDimensionDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageConvertDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageMaskDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageReprojectDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.CoverageResampleDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.FeatureSetConcatenateDescriptor.INSTANCE,
                 //query like processes
                 org.geotoolkit.processing.vector.QueryProcess.Offset.DESCRIPTOR,
                 org.geotoolkit.processing.vector.QueryProcess.SortBy.DESCRIPTOR,
