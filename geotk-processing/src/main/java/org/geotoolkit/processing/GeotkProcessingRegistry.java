@@ -173,6 +173,8 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.resource.CoverageReprojectDescriptor.INSTANCE,
                 org.geotoolkit.processing.resource.CoverageResampleDescriptor.INSTANCE,
                 org.geotoolkit.processing.resource.FeatureSetConcatenateDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.TileMatrixClearEnvelopeDescriptor.INSTANCE,
+                org.geotoolkit.processing.resource.TileMatrixClearRangeDescriptor.INSTANCE,
                 //query like processes
                 org.geotoolkit.processing.vector.QueryProcess.Offset.DESCRIPTOR,
                 org.geotoolkit.processing.vector.QueryProcess.SortBy.DESCRIPTOR,
