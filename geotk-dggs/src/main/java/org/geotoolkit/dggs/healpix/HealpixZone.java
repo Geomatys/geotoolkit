@@ -269,10 +269,7 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
         double lon = radPoint[0];
         if (lon >= Math.PI) lon -= (Math.PI + Math.PI);
         double lat = radPoint[1];
-        return new Vector2D.Double(CRS84,
-                lon,
-                lat
-        );
+        return new Vector2D.Double(lon, lat);
     }
 
 }
