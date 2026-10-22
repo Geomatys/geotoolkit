@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2025, Geomatys
+ *    (C) 2025-2026, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.dggs.a5;
 
-import org.geotoolkit.dggs.a5.internal.Serialization;
 import org.apache.sis.referencing.dggs.DiscreteGlobalGrid;
 import org.apache.sis.referencing.dggs.Zone;
 import org.apache.sis.referencing.dggs.internal.shared.AbstractDiscreteGlobalGridHierarchy;
@@ -31,7 +30,7 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy<A5Dggrs> {
 
     A5Dggh(A5Dggrs dggrs) {
         super(dggrs);
-        grids = new DiscreteGlobalGrid[Serialization.MAX_RESOLUTION];
+        grids = new DiscreteGlobalGrid[A5.MAX_RESOLUTION + 1];
         for (int i = 0; i < grids.length; i++) {
             grids[i] = new A5Dgg(this, i);
         }
@@ -85,10 +84,10 @@ final class A5Dggh extends AbstractDiscreteGlobalGridHierarchy<A5Dggrs> {
     }
 
     static final String idAsText(final long hash) {
-        return Long.toHexString(hash);
+        return A5.u64ToHex(hash);
     }
 
     static final long idAsLong(final CharSequence cs) {
-        return Long.parseUnsignedLong(cs.toString(), 16);
+        return A5.hexToU64(cs.toString());
     }
 }

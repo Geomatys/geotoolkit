@@ -1,0 +1,743 @@
+{
+  "numCells": [
+    {
+      "resolution": 0,
+      "count": 12,
+      "countBigInt": "12"
+    },
+    {
+      "resolution": 1,
+      "count": 60,
+      "countBigInt": "60"
+    },
+    {
+      "resolution": 2,
+      "count": 240,
+      "countBigInt": "240"
+    },
+    {
+      "resolution": 3,
+      "count": 960,
+      "countBigInt": "960"
+    },
+    {
+      "resolution": 4,
+      "count": 3840,
+      "countBigInt": "3840"
+    },
+    {
+      "resolution": 5,
+      "count": 15360,
+      "countBigInt": "15360"
+    },
+    {
+      "resolution": 6,
+      "count": 61440,
+      "countBigInt": "61440"
+    },
+    {
+      "resolution": 7,
+      "count": 245760,
+      "countBigInt": "245760"
+    },
+    {
+      "resolution": 8,
+      "count": 983040,
+      "countBigInt": "983040"
+    },
+    {
+      "resolution": 9,
+      "count": 3932160,
+      "countBigInt": "3932160"
+    },
+    {
+      "resolution": 10,
+      "count": 15728640,
+      "countBigInt": "15728640"
+    },
+    {
+      "resolution": 11,
+      "count": 62914560,
+      "countBigInt": "62914560"
+    },
+    {
+      "resolution": 12,
+      "count": 251658240,
+      "countBigInt": "251658240"
+    },
+    {
+      "resolution": 13,
+      "count": 1006632960,
+      "countBigInt": "1006632960"
+    },
+    {
+      "resolution": 14,
+      "count": 4026531840,
+      "countBigInt": "4026531840"
+    },
+    {
+      "resolution": 15,
+      "count": 16106127360,
+      "countBigInt": "16106127360"
+    },
+    {
+      "resolution": 16,
+      "count": 64424509440,
+      "countBigInt": "64424509440"
+    },
+    {
+      "resolution": 17,
+      "count": 257698037760,
+      "countBigInt": "257698037760"
+    },
+    {
+      "resolution": 18,
+      "count": 1030792151040,
+      "countBigInt": "1030792151040"
+    },
+    {
+      "resolution": 19,
+      "count": 4123168604160,
+      "countBigInt": "4123168604160"
+    },
+    {
+      "resolution": 20,
+      "count": 16492674416640,
+      "countBigInt": "16492674416640"
+    },
+    {
+      "resolution": 21,
+      "count": 65970697666560,
+      "countBigInt": "65970697666560"
+    },
+    {
+      "resolution": 22,
+      "count": 263882790666240,
+      "countBigInt": "263882790666240"
+    },
+    {
+      "resolution": 23,
+      "count": 1055531162664960,
+      "countBigInt": "1055531162664960"
+    },
+    {
+      "resolution": 24,
+      "count": 4222124650659840,
+      "countBigInt": "4222124650659840"
+    },
+    {
+      "resolution": 25,
+      "count": 16888498602639360,
+      "countBigInt": "16888498602639360"
+    },
+    {
+      "resolution": 26,
+      "count": 67553994410557440,
+      "countBigInt": "67553994410557440"
+    },
+    {
+      "resolution": 27,
+      "count": 270215977642229760,
+      "countBigInt": "270215977642229760"
+    },
+    {
+      "resolution": 28,
+      "count": 1080863910568919000,
+      "countBigInt": "1080863910568919040"
+    },
+    {
+      "resolution": 29,
+      "count": 4323455642275676000,
+      "countBigInt": "4323455642275676160"
+    },
+    {
+      "resolution": 30,
+      "count": 17293822569102705000,
+      "countBigInt": "17293822569102704640"
+    }
+  ],
+  "numChildren": [
+    {
+      "parentResolution": 0,
+      "childResolution": 0,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 0,
+      "childResolution": 1,
+      "numChildren": 5
+    },
+    {
+      "parentResolution": 0,
+      "childResolution": 2,
+      "numChildren": 20
+    },
+    {
+      "parentResolution": 0,
+      "childResolution": 3,
+      "numChildren": 80
+    },
+    {
+      "parentResolution": 0,
+      "childResolution": 4,
+      "numChildren": 320
+    },
+    {
+      "parentResolution": 0,
+      "childResolution": 5,
+      "numChildren": 1280
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 1,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 2,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 3,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 4,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 5,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 1,
+      "childResolution": 6,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 2,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 3,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 4,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 5,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 6,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 2,
+      "childResolution": 7,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 3,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 4,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 5,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 6,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 7,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 3,
+      "childResolution": 8,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 4,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 5,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 6,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 7,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 8,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 4,
+      "childResolution": 9,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 5,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 6,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 7,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 8,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 9,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 5,
+      "childResolution": 10,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 6,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 7,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 8,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 9,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 10,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 6,
+      "childResolution": 11,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 7,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 8,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 9,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 10,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 11,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 7,
+      "childResolution": 12,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 8,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 9,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 10,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 11,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 12,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 8,
+      "childResolution": 13,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 9,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 10,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 11,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 12,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 13,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 9,
+      "childResolution": 14,
+      "numChildren": 1024
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 10,
+      "numChildren": 1
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 11,
+      "numChildren": 4
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 12,
+      "numChildren": 16
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 13,
+      "numChildren": 64
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 14,
+      "numChildren": 256
+    },
+    {
+      "parentResolution": 10,
+      "childResolution": 15,
+      "numChildren": 1024
+    }
+  ],
+  "cellArea": [
+    {
+      "resolution": 0,
+      "areaM2": 42505468731619.93
+    },
+    {
+      "resolution": 1,
+      "areaM2": 8501093746323.985
+    },
+    {
+      "resolution": 2,
+      "areaM2": 2125273436580.9963
+    },
+    {
+      "resolution": 3,
+      "areaM2": 531318359145.2491
+    },
+    {
+      "resolution": 4,
+      "areaM2": 132829589786.31227
+    },
+    {
+      "resolution": 5,
+      "areaM2": 33207397446.578068
+    },
+    {
+      "resolution": 6,
+      "areaM2": 8301849361.644517
+    },
+    {
+      "resolution": 7,
+      "areaM2": 2075462340.4111292
+    },
+    {
+      "resolution": 8,
+      "areaM2": 518865585.1027823
+    },
+    {
+      "resolution": 9,
+      "areaM2": 129716396.27569558
+    },
+    {
+      "resolution": 10,
+      "areaM2": 32429099.068923894
+    },
+    {
+      "resolution": 11,
+      "areaM2": 8107274.767230974
+    },
+    {
+      "resolution": 12,
+      "areaM2": 2026818.6918077434
+    },
+    {
+      "resolution": 13,
+      "areaM2": 506704.67295193585
+    },
+    {
+      "resolution": 14,
+      "areaM2": 126676.16823798396
+    },
+    {
+      "resolution": 15,
+      "areaM2": 31669.04205949599
+    },
+    {
+      "resolution": 16,
+      "areaM2": 7917.260514873998
+    },
+    {
+      "resolution": 17,
+      "areaM2": 1979.3151287184994
+    },
+    {
+      "resolution": 18,
+      "areaM2": 494.82878217962485
+    },
+    {
+      "resolution": 19,
+      "areaM2": 123.70719554490621
+    },
+    {
+      "resolution": 20,
+      "areaM2": 30.926798886226553
+    },
+    {
+      "resolution": 21,
+      "areaM2": 7.731699721556638
+    },
+    {
+      "resolution": 22,
+      "areaM2": 1.9329249303891596
+    },
+    {
+      "resolution": 23,
+      "areaM2": 0.4832312325972899
+    },
+    {
+      "resolution": 24,
+      "areaM2": 0.12080780814932247
+    },
+    {
+      "resolution": 25,
+      "areaM2": 0.03020195203733062
+    },
+    {
+      "resolution": 26,
+      "areaM2": 0.007550488009332655
+    },
+    {
+      "resolution": 27,
+      "areaM2": 0.0018876220023331637
+    },
+    {
+      "resolution": 28,
+      "areaM2": 0.0004719055005832909
+    },
+    {
+      "resolution": 29,
+      "areaM2": 0.00011797637514582273
+    },
+    {
+      "resolution": 30,
+      "areaM2": 0.000029494093786455682
+    }
+  ],
+  "cellEdgeLengthAvg": [
+    {
+      "resolution": 0,
+      "lengthM": 4649142.322893622
+    },
+    {
+      "resolution": 1,
+      "lengthM": 2343318.7688829224
+    },
+    {
+      "resolution": 2,
+      "lengthM": 1190173.8477765447
+    },
+    {
+      "resolution": 3,
+      "lengthM": 597565.2378780079
+    },
+    {
+      "resolution": 4,
+      "lengthM": 299147.07687867095
+    },
+    {
+      "resolution": 5,
+      "lengthM": 149609.98423330215
+    },
+    {
+      "resolution": 6,
+      "lengthM": 74814.10356514277
+    },
+    {
+      "resolution": 7,
+      "lengthM": 37407.05178257138
+    },
+    {
+      "resolution": 8,
+      "lengthM": 18703.52589128569
+    },
+    {
+      "resolution": 9,
+      "lengthM": 9351.762945642846
+    },
+    {
+      "resolution": 10,
+      "lengthM": 4675.881472821423
+    },
+    {
+      "resolution": 11,
+      "lengthM": 2337.9407364107115
+    },
+    {
+      "resolution": 12,
+      "lengthM": 1168.9703682053557
+    },
+    {
+      "resolution": 13,
+      "lengthM": 584.4851841026779
+    },
+    {
+      "resolution": 14,
+      "lengthM": 292.24259205133893
+    },
+    {
+      "resolution": 15,
+      "lengthM": 146.12129602566947
+    },
+    {
+      "resolution": 16,
+      "lengthM": 73.06064801283473
+    },
+    {
+      "resolution": 17,
+      "lengthM": 36.530324006417366
+    },
+    {
+      "resolution": 18,
+      "lengthM": 18.265162003208683
+    },
+    {
+      "resolution": 19,
+      "lengthM": 9.132581001604342
+    },
+    {
+      "resolution": 20,
+      "lengthM": 4.566290500802171
+    },
+    {
+      "resolution": 21,
+      "lengthM": 2.2831452504010854
+    },
+    {
+      "resolution": 22,
+      "lengthM": 1.1415726252005427
+    },
+    {
+      "resolution": 23,
+      "lengthM": 0.5707863126002714
+    },
+    {
+      "resolution": 24,
+      "lengthM": 0.2853931563001357
+    },
+    {
+      "resolution": 25,
+      "lengthM": 0.14269657815006784
+    },
+    {
+      "resolution": 26,
+      "lengthM": 0.07134828907503392
+    },
+    {
+      "resolution": 27,
+      "lengthM": 0.03567414453751696
+    },
+    {
+      "resolution": 28,
+      "lengthM": 0.01783707226875848
+    },
+    {
+      "resolution": 29,
+      "lengthM": 0.00891853613437924
+    },
+    {
+      "resolution": 30,
+      "lengthM": 0.00445926806718962
+    }
+  ]
+}

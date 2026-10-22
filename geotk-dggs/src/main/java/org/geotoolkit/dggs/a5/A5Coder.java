@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2025, Geomatys
+ *    (C) 2025-2026, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 package org.geotoolkit.dggs.a5;
 
 import javax.measure.IncommensurableException;
-import org.apache.sis.maths.Vector2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.dggs.DiscreteGlobalGridReferenceSystem;
 import org.opengis.geometry.DirectPosition;
@@ -73,7 +72,7 @@ final class A5Coder extends DiscreteGlobalGridReferenceSystem.Coder{
                 throw new TransformException(ex.getMessage(), ex);
             }
         }
-        return A5.lonLatToCell(new Vector2D.Double(dp.getCoordinate(0), dp.getCoordinate(1)), level);
+        return A5.lonLatToCell(new double[]{dp.getCoordinate(0), dp.getCoordinate(1)}, level);
     }
 
 }
