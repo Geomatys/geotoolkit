@@ -34,6 +34,7 @@ import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.maths.SampleSystem;
+import org.apache.sis.maths.Vector;
 import org.apache.sis.maths.Vector2D;
 import org.apache.sis.maths.Vectors;
 import org.apache.sis.referencing.CommonCRS;
@@ -255,9 +256,7 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
      */
     private Vector2D.Double toLonLat(double[] radPoint) {
         Vector2D.Double v = toLonLatRad(radPoint);
-        v.x = Math.toDegrees(v.x);
-        v.y = Math.toDegrees(v.y);
-        return v;
+        return Vector.of(Math.toDegrees(v.x), Math.toDegrees(v.y));
     }
 
     /**

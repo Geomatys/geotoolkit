@@ -286,7 +286,7 @@ public class Predictor extends AbstractProcess {
      * @throws ProcessException
      */
     private double[] advance(final PredictionContext ctx, MeteoDataset.Snapshot uv) throws ProcessException {
-        final Vector2D.Double move = new Vector2D.Double();
+
         final CoordinateReferenceSystem workCrs = ctx.grid.model.getCoordinateReferenceSystem();
 
         final SingleCRS workHorizontal = CRS.getHorizontalComponent(workCrs);
@@ -313,7 +313,7 @@ public class Predictor extends AbstractProcess {
                 continue;
             }
 
-            final Vector2D.Double current = currentOpt.get();
+            Vector2D.Double current = currentOpt.get();
 
             final Vector2D.Double wind = uv.wind.evaluate(location)
                     .orElseGet(RANDOM_NOISE);// TODO : should we just ignore wind here ?
@@ -328,11 +328,11 @@ public class Predictor extends AbstractProcess {
 //                    continue;
 //                }
 
-                wind.scale(w.wind);
-                current.scale(w.current);
-                move.x = wind.x + current.x;
-                move.y = wind.y + current.y;
-                move.scale(ctx.timestep.getSeconds());
+                final Vector2D.Double wind2 = wind.scale(w.wind);
+                current = current.scale(w.current);
+                final Vector2D.Double move = new Vector2D.Double(
+                 (wind2.x + current.x) * ctx.timestep.getSeconds(),
+                 (wind2.y + current.y) * ctx.timestep.getSeconds());
 
                 final double[] movedLocation = location.getCoordinates();
                 movedLocation[0] += move.x;

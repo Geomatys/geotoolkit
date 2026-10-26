@@ -57,10 +57,12 @@ public class LinearReferencing{
         public Vector2D.Double right;
 
         public Coordinate getPoint(double distanceAlongLinear, double distancePerpendicular){
-            final Vector2D.Double tempForward = new Vector2D.Double(forward.x, forward.y);
-            final Vector2D.Double tempPerpendicular = new Vector2D.Double(right.x, right.y);
-            tempForward.scale(distanceAlongLinear);
-            tempPerpendicular.scale(distancePerpendicular);
+            final Vector2D.Double tempForward = new Vector2D.Double(
+                    forward.x * distanceAlongLinear,
+                    forward.y * distanceAlongLinear);
+            final Vector2D.Double tempPerpendicular = new Vector2D.Double(
+                    right.x * distancePerpendicular,
+                    right.y * distancePerpendicular);
             return new Coordinate(
                 segmentCoords[0].x+tempForward.x+tempPerpendicular.x,
                 segmentCoords[0].y+tempForward.y+tempPerpendicular.y);
@@ -298,7 +300,7 @@ public class LinearReferencing{
             segment.forward = new Vector2D.Double(
                     segment.segmentCoords[1].x-segment.segmentCoords[0].x,
                     segment.segmentCoords[1].y-segment.segmentCoords[0].y);
-            segment.forward.normalize();
+            segment.forward = segment.forward.normalize();
             segment.right = new Vector2D.Double(segment.forward.y,-segment.forward.x);
 
             segments[i] = segment;
