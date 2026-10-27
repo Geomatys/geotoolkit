@@ -1,0 +1,1044 @@
+[
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        1633,
+        1634,
+        1635,
+        1637,
+        1639,
+        1640,
+        1641
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        3275,
+        3277,
+        3319,
+        3320,
+        3321,
+        3340,
+        3369
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        4914,
+        4916,
+        4924,
+        4925,
+        4926,
+        4931,
+        4938
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        6532,
+        6542,
+        6546,
+        6547,
+        6548,
+        6552,
+        6554
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        6824,
+        6826,
+        8191,
+        8193,
+        8194
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        9825,
+        9827,
+        9828,
+        9829,
+        9831,
+        9832,
+        9838
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        11467,
+        11469,
+        11511,
+        11512,
+        11513,
+        11532,
+        11561
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        13101,
+        13102,
+        13103,
+        13105,
+        13106,
+        13108,
+        13110
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "uv"
+    },
+    "output": {
+      "neighbors": [
+        14744,
+        14746,
+        14747,
+        14748,
+        14750,
+        14768,
+        14771
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        1633,
+        1634,
+        1635,
+        1637,
+        1639,
+        1640,
+        1641
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        3275,
+        3277,
+        3319,
+        3320,
+        3321,
+        3340,
+        3369
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        4822,
+        4851,
+        4870,
+        4871,
+        4872,
+        4914,
+        4916
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        6545,
+        6551,
+        6552,
+        6554,
+        6555,
+        6556,
+        6558
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        3667,
+        3668,
+        3669,
+        8191,
+        8193,
+        8533,
+        11690
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        9825,
+        9827,
+        9828,
+        9829,
+        9831,
+        9832,
+        9838
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        11465,
+        11467,
+        11469,
+        11470,
+        11472,
+        11473,
+        11474
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        13093,
+        13100,
+        13101,
+        13103,
+        13104,
+        13106,
+        13108
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "uw"
+    },
+    "output": {
+      "neighbors": [
+        14741,
+        14743,
+        14744,
+        14746,
+        14747,
+        14748,
+        14749
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        1612,
+        1615,
+        1633,
+        1635,
+        1636,
+        1637,
+        1639
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        3273,
+        3275,
+        3277,
+        3278,
+        3280,
+        3281,
+        3282
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        4822,
+        4851,
+        4870,
+        4871,
+        4872,
+        4914,
+        4916
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        6545,
+        6551,
+        6552,
+        6554,
+        6555,
+        6556,
+        6558
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        8191,
+        8193,
+        9557
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        9829,
+        9831,
+        9835,
+        9836,
+        9837,
+        9841,
+        9851
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        11445,
+        11452,
+        11457,
+        11458,
+        11459,
+        11467,
+        11469
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        13014,
+        13043,
+        13062,
+        13063,
+        13064,
+        13106,
+        13108
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "vu"
+    },
+    "output": {
+      "neighbors": [
+        14742,
+        14743,
+        14744,
+        14746,
+        14748,
+        14749,
+        14750
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        1612,
+        1615,
+        1633,
+        1635,
+        1636,
+        1637,
+        1639
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        3253,
+        3260,
+        3265,
+        3266,
+        3267,
+        3275,
+        3277
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        4909,
+        4910,
+        4911,
+        4913,
+        4914,
+        4916,
+        4918
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        6545,
+        6551,
+        6552,
+        6554,
+        6555,
+        6556,
+        6558
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        8189,
+        8191,
+        8193,
+        8194,
+        10236,
+        10238,
+        10239
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        9824,
+        9826,
+        9828,
+        9829,
+        9831,
+        9833,
+        9836
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        11445,
+        11452,
+        11457,
+        11458,
+        11459,
+        11467,
+        11469
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        13093,
+        13100,
+        13101,
+        13103,
+        13104,
+        13106,
+        13108
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "vw"
+    },
+    "output": {
+      "neighbors": [
+        14741,
+        14743,
+        14744,
+        14746,
+        14747,
+        14748,
+        14749
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        1
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        1634,
+        1635,
+        1636,
+        1637,
+        1639,
+        1640,
+        1642
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        3275,
+        3277,
+        3279,
+        3280,
+        3282,
+        3283,
+        3290
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        4909,
+        4910,
+        4911,
+        4913,
+        4914,
+        4916,
+        4918
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        6545,
+        6551,
+        6552,
+        6554,
+        6555,
+        6556,
+        6558
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        4691,
+        4692,
+        4693,
+        8191,
+        8193,
+        8533,
+        12714
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        9825,
+        9827,
+        9828,
+        9829,
+        9831,
+        9832,
+        9838
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        11467,
+        11469,
+        11511,
+        11512,
+        11513,
+        11532,
+        11561
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        13014,
+        13043,
+        13062,
+        13063,
+        13064,
+        13106,
+        13108
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "wu"
+    },
+    "output": {
+      "neighbors": [
+        14742,
+        14743,
+        14744,
+        14746,
+        14748,
+        14749,
+        14750
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 0,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        1
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 1638,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        1634,
+        1635,
+        1636,
+        1637,
+        1639,
+        1640,
+        1642
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 3276,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        3275,
+        3277,
+        3279,
+        3280,
+        3282,
+        3283,
+        3290
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 4915,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        4914,
+        4916,
+        4924,
+        4925,
+        4926,
+        4931,
+        4938
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 6553,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        6547,
+        6550,
+        6552,
+        6554,
+        6555,
+        6557,
+        6559
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 8192,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        6143,
+        6144,
+        8190,
+        8191,
+        8193,
+        8194,
+        11263
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 9830,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        9825,
+        9827,
+        9828,
+        9829,
+        9831,
+        9832,
+        9838
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 11468,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        11465,
+        11467,
+        11469,
+        11470,
+        11472,
+        11473,
+        11474
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 13107,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        13106,
+        13108,
+        13116,
+        13117,
+        13118,
+        13123,
+        13130
+      ]
+    }
+  },
+  {
+    "input": {
+      "s": 14745,
+      "resolution": 7,
+      "orientation": "wv"
+    },
+    "output": {
+      "neighbors": [
+        14744,
+        14746,
+        14747,
+        14748,
+        14750,
+        14768,
+        14771
+      ]
+    }
+  }
+]

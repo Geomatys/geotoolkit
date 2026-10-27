@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2025, Geomatys
+ *    (C) 2025-2026, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,10 @@
 package org.geotoolkit.dggs.a5;
 
 import com.google.common.geometry.S2Polygon;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
-import org.apache.sis.maths.Vector2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.referencing.dggs.Zone;
@@ -55,38 +57,47 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
             }
         }
 
-        final long hash = A5.lonLatToCell(new Vector2D.Double(dp.getCoordinate(0), dp.getCoordinate(1)), level);
+        final long hash = A5.lonLatToCell(new double[]{dp.getCoordinate(0), dp.getCoordinate(1)}, level);
         return new A5Zone(hierarchy.dggrs, hash);
     }
 
+    /**
+     * Returns the number of zones at this level, saturated to {@link Long#MAX_VALUE}
+     * for the finest level which has more than 2^63 zones.
+     */
     @Override
     public long getZoneCount() {
-        return A5.countZones(level);
+        final BigInteger count = A5.getNumCellsExact(level);
+        return count.bitLength() < Long.SIZE ? count.longValue() : Long.MAX_VALUE;
     }
 
     @Override
     public Stream<Zone> getZones(GeographicExtent extent) throws TransformException {
+        //the 12 dodecahedron faces
+        final long[] res0 = A5.getRes0Cells();
+        final List<Zone> roots = new ArrayList<>(res0.length);
+        for (long cell : res0) {
+            roots.add(new A5Zone(hierarchy.dggrs, cell));
+        }
         if (extent == null && level == 0) {
-            return Stream.of(hierarchy.getZone(0l));
+            return roots.stream();
         }
 
         //search from root
         final S2Polygon geometry = DiscreteGlobalGridSystems.toS2Polygon(extent);
-        try (Stream<Zone> zones = hierarchy.getGrids().get(0).getZones()) {
-            return DiscreteGlobalGridSystems.spatialSearch(zones.toList(), level, geometry);
-        }
+        return DiscreteGlobalGridSystems.spatialSearch(roots, level, geometry);
     }
 
     @Override
     protected long getZoneLongIdentifier(double[] source, int soffset) {
-        return A5.lonLatToCell(new Vector2D.Double(source[soffset], source[soffset+1]), level);
+        return A5.lonLatToCell(new double[]{source[soffset], source[soffset+1]}, level);
     }
 
     @Override
     protected void getZonePosition(long zoneId, double[] target, int toffset) {
-        final Vector2D.Double lonlat = A5.cellToLonLat(zoneId);
-        target[toffset] = lonlat.x;
-        target[toffset+1] = lonlat.y;
+        final double[] lonlat = A5.cellToLonLat(zoneId);
+        target[toffset] = lonlat[0];
+        target[toffset+1] = lonlat[1];
     }
 
 }

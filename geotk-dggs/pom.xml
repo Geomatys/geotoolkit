@@ -54,5 +54,12 @@
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
         </dependency>
+
+        <!-- A5 fixtures (JSON shared with upstream a5 ports) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

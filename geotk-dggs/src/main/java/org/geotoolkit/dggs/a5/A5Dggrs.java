@@ -76,8 +76,8 @@ public final class A5Dggrs extends DiscreteGlobalGridReferenceSystem {
     public Optional<InternationalString> getDescription() {
         return Optional.of(new SimpleInternationalString(
                 "A5 is a geospatial index that partitions the world into pentagonal cells. The cells are available at "
-              + "32 different resolution levels, with the largest cell covering the whole world, "
-              + "and the smallest less than 30mm square. Within each resolution level the cells have equal area, to within 2%."));
+              + "31 different resolution levels, from the 12 faces of a dodecahedron at level 0 "
+              + "to cells smaller than 30mm square at level 30. Within each resolution level the cells have exactly equal area."));
     }
 
     @Override
