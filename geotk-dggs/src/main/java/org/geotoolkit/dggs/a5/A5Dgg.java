@@ -89,6 +89,15 @@ final class A5Dgg extends AbstractDiscreteGlobalGrid<A5Dggh> {
     }
 
     @Override
+    public Stream<Zone> getZones(Zone parent) throws TransformException {
+        final int parentDepth = parent.getLocationType().getRefinementLevel();
+        if (parentDepth > level) {
+            throw new IllegalArgumentException("Parent zone is at a lower level then this grid");
+        }
+        return parent.getChildrenAtRelativeDepth(level - parentDepth);
+    }
+
+    @Override
     protected long getZoneLongIdentifier(double[] source, int soffset) {
         return A5.lonLatToCell(new double[]{source[soffset], source[soffset+1]}, level);
     }
