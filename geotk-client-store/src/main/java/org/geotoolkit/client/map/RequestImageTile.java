@@ -27,6 +27,7 @@ import org.apache.sis.storage.tiling.TileMatrix;
 import org.apache.sis.storage.tiling.TileStatus;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 
 /**
@@ -43,39 +44,28 @@ public class RequestImageTile extends DefaultImageTile {
     public ImageReader getImageReader() throws IOException {
 
         if(spi == null){
-            //try to find reader
             final Request request = (Request)input;
-
-            //try to find a reader using a suffix
-            ImageReader reader = XImageIO.getReaderBySuffix(request.getURL(), Boolean.TRUE, Boolean.TRUE);
-            InputStream in = null;
-            try {
-                in = request.getResponseStream();
-                byte[] readAllBytes = in.readAllBytes();
-                final StorageConnector cnx = new StorageConnector(readAllBytes);
-                final ImageInputStream imin = cnx.getStorageAs(ImageInputStream.class);
-                if (reader != null) {
-                    reader.setInput(imin, true);
-                    return reader;
-                } else {
-                    reader = XImageIO.getReader(imin, Boolean.TRUE, Boolean.TRUE);
-                    return reader;
-                }
-            } catch (DataStoreException ex) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    ex.addSuppressed(e);
-                }
-                throw new IOException(ex.getMessage(), ex);
-            } catch (IOException ex) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    ex.addSuppressed(e);
-                }
-                throw ex;
+            //download the tile once : the readers would open the URL again if given as input
+            final byte[] bytes;
+            try (InputStream in = request.getResponseStream()) {
+                bytes = in.readAllBytes();
             }
+            final ImageInputStream imin;
+            try {
+                imin = new StorageConnector(bytes).getStorageAs(ImageInputStream.class);
+            } catch (DataStoreException ex) {
+                throw new IOException(ex.getMessage(), ex);
+            }
+            //try to find a reader using the URL suffix, otherwise from the content
+            final String suffix = IOUtilities.extension(request.getURL().getPath());
+            if (suffix != null && !suffix.isEmpty()) {
+                try {
+                    return XImageIO.getReaderBySuffix(suffix, imin, Boolean.TRUE, Boolean.TRUE);
+                } catch (IOException ex) {
+                    //no reader for this suffix, search by content
+                }
+            }
+            return XImageIO.getReader(imin, Boolean.TRUE, Boolean.TRUE);
         }
 
         final Object inputTmp = ((Request)input).getResponseStream();

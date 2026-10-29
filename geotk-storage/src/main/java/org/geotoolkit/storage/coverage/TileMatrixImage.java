@@ -311,7 +311,14 @@ public class TileMatrixImage extends ComputedImage {
             for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                 for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
                     if (!isTileMissing(x, y)) {
-                        Raster tile = getTile(x, y, true, false);
+                        //tiles from the image cache, they are not read again for each region
+                        Raster tile;
+                        try {
+                            tile = getTile(x, y);
+                        } catch (RuntimeException ex) {
+                            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                            tile = null;
+                        }
                         if (tile != null) {
                             final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 

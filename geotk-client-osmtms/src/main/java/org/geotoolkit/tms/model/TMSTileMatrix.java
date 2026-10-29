@@ -17,12 +17,18 @@
 package org.geotoolkit.tms.model;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.TileMatrixSet;
@@ -50,9 +56,41 @@ public class TMSTileMatrix extends AbstractTileMatrix {
         return scaleLevel;
     }
 
+    /**
+     * Returns the tile, its image converted to ARGB.
+     * Tile servers often send palette images, with a different palette in each tile : the mosaic image
+     * built from the tiles has a single color model, the tiles must share it.
+     */
     @Override
     public Optional<Tile> getTile(long... indices) throws DataStoreException {
-        return set.getTile(getTileMatrixSet(), this, indices, null);
+        final Tile tile = set.getTile(getTileMatrixSet(), this, indices, null).orElse(null);
+        if (tile instanceof DefaultImageTile imageTile) {
+            final RenderedImage image;
+            try {
+                image = imageTile.getImage();
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+            if (image == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new DefaultImageTile(this, toARGB(image), indices));
+        }
+        return Optional.ofNullable(tile);
+    }
+
+    private static RenderedImage toARGB(RenderedImage image) {
+        if (image instanceof BufferedImage bi && bi.getType() == BufferedImage.TYPE_INT_ARGB) {
+            return image;
+        }
+        final BufferedImage argb = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = argb.createGraphics();
+        try {
+            g.drawRenderedImage(image, AffineTransform.getTranslateInstance(-image.getMinX(), -image.getMinY()));
+        } finally {
+            g.dispose();
+        }
+        return argb;
     }
 
     @Override
