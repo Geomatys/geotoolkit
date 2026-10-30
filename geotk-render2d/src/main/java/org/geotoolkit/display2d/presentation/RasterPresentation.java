@@ -155,7 +155,7 @@ public class RasterPresentation extends Grid2DPresentation {
 
         Geometry coverageShape;
         try {
-            coverageShape = org.apache.sis.geometry.wrapper.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
+            coverageShape = JTS.transform(polygon, renderingContext.getDisplayCRS());
             final Geometry area = search.getDisplayGeometryJTS();
 
             if (coverageShape.intersects(area)) {
@@ -164,7 +164,7 @@ public class RasterPresentation extends Grid2DPresentation {
 
             //test with wrap around split
             coverageShape = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-            coverageShape = org.apache.sis.geometry.wrapper.jts.JTS.transform(polygon, renderingContext.getDisplayCRS());
+            coverageShape = JTS.transform(polygon, renderingContext.getDisplayCRS());
             if (coverageShape.intersects(area)) {
                 return true;
             }

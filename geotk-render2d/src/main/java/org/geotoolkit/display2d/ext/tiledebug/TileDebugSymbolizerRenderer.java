@@ -114,7 +114,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                         final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, indice, TileMatrices.getOrEstimateTileGridSize(m));
                         Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                         geom.setUserData(crs2d);
-                        geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
+                        geom = org.geotoolkit.geometry.jts.JTS.transform(geom, renderingContext.getDisplayCRS());
 
                         Shape shp = JTS.asShape(geom);
 

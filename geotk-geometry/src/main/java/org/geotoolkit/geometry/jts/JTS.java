@@ -19,12 +19,10 @@ package org.geotoolkit.geometry.jts;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
 import static java.awt.geom.PathIterator.SEG_CLOSE;
 import static java.awt.geom.PathIterator.SEG_LINETO;
 import static java.awt.geom.PathIterator.SEG_MOVETO;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,13 +33,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import static org.apache.sis.geometry.wrapper.jts.JTS.getCoordinateReferenceSystem;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -62,6 +63,7 @@ import org.opengis.coordinate.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -131,6 +133,77 @@ public final class JTS {
         if (!array[0].equals2D(array[array.length - 1])) {
             array[array.length - 1].setCoordinate(array[0]);
         }
+    }
+
+    /**
+     * Transforms the given geometry to the specified Coordinate Reference System (<abbr>CRS</abbr>).
+     * If the given geometry is {@code null}, or if the given <abbr>CRS</abbr> is {@code null} or the
+     * same as the current geometry <abbr>CRS</abbr>, then the given geometry is returned unchanged.
+     * If the geometry has no Coordinate Reference System, then the geometry is returned unchanged.
+     *
+     * <p><b>This operation may be slow!</b>
+     * If many geometries need to be transformed, it is better to store them in a single geometry
+     * collection in order to invoke this method only once.</p>
+     *
+     * <p>Copied from Apache SIS.</p>
+     *
+     * @param  geometry   the geometry to transform, or {@code null}.
+     * @param  targetCRS  the target coordinate reference system, or {@code null}.
+     * @return the transformed geometry, or the same geometry if it is already in target CRS.
+     * @throws FactoryException if transformation to the target CRS cannot be constructed.
+     * @throws TransformException if the given geometry cannot be transformed.
+     */
+    public static Geometry transform(Geometry geometry, final CoordinateReferenceSystem targetCRS)
+            throws FactoryException, TransformException
+    {
+        if (geometry != null && targetCRS != null) {
+            final CoordinateReferenceSystem sourceCRS = getCoordinateReferenceSystem(geometry);
+            if (sourceCRS != null) {
+                if (!CRS.equivalent(sourceCRS, targetCRS)) {
+                    CoordinateOperation operation = findOperation(sourceCRS, targetCRS, geometry);
+                    geometry = org.apache.sis.geometry.wrapper.jts.JTS.transform(geometry, operation.getMathTransform());
+                    geometry.setUserData(operation.getTargetCRS());
+                }
+            }
+        }
+        return geometry;
+    }
+
+    /**
+     * Finds an operation between the given CRS valid in the given area of interest.
+     * This method does not verify the <abbr>CRS</abbr> of the given geometry.
+     *
+     * <p>Copied from Apache SIS.</p>
+     *
+     * @param  sourceCRS       the CRS of source coordinates.
+     * @param  targetCRS       the CRS of target coordinates.
+     * @param  areaOfInterest  the area of interest.
+     * @return the mathematical operation from {@code sourceCRS} to {@code targetCRS}.
+     * @throws FactoryException if the operation cannot be created.
+     */
+    private static CoordinateOperation findOperation(final CoordinateReferenceSystem sourceCRS,
+                                                     final CoordinateReferenceSystem targetCRS,
+                                                     final Geometry areaOfInterest)
+            throws FactoryException
+    {
+        DefaultGeographicBoundingBox bbox = null;
+        if (!areaOfInterest.isEmpty()) {
+            bbox = new DefaultGeographicBoundingBox();
+            try {
+                final Envelope e = areaOfInterest.getEnvelopeInternal();
+                final var env = new GeneralEnvelope(sourceCRS);     // May be 3- or 4-dimensional.
+                env.setRange(0, e.getMinX(), e.getMaxX());
+                env.setRange(1, e.getMinY(), e.getMaxY());
+                bbox.setBounds(env);
+            } catch (TransformException ex) {
+                bbox = null;
+                Logging.ignorableException(
+                        Logger.getLogger("org.geotoolkit.geometry"),
+                        org.apache.sis.geometry.wrapper.jts.JTS.class,
+                        "transform", ex);
+            }
+        }
+        return CRS.findOperation(sourceCRS, targetCRS, bbox);
     }
 
     /**

@@ -99,7 +99,7 @@ public class WKTAdaptor extends ComplexAdaptor {
                     //force geometry in longitude first
                     final CoordinateReferenceSystem crs2 = ((AbstractCRS)crs).forConvention(AxesConvention.RIGHT_HANDED);
                     if (crs2 != crs) {
-                        geom = org.apache.sis.geometry.wrapper.jts.JTS.transform(geom, crs2);
+                        geom = org.geotoolkit.geometry.jts.JTS.transform(geom, crs2);
                     }
                     if (crs2 != null)
                         dimension = crs2.getCoordinateSystem().getDimension();

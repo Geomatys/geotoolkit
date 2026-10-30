@@ -243,7 +243,7 @@ public class ProjectedGeometry  {
                         //check that the futur geometry will intersect the visible area
                         final org.locationtech.jts.geom.Envelope candidate = org.geotoolkit.geometry.jts.JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
                         if (candidate.intersects(context.objectiveJTSEnvelope)) {
-                            org.locationtech.jts.geom.Geometry trsGeom = org.apache.sis.geometry.wrapper.jts.JTS.transform(objBase, context.wraps.wrapIncObj[i]);
+                            org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
                             trsGeom.setUserData(objCrs);
                             objectiveGeometryJTS[n++] = trsGeom;
                         }

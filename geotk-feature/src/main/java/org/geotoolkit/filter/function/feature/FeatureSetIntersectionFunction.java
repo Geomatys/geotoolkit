@@ -35,6 +35,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.function.AbstractFunction;
+import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -85,7 +86,7 @@ public class FeatureSetIntersectionFunction extends AbstractFunction {
                             if (igeom == null) {
                                 continue;
                             }
-                            igeom = org.apache.sis.geometry.wrapper.jts.JTS.transform((Geometry) igeom, geomCrs);
+                            igeom = JTS.transform((Geometry) igeom, geomCrs);
                             try {
                                 Geometry intersection = geom.intersection((Geometry) igeom);
                                 if (!intersection.isEmpty()) {
