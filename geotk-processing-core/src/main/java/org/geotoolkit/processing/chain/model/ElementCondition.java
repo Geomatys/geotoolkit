@@ -142,8 +142,7 @@ public class ElementCondition extends Element implements Parameterized{
             return true;
         }
 
-        if (obj instanceof ElementCondition) { // no looking for position
-            final ElementCondition that = (ElementCondition) obj;
+        if (obj instanceof ElementCondition that) { // no looking for position
             return Objects.equals(this.id,        that.id)
                 && Objects.equals(this.inputs,    that.inputs)
                 && Objects.equals(this.outputs,    that.outputs)

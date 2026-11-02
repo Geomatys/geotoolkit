@@ -104,8 +104,7 @@ public class ChainProcess extends AbstractProcess {
             } else if(obj == ElementProcess.BEGIN){
                 // do nothing
 
-            } else if(obj instanceof ElementProcess){
-                final ElementProcess element = (ElementProcess) obj;
+            } else if(obj instanceof ElementProcess element){
                 final ProcessDescriptor desc;
                 try {
                     desc = getProcessDescriptor(element);
@@ -113,8 +112,7 @@ public class ChainProcess extends AbstractProcess {
                     throw new ProcessException("Sub process "+element.getAuthority()+"."+element.getCode()+" not found.", this, ex);
                 }
                 configs.put(element.getId(), desc.getInputDescriptor().createValue());
-            }  else if (obj instanceof ElementCondition) {
-                final ElementCondition element = (ElementCondition) obj;
+            }  else if (obj instanceof ElementCondition element) {
                 if (element.getFailed().isEmpty() || element.getSuccess().isEmpty()) {
                     throw new ProcessException("A conditional element should have at least one success AND one failed execution link.", this, null);
                 }
@@ -164,7 +162,7 @@ public class ChainProcess extends AbstractProcess {
                 } else if (obj == ElementProcess.END) {
                     // do nothing
 
-                } else if(obj instanceof ElementProcess) {
+                } else if(obj instanceof ElementProcess element) {
                     // handle process cancel
                     stopIfDismissed();
                     // handle process pause
@@ -181,7 +179,6 @@ public class ChainProcess extends AbstractProcess {
                     }
 
                     //execute process
-                    final ElementProcess element = (ElementProcess) obj;
                     final ParameterValueGroup config = configs.get(element.getId());
                     final ProcessDescriptor pdesc;
                     try {
@@ -229,8 +226,7 @@ public class ChainProcess extends AbstractProcess {
                             }
                         }
                     }
-                } else if (obj instanceof ElementCondition) {
-                    final ElementCondition condition = (ElementCondition) obj;
+                } else if (obj instanceof ElementCondition condition) {
                     final Boolean result = executeConditionalElement(condition, configs.get(condition.getId()));
 
                     final Chain updateModel = new Chain(model);

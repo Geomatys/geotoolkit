@@ -129,8 +129,7 @@ public class RDF implements Serializable {
         if (object == this) {
             return true;
         }
-        if (object instanceof RDF) {
-            final RDF that = (RDF) object;
+        if (object instanceof RDF that) {
 
             return Objects.equals(this.concept, that.concept) &&
                    Objects.equals(this.description, that.description);

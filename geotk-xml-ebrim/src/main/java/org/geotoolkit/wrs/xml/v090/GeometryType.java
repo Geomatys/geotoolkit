@@ -135,8 +135,7 @@ public class GeometryType extends WRSExtrinsicObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof GeometryType && super.equals(obj)) {
-            final GeometryType that = (GeometryType) obj;
+        if (obj instanceof GeometryType that && super.equals(obj)) {
             return Objects.equals(this.dimension,    that.dimension) &&
                    Objects.equals(this.geometryType, that.geometryType) &&
                    Objects.equals(this.srid,         that.srid);

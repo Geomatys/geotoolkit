@@ -117,8 +117,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor<Envelope> {
             if (c.data == null) return;
             final JTSEnvelope2D bbox = bbox(c.data);
             final Object value = expression.getValue();
-            if (value instanceof Geometry) {
-                final Geometry geometry = (Geometry) value;
+            if (value instanceof Geometry geometry) {
                 final Envelope bounds = geometry.getEnvelopeInternal();
                 bbox.expandToInclude(bounds);
             } else {

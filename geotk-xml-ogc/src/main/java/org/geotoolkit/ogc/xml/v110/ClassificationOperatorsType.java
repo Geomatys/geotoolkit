@@ -82,8 +82,7 @@ public class ClassificationOperatorsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ClassificationOperatorsType) {
-            final ClassificationOperatorsType that = (ClassificationOperatorsType) object;
+        if (object instanceof ClassificationOperatorsType that) {
 
             return Objects.equals(this.classificationOperator, that.classificationOperator);
         }

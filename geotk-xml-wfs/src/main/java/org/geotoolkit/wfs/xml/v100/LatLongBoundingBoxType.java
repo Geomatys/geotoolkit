@@ -182,8 +182,7 @@ public class LatLongBoundingBoxType implements BoundingBox {
         if (object == this) {
             return true;
         }
-        if (object instanceof LatLongBoundingBoxType) {
-            final LatLongBoundingBoxType that = (LatLongBoundingBoxType) object;
+        if (object instanceof LatLongBoundingBoxType that) {
             return Objects.equals(this.minx, that.minx) &&
                    Objects.equals(this.maxx, that.maxx) &&
                    Objects.equals(this.miny, that.miny) &&

@@ -97,8 +97,7 @@ public class ListStoredQueriesResponseType implements ListStoredQueriesResponse 
         if (object == this) {
             return true;
         }
-        if (object instanceof ListStoredQueriesResponseType) {
-            final ListStoredQueriesResponseType that = (ListStoredQueriesResponseType) object;
+        if (object instanceof ListStoredQueriesResponseType that) {
             return Objects.equals(this.storedQuery,   that.storedQuery);
         }
         return false;

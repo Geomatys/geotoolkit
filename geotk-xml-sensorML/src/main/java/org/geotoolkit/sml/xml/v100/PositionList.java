@@ -168,8 +168,7 @@ public class PositionList implements AbstractPositionList {
             return true;
         }
 
-        if (object instanceof PositionList) {
-            final PositionList that = (PositionList) object;
+        if (object instanceof PositionList that) {
 
             return Objects.equals(this.position, that.position) &&
                    Objects.equals(this.timePosition, that.timePosition) &&

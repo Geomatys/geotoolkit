@@ -101,8 +101,7 @@ public abstract class AbstractDatumBaseType extends DefinitionType {
             return true;
         }
 
-        if (object instanceof AbstractDatumType && super.equals(object, mode)) {
-            final AbstractDatumType that = (AbstractDatumType) object;
+        if (object instanceof AbstractDatumType that && super.equals(object, mode)) {
 
             return Objects.equals(this.datumName,     that.getDatumName());
         }

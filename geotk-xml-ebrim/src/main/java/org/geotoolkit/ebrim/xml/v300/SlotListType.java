@@ -99,8 +99,7 @@ public class SlotListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SlotListType) {
-            final SlotListType that = (SlotListType) obj;
+        if (obj instanceof SlotListType that) {
             return Objects.equals(this.slot, that.slot);
         }
         return false;

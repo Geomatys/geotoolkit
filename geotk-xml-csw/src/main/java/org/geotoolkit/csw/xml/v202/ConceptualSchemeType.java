@@ -107,8 +107,7 @@ public class ConceptualSchemeType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ConceptualSchemeType) {
-            final ConceptualSchemeType that = (ConceptualSchemeType) object;
+        if (object instanceof ConceptualSchemeType that) {
 
             return  Objects.equals(this.authority, that.authority) &&
                     Objects.equals(this.name,      that.name)      &&

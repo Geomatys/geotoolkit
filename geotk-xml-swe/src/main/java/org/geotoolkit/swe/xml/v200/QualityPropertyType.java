@@ -436,8 +436,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof QualityPropertyType) {
-            final QualityPropertyType that = (QualityPropertyType) object;
+        if (object instanceof QualityPropertyType that) {
 
             return Objects.equals(this.quantity,      that.quantity) &&
                    Objects.equals(this.quantityRange, that.quantityRange) &&

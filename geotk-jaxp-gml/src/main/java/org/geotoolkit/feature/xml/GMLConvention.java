@@ -207,11 +207,9 @@ public class GMLConvention {
         final Annotation annotation = type.getAnnotation();
         if (annotation != null) {
             for (Object obj : annotation.getAppinfoOrDocumentation()) {
-                if (obj instanceof Appinfo) {
-                    final Appinfo app = (Appinfo) obj;
+                if (obj instanceof Appinfo app) {
                     for (Object ele : app.getContent()) {
-                        if (ele instanceof String) {
-                            final String text = (String) ele;
+                        if (ele instanceof String text) {
                             if ("deprecated".equalsIgnoreCase(text)) {
                                 return true;
                             }
@@ -246,15 +244,13 @@ public class GMLConvention {
      */
     public static String getGmlId(Object candidate) {
         Object id = null;
-        if (candidate instanceof Feature) {
-            final Feature feature = (Feature) candidate;
+        if (candidate instanceof Feature feature) {
             try {
                 id = feature.getPropertyValue("@id");
             } catch (PropertyNotFoundException ex) {
                 //not a gml object
             }
-        } else if (candidate instanceof Geometry) {
-            final Geometry geom = (Geometry) candidate;
+        } else if (candidate instanceof Geometry geom) {
             Object userData = geom.getUserData();
             if (userData instanceof Map) {
                 id = ((Map) userData).get("@id");

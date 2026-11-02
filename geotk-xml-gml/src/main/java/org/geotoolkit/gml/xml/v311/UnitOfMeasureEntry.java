@@ -113,8 +113,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof UnitOfMeasureEntry) {
-            final UnitOfMeasureEntry that = (UnitOfMeasureEntry) object;
+        if (object instanceof UnitOfMeasureEntry that) {
             return Objects.equals(this.name,  that.name) &&
                    Objects.equals(this.id,   that.id) &&
                    Objects.equals(this.quantityType, that.quantityType) &&

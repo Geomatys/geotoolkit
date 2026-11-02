@@ -83,8 +83,7 @@ public class EchoedRequestType {
         if (object == this) {
             return true;
         }
-        if (object instanceof EchoedRequestType) {
-            final EchoedRequestType that = (EchoedRequestType) object;
+        if (object instanceof EchoedRequestType that) {
             return Objects.equals(this.any, that.any);
         }
         return false;

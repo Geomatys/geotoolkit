@@ -38,8 +38,7 @@ public class BackgroundUtilities {
         int correction = 0;
 
         final Stroke stroke = template.getBackgroundStroke();
-        if(stroke instanceof BasicStroke){
-            final BasicStroke strk = (BasicStroke) stroke;
+        if(stroke instanceof BasicStroke strk){
             correction = (int) (strk.getLineWidth() / 2);
         }
 

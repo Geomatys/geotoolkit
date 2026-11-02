@@ -268,8 +268,7 @@ public class GeometryArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof GeometryArrayPropertyType) {
-            final GeometryArrayPropertyType that = (GeometryArrayPropertyType) object;
+        if (object instanceof GeometryArrayPropertyType that) {
 
             if (this.abstractGeometry != null && that.abstractGeometry != null) {
                 for (int i = 0; i < abstractGeometry.size(); i++) {

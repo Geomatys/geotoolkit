@@ -216,8 +216,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
     // TODO: we should be able to simplify this if we transmit correctly empty tiles and tiles in error.
     protected final boolean emptyFilter(Tile data) {
         if (data == null) return false;
-        if (data instanceof TileInError) {
-            final TileInError error = (TileInError) data;
+        if (data instanceof TileInError error) {
             final boolean errorDueToNoDataAvailable = (error.getCause() instanceof NoSuchDataException || error.getCause() instanceof IllegalGridGeometryException);
             LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", Arrays.toString(error.getIndices())));
             if (!errorDueToNoDataAvailable) return false;

@@ -76,8 +76,7 @@ public class TopLeftPoint {
         if (object == this) {
             return true;
         }
-        if (object instanceof TopLeftPoint) {
-            final TopLeftPoint that = (TopLeftPoint) object;
+        if (object instanceof TopLeftPoint that) {
             if (this.topLeftPoint == null && that.topLeftPoint == null) {
                 return true;
             } else if (this.topLeftPoint != null && that.topLeftPoint != null) {

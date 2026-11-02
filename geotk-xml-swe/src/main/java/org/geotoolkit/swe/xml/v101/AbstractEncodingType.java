@@ -93,8 +93,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractEncodingType) {
-            final AbstractEncodingType that = (AbstractEncodingType) object;
+        if (object instanceof AbstractEncodingType that) {
             return Objects.equals(this.id, that.id);
         }
         return false;

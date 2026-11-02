@@ -335,8 +335,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             return true;
         }
 
-        if (object instanceof AbstractEncodingPropertyType) {
-            final AbstractEncodingPropertyType that = (AbstractEncodingPropertyType) object;
+        if (object instanceof AbstractEncodingPropertyType that) {
             boolean enc = false;
             if (this.abstractEncoding == null && that.abstractEncoding == null) {
                 enc = true;

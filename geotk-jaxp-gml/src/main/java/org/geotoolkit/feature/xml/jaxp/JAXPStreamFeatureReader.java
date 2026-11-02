@@ -203,11 +203,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         final String gmlId = GMLConvention.getGmlId(obj);
         if (gmlId != null) index.put(gmlId, obj);
 
-        if (obj instanceof Feature) {
-            final Feature feature = (Feature) obj;
+        if (obj instanceof Feature feature) {
             for (PropertyType pt : feature.getType().getProperties(true)) {
-                if (pt instanceof AttributeType) {
-                    AttributeType atType = (AttributeType) pt;
+                if (pt instanceof AttributeType atType) {
                     if (Geometry.class.isAssignableFrom(atType.getValueClass())) {
                         Object value = feature.getPropertyValue(pt.getName().toString());
                         populateIndex(value);
@@ -217,16 +215,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     populateIndex(value);
                 }
             }
-        } else if (obj instanceof FeatureSet) {
-            final FeatureSet fs = (FeatureSet) obj;
+        } else if (obj instanceof FeatureSet fs) {
             try (Stream<Feature> stream = fs.features(false)) {
                 Iterator<Feature> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     populateIndex(iterator.next());
                 }
             }
-        } else if (obj instanceof Collection) {
-            final Collection col = (Collection) obj;
+        } else if (obj instanceof Collection col) {
             Iterator<Feature> iterator = col.iterator();
             while (iterator.hasNext()) {
                 populateIndex(iterator.next());
@@ -242,12 +238,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     private void resolveReferences(Object obj) throws DataStoreException {
 
-        if (obj instanceof Feature) {
-            final Feature feature = (Feature) obj;
+        if (obj instanceof Feature feature) {
             final FeatureType type = feature.getType();
             for (PropertyType pt : type.getProperties(true)) {
-                if (pt instanceof AttributeType) {
-                    AttributeType attType = (AttributeType) pt;
+                if (pt instanceof AttributeType attType) {
                     if (attType.getMaximumOccurs() == 1) {
                         Attribute att = (Attribute) feature.getProperty(pt.getName().toString());
                         Object value = att.getValue();
@@ -272,8 +266,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     FeatureType valueType = ((FeatureAssociationRole) pt).getValueType();
                     if ("AbstractGMLType".equals(valueType.getName().tip().toString())) {
 
-                        if (value instanceof Feature) {
-                            Feature f = (Feature) value;
+                        if (value instanceof Feature f) {
                             try {
                                 Object fid = f.getPropertyValue(AttributeConvention.IDENTIFIER);
                                 if (String.valueOf(fid).startsWith("#")) {
@@ -286,9 +279,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             } catch (IllegalArgumentException ex) {
                                 //do nothing
                             }
-                        } else if (value instanceof Collection) {
+                        } else if (value instanceof Collection col) {
                             final List<Feature> newFeatures = new ArrayList<>();
-                            final Collection col = (Collection) value;
                             Iterator<Feature> iterator = col.iterator();
                             while (iterator.hasNext()) {
                                 Feature f = (Feature) iterator.next();
@@ -317,8 +309,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                 }
             }
-        } else if (obj instanceof WritableFeatureSet) {
-            final WritableFeatureSet fs = (WritableFeatureSet) obj;
+        } else if (obj instanceof WritableFeatureSet fs) {
             final List<Feature> newFeatures = new ArrayList<>();
             try (Stream<Feature> stream = fs.features(false)) {
                 Iterator<Feature> iterator = stream.iterator();
@@ -333,8 +324,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         } else if (obj instanceof FeatureSet) {
             //can not update features, not writable
 
-        } else if (obj instanceof Collection) {
-            final Collection col = (Collection) obj;
+        } else if (obj instanceof Collection col) {
             Iterator<Feature> iterator = col.iterator();
             while (iterator.hasNext()) {
                 resolveReferences(iterator.next());
@@ -643,8 +633,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         if (candidate != null) {
                             //search for a FeatureAssociationRole
                             for (PropertyType pt : featureType.getProperties(true)) {
-                                if (pt instanceof FeatureAssociationRole) {
-                                    final FeatureAssociationRole far = (FeatureAssociationRole) pt;
+                                if (pt instanceof FeatureAssociationRole far) {
                                     final FeatureType vt = far.getValueType();
                                     if (vt.isAssignableFrom(candidate)) {
                                         propertyType = far;
@@ -681,8 +670,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                 }
 
-                if (propertyType instanceof Operation) {
-                    final Operation opType = (Operation) propertyType;
+                if (propertyType instanceof Operation opType) {
                     final PropertyType resultType = (PropertyType) opType.getResult();
                     final Object value = readPropertyValue(resultType, null, null);
                     ops.add(new AbstractMap.SimpleImmutableEntry<>((Operation)propertyType,value));
@@ -756,9 +744,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             GeometryMapping mapping = new GeometryMapping(null, propertyType, getPool(), longitudeFirst, skipCurrent);
             mapping.readValue(reader, propName, feature);
 
-        } else if (propertyType instanceof FeatureAssociationRole) {
+        } else if (propertyType instanceof FeatureAssociationRole far) {
 
-            final FeatureAssociationRole far = (FeatureAssociationRole) propertyType;
             final FeatureType valueType = (associationSubType == null) ? far.getValueType() : associationSubType;
 
             //GML properties have one level of encapsulation (in properties which follow the ogc convention)
@@ -1118,8 +1105,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
         final Object previousVal = feature.getPropertyValue(propName.toString());
 
-        if (propertyType instanceof FeatureAssociationRole) {
-            final FeatureAssociationRole role = (FeatureAssociationRole) propertyType;
+        if (propertyType instanceof FeatureAssociationRole role) {
 
             if (role.getMaximumOccurs() > 1) {
                 final List vals = new ArrayList((Collection) previousVal);
@@ -1178,8 +1164,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public static void resolveLinks(Map<String,Object> index, Feature feature) {
         final FeatureType type = feature.getType();
         for (PropertyType pt : type.getProperties(true)) {
-            if (pt instanceof AttributeType) {
-                AttributeType attType = (AttributeType) pt;
+            if (pt instanceof AttributeType attType) {
                 if (attType.getMaximumOccurs() == 1) {
                     Attribute att = (Attribute) feature.getProperty(pt.getName().toString());
                     Object value = att.getValue();

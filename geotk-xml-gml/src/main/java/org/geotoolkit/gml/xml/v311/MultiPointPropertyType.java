@@ -307,8 +307,7 @@ public class MultiPointPropertyType implements MultiPointProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiPointPropertyType) {
-            final MultiPointPropertyType that = (MultiPointPropertyType) object;
+        if (object instanceof MultiPointPropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

@@ -115,8 +115,7 @@ public class SimpleFeatureCollectionType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SimpleFeatureCollectionType) {
-            final SimpleFeatureCollectionType that = (SimpleFeatureCollectionType) obj;
+        if (obj instanceof SimpleFeatureCollectionType that) {
             return Objects.equals(this.boundedBy, that.boundedBy) &&
                    Objects.equals(this.member,    that.member);
         }

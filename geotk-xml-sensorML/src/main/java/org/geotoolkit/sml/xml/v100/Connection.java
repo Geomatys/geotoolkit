@@ -146,8 +146,7 @@ public class Connection implements AbstractConnection {
             return true;
         }
 
-        if (object instanceof Connection) {
-            final Connection that = (Connection) object;
+        if (object instanceof Connection that) {
             return Objects.equals(this.arrayLink, that.arrayLink) &&
                    Objects.equals(this.link, that.link)           &&
                    Objects.equals(this.name, that.name);

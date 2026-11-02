@@ -171,8 +171,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
             return true;
         }
 
-        if (obj instanceof InsertType) {
-            InsertType that = (InsertType) obj;
+        if (obj instanceof InsertType that) {
             return Objects.equals(this.any, that.any) &&
                    Objects.equals(this.inputFormat, that.inputFormat) &&
                    Objects.equals(this.srsName, that.srsName);

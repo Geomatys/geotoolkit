@@ -139,8 +139,7 @@ public class ElementSetNameType implements ElementSetName {
         if (object == this) {
             return true;
         }
-        if (object instanceof ElementSetNameType) {
-            final ElementSetNameType that = (ElementSetNameType) object;
+        if (object instanceof ElementSetNameType that) {
             return Objects.equals(this.typeNames,  that.typeNames)   &&
                    Objects.equals(this.value,  that.value);
         }

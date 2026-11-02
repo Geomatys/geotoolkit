@@ -352,8 +352,7 @@ public class LinearReferencing{
             return GO2Utilities.JTS_FACTORY.createLineString(new Coordinate[]{coordinate, coordinate});
         } else if (candidate instanceof MultiPoint) {
             return GO2Utilities.JTS_FACTORY.createLineString(((candidate).getCoordinates()));
-        } else if (candidate instanceof GeometryCollection) {
-            final GeometryCollection gc = (GeometryCollection) candidate;
+        } else if (candidate instanceof GeometryCollection gc) {
             final int nb = gc.getNumGeometries();
             if(nb>0){
                 linear = asLineString(gc.getGeometryN(0));

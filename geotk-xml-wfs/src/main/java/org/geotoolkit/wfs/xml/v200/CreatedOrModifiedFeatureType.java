@@ -128,8 +128,7 @@ public class CreatedOrModifiedFeatureType {
         if (object == this) {
             return true;
         }
-        if (object instanceof CreatedOrModifiedFeatureType) {
-            final CreatedOrModifiedFeatureType that = (CreatedOrModifiedFeatureType) object;
+        if (object instanceof CreatedOrModifiedFeatureType that) {
             return Objects.equals(this.resourceId,   that.resourceId) &&
                    Objects.equals(this.handle,   that.handle);
         }

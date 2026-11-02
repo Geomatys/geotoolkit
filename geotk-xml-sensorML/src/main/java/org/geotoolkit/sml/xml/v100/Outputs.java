@@ -260,8 +260,7 @@ public class Outputs implements AbstractOutputs {
             return true;
         }
 
-        if (object instanceof Outputs) {
-            final Outputs that = (Outputs) object;
+        if (object instanceof Outputs that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

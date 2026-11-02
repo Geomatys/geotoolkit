@@ -237,8 +237,7 @@ public class BoundingBoxType implements BoundingBox {
         if (object == this) {
             return true;
         }
-        if (object instanceof BoundingBoxType) {
-            final BoundingBoxType that = (BoundingBoxType) object;
+        if (object instanceof BoundingBoxType that) {
             return Objects.equals(this.crs        , that.crs)         &&
                    Objects.equals(this.dimensions , that.dimensions)  &&
                    Objects.equals(this.lowerCorner, that.lowerCorner) &&

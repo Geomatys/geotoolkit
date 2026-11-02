@@ -145,8 +145,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         if (object == this) {
             return true;
         }
-        if (object instanceof DomainType && super.equals(object)) {
-            final DomainType that = (DomainType) object;
+        if (object instanceof DomainType that && super.equals(object)) {
             return Objects.equals(this.name, that.name);
         }
         return false;

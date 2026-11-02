@@ -436,8 +436,7 @@ public class Characteristics extends SensorObject implements AbstractCharacteris
         }
 
         boolean record = false;
-        if (object instanceof Characteristics) {
-            final Characteristics that = (Characteristics) object;
+        if (object instanceof Characteristics that) {
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 record = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {

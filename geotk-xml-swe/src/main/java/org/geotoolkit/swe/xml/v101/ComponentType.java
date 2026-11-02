@@ -78,8 +78,7 @@ public class ComponentType implements Entry{
         if (object == this) {
             return true;
         }
-        if (object instanceof ComponentType)  {
-            final ComponentType that = (ComponentType) object;
+        if (object instanceof ComponentType that)  {
 
             return  Objects.equals(this.component,   that.component)   &&
                     Objects.equals(this.idCompositePhenomenon,   that.idCompositePhenomenon);

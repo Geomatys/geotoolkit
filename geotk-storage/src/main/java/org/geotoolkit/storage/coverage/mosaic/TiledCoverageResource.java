@@ -311,8 +311,7 @@ public class TiledCoverageResource extends AbstractGridCoverageResource {
     }
 
     private static void append(GridCoverageResource r, TileOrganizer c) throws DataStoreException {
-        if (r instanceof TiledCoverageResource) {
-            TiledCoverageResource mcr = (TiledCoverageResource) r;
+        if (r instanceof TiledCoverageResource mcr) {
             for (ResourceTile t : mcr.tiles) {
                 c.add(new ResourceTile(t.getResource()));
             }

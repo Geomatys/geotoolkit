@@ -281,8 +281,7 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         if (this == o) {
             return true;
         }
-        if (o instanceof GetCoverageType && super.equals(o)) {
-            final GetCoverageType that = (GetCoverageType) o;
+        if (o instanceof GetCoverageType that && super.equals(o)) {
             boolean dimEquals = false;
             if (this.dimensionSubset != null && that.dimensionSubset != null) {
                 if (this.dimensionSubset.size() == that.dimensionSubset.size()) {

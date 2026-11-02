@@ -157,8 +157,7 @@ public class SupportedUOMs {
         if (object == this) {
             return true;
         }
-        if (object instanceof SupportedUOMs) {
-            final SupportedUOMs that = (SupportedUOMs) object;
+        if (object instanceof SupportedUOMs that) {
             return Objects.equals(this._default, that._default) &&
                    Objects.equals(this.supported, that.supported);
         }
@@ -251,8 +250,7 @@ public class SupportedUOMs {
             if (object == this) {
                 return true;
             }
-            if (object instanceof Default) {
-                final Default that = (Default) object;
+            if (object instanceof Default that) {
                 return Objects.equals(this.uom, that.uom);
             }
             return false;

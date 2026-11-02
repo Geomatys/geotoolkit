@@ -90,8 +90,7 @@ public class Value implements Serializable{
         if (object == this) {
             return true;
         }
-        if (object instanceof Value) {
-            final Value that = (Value) object;
+        if (object instanceof Value that) {
             return Objects.equals(this.lang,  that.lang) &&
                    Objects.equals(this.value, that.value);
         }

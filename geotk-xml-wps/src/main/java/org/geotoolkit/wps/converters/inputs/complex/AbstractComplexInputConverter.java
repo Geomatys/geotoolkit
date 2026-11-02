@@ -129,8 +129,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
             if (o instanceof JAXBElement) {
                 o = ((JAXBElement) o).getValue();
             }
-            if (o instanceof FeatureCollection) {
-                FeatureCollection fc = (FeatureCollection) o;
+            if (o instanceof FeatureCollection fc) {
                 for (FeatureProperty fp : fc.getFeatureMember()) {
                     if (fp.getUnknowFeature() != null) {
                         content.add(fp.getUnknowFeature());

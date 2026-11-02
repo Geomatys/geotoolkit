@@ -128,8 +128,7 @@ public abstract class MapProjection extends MathTransformProvider {
      */
     static NamedIdentifier sameNameAs(final Citation authority, final GeneralParameterDescriptor parameters) {
         for (final GenericName candidate : parameters.getAlias()) {
-            if (candidate instanceof NamedIdentifier) {
-                final NamedIdentifier name = (NamedIdentifier) candidate;
+            if (candidate instanceof NamedIdentifier name) {
                 if (name.getAuthority() == authority) {
                     return name;
                 }

@@ -150,8 +150,7 @@ public class BoundingBox implements AbstractBoundingBox{
         if (object == this) {
             return true;
         }
-        if (object instanceof BoundingBox) {
-            final BoundingBox that = (BoundingBox) object;
+        if (object instanceof BoundingBox that) {
 
 
             return Objects.equals(this.maxx, that.maxx) &&

@@ -97,8 +97,7 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiPolygonType && super.equals(object, mode)) {
-            final MultiPolygonType that = (MultiPolygonType) object;
+        if (object instanceof MultiPolygonType that && super.equals(object, mode)) {
 
             return Objects.equals(this.polygonMember, that.polygonMember);
         }

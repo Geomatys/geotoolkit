@@ -169,8 +169,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         if (object == this) {
             return true;
         }
-        if (object instanceof TimeInstantType) {
-            final TimeInstantType that = (TimeInstantType) object;
+        if (object instanceof TimeInstantType that) {
             return  Objects.equals(this.timePosition, that.timePosition);
         }
         return false;

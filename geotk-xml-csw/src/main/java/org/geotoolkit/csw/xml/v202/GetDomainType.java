@@ -131,8 +131,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetDomainType && super.equals(object)) {
-            final GetDomainType that = (GetDomainType) object;
+        if (object instanceof GetDomainType that && super.equals(object)) {
             return Objects.equals(this.parameterName, that.parameterName) &&
                    Objects.equals(this.propertyName,  that.propertyName);
         }

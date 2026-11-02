@@ -105,8 +105,7 @@ public class DCP implements AbstractDCP {
         if (object == this) {
             return true;
         }
-        if (object instanceof DCP) {
-            final DCP that = (DCP) object;
+        if (object instanceof DCP that) {
             return Objects.equals(this.http, that.http);
         }
         return false;

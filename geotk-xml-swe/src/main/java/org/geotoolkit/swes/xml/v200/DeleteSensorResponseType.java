@@ -103,8 +103,7 @@ public class DeleteSensorResponseType extends ExtensibleResponseType implements 
         if (obj == this) {
             return true;
         }
-        if (obj instanceof DeleteSensorResponseType && super.equals(obj)) {
-            final DeleteSensorResponseType that = (DeleteSensorResponseType)obj;
+        if (obj instanceof DeleteSensorResponseType that && super.equals(obj)) {
             return Objects.equals(this.deletedProcedure, that.deletedProcedure);
         }
         return false;

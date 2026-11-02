@@ -261,8 +261,7 @@ public class Address extends SensorObject implements AbstractAddress {
             return true;
         }
 
-        if (object instanceof Address) {
-            final Address that = (Address) object;
+        if (object instanceof Address that) {
             return Objects.equals(this.administrativeArea, that.administrativeArea)
                     && Objects.equals(this.city, that.city)
                     && Objects.equals(this.country, that.country)

@@ -345,8 +345,7 @@ public class Tester {
         }
 
         for(Object obj : sld.getNamedLayerOrUserLayer()){
-            if(obj instanceof org.geotoolkit.sld.xml.v110.NamedLayer){
-                org.geotoolkit.sld.xml.v110.NamedLayer named = (org.geotoolkit.sld.xml.v110.NamedLayer) obj;
+            if(obj instanceof org.geotoolkit.sld.xml.v110.NamedLayer named){
                 System.out.println("LAYER : NAMED : name=" + named.getName());
                 org.geotoolkit.se.xml.v110.DescriptionType desc = named.getDescription();
                 if(desc != null){
@@ -360,8 +359,7 @@ public class Tester {
                 }
 
                 for(Object style : named.getNamedStyleOrUserStyle()){
-                    if(style instanceof org.geotoolkit.sld.xml.v110.NamedStyle){
-                        org.geotoolkit.sld.xml.v110.NamedStyle ns = (org.geotoolkit.sld.xml.v110.NamedStyle) style;
+                    if(style instanceof org.geotoolkit.sld.xml.v110.NamedStyle ns){
                         System.out.println("LAYER : NAMED : STYLE : NAMED : name=" + ns.getName());
                         org.geotoolkit.se.xml.v110.DescriptionType nsdesc = ns.getDescription();
                         if(desc != null){
@@ -373,8 +371,7 @@ public class Tester {
                     }
                 }
 
-            }else if(obj instanceof org.geotoolkit.sld.xml.v110.UserLayer){
-                org.geotoolkit.sld.xml.v110.UserLayer user = (org.geotoolkit.sld.xml.v110.UserLayer) obj;
+            }else if(obj instanceof org.geotoolkit.sld.xml.v110.UserLayer user){
                 System.out.println("LAYER : USER : name=" + user.getName());
                 org.geotoolkit.se.xml.v110.DescriptionType desc = user.getDescription();
                 if(desc != null){

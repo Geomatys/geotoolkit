@@ -154,8 +154,7 @@ public class QueryConstraintType implements QueryConstraint {
         if (object == this) {
             return true;
         }
-        if (object instanceof QueryConstraintType) {
-            final QueryConstraintType that = (QueryConstraintType) object;
+        if (object instanceof QueryConstraintType that) {
             return Objects.equals(this.cqlText,  that.cqlText)   &&
                    Objects.equals(this.filter,  that.filter)   &&
                    Objects.equals(this.version,  that.version);

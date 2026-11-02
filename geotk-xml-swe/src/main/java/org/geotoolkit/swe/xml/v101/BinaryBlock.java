@@ -193,8 +193,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
         if (object == this) {
             return true;
         }
-        if (object instanceof BinaryBlock && super.equals(object)) {
-            final BinaryBlock that = (BinaryBlock) object;
+        if (object instanceof BinaryBlock that && super.equals(object)) {
 
             return Objects.equals(this.byteEncoding, that.byteEncoding) &&
                    Objects.equals(this.byteLength,   that.byteLength)   &&
@@ -327,8 +326,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
             if (object == this) {
                 return true;
             }
-            if (object instanceof Member) {
-                final Member that = (Member) object;
+            if (object instanceof Member that) {
 
                 return Objects.equals(this.block, that.block) &&
                        Objects.equals(this.component, that.component);
@@ -507,8 +505,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
                 if (object == this) {
                     return true;
                 }
-                if (object instanceof Block) {
-                    final Block that = (Block) object;
+                if (object instanceof Block that) {
 
                     return Objects.equals(this.byteLength,  that.byteLength)                &&
                            Objects.equals(this.encryption,  that.encryption)                &&
@@ -720,8 +717,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
                 if (object == this) {
                     return true;
                 }
-                if (object instanceof Component) {
-                    final Component that = (Component) object;
+                if (object instanceof Component that) {
 
                     return Objects.equals(this.bitLength,   that.bitLength)                 &&
                            Objects.equals(this.encryption,  that.encryption)                &&

@@ -171,9 +171,8 @@ public final class FeatureTypeExt {
 
     private static boolean equalsIgnoreConvention(PropertyType pt1, PropertyType pt2){
         if(pt1 instanceof FeatureAssociationRole){
-            if(pt2 instanceof FeatureAssociationRole){
+            if(pt2 instanceof FeatureAssociationRole far2){
                 final FeatureAssociationRole far1 = (FeatureAssociationRole) pt1;
-                final FeatureAssociationRole far2 = (FeatureAssociationRole) pt2;
 
                  //check base properties
                 if (!Objects.equals(far1.getName(),        far2.getName()) ||
@@ -233,8 +232,7 @@ public final class FeatureTypeExt {
      */
     public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
 
-        if(descriptor instanceof ParameterDescriptor){
-            final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
+        if(descriptor instanceof ParameterDescriptor desc){
 
             final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
             atb.setName(NamesExt.valueOf(desc.getName().getCode()));
@@ -251,9 +249,8 @@ public final class FeatureTypeExt {
 
             return atb.build();
 
-        }else if (descriptor instanceof ParameterDescriptorGroup){
+        }else if (descriptor instanceof ParameterDescriptorGroup desc){
 
-            final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
             final FeatureType type = toFeatureType(desc);
 
             final Map params = new HashMap();

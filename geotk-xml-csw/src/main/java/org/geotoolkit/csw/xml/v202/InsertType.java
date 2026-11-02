@@ -140,8 +140,7 @@ public class InsertType implements Insert {
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertType) {
-            final InsertType that = (InsertType) object;
+        if (object instanceof InsertType that) {
             return Objects.equals(this.any,      that.any)    &&
                    Objects.equals(this.handle,   that.handle) &&
                    Objects.equals(this.typeName, that.typeName);

@@ -124,8 +124,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
 
         final List<Presentation> presentations = new ArrayList<>();
 
-        if (cachedStroke instanceof CachedStrokeSimple) {
-            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+        if (cachedStroke instanceof CachedStrokeSimple cs) {
 
             final ShapePresentation presentation = new ShapePresentation(layer, layer.getData(), feature);
             presentation.forGrid(ctx);
@@ -146,8 +145,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
 
             presentations.add(presentation);
 
-        } else if (cachedStroke instanceof CachedStrokeGraphic) {
-            final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+        } else if (cachedStroke instanceof CachedStrokeGraphic gc) {
             final float initGap = gc.getInitialGap(feature);
             final Point2D pt = new Point2D.Double();
             final CachedGraphicStroke cgs = gc.getCachedGraphic();

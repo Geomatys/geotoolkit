@@ -70,8 +70,7 @@ public class LabelingUtilities {
         final List<Candidate> correctCandidates = new ArrayList<Candidate>();
 
         for(Candidate candidate : candidates){
-            if(candidate instanceof PointCandidate){
-                PointCandidate pc = (PointCandidate) candidate;
+            if(candidate instanceof PointCandidate pc){
                 if(bounds.contains(pc.getBounds())){
                     correctCandidates.add(candidate);
                 }

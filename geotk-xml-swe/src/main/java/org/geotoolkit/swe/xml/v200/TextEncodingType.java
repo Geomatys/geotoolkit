@@ -190,8 +190,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
             return true;
         }
 
-        if (object instanceof TextEncodingType && super.equals(object)) {
-            final TextEncodingType that = (TextEncodingType) object;
+        if (object instanceof TextEncodingType that && super.equals(object)) {
             return Objects.equals(this.blockSeparator,      that.blockSeparator)      &&
                    Objects.equals(this.collapseWhiteSpaces, that.collapseWhiteSpaces) &&
                    Objects.equals(this.decimalSeparator,    that.decimalSeparator)    &&

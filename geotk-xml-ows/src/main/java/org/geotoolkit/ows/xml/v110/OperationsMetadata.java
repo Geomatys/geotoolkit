@@ -271,8 +271,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         if (object == this) {
             return true;
         }
-        if (object instanceof OperationsMetadata) {
-            final OperationsMetadata that = (OperationsMetadata) object;
+        if (object instanceof OperationsMetadata that) {
 
             return Objects.equals(this.constraint,           that.constraint)           &&
                    Objects.equals(this.extendedCapabilities, that.extendedCapabilities) &&

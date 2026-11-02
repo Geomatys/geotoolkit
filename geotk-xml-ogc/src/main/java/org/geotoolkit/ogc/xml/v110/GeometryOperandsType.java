@@ -115,8 +115,7 @@ public class GeometryOperandsType {
             return true;
         }
 
-       if (object instanceof GeometryOperandsType) {
-           final GeometryOperandsType that = (GeometryOperandsType) object;
+       if (object instanceof GeometryOperandsType that) {
 
             return Objects.equals(this.geometryOperand, that.geometryOperand);
         }

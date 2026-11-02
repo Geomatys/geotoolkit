@@ -113,8 +113,7 @@ public class InternalPropertyName extends AbstractExpression implements ValueRef
         if (object == this) {
             return true;
         }
-        if (object instanceof InternalPropertyName) {
-            final InternalPropertyName that = (InternalPropertyName) object;
+        if (object instanceof InternalPropertyName that) {
 
             return  Objects.equals(this.content, that.content);
         }

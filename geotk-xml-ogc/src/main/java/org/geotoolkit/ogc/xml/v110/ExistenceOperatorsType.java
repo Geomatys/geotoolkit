@@ -82,8 +82,7 @@ public class ExistenceOperatorsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExistenceOperatorsType) {
-            final ExistenceOperatorsType that = (ExistenceOperatorsType) object;
+        if (object instanceof ExistenceOperatorsType that) {
 
             return Objects.equals(this.existenceOperator, that.existenceOperator);
         }

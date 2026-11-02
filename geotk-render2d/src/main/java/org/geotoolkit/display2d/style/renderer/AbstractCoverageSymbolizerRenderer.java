@@ -346,8 +346,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private boolean isNonLinear(MathTransform trs) {
         if (trs instanceof InterpolatedTransform) {
             return true;
-        } else if (trs instanceof PassThroughTransform) {
-            final PassThroughTransform pt = (PassThroughTransform) trs;
+        } else if (trs instanceof PassThroughTransform pt) {
             return isNonLinear(pt.getSubTransform());
         } else {
             for (MathTransform t : MathTransforms.getSteps(trs)) {

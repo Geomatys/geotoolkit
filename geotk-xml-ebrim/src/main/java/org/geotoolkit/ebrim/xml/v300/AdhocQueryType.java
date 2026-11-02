@@ -86,8 +86,7 @@ public class AdhocQueryType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof AdhocQueryType && super.equals(obj)) {
-            final AdhocQueryType that = (AdhocQueryType) obj;
+        if (obj instanceof AdhocQueryType that && super.equals(obj)) {
             return Objects.equals(this.queryExpression, that.queryExpression);
         }
         return false;

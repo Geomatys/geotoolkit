@@ -112,8 +112,7 @@ public abstract class ExtensibleResponseType implements SOSResponse {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ExtensibleResponseType) {
-            final ExtensibleResponseType that = (ExtensibleResponseType) obj;
+        if (obj instanceof ExtensibleResponseType that) {
             return Objects.equals(this.extension, that.extension);
         }
         return false;

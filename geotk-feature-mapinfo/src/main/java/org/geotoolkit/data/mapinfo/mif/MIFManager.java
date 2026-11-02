@@ -259,8 +259,7 @@ public class MIFManager {
             /*  We have to determine if it's a geometry we should override (generify).
              * We'll also check if it's a supported type.
              */
-            if (next instanceof AttributeTypeBuilder) {
-                final AttributeTypeBuilder builder = (AttributeTypeBuilder) next;
+            if (next instanceof AttributeTypeBuilder builder) {
                 final Class valueClass = builder.getValueClass();
                 if (Geometry.class.isAssignableFrom(valueClass)) {
                     if (geometry != null) {

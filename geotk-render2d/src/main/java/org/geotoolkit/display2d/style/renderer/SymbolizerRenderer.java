@@ -65,8 +65,7 @@ public interface SymbolizerRenderer {
      * @return Stream never null, can be empty
      */
     default Stream<Presentation> presentations(MapLayer layer, Resource resource) {
-        if (resource instanceof FeatureSet) {
-            final FeatureSet fs = (FeatureSet) resource;
+        if (resource instanceof FeatureSet fs) {
 
             try {
                 return fs.features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
@@ -79,8 +78,7 @@ public interface SymbolizerRenderer {
                 return Stream.of(new ExceptionPresentation(ex));
             }
 
-        } else if (resource instanceof Aggregate) {
-            final Aggregate agg = (Aggregate) resource;
+        } else if (resource instanceof Aggregate agg) {
             Stream<Presentation> stream = Stream.empty();
             try {
                 for (Resource r : agg.components()) {

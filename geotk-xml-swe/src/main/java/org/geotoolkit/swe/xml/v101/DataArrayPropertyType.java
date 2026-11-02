@@ -100,8 +100,7 @@ public class DataArrayPropertyType implements DataArrayProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof DataArrayPropertyType) {
-            final DataArrayPropertyType that = (DataArrayPropertyType) object;
+        if (object instanceof DataArrayPropertyType that) {
             if (this.dataArray == null && that.dataArray == null) {
                 return true;
             } else if (this.dataArray != null && that.dataArray != null) {

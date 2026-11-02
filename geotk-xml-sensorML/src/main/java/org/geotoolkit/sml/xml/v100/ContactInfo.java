@@ -234,8 +234,7 @@ public class ContactInfo implements AbstractContactInfo {
             return true;
         }
 
-        if (object instanceof ContactInfo) {
-            final ContactInfo that = (ContactInfo) object;
+        if (object instanceof ContactInfo that) {
             return Objects.equals(this.address,             that.address)             &&
                    Objects.equals(this.contactInstructions, that.contactInstructions) &&
                    Objects.equals(this.hoursOfService,      that.hoursOfService)      &&

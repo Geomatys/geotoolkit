@@ -220,8 +220,7 @@ public class UomPropertyType implements UomProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof UomPropertyType) {
-            final UomPropertyType that = (UomPropertyType) object;
+        if (object instanceof UomPropertyType that) {
             return Objects.equals(this.actuate,        that.actuate)        &&
                    Objects.equals(this.arcrole,        that.arcrole)        &&
                    Objects.equals(this.baseUnit,       that.baseUnit)       &&

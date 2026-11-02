@@ -138,8 +138,7 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
             return true;
         }
 
-        if (obj instanceof DeleteType) {
-            DeleteType that = (DeleteType) obj;
+        if (obj instanceof DeleteType that) {
             return Objects.equals(this.filter, that.filter) &&
                    Objects.equals(this.typeName, that.typeName);
         }

@@ -141,8 +141,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
                 this.name = new ArrayList<>();
                 this.name.add(that.getName());
             }
-            if (that instanceof AbstractGMLType) {
-                final AbstractGMLType thatGML = (AbstractGMLType) that;
+            if (that instanceof AbstractGMLType thatGML) {
                 if (thatGML.identifier != null) {
                     this.identifier = new CodeWithAuthorityType(thatGML.identifier);
                 }
@@ -340,8 +339,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         if (obj == null) {
             return false;
         }
-        if (obj instanceof AbstractGMLType) {
-            final AbstractGMLType that = (AbstractGMLType) obj;
+        if (obj instanceof AbstractGMLType that) {
             return Objects.equals(this.description,          that.description)          &&
                    Objects.equals(this.descriptionReference, that.descriptionReference) &&
                    Objects.equals(this.id,                   that.id)                   &&

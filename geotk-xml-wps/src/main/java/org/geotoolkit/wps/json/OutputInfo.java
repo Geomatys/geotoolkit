@@ -53,8 +53,7 @@ public class OutputInfo {
                 Object r = that.getData().getContent().get(0);
                 if (r instanceof LiteralValue) {
                     r = ((LiteralValue)r).getValue();
-                } else if (r instanceof BoundingBox) {
-                    BoundingBox bbox = (BoundingBox) r;
+                } else if (r instanceof BoundingBox bbox) {
                     if ("text/xml".equals(that.getData().getMimeType()) || "application/xml".equals(that.getData().getMimeType())) {
                         try {
                             Marshaller m = OWSMarshallerPool.getInstance().acquireMarshaller();

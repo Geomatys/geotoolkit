@@ -312,8 +312,7 @@ public class PolygonPropertyType implements PolygonProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof PolygonPropertyType) {
-            final PolygonPropertyType that = (PolygonPropertyType) object;
+        if (object instanceof PolygonPropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

@@ -165,8 +165,7 @@ public class SurfaceArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SurfaceArrayPropertyType) {
-            final SurfaceArrayPropertyType that = (SurfaceArrayPropertyType) object;
+        if (object instanceof SurfaceArrayPropertyType that) {
             return Objects.equals(this.getAbstractSurface(), that.getAbstractSurface());
         }
         return false;

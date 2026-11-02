@@ -133,8 +133,7 @@ public class ParameterList implements AbstractParameterList {
             return true;
         }
 
-        if (object instanceof ParameterList) {
-            final ParameterList that = (ParameterList) object;
+        if (object instanceof ParameterList that) {
 
             return Objects.equals(this.parameter, that.parameter) &&
                     Objects.equals(this.id, that.id);

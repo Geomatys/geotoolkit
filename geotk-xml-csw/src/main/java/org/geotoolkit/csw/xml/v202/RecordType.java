@@ -258,8 +258,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         if (object == this) {
             return true;
         }
-        if (object instanceof RecordType && super.equals(object)) {
-            final RecordType that = (RecordType) object;
+        if (object instanceof RecordType that && super.equals(object)) {
 
             boolean bbox = this.getBoundingBox().size() == that.getBoundingBox().size();
 

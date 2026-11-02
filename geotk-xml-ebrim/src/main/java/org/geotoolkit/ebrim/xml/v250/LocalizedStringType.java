@@ -132,8 +132,7 @@ public class LocalizedStringType implements LocalizedString {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof LocalizedStringType) {
-            final LocalizedStringType that = (LocalizedStringType) obj;
+        if (obj instanceof LocalizedStringType that) {
             return Objects.equals(this.getCharset(), that.getCharset()) &&
                    Objects.equals(this.getLang(), that.getLang()) &&
                    Objects.equals(this.value,   that.value);

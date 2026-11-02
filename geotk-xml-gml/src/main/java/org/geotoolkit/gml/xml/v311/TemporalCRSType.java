@@ -120,8 +120,7 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
             return true;
         }
 
-        if (object instanceof TemporalCRSType && super.equals(object, mode)) {
-            final TemporalCRSType that = (TemporalCRSType) object;
+        if (object instanceof TemporalCRSType that && super.equals(object, mode)) {
 
             return Objects.equals(this.usesTemporalCS,    that.usesTemporalCS) &&
                    Objects.equals(this.usesTemporalDatum, that.usesTemporalDatum);

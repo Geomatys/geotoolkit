@@ -159,8 +159,7 @@ public class TelephoneNumberType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof TelephoneNumberType) {
-            final TelephoneNumberType that = (TelephoneNumberType) obj;
+        if (obj instanceof TelephoneNumberType that) {
             return Objects.equals(this.areaCode,    that.areaCode) &&
                    Objects.equals(this.countryCode, that.countryCode) &&
                    Objects.equals(this.extension,   that.extension) &&

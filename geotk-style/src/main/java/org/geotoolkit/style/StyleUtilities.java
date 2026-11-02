@@ -167,8 +167,7 @@ public final class StyleUtilities extends Static {
             return symbol;
         }
 
-        if(symbol instanceof PointSymbolizer){
-            final PointSymbolizer ps = (PointSymbolizer) symbol;
+        if(symbol instanceof PointSymbolizer ps){
             final Graphic gra = ps.getGraphic();
             return SF.pointSymbolizer(
                     ps.getName(),
@@ -183,8 +182,7 @@ public final class StyleUtilities extends Static {
                         gra.getAnchorPoint(),
                         gra.getDisplacement())
                     );
-        }else if(symbol instanceof LineSymbolizer){
-            final LineSymbolizer ps = (LineSymbolizer) symbol;
+        }else if(symbol instanceof LineSymbolizer ps){
             return SF.lineSymbolizer(
                     ps.getName(),
                     ps.getGeometryPropertyName(),
@@ -192,8 +190,7 @@ public final class StyleUtilities extends Static {
                     ps.getUnitOfMeasure(),
                     correctOpacity(ps.getStroke(), opacity),
                     ps.getPerpendicularOffset());
-        }else if(symbol instanceof PolygonSymbolizer){
-            final PolygonSymbolizer ps = (PolygonSymbolizer) symbol;
+        }else if(symbol instanceof PolygonSymbolizer ps){
             final Stroke str = ps.getStroke();
             return SF.polygonSymbolizer(
                     ps.getName(),
@@ -204,8 +201,7 @@ public final class StyleUtilities extends Static {
                     correctOpacity(ps.getFill(), opacity),
                     ps.getDisplacement(),
                     ps.getPerpendicularOffset());
-        }else if(symbol instanceof TextSymbolizer){
-            final TextSymbolizer ps = (TextSymbolizer) symbol;
+        }else if(symbol instanceof TextSymbolizer ps){
             return SF.textSymbolizer(
                     ps.getName(),
                     ps.getGeometryPropertyName(),
@@ -218,8 +214,7 @@ public final class StyleUtilities extends Static {
                         correctOpacity(ps.getHalo().getFill(), opacity),
                         ps.getHalo().getRadius()),
                     correctOpacity(ps.getFill(), opacity));
-        }else if(symbol instanceof RasterSymbolizer){
-            final RasterSymbolizer ps = (RasterSymbolizer) symbol;
+        }else if(symbol instanceof RasterSymbolizer ps){
             return SF.rasterSymbolizer(
                     ps.getName(),
                     ps.getGeometryPropertyName(),

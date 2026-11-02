@@ -75,8 +75,7 @@ public class ExtendedDescriptionType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExtendedDescriptionType) {
-            final ExtendedDescriptionType that = (ExtendedDescriptionType) object;
+        if (object instanceof ExtendedDescriptionType that) {
 
             return Objects.equals(this.element, that.element);
             }

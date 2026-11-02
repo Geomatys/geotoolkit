@@ -86,8 +86,7 @@ public class BufferedImages {
     }
 
     public static DataBuffer toDataBuffer1D(Object data) throws ArithmeticException {
-        if (data instanceof byte[][]) {
-            final byte[][] matrix = (byte[][]) data;
+        if (data instanceof byte[][] matrix) {
             final int height = matrix.length;
             final int width = matrix[0].length;
             final int size = Math.multiplyExact(height,width);
@@ -96,8 +95,7 @@ public class BufferedImages {
                 System.arraycopy(matrix[i], 0, datas, offset, width);
             }
             return new DataBufferByte(datas, datas.length);
-        } else if (data instanceof short[][]) {
-            final short[][] matrix = (short[][]) data;
+        } else if (data instanceof short[][] matrix) {
             final int height = matrix.length;
             final int width = matrix[0].length;
             final int size = Math.multiplyExact(height,width);
@@ -106,8 +104,7 @@ public class BufferedImages {
                 System.arraycopy(matrix[i], 0, datas, offset, width);
             }
             return new DataBufferShort(datas, datas.length);
-        } else if (data instanceof int[][]) {
-            final int[][] matrix = (int[][]) data;
+        } else if (data instanceof int[][] matrix) {
             final int height = matrix.length;
             final int width = matrix[0].length;
             final int size = Math.multiplyExact(height,width);
@@ -116,8 +113,7 @@ public class BufferedImages {
                 System.arraycopy(matrix[i], 0, datas, offset, width);
             }
             return new DataBufferInt(datas, datas.length);
-        } else if (data instanceof float[][]) {
-            final float[][] matrix = (float[][]) data;
+        } else if (data instanceof float[][] matrix) {
             final int height = matrix.length;
             final int width = matrix[0].length;
             final int size = Math.multiplyExact(height,width);
@@ -126,8 +122,7 @@ public class BufferedImages {
                 System.arraycopy(matrix[i], 0, datas, offset, width);
             }
             return new DataBufferFloat(datas, datas.length);
-        } else if (data instanceof double[][]) {
-            final double[][] matrix = (double[][]) data;
+        } else if (data instanceof double[][] matrix) {
             final int height = matrix.length;
             final int width = matrix[0].length;
             final int size = Math.multiplyExact(height,width);

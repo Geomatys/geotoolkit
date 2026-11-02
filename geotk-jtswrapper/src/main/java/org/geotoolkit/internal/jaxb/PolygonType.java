@@ -121,12 +121,10 @@ public class PolygonType {
         if (out != null) {
             ((JTSRing) out).setCoordinateReferenceSystem(coordinateReferenceSystem);
             for (Primitive p : out.getElements()) {
-                if (p instanceof JTSCurve) {
-                    JTSCurve curve = (JTSCurve) p;
+                if (p instanceof JTSCurve curve) {
                     curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
                     for (CurveSegment cv : curve.getSegments()) {
-                        if (cv instanceof JTSLineString) {
-                            JTSLineString line = (JTSLineString) cv;
+                        if (cv instanceof JTSLineString line) {
                             line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                             PointArray pa = line.getControlPoints();
                             var newPositions = new ArrayList<DirectPosition>();
@@ -153,12 +151,10 @@ public class PolygonType {
             for (Ring ring : inte) {
                 ((JTSRing) ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
                 for (Primitive p : ring.getElements()) {
-                    if (p instanceof JTSCurve) {
-                        JTSCurve curve = (JTSCurve) p;
+                    if (p instanceof JTSCurve curve) {
                         curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
                         for (CurveSegment cv : curve.getSegments()) {
-                            if (cv instanceof JTSLineString) {
-                                JTSLineString line = (JTSLineString) cv;
+                            if (cv instanceof JTSLineString line) {
                                 line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                                 PointArray pa = line.getControlPoints();
                                 var newPositions = new ArrayList<DirectPosition>();

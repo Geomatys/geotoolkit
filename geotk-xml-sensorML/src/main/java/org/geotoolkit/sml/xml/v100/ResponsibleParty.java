@@ -199,8 +199,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
             return true;
         }
 
-        if (object instanceof ResponsibleParty) {
-            final ResponsibleParty that = (ResponsibleParty) object;
+        if (object instanceof ResponsibleParty that) {
             return Objects.equals(this.contactInfo,      that.contactInfo)      &&
                    Objects.equals(this.id,               that.id)               &&
                    Objects.equals(this.individualName,   that.individualName)   &&

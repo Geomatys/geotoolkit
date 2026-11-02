@@ -357,8 +357,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         if (this == object)
             return true;
 
-        if (object instanceof JTSCurve && super.equals(object)) {
-            JTSCurve that = (JTSCurve) object;
+        if (object instanceof JTSCurve that && super.equals(object)) {
             return Objects.equals(this.curveSegments, that.curveSegments);
         }
         return false;

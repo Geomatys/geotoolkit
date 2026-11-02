@@ -412,8 +412,7 @@ public final class TimeParser {
      */
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof TimeParser) {
-            final TimeParser that = (TimeParser) other;
+        if (other instanceof TimeParser that) {
             return this.numDateFields == that.numDateFields &&
                    this.numTimeFields == that.numTimeFields &&
                    this.hasTimeZone   == that.hasTimeZone;

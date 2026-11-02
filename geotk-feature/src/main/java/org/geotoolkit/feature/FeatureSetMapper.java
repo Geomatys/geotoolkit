@@ -68,8 +68,7 @@ public abstract class FeatureSetMapper implements Function<Feature,Feature> {
         while (iterator.hasNext()) {
             final PropertyTypeBuilder ptb = iterator.next();
             final PropertyType property = ptb.build();
-            if (property instanceof Operation) {
-                Operation op = (Operation) property;
+            if (property instanceof Operation op) {
                 String code = op.getParameters().getName().getCode();
 
                 if ("Envelope".equals(code)) {

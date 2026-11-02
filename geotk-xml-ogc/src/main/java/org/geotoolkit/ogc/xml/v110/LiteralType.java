@@ -174,8 +174,7 @@ public class LiteralType extends AbstractExpression implements XMLLiteral {
         if (object == this) {
             return true;
         }
-        if (object instanceof LiteralType) {
-            final LiteralType that = (LiteralType) object;
+        if (object instanceof LiteralType that) {
 
 
             return Objects.equals(this.content,   that.content);

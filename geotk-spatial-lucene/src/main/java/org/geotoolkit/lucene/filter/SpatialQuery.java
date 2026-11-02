@@ -259,8 +259,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     private void applyRtreeOnQuery(final Query query, final Tree rTree, final boolean envelopeOnly) {
         if (query instanceof org.geotoolkit.lucene.filter.Filter) {
             ((org.geotoolkit.lucene.filter.Filter)query).applyRtreeOnFilter(rTree, envelopeOnly);
-        } else if (query instanceof BooleanQuery) {
-            BooleanQuery bQuery = (BooleanQuery) query;
+        } else if (query instanceof BooleanQuery bQuery) {
             for (BooleanClause clause : bQuery.clauses()) {
                 applyRtreeOnQuery(clause.getQuery(), rTree, envelopeOnly);
             }
@@ -310,8 +309,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
         if (object == this) {
             return true;
         }
-        if (object instanceof SpatialQuery) {
-            final SpatialQuery that = (SpatialQuery) object;
+        if (object instanceof SpatialQuery that) {
 
             return (this.logicalOperator ==  that.logicalOperator)          &&
                    Objects.equals(this.getTextQuery(), that.getTextQuery())       &&

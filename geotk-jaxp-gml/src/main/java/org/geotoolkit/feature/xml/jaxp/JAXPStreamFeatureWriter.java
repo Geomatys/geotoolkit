@@ -399,8 +399,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         setOutput(output);
         Integer nbReturned = null;
         Integer nbMatched = null;
-        if (candidate instanceof FeatureSetWrapper) {
-            FeatureSetWrapper fsw = (FeatureSetWrapper) candidate;
+        if (candidate instanceof FeatureSetWrapper fsw) {
             nbReturned = fsw.getNbReturned();
             nbMatched  = fsw.getNbMatched();
             if (fsw.getFeatureSet().size() == 1) {
@@ -415,9 +414,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writeFeature((Feature) candidate,true);
         } else if (candidate instanceof FeatureSet) {
             writeFeatureCollection((FeatureSet) candidate, nbReturned, nbMatched, true);
-        } else if (candidate instanceof List) {
+        } else if (candidate instanceof List collections) {
             // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
-            List collections = (List) candidate;
             long count = 0;
             List<FeatureType> types = new ArrayList<>();
             for (Object c : collections) {
@@ -586,8 +584,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 //            }
 //        }
 
-        if (typeA instanceof FeatureAssociationRole && valueA instanceof Feature) {
-            final FeatureAssociationRole far = (FeatureAssociationRole) typeA;
+        if (typeA instanceof FeatureAssociationRole far && valueA instanceof Feature) {
             final Feature ca = (Feature) valueA;
             final FeatureType valueType = far.getValueType();
 
@@ -706,9 +703,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         } else if (!(AttributeConvention.isGeometryAttribute(typeA))) {
 
-            if (valueA instanceof Document) {
+            if (valueA instanceof Document doc) {
                 //special case for xml documents
-                final Document doc = (Document) valueA;
                 StaxUtils.writeElement(doc.getDocumentElement(), writer, false);
             } else {
                 //simple type
@@ -727,10 +723,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     }
                     if (hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
 
-                    if (valueA instanceof Feature) {
+                    if (valueA instanceof Feature prop) {
                         //some types, like Observation & Measurement have Object types which can be
                         //properties again, we ensure to write then as proper xml tags
-                        final Feature prop = (Feature) valueA;
                         final GenericName propName = prop.getType().getName();
                         final String namespaceURI = getNamespace(propName);
                         final String localPart = Utils.getNameWithoutTypeSuffix(propName.tip().toString());

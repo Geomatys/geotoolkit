@@ -64,8 +64,7 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
 
     public AbstractTimePrimitiveType(final TemporalPrimitive tp) {
         super((AbstractGML) tp);
-        if (tp instanceof AbstractTimePrimitiveType) {
-            final AbstractTimePrimitiveType that = (AbstractTimePrimitiveType) tp;
+        if (tp instanceof AbstractTimePrimitiveType that) {
             this.relatedTime = new ArrayList<>();
             for (RelatedTimeType rt : that.getRelatedTime()) {
                 this.relatedTime.add(new RelatedTimeType(rt));

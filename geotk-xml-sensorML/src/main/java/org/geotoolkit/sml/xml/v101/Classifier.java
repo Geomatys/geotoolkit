@@ -148,8 +148,7 @@ public class Classifier extends SensorObject implements AbstractClassifier {
             return true;
         }
 
-        if (object instanceof Classifier) {
-            final Classifier that = (Classifier) object;
+        if (object instanceof Classifier that) {
 
             return Objects.equals(this.name, that.name)
                     && Objects.equals(this.term, that.term);

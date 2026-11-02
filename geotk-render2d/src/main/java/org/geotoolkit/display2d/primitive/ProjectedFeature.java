@@ -126,8 +126,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     private static boolean isNullorEmpty(Expression exp){
         if (exp == null) {
             return true;
-        } else if (exp instanceof ValueReference) {
-            final ValueReference pn = (ValueReference) exp;
+        } else if (exp instanceof ValueReference pn) {
             final String str = pn.getXPath();
             if (str == null || str.trim().isEmpty()) {
                 return true;

@@ -435,8 +435,7 @@ public abstract class AbstractRequest implements Request {
                 //will never happen is this case
                 e.printStackTrace();
             }
-            if (cnx instanceof HttpURLConnection) {
-                HttpURLConnection httpCnx = (HttpURLConnection) cnx;
+            if (cnx instanceof HttpURLConnection httpCnx) {
                 if (httpCnx.getErrorStream() != null) {
                     String serverError = IOUtilities.toString(httpCnx.getErrorStream());
                     writer.append("Error response from server:\n" + serverError);

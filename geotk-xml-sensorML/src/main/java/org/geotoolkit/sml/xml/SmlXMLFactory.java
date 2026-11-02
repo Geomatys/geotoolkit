@@ -441,9 +441,8 @@ public class SmlXMLFactory {
                 newProcess.setValidTime(oldProcess.getValidTime());
             }
 
-            if (oldProcess instanceof AbstractComponent) {
+            if (oldProcess instanceof AbstractComponent oldAbsComponent) {
                 AbstractComponent newAbsComponent = (AbstractComponent) newProcess;
-                AbstractComponent oldAbsComponent = (AbstractComponent) oldProcess;
 
                 //Inputs
                 if (oldAbsComponent.getInputs() != null) {
@@ -461,9 +460,8 @@ public class SmlXMLFactory {
                 }
             }
 
-            if (oldProcess instanceof AbstractDerivableComponent) {
+            if (oldProcess instanceof AbstractDerivableComponent oldDerComponent) {
                 org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType newDerComponent =  (org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType) newProcess;
-                AbstractDerivableComponent oldDerComponent = (AbstractDerivableComponent) oldProcess;
 
                 // Position
                 if (oldDerComponent.getPosition() != null) {
@@ -491,9 +489,8 @@ public class SmlXMLFactory {
                 }
             }
 
-            if (oldProcess instanceof AbstractPureProcess) {
+            if (oldProcess instanceof AbstractPureProcess oldAbsPuProc) {
                 org.geotoolkit.sml.xml.v101.AbstractPureProcessType newAbsPuProc = (org.geotoolkit.sml.xml.v101.AbstractPureProcessType) newProcess;
-                AbstractPureProcess oldAbsPuProc = (AbstractPureProcess) oldProcess;
 
                 //Inputs
                 if (oldAbsPuProc.getInputs() != null) {

@@ -413,8 +413,7 @@ public final class JTSMapping {
                 Geometry cdt = preservePonctuals(gc.getGeometryN(i));
                 if (cdt instanceof Point) {
                     parts.add((Point) cdt);
-                } else if (cdt instanceof MultiPoint) {
-                    MultiPoint mp = (MultiPoint) cdt;
+                } else if (cdt instanceof MultiPoint mp) {
                     for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
                         parts.add((Point) mp.getGeometryN(k));
                     }
@@ -465,8 +464,7 @@ public final class JTSMapping {
                 Geometry cdt = preserveLinears(gc.getGeometryN(i));
                 if (cdt instanceof LineString) {
                     parts.add((LineString) cdt);
-                } else if (cdt instanceof MultiLineString) {
-                    MultiLineString mp = (MultiLineString) cdt;
+                } else if (cdt instanceof MultiLineString mp) {
                     for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
                         parts.add((LineString) mp.getGeometryN(k));
                     }
@@ -516,8 +514,7 @@ public final class JTSMapping {
                 Geometry cdt = preservePolygonals(gc.getGeometryN(i));
                 if (cdt instanceof Polygon) {
                     parts.add((Polygon) cdt);
-                } else if (cdt instanceof MultiPolygon) {
-                    MultiPolygon mp = (MultiPolygon) cdt;
+                } else if (cdt instanceof MultiPolygon mp) {
                     for (int k = 0, kn = mp.getNumGeometries(); k < kn; k++) {
                         parts.add((Polygon) mp.getGeometryN(k));
                     }

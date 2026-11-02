@@ -124,9 +124,8 @@ public final class URITile {
                 //we have try
             }
 
-            if (input instanceof URI && security != DefaultClientSecurity.NO_SECURITY) {
+            if (input instanceof URI uri && security != DefaultClientSecurity.NO_SECURITY) {
                 //distant URI, go through the security layer
-                URI uri = (URI) input;
                 URL url = security.secure(uri.toURL());
                 URLConnection urlcnx = security.secure(url.openConnection());
                 InputStream in = urlcnx.getInputStream();

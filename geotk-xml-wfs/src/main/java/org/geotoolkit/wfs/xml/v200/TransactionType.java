@@ -255,8 +255,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionType && super.equals(object)) {
-            final TransactionType that = (TransactionType) object;
+        if (object instanceof TransactionType that && super.equals(object)) {
 
             boolean ok = false;
             if (this.abstractTransactionAction.size() == that.abstractTransactionAction.size()) {

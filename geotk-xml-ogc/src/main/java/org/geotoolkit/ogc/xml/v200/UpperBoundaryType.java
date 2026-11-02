@@ -137,8 +137,7 @@ public class UpperBoundaryType extends AbstractExpression implements Boundary, L
         if (this == obj) {
             return true;
         }
-        if (obj instanceof UpperBoundaryType) {
-            final UpperBoundaryType that = (UpperBoundaryType) obj;
+        if (obj instanceof UpperBoundaryType that) {
             if (this.expression != null && that.expression != null) {
                 return Objects.equals(this.expression.getValue(), that.expression.getValue());
             }

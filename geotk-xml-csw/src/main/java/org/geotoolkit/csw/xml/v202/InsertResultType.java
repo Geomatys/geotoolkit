@@ -116,8 +116,7 @@ public class InsertResultType implements InsertResult {
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertResultType) {
-            final InsertResultType that = (InsertResultType) object;
+        if (object instanceof InsertResultType that) {
             return Objects.equals(this.briefRecord, that.briefRecord) &&
                    Objects.equals(this.handleRef,   that.handleRef);
         }

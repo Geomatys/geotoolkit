@@ -171,8 +171,7 @@ public class Term implements AbstractTerm {
             return true;
         }
 
-        if (object instanceof Term) {
-            final Term that = (Term) object;
+        if (object instanceof Term that) {
 
             return Objects.equals(this.codeSpace,  that.codeSpace) &&
                    Objects.equals(this.value,      that.value)     &&

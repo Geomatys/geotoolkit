@@ -320,8 +320,7 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
         if (object == this) {
             return true;
         }
-        if (object instanceof AllowedTokensPropertyType) {
-            final AllowedTokensPropertyType that = (AllowedTokensPropertyType) object;
+        if (object instanceof AllowedTokensPropertyType that) {
 
             return Objects.equals(this.allowedTokens,      that.allowedTokens)    &&
                    Objects.equals(this.actuate,            that.actuate)          &&

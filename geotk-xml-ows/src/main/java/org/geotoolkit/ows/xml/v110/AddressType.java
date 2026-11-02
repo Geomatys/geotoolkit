@@ -177,8 +177,7 @@ public class AddressType implements AbstractAddress {
         if (object == this) {
             return true;
         }
-        if (object instanceof AddressType) {
-            final AddressType that = (AddressType) object;
+        if (object instanceof AddressType that) {
             return Objects.equals(this.administrativeArea,    that.administrativeArea)    &&
                    Objects.equals(this.city,                  that.city)                  &&
                    Objects.equals(this.country,               that.country)               &&

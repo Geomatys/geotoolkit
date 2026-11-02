@@ -140,8 +140,7 @@ public class CodeType implements AbstractCodeType {
         if (object == this) {
             return true;
         }
-        if (object instanceof  CodeType) {
-            final CodeType that = (CodeType) object;
+        if (object instanceof  CodeType that) {
             return Objects.equals(this.codeSpace, that.codeSpace) &&
                    Objects.equals(this.value, that.value);
         }

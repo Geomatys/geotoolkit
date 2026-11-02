@@ -109,8 +109,7 @@ public class PGGridMosaic extends AbstractMosaic{
 
         try {
             tiles.parallel().forEach((Tile tile) -> {
-                if (tile instanceof ImageTile) {
-                    final ImageTile imgTile = (ImageTile) tile;
+                if (tile instanceof ImageTile imgTile) {
                     try {
                         writeTile(imgTile.getPosition(), imgTile.getImage());
                     } catch (IOException ex) {

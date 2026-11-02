@@ -182,8 +182,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
 
     private void syntaxHighLight(ParseTree tree, StyledDocument doc, AtomicInteger position){
 
-        if(tree instanceof ParserRuleContext){
-            final ParserRuleContext prc = (ParserRuleContext) tree;
+        if(tree instanceof ParserRuleContext prc){
             if(prc.exception!=null){
                 //error nodes
                 final Token tokenStart = prc.getStart();
@@ -196,14 +195,12 @@ public class JCQLTextPane extends JPanel implements KeyListener{
             }
 
             //special case for functions
-            if(prc instanceof CQLParser.ExpressionTermContext){
-                final CQLParser.ExpressionTermContext ctx = (CQLParser.ExpressionTermContext) prc;
+            if(prc instanceof CQLParser.ExpressionTermContext ctx){
                 if(ctx.NAME()!=null && ctx.LPAREN()!=null){
                     final int nbChild = tree.getChildCount();
                     for(int i=0;i<nbChild;i++){
                         final ParseTree pt = tree.getChild(i);
-                        if(pt instanceof TerminalNode && ((TerminalNode)pt).getSymbol().getType() == CQLLexer.NAME){
-                            final TerminalNode tn = (TerminalNode) pt;
+                        if(pt instanceof TerminalNode tn && ((TerminalNode)pt).getSymbol().getType() == CQLLexer.NAME){
                             // if index<0 = missing token
                             final Token token = tn.getSymbol();
                             final int offset = token.getStartIndex();
@@ -220,8 +217,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
 
         }
 
-        if(tree instanceof TerminalNode){
-            final TerminalNode tn = (TerminalNode) tree;
+        if(tree instanceof TerminalNode tn){
             // if index<0 = missing token
             final Token token = tn.getSymbol();
             final int offset = token.getStartIndex();

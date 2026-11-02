@@ -167,8 +167,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
             }
         }
 
-        if (jsonObj instanceof GeoJSONFeatureCollection) {
-            final GeoJSONFeatureCollection fc = (GeoJSONFeatureCollection) jsonObj;
+        if (jsonObj instanceof GeoJSONFeatureCollection fc) {
             rwlock.readLock().lock();
             try {
                 if (fc.hasNext()) {
@@ -246,8 +245,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                 continue;
             }
 
-            if (type instanceof FeatureAssociationRole) {
-                final FeatureAssociationRole asso = (FeatureAssociationRole) type;
+            if (type instanceof FeatureAssociationRole asso) {
                 final FeatureType assoType = asso.getValueType();
                 final Class<?> valueClass = value.getClass();
 
@@ -284,8 +282,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                 } else if (value instanceof GeoJSONFeature) {
                     final Feature subComplexAttribute = toFeature((GeoJSONFeature)value, assoType);
                     feature.setPropertyValue(attName, subComplexAttribute);
-                } else if (value instanceof GeoJSONFeatureCollection) {
-                    GeoJSONFeatureCollection collection = (GeoJSONFeatureCollection) value;
+                } else if (value instanceof GeoJSONFeatureCollection collection) {
                     final List<Feature> subFeatures = new ArrayList<>();
                     for (GeoJSONFeature subFeature : collection.getFeatures()) {
                         subFeatures.add(toFeature(subFeature, assoType));

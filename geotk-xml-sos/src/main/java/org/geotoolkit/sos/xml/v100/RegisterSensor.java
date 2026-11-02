@@ -134,8 +134,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
         if (object == this) {
             return true;
         }
-        if (object instanceof RegisterSensor && super.equals(object)) {
-            final RegisterSensor that = (RegisterSensor) object;
+        if (object instanceof RegisterSensor that && super.equals(object)) {
             return Objects.equals(this.observationTemplate, that.observationTemplate) &&
                    Objects.equals(this.sensorDescription,   that.sensorDescription);
         }
@@ -217,8 +216,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
             if (object == this) {
                 return true;
             }
-            if (object instanceof SensorDescription && super.equals(object)) {
-                final SensorDescription that = (SensorDescription) object;
+            if (object instanceof SensorDescription that && super.equals(object)) {
                 return Objects.equals(this.any, that.any);
             }
             return false;

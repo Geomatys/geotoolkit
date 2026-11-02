@@ -123,8 +123,7 @@ public class ValueType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ValueType) {
-            final ValueType that = (ValueType) object;
+        if (object instanceof ValueType that) {
             return  Objects.equals(this.getValue(), that.getValue());
         }
         return false;

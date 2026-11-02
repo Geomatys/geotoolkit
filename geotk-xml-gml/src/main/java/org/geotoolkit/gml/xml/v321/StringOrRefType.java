@@ -343,8 +343,7 @@ public class StringOrRefType {
         if (object == this) {
             return true;
         }
-        if (object instanceof StringOrRefType) {
-            final StringOrRefType that = (StringOrRefType) object;
+        if (object instanceof StringOrRefType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

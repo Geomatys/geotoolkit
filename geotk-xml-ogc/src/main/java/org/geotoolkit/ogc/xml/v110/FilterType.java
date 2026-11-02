@@ -117,8 +117,7 @@ public class FilterType implements Filter, XMLFilter {
             this.id.add(createIdOps((AbstractIdType) obj));
 
         // clone
-        } else if (obj instanceof FilterType) {
-            final FilterType that = (FilterType) obj;
+        } else if (obj instanceof FilterType that) {
             if (that.comparisonOps != null) {
                 final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
                 this.comparisonOps = createComparisonOps(comp);
@@ -127,11 +126,9 @@ public class FilterType implements Filter, XMLFilter {
                 this.id = new ArrayList<>();
                 for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                     AbstractIdType aid = jb.getValue();
-                    if (aid instanceof FeatureIdType) {
-                        final FeatureIdType raid = (FeatureIdType) aid;
+                    if (aid instanceof FeatureIdType raid) {
                         this.id.add(FACTORY.createFeatureId(new FeatureIdType(raid)));
-                    } else if (aid instanceof GmlObjectIdType) {
-                        final GmlObjectIdType raid = (GmlObjectIdType) aid;
+                    } else if (aid instanceof GmlObjectIdType raid) {
                         this.id.add(FACTORY.createGmlObjectId(new GmlObjectIdType(raid)));
                     } else if (aid != null) {
                         throw new IllegalArgumentException("Unexpected ID type in filter: " + aid.getClass().getName());
@@ -489,8 +486,7 @@ public class FilterType implements Filter, XMLFilter {
         if (object == this) {
             return true;
         }
-        if (object instanceof FilterType) {
-            final FilterType that = (FilterType) object;
+        if (object instanceof FilterType that) {
 
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {

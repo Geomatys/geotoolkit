@@ -261,8 +261,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
         //loop on all properties, extract numeric fields only
         for(PropertyType desc : basetype.getProperties(true)){
-            if(desc instanceof AttributeType){
-                final AttributeType att = (AttributeType) desc;
+            if(desc instanceof AttributeType att){
                 final Class binding = att.getValueClass();
                 if(Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)){
                     final String name = att.getName().toString();

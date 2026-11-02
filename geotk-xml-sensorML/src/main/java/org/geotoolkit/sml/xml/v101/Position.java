@@ -494,8 +494,7 @@ public class Position extends SensorObject implements AbstractPosition {
             return true;
         }
 
-        if (object instanceof Position) {
-            final Position that = (Position) object;
+        if (object instanceof Position that) {
 
             boolean proc = false;
             if (this.process != null && that.process != null) {

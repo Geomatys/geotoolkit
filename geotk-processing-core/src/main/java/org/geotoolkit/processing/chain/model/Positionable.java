@@ -82,8 +82,7 @@ public abstract class Positionable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Positionable) {
-            final Positionable that = (Positionable) obj;
+        if (obj instanceof Positionable that) {
             return Utilities.equals(this.x,     that.x)
                 && Utilities.equals(this.y,     that.y);
         }

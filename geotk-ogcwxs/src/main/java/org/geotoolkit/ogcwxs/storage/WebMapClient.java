@@ -169,8 +169,7 @@ public final class WebMapClient extends DataStore implements Aggregate {
         boolean changed = true;
         try {
             Object lastCapa = api.getCapabilities(getCaps).send().body().get();
-            if (lastCapa instanceof ServiceExceptionReport) {
-                ServiceExceptionReport report = (ServiceExceptionReport) lastCapa;
+            if (lastCapa instanceof ServiceExceptionReport report) {
                 if (!report.getException().isEmpty() && "CurrentUpdateSequence".equalsIgnoreCase(report.getException().get(0).getExceptionCode())) {
                     newUpdateSequence = currentUpdateSequence;
                     changed = false;
@@ -178,8 +177,7 @@ public final class WebMapClient extends DataStore implements Aggregate {
                      throw report.toException();
                 }
 
-            } else if (lastCapa instanceof AbstractWMSCapabilities) {
-                AbstractWMSCapabilities lc = (AbstractWMSCapabilities) lastCapa;
+            } else if (lastCapa instanceof AbstractWMSCapabilities lc) {
                 newUpdateSequence = lc.getUpdateSequence();
             }
             changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);

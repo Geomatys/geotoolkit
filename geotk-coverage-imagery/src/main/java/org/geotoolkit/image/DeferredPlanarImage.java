@@ -123,8 +123,7 @@ public final class DeferredPlanarImage extends PlanarImage
         /** Compares this entry with the specified object. */
         @Override
         public boolean equals(final Object object) {
-            if (object instanceof Entry) {
-                final Entry that = (Entry) object;
+            if (object instanceof Entry that) {
                 return model.equals(that.model) && fill == that.fill && box == that.box;
             }
             return false;
@@ -331,8 +330,7 @@ public final class DeferredPlanarImage extends PlanarImage
     {
         int fill = 0;
         int box  = 0;
-        if (colorModel instanceof IndexColorModel) {
-            final IndexColorModel colors = (IndexColorModel) colorModel;
+        if (colorModel instanceof IndexColorModel colors) {
             fill = ColorUtilities.getTransparentPixel(colors);
             if (BOX_THICKNESS > 0 && Math.min(sampleModel.getWidth(), sampleModel.getHeight()) >= 64) {
                 box = ColorUtilities.getColorIndex(colors, Color.DARK_GRAY, fill);

@@ -79,8 +79,7 @@ public class ServiceType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ServiceType) {
-            final ServiceType that = (ServiceType) object;
+        if (object instanceof ServiceType that) {
             return Objects.equals(this.serviceType, that.serviceType);
         }
         return false;

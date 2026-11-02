@@ -330,8 +330,7 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
 
         if (cm != null && cm.getFunction() != null ) {
             final Expression fct = cm.getFunction();
-            if (fct instanceof Interpolate) {
-                final Interpolate interpolate = (Interpolate) fct;
+            if (fct instanceof Interpolate interpolate) {
                 final List<InterpolationPoint> points = interpolate.getInterpolationPoints();
                 final int size = points.size();
                 for(int i=0;i<size;i++){
@@ -346,8 +345,7 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
                     colorMap.put(pt.getData().toString(), color);
                 }
 
-            } else if(fct instanceof Jenks) {
-                final Jenks jenks = (Jenks) fct;
+            } else if(fct instanceof Jenks jenks) {
                 final Map<Double, Color> jenksColorMap = jenks.getColorMap();
                 final Map<Color, List<Double>> rangeJenksMap = new HashMap<>();
 
@@ -373,8 +371,7 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
                     colorMap.put(new NumberRange<>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
 
-            } else if(fct instanceof Categorize) {
-                final Categorize categorize = (Categorize) fct;
+            } else if(fct instanceof Categorize categorize) {
                 final Map<Expression, Expression> thresholds = categorize.getThresholds();
 
                 final Map<Color, List<Double>> colorValuesMap = new HashMap<>();

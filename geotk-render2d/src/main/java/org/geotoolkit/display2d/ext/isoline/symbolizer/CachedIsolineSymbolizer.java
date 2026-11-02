@@ -138,16 +138,14 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
             ColorMap colorMap = rasterSymbolizer.getColorMap();
             Expression function = colorMap.getFunction();
 
-            if (function instanceof Interpolate) {
-                Interpolate interpolate = (Interpolate) function;
+            if (function instanceof Interpolate interpolate) {
                 List<InterpolationPoint> points = interpolate.getInterpolationPoints();
                 for (InterpolationPoint point : points) {
                     steps.add(point.getData().doubleValue());
                 }
                 dynamicColorMap = false;
 
-            } else if (function instanceof Categorize) {
-                Categorize categorize = (Categorize) function;
+            } else if (function instanceof Categorize categorize) {
                 Map<Expression, Expression> thresholds = categorize.getThresholds();
                 for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
                     Expression key = entry.getKey();
@@ -158,8 +156,7 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
                 }
                 dynamicColorMap = false;
 
-            } else if (function instanceof Jenks) {
-                Jenks jenks = (Jenks) function;
+            } else if (function instanceof Jenks jenks) {
                 Map<Double, Color> jenksColorMap = jenks.getColorMap();
                 if (jenksColorMap != null) {
                     for (Double jenksStep : jenksColorMap.keySet()) {

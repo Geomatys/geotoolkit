@@ -163,8 +163,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         if (object == this) {
             return true;
         }
-        if (object instanceof ObservationTemplate && super.equals(object)) {
-            final ObservationTemplate that = (ObservationTemplate) object;
+        if (object instanceof ObservationTemplate that && super.equals(object)) {
             return Objects.equals(this.observation, that.observation);
         }
         return false;

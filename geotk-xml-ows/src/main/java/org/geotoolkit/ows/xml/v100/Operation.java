@@ -271,8 +271,7 @@ public class Operation implements AbstractOperation {
         if (object == this) {
             return true;
         }
-        if (object instanceof Operation) {
-            final Operation that = (Operation) object;
+        if (object instanceof Operation that) {
             return Objects.equals(this.constraint, that.constraint) &&
                    Objects.equals(this.dcp,        that.dcp)        &&
                    Objects.equals(this.metadata,   that.metadata)   &&

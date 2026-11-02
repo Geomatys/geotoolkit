@@ -218,8 +218,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
             } else {
                 svg.getContent().add(ele);
             }
-        } else if (obj instanceof float[]) {
-            final float[] dashes = (float[]) obj;
+        } else if (obj instanceof float[] dashes) {
             final StringBuilder sb = new StringBuilder();
             for (final float f : dashes) {
                 sb.append(f);
@@ -736,14 +735,11 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
         final GraphicType gt = se_factory.createGraphicType();
         gt.setAnchorPoint(visit(graphic.getAnchorPoint(), null));
         for (final GraphicalSymbol gs : graphic.graphicalSymbols()) {
-            if (gs instanceof Mark) {
-                final Mark mark = (Mark) gs;
+            if (gs instanceof Mark mark) {
                 gt.getExternalGraphicOrMark().add(visit(mark, null));
-            } else if (gs instanceof ExternalMark) {
-                final ExternalMark ext = (ExternalMark) gs;
+            } else if (gs instanceof ExternalMark ext) {
                 gt.getExternalGraphicOrMark().add(visit(ext, null));
-            } else if (gs instanceof ExternalGraphic) {
-                final ExternalGraphic ext = (ExternalGraphic) gs;
+            } else if (gs instanceof ExternalGraphic ext) {
                 gt.getExternalGraphicOrMark().add(visit(ext, null));
             }
         }
@@ -923,11 +919,9 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
      */
     public LabelPlacementType visit(final LabelPlacement labelPlacement, final Object data) {
         final LabelPlacementType lpt = se_factory.createLabelPlacementType();
-        if (labelPlacement instanceof LinePlacement) {
-            final LinePlacement lp = (LinePlacement) labelPlacement;
+        if (labelPlacement instanceof LinePlacement lp) {
             lpt.setLinePlacement(visit(lp, null));
-        } else if (labelPlacement instanceof PointPlacement) {
-            final PointPlacement pp = (PointPlacement) labelPlacement;
+        } else if (labelPlacement instanceof PointPlacement pp) {
             lpt.setPointPlacement(visit(pp, null));
         }
         return lpt;
@@ -1064,8 +1058,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
         final ColorReplacementType crt = se_factory.createColorReplacementType();
         final Expression fct = colorReplacement.getRecoding();
 
-        if (fct instanceof RecolorFunction) {
-            final RecolorFunction rf = (RecolorFunction) fct;
+        if (fct instanceof RecolorFunction rf) {
             crt.setRecolor(visit(rf));
         }
 

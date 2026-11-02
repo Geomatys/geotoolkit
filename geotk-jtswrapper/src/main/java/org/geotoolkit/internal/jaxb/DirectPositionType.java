@@ -291,8 +291,7 @@ public class DirectPositionType implements DirectPosition {
         if (object == this) {
             return true;
         }
-        if (object instanceof DirectPositionType) {
-            final DirectPositionType that = (DirectPositionType) object;
+        if (object instanceof DirectPositionType that) {
             return  Objects.equals(this.axisLabels, that.axisLabels)     &&
                     Objects.equals(this.srsDimension, that.srsDimension) &&
                     Objects.equals(this.srsName, that.srsName)           &&

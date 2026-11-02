@@ -160,8 +160,7 @@ public class RangeType implements Range {
         if (object == this) {
             return true;
         }
-        if (object instanceof RangeType) {
-            final RangeType that = (RangeType) object;
+        if (object instanceof RangeType that) {
             return Objects.equals(this.maximumValue,   that.maximumValue) &&
                    Objects.equals(this.minimumValue,   that.minimumValue) &&
                    Objects.equals(this.rangeClosure,   that.rangeClosure) &&

@@ -175,8 +175,7 @@ public class RegistryType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryType && super.equals(obj)) {
-            final RegistryType that = (RegistryType) obj;
+        if (obj instanceof RegistryType that && super.equals(obj)) {
             return Objects.equals(this.catalogingLatency,      that.catalogingLatency) &&
                    Objects.equals(this.conformanceProfile,     that.conformanceProfile) &&
                    Objects.equals(this.operator,               that.operator) &&

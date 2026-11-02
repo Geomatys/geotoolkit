@@ -162,8 +162,7 @@ public class DefinitionSourceImpl extends AbstractMetadata implements Definition
         if (object == this) {
             return true;
         }
-        if (object instanceof DefinitionSourceImpl) {
-            final DefinitionSourceImpl that = (DefinitionSourceImpl) object;
+        if (object instanceof DefinitionSourceImpl that) {
 
 
 

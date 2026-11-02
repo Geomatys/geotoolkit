@@ -295,8 +295,7 @@ public class Attribute extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof Attribute && super.equals(object)) {
-            final Attribute that = (Attribute) object;
+        if (object instanceof Attribute that && super.equals(object)) {
             return Objects.equals(this._default,     that._default) &&
                    Objects.equals(this.fixed,        that.fixed) &&
                    Objects.equals(this.name,         that.name) &&

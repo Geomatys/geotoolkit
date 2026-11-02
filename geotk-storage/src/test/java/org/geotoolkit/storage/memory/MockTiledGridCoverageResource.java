@@ -289,8 +289,7 @@ final class MockTiledGridCoverageResource extends AbstractGridCoverageResource
 
         private void writeTile(Tile tile) throws DataStoreException {
             final Resource resource = tile.getResource();
-            if (resource instanceof GridCoverageResource) {
-                final GridCoverageResource imgTile = (GridCoverageResource) resource;
+            if (resource instanceof GridCoverageResource imgTile) {
                 RenderedImage image = imgTile.read(null).render(null);
 
                 final int[] tileSize = getTileSize();

@@ -187,8 +187,7 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractDataComponentType && super.equals(object)) {
-            final AbstractDataComponentType that = (AbstractDataComponentType) object;
+        if (object instanceof AbstractDataComponentType that && super.equals(object)) {
 
             return Objects.equals(this.definition,  that.definition) &&
                    Objects.equals(this.optional,    that.optional) &&

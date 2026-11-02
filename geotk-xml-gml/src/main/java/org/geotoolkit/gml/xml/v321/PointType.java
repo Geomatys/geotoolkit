@@ -235,8 +235,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     @Override
     public boolean equals(Object object, final ComparisonMode mode) {
-        if (object instanceof PointType) {
-            final PointType that = (PointType) object;
+        if (object instanceof PointType that) {
 
             return Objects.equals(this.coordinates,   that.coordinates)   &&
                    Objects.equals(this.pos, that.pos);

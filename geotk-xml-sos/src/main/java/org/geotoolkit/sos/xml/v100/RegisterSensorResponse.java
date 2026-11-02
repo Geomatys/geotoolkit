@@ -93,8 +93,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
         if (object == this) {
             return true;
         }
-        if (object instanceof RegisterSensorResponse) {
-            final RegisterSensorResponse that = (RegisterSensorResponse) object;
+        if (object instanceof RegisterSensorResponse that) {
             return Objects.equals(this.assignedSensorId, that.assignedSensorId);
         }
         return false;

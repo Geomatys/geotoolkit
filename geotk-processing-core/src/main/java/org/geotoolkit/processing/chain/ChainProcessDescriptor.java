@@ -239,8 +239,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ChainProcessDescriptor) {
-            ChainProcessDescriptor that = (ChainProcessDescriptor) obj;
+        if (obj instanceof ChainProcessDescriptor that) {
             return Objects.equals(this.model, that.model);
         }
         return false;

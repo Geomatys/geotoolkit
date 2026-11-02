@@ -169,9 +169,8 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
             if (crs != null) {
                 try {
-                     if (crs instanceof CompoundCRS) {
+                     if (crs instanceof CompoundCRS compCrs) {
                         final StringBuilder sb = new StringBuilder();
-                        final CompoundCRS compCrs = (CompoundCRS) crs;
                         // see OGC 07-092r3 7.5.2
                         sb.append("urn:ogc:def:crs,");
                         for (CoordinateReferenceSystem child : compCrs.getComponents()) {
@@ -464,8 +463,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         if (object == this) {
             return true;
         }
-        if (object instanceof EnvelopeType) {
-            final EnvelopeType that = (EnvelopeType) object;
+        if (object instanceof EnvelopeType that) {
 
             return listNullEquals(this.axisLabels,      that.axisLabels)      &&
                    Objects.equals(this.coordinates,     that.coordinates)     &&

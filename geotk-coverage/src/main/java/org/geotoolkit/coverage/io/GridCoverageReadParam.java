@@ -75,8 +75,7 @@ public class GridCoverageReadParam extends GridCoverageStoreParam {
      */
     public GridCoverageReadParam(final GridCoverageStoreParam param) {
         super(param);
-        if (param instanceof GridCoverageReadParam) {
-            final GridCoverageReadParam rp = (GridCoverageReadParam) param;
+        if (param instanceof GridCoverageReadParam rp) {
             destinationBands = rp.destinationBands;
         }
     }

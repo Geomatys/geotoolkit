@@ -164,8 +164,7 @@ public class Result {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Result) {
-            final Result that = (Result) obj;
+        if (obj instanceof Result that) {
             return Objects.equals(this.matchingConcept,  that.matchingConcept) &&
                    Objects.equals(this.matchingLanguage, that.matchingLanguage) &&
                    Objects.equals(this.operators,        that.operators);

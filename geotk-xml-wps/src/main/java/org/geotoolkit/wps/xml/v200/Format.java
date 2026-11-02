@@ -262,8 +262,7 @@ public class Format {
         if (object == this) {
             return true;
         }
-        if (object instanceof Format) {
-            final Format that = (Format) object;
+        if (object instanceof Format that) {
             return Objects.equals(this.encoding, that.encoding) &&
                    Objects.equals(this.mimeType, that.mimeType) &&
                    Objects.equals(this._default, that._default) &&

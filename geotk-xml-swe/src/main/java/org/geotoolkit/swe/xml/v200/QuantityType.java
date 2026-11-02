@@ -185,8 +185,7 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
         if (object == this) {
             return true;
         }
-        if (object instanceof QuantityType && super.equals(object)) {
-            final QuantityType that = (QuantityType) object;
+        if (object instanceof QuantityType that && super.equals(object)) {
 
             return Objects.equals(this.constraint,  that.constraint) &&
                    Objects.equals(this.uom,         that.uom) &&

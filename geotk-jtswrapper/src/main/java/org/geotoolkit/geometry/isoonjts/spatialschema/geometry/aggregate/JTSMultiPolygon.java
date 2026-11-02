@@ -47,8 +47,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
     protected org.locationtech.jts.geom.Geometry computeJTSPeer() {
         List<org.locationtech.jts.geom.Geometry> childParts = new ArrayList<org.locationtech.jts.geom.Geometry>();
         for(Polygon prim : elements) {
-            if(prim instanceof JTSGeometry){
-                JTSGeometry jtsGeom = (JTSGeometry) prim;
+            if(prim instanceof JTSGeometry jtsGeom){
                 childParts.add(jtsGeom.getJTSGeometry());
             }else{
                 throw new IllegalStateException("Only JTSGeometries are allowed in the JTSMultiPolygon class.");
@@ -94,8 +93,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
     public boolean equals(final Object object) {
         if (this == object)
             return true;
-        if (object instanceof JTSMultiPolygon && super.equals(object)) {
-            JTSMultiPolygon that = (JTSMultiPolygon) object;
+        if (object instanceof JTSMultiPolygon that && super.equals(object)) {
             return Objects.equals(this.elements, that.elements);
         }
         return false;
@@ -115,12 +113,10 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
             exterior.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
 
             for (Primitive p : (Collection<Primitive>) exterior.getElements()) {
-                if (p instanceof JTSCurve) {
-                    JTSCurve curve = (JTSCurve) p;
+                if (p instanceof JTSCurve curve) {
                     curve.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     for (CurveSegment cv : curve.getSegments()) {
-                        if (cv instanceof JTSLineString) {
-                            JTSLineString line = (JTSLineString) cv;
+                        if (cv instanceof JTSLineString line) {
                             line.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                             PointArray pa = line.getControlPoints();
                             var newPositions = new ArrayList<DirectPosition>();
@@ -140,12 +136,10 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
                 for (Ring ring : polygon.getBoundary().getInteriors()) {
                     ((JTSRing) ring).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     for (Primitive p : ring.getElements()) {
-                        if (p instanceof JTSCurve) {
-                            JTSCurve curve = (JTSCurve) p;
+                        if (p instanceof JTSCurve curve) {
                             curve.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                             for (CurveSegment cv : curve.getSegments()) {
-                                if (cv instanceof JTSLineString) {
-                                    JTSLineString line = (JTSLineString) cv;
+                                if (cv instanceof JTSLineString line) {
                                     line.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                                     PointArray pa = line.getControlPoints();
                                     var newPositions = new ArrayList<DirectPosition>();

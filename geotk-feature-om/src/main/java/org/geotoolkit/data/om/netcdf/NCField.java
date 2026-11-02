@@ -75,8 +75,7 @@ public class NCField extends Field implements Serializable {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof NCField) {
-            final NCField that = (NCField) obj;
+        if (obj instanceof NCField that) {
             return Objects.equals(this.label, that.label)
                 && Objects.equals(this.ncDataType,  that.ncDataType);
         }

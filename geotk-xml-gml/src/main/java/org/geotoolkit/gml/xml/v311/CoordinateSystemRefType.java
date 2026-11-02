@@ -277,8 +277,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
             return true;
         }
 
-        if (object instanceof CoordinateSystemRefType) {
-            final CoordinateSystemRefType that = (CoordinateSystemRefType) object;
+        if (object instanceof CoordinateSystemRefType that) {
 
             boolean proc = false;
             if (this.coordinateSystem != null && that.coordinateSystem != null) {

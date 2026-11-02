@@ -174,8 +174,7 @@ public class ViewContextType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ViewContextType) {
-            final ViewContextType that = (ViewContextType) object;
+        if (object instanceof ViewContextType that) {
 
             return Objects.equals(this.general, that.general) &&
                    Objects.equals(this.layerList, that.layerList) &&

@@ -118,8 +118,7 @@ public class GetDomainResponseType implements GetDomainResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetDomainResponseType) {
-            final GetDomainResponseType that = (GetDomainResponseType) object;
+        if (object instanceof GetDomainResponseType that) {
 
             return  Objects.equals(this.domainValues, that.domainValues);
         }

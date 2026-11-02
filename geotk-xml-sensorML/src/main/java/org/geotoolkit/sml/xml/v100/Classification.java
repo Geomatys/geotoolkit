@@ -309,8 +309,7 @@ public class Classification implements AbstractClassification {
             return true;
         }
 
-        if (object instanceof Classification) {
-            final Classification that = (Classification) object;
+        if (object instanceof Classification that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

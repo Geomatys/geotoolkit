@@ -163,8 +163,7 @@ public class HTTP implements AbstractHTTP {
         if (object == this) {
             return true;
         }
-        if (object instanceof HTTP) {
-            final HTTP that = (HTTP) object;
+        if (object instanceof HTTP that) {
             int i=0;
             for (JAXBElement<RequestMethodType> j:getOrPost) {
                 if (!Objects.equals(j.getValue(), that.getOrPost.get(i).getValue()))

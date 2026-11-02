@@ -211,8 +211,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
             return true;
         }
 
-        if (object instanceof DataSourceType && super.equals(object, mode)) {
-            final DataSourceType that = (DataSourceType) object;
+        if (object instanceof DataSourceType that && super.equals(object, mode)) {
             return Objects.equals(this.dataDefinition,    that.dataDefinition)       &&
                    Objects.equals(this.observationReference, that.observationReference)    &&
                    Objects.equals(this.values,  that.values);

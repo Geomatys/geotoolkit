@@ -296,8 +296,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof AnyScalarPropertyType) {
-            final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
+        if (object instanceof AnyScalarPropertyType that) {
 
             return Objects.equals(this._boolean,           that._boolean)         &&
                    Objects.equals(this.abstractDataComponent, that.abstractDataComponent)          &&

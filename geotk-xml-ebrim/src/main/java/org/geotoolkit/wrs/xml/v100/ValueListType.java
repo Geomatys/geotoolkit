@@ -101,8 +101,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ValueListType && super.equals(obj)) {
-            final ValueListType that = (ValueListType) obj;
+        if (obj instanceof ValueListType that && super.equals(obj)) {
             return Objects.equals(this.anyValue,  that.anyValue);
         }
         return false;

@@ -107,8 +107,7 @@ public class LanguagesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof LanguagesType) {
-            final LanguagesType that = (LanguagesType) object;
+        if (object instanceof LanguagesType that) {
             return Objects.equals(this.language, that.language);
         }
         return false;

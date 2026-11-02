@@ -82,8 +82,7 @@ public final class MarchingSquares {
                 Object geom = buildGeometry(idx, threshold, ll, lr, tl, tr, x, y);
                 if (geom instanceof LineString) {
                     geometries.add((LineString) geom);
-                } else if(geom instanceof LineString[]) {
-                    LineString[] array = (LineString[]) geom;
+                } else if(geom instanceof LineString[] array) {
                     geometries.add(array[0]);
                     geometries.add(array[1]);
                 }

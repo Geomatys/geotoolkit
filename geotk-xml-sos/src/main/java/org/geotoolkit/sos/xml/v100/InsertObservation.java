@@ -117,8 +117,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertObservation && super.equals(object)) {
-            final InsertObservation that = (InsertObservation) object;
+        if (object instanceof InsertObservation that && super.equals(object)) {
             return Objects.equals(this.assignedSensorId, that.assignedSensorId) &&
                    Objects.equals(this.observation,      that.observation);
         }

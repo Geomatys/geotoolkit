@@ -177,11 +177,9 @@ public final class SEPortrayer {
     public Stream<Presentation> present(GridGeometry canvas, final MapItem mapitem) {
         Stream<Presentation> stream = Stream.empty();
         if (mapitem.isVisible()) {
-            if (mapitem instanceof MapLayer) {
-                final MapLayer layer = (MapLayer) mapitem;
+            if (mapitem instanceof MapLayer layer) {
                 stream = Stream.concat(stream, present(canvas, layer, layer.getData()));
-            } else if (mapitem instanceof MapLayers) {
-                final MapLayers layers = (MapLayers) mapitem;
+            } else if (mapitem instanceof MapLayers layers) {
                 for (MapItem item : layers.getComponents()) {
                     stream = Stream.concat(stream, present(canvas, item));
                 }
@@ -307,8 +305,7 @@ public final class SEPortrayer {
                         }
                     }
                 }
-            } else if (resource instanceof FeatureSet) {
-                final FeatureSet fs = (FeatureSet) resource;
+            } else if (resource instanceof FeatureSet fs) {
                 // Calculate max symbol size, to expand search envelope.
                 double symbolsMargin = 0.0;
                 for (Rule rule : rules) {

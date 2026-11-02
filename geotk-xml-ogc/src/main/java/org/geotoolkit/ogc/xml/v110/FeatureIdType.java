@@ -116,8 +116,7 @@ public class FeatureIdType extends AbstractIdType implements ResourceId {
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureIdType) {
-            final FeatureIdType that = (FeatureIdType) object;
+        if (object instanceof FeatureIdType that) {
             return Objects.equals(this.fid,  that.fid);
         }
         return false;

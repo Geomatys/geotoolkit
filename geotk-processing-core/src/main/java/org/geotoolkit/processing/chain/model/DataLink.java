@@ -153,8 +153,7 @@ public class DataLink {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof DataLink) {
-            final DataLink that = (DataLink) obj;
+        if (obj instanceof DataLink that) {
             return Objects  .equals(this.sourceCode, that.sourceCode) &&
                                    (this.sourceId == that.sourceId) &&
                    Objects  .equals(this.targetCode, that.targetCode) &&

@@ -316,8 +316,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         if (obj == null) {
             return false;
         }
-        if (obj instanceof AbstractGMLType) {
-            final AbstractGMLType that = (AbstractGMLType) obj;
+        if (obj instanceof AbstractGMLType that) {
             return Objects.equals(this.description,          that.description)          &&
                    Objects.equals(this.descriptionReference, that.descriptionReference) &&
                    Objects.equals(this.getId(),              that.getId())              &&

@@ -123,8 +123,7 @@ public class PropertyType implements Property {
         if (object == this) {
             return true;
         }
-        if (object instanceof PropertyType) {
-            final PropertyType that = (PropertyType) object;
+        if (object instanceof PropertyType that) {
             return  Objects.equals(this.name, that.name) &&
                     Objects.equals(this.value, that.value);
         }

@@ -350,8 +350,7 @@ public class Contact implements AbstractContact {
             return true;
         }
 
-        if (object instanceof Contact) {
-            final Contact that = (Contact) object;
+        if (object instanceof Contact that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

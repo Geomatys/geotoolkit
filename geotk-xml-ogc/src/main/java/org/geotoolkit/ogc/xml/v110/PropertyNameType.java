@@ -121,8 +121,7 @@ public class PropertyNameType extends AbstractExpression implements ValueReferen
         if (object == this) {
             return true;
         }
-        if (object instanceof PropertyNameType) {
-            final PropertyNameType that = (PropertyNameType) object;
+        if (object instanceof PropertyNameType that) {
 
             return  Objects.equals(this.content, that.content);
         }

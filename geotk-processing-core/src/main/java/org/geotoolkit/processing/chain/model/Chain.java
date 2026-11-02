@@ -344,8 +344,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Chain) {
-            final Chain that = (Chain) obj;
+        if (obj instanceof Chain that) {
             return Objects.equals(this.getConstants(), that.getConstants())
                 && Objects.equals(this.getElements(), that.getElements())
                 && Objects.equals(this.getDataLinks(), that.getDataLinks())

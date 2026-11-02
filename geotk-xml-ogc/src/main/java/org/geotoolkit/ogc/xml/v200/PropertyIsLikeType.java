@@ -273,8 +273,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements LikeOperato
         if (object == this) {
             return true;
         }
-        if (object instanceof PropertyIsLikeType) {
-            final PropertyIsLikeType that = (PropertyIsLikeType) object;
+        if (object instanceof PropertyIsLikeType that) {
 
             boolean exp;
             if (this.expression == null && that.expression == null) {

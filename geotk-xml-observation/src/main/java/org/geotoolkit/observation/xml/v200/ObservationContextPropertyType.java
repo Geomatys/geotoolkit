@@ -88,8 +88,7 @@ public class ObservationContextPropertyType {
             return true;
         }
 
-        if (object instanceof ObservationContextPropertyType && super.equals(object)) {
-            final ObservationContextPropertyType that = (ObservationContextPropertyType) object;
+        if (object instanceof ObservationContextPropertyType that && super.equals(object)) {
             return Objects.equals(this.observationContext,  that.observationContext);
         }
         return false;

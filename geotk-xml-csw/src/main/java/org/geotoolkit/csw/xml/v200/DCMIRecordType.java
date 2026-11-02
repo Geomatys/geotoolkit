@@ -670,8 +670,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         if (object == this) {
             return true;
         }
-        if (object instanceof DCMIRecordType) {
-            final DCMIRecordType that = (DCMIRecordType) object;
+        if (object instanceof DCMIRecordType that) {
 
             boolean dcelement = this.dcElement.size() == that.dcElement.size();
 

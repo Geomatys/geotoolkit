@@ -233,8 +233,7 @@ public class ParametersType {
         if (this == o) {
             return true;
         }
-        if (o instanceof ParametersType) {
-            final ParametersType that = (ParametersType) o;
+        if (o instanceof ParametersType that) {
 
             return Objects.equals(this.compression, that.compression) &&
                    Objects.equals(this.interleave,   that.interleave) &&

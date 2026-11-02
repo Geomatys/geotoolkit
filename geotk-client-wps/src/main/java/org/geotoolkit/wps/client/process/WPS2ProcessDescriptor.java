@@ -167,14 +167,12 @@ class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final DataDescription dataDescType;
         final int min;
         final int max;
-        if (input instanceof InputDescription) {
-            final InputDescription id = (InputDescription) input;
+        if (input instanceof InputDescription id) {
             subInputs = id.getInput();
             dataDescType = id.getDataDescription();
             max = id.getMaxOccurs();
             min = id.getMinOccurs();
-        } else if(input instanceof OutputDescription) {
-            final OutputDescription od = (OutputDescription) input;
+        } else if(input instanceof OutputDescription od) {
             subInputs = od.getOutput();
             dataDescType = od.getDataDescription();
             min = 1;
@@ -189,16 +187,14 @@ class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
         Map userObject = new HashMap();
         for (MetadataType meta : input.getMetadata()) {
-            if (meta instanceof AdditionalParametersType) {
-                AdditionalParametersType params = (AdditionalParametersType)meta;
+            if (meta instanceof AdditionalParametersType params) {
                 for (AdditionalParameter param : params.getAdditionalParameter()) {
                     userObject.put(param.getName().getValue(), param.getValue());
                 }
             }
         }
 
-        if (dataDescType instanceof LiteralData) {
-            final LiteralData cd = (LiteralData) dataDescType;
+        if (dataDescType instanceof LiteralData cd) {
 
             for(LiteralDataDomain domain : cd.getLiteralDataDomain()) {
 
@@ -228,8 +224,7 @@ class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
             throw new UnsupportedParameterException(processId,inputName,"Unidentifiable literal input "+inputName);
 
-        } else if (dataDescType instanceof ComplexData) {
-            final ComplexData cdt = (ComplexData) dataDescType;
+        } else if (dataDescType instanceof ComplexData cdt) {
 
             //ensure default format is first in the list
             Collections.sort(cdt.getFormat(), (Format o1, Format o2) -> {

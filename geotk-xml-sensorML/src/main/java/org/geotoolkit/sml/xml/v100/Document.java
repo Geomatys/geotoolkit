@@ -239,8 +239,7 @@ public class Document implements AbstractDocument {
             return true;
         }
 
-        if (object instanceof Document) {
-            final Document that = (Document) object;
+        if (object instanceof Document that) {
             return Objects.equals(this.contact,             that.contact)        &&
                    Objects.equals(this.date,                that.date)           &&
                    Objects.equals(this.description,         that.description)    &&

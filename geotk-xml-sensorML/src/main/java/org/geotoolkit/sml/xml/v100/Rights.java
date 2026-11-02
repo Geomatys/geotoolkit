@@ -202,8 +202,7 @@ public class Rights implements AbstractRights {
             return true;
         }
 
-        if (object instanceof Rights) {
-            final Rights that = (Rights) object;
+        if (object instanceof Rights that) {
             return Objects.equals(this.copyRights,    that.copyRights)       &&
                    Objects.equals(this.documentation, that.documentation)       &&
                    Objects.equals(this.id,            that.id)          &&

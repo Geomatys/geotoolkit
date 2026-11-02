@@ -188,8 +188,7 @@ public class Subscription extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Subscription && super.equals(obj)) {
-            final Subscription that = (Subscription) obj;
+        if (obj instanceof Subscription that && super.equals(obj)) {
             return Objects.equals(this.action,               that.action) &&
                    Objects.equals(this.endDate,              that.endDate) &&
                    Objects.equals(this.notificationInterval, that.notificationInterval) &&

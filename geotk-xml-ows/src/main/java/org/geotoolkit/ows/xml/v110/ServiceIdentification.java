@@ -174,8 +174,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         if (object == this) {
             return true;
         }
-        if (object instanceof ServiceIdentification && super.equals(object)) {
-            final ServiceIdentification that = (ServiceIdentification) object;
+        if (object instanceof ServiceIdentification that && super.equals(object)) {
 
             return Objects.equals(this.accessConstraints,  that.accessConstraints) &&
                    Objects.equals(this.fees,               that.fees)              &&

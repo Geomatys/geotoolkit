@@ -329,8 +329,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
             return true;
         }
 
-        if (obj instanceof GetFeatureType && super.equals(obj)) {
-            GetFeatureType that = (GetFeatureType) obj;
+        if (obj instanceof GetFeatureType that && super.equals(obj)) {
             return Objects.equals(this.maxFeatures, that.maxFeatures) &&
                    Objects.equals(this.outputFormat, that.outputFormat) &&
                    Objects.equals(this.query, that.query) &&

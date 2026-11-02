@@ -314,8 +314,7 @@ public class StatusInfo extends DocumentBase implements WPSResponse{
         if (object == this) {
             return true;
         }
-        if (object instanceof StatusInfo) {
-            final StatusInfo that = (StatusInfo) object;
+        if (object instanceof StatusInfo that) {
             return Objects.equals(this.estimatedCompletion, that.estimatedCompletion) &&
                    Objects.equals(this.expirationDate, that.expirationDate) &&
                    Objects.equals(this.jobID, that.jobID) &&

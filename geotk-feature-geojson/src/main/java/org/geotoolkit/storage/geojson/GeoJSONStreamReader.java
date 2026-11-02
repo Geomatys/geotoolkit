@@ -55,8 +55,7 @@ public final class GeoJSONStreamReader implements Iterator<Feature>, AutoCloseab
         }
 
         GeoJSONFeature jsonFeature = null;
-        if (result instanceof GeoJSONFeatureCollection) {
-            GeoJSONFeatureCollection jsonFeatureCollection = (GeoJSONFeatureCollection) result;
+        if (result instanceof GeoJSONFeatureCollection jsonFeatureCollection) {
             if (!jsonFeatureCollection.hasNext()) {
                 //empty FeatureCollection error ?
                 throw new DataStoreException("Empty GeoJSON FeatureCollection");

@@ -158,8 +158,7 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
         if (object == this) {
             return true;
         }
-        if (object instanceof GetObservationById && super.equals(object)) {
-            final GetObservationById that = (GetObservationById) object;
+        if (object instanceof GetObservationById that && super.equals(object)) {
             return Objects.equals(this.observationId,         that.observationId) &&
                    Objects.equals(this.responseFormat,    that.responseFormat)    &&
                    Objects.equals(this.responseMode,      that.responseMode)      &&

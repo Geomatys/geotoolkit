@@ -450,8 +450,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements FeatureCat
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureCatalogueImpl) {
-            final FeatureCatalogueImpl that = (FeatureCatalogueImpl) object;
+        if (object instanceof FeatureCatalogueImpl that) {
 
             return Objects.equals(this.definitionSource,   that.definitionSource)   &&
                    Objects.equals(this.featureType,        that.featureType)        &&

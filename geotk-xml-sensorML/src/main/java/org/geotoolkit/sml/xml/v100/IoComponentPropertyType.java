@@ -645,8 +645,7 @@ public class IoComponentPropertyType implements IoComponent {
             return true;
         }
 
-        if (object instanceof IoComponentPropertyType) {
-            final IoComponentPropertyType that = (IoComponentPropertyType) object;
+        if (object instanceof IoComponentPropertyType that) {
             boolean absDataRec = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 absDataRec = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());

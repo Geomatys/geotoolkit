@@ -133,8 +133,7 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
     private void checkColor(final Expression exp){
         if(exp == null || unpredictable){
             return;
-        }else if(exp instanceof Literal){
-            final Literal l = (Literal) exp;
+        }else if(exp instanceof Literal l){
             final Object value = l.getValue();
             if (value instanceof Color) {
                 colors.add(((Color)value).getRGB());

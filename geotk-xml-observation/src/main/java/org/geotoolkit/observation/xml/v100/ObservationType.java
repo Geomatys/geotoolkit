@@ -653,8 +653,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (object == this) {
             return true;
         }
-        if (object instanceof ObservationType) {
-            final ObservationType that = (ObservationType) object;
+        if (object instanceof ObservationType that) {
 
             boolean res = false;
             if (this.result == null && that.result == null) {

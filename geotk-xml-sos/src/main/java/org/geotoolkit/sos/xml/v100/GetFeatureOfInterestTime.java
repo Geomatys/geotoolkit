@@ -82,8 +82,7 @@ public class GetFeatureOfInterestTime extends RequestBaseType implements org.geo
         if (object == this) {
             return true;
         }
-        if (object instanceof GetFeatureOfInterestTime && super.equals(object)) {
-            final GetFeatureOfInterestTime that = (GetFeatureOfInterestTime) object;
+        if (object instanceof GetFeatureOfInterestTime that && super.equals(object)) {
             return Objects.equals(this.featureOfInterestId, that.featureOfInterestId);
         }
         return false;

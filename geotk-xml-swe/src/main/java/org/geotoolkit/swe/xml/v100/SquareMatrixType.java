@@ -159,8 +159,7 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
             return true;
         }
 
-        if (object instanceof SquareMatrixType && super.equals(object, mode)) {
-            final SquareMatrixType  that = (SquareMatrixType) object;
+        if (object instanceof SquareMatrixType that && super.equals(object, mode)) {
             return Objects.equals(this.elementType, that.elementType) &&
                    Objects.equals(this.encoding,    that.encoding)    &&
                    Objects.equals(this.values,      that.values);

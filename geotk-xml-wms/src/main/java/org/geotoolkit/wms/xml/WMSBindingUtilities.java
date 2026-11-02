@@ -84,8 +84,7 @@ import org.xml.sax.InputSource;
             return unMarshaller.unmarshal( (XMLEventReader)source );
         }else if(source instanceof XMLStreamReader){
             return unMarshaller.unmarshal( (XMLStreamReader)source );
-        }else if(source instanceof OnlineResource){
-            final OnlineResource online = (OnlineResource) source;
+        }else if(source instanceof OnlineResource online){
             final URL url = online.getLinkage().toURL();
             return unMarshaller.unmarshal(url);
         }else{

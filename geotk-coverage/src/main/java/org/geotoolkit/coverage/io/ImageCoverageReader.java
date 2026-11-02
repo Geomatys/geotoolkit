@@ -1417,8 +1417,7 @@ public class ImageCoverageReader extends ImageCoverageStore {
         final SampleDimension[] bands = getSampleDimensions(index,
                 supportBandSelection ? srcBands : null,
                 supportBandSelection ? dstBands : null);
-        if (imageParam instanceof SpatialImageReadParam) {
-            final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
+        if (imageParam instanceof SpatialImageReadParam sp) {
             if (!isRangeSigned(bands)) {
                 sp.setSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
             }

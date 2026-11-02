@@ -129,8 +129,7 @@ public class AnyResultType implements AnyResult, Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof AnyResultType) {
-            final AnyResultType that = (AnyResultType) object;
+        if (object instanceof AnyResultType that) {
 
             return Objects.equals(this.array,     that.array)    &&
                    Objects.equals(this.id,        that.id)          &&

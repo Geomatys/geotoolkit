@@ -68,8 +68,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
 
         if (g instanceof Point) {
             transformed = transformPoint((Point) g, factory);
-        } else if (g instanceof MultiPoint) {
-            MultiPoint mp = (MultiPoint) g;
+        } else if (g instanceof MultiPoint mp) {
             Point[] points = new Point[mp.getNumGeometries()];
 
             for (int i = 0; i < points.length; i++) {
@@ -79,8 +78,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
             transformed = factory.createMultiPoint(points);
         } else if (g instanceof LineString) {
             transformed = transformLineString((LineString) g, factory);
-        } else if (g instanceof MultiLineString) {
-            MultiLineString mls = (MultiLineString) g;
+        } else if (g instanceof MultiLineString mls) {
             LineString[] lines = new LineString[mls.getNumGeometries()];
 
             for (int i = 0; i < lines.length; i++) {
@@ -90,8 +88,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
             transformed = factory.createMultiLineString(lines);
         } else if (g instanceof Polygon) {
             transformed = transformPolygon((Polygon) g, factory);
-        } else if (g instanceof MultiPolygon) {
-            MultiPolygon mp = (MultiPolygon) g;
+        } else if (g instanceof MultiPolygon mp) {
             Polygon[] polygons = new Polygon[mp.getNumGeometries()];
 
             for (int i = 0; i < polygons.length; i++) {
@@ -99,8 +96,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
             }
 
             transformed = factory.createMultiPolygon(polygons);
-        } else if (g instanceof GeometryCollection) {
-            GeometryCollection gc = (GeometryCollection) g;
+        } else if (g instanceof GeometryCollection gc) {
             Geometry[] geoms = new Geometry[gc.getNumGeometries()];
 
             for (int i = 0; i < geoms.length; i++) {

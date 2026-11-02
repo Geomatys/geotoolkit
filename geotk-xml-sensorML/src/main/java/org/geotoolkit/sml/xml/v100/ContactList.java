@@ -151,8 +151,7 @@ public class ContactList implements AbstractContactList {
             return true;
         }
 
-        if (object instanceof ContactList) {
-            final ContactList that = (ContactList) object;
+        if (object instanceof ContactList that) {
             return Objects.equals(this.description, that.description)    &&
                    Objects.equals(this.id,          that.id)             &&
                    Objects.equals(this.member,      that.member);
@@ -408,8 +407,7 @@ public class ContactList implements AbstractContactList {
                 return true;
             }
 
-            if (object instanceof Member) {
-                final Member that = (Member) object;
+            if (object instanceof Member that) {
                 return Objects.equals(this.actuate,      that.actuate)       &&
                        Objects.equals(this.arcrole,      that.arcrole)       &&
                        Objects.equals(this.href,         that.href)          &&

@@ -100,11 +100,9 @@ public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOpe
         if (that != null) {
             this.propertyName = that.propertyName;
             for (Object o : that.getRest()) {
-                if (o instanceof TimePeriodType) {
-                    final TimePeriodType tm = (TimePeriodType)o;
+                if (o instanceof TimePeriodType tm) {
                     this.rest.add(new TimePeriodType(tm.getId(), tm.getBeginPosition(), tm.getEndPosition()));
-                } else if (o instanceof TimeInstantType) {
-                    final TimeInstantType tm = (TimeInstantType)o;
+                } else if (o instanceof TimeInstantType tm) {
                     this.rest.add(new TimeInstantType(tm.getId(), tm.getTimePosition()));
                 } else {
                     throw new IllegalArgumentException("unexpected litteral type:" + o.getClass().getName());

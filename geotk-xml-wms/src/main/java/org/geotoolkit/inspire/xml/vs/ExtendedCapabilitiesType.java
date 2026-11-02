@@ -295,8 +295,7 @@ public class ExtendedCapabilitiesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExtendedCapabilitiesType) {
-            final ExtendedCapabilitiesType that = (ExtendedCapabilitiesType) object;
+        if (object instanceof ExtendedCapabilitiesType that) {
 
             return Objects.equals(this.conformity, that.conformity) &&
                    Objects.equals(this.currentLanguage, that.currentLanguage) &&

@@ -1252,8 +1252,7 @@ public class Concept implements Serializable {
         if (object == this) {
             return true;
         }
-        if (object instanceof Concept) {
-            final Concept that = (Concept) object;
+        if (object instanceof Concept that) {
             return Objects.equals(this.about,              that.about)       &&
                    Objects.equals(this.resource,           that.resource)    &&
                    Objects.equals(this.hierarchyRoot,      that.hierarchyRoot)    &&

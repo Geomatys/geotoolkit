@@ -200,8 +200,7 @@ final class AdditionalAxisTable extends CachedTable<String,AdditionalAxisEntry> 
         final Object   data      = bounds.getArray();
         final int      length    = getLength(data);
         final double[] values    = new double[length];
-        if (data instanceof Number[]) {
-            final Number[] array = (Number[]) data;
+        if (data instanceof Number[] array) {
             for (int i=0; i<length; i++) {
                 values[i] = array[i].doubleValue();
             }

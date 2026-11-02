@@ -145,8 +145,7 @@ public class LegacyValuesReference implements ValueReference {
         if (object == this) {
             return true;
         }
-        if (object instanceof LegacyValuesReference) {
-            final LegacyValuesReference that = (LegacyValuesReference) object;
+        if (object instanceof LegacyValuesReference that) {
             return Objects.equals(this.reference, that.reference) &&
                    Objects.equals(this.valuesForm, that.valuesForm);
         }

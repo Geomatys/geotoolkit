@@ -321,9 +321,8 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
      */
     @Override
     public ParameterValueGroup getParameterValues() {
-        if (warp instanceof WarpPolynomial) {
+        if (warp instanceof WarpPolynomial poly) {
             var p = new DefaultParameterValueGroup(getParameterDescriptors());
-            final WarpPolynomial poly = (WarpPolynomial) warp;
             p.getOrCreate(DEGREE).setValue(poly.getDegree());
             p.getOrCreate(X_COEFFS).setValue(poly.getXCoeffs());
             p.getOrCreate(Y_COEFFS).setValue(poly.getYCoeffs());

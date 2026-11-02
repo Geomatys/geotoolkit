@@ -364,8 +364,7 @@ public class LiteralDataDomain {
         if (object == this) {
             return true;
         }
-        if (object instanceof LiteralDataDomain) {
-            final LiteralDataDomain that = (LiteralDataDomain) object;
+        if (object instanceof LiteralDataDomain that) {
             return Objects.equals(this.allowedValues, that.allowedValues) &&
                    Objects.equals(this.allowedRanges, that.allowedRanges) &&
                    Objects.equals(this.anyValue, that.anyValue) &&

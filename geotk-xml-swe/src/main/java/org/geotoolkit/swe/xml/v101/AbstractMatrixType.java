@@ -110,8 +110,7 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
             return true;
         }
 
-        if (object instanceof AbstractMatrixType && super.equals(object, mode)) {
-            final AbstractMatrixType that = (AbstractMatrixType) object;
+        if (object instanceof AbstractMatrixType that && super.equals(object, mode)) {
 
             return Objects.equals(this.localFrame,     that.localFrame) &&
                    Objects.equals(this.referenceFrame, that.referenceFrame);

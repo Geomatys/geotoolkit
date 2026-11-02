@@ -49,8 +49,7 @@ public class ScoredConcept {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ScoredConcept) {
-            final ScoredConcept that = (ScoredConcept) obj;
+        if (obj instanceof ScoredConcept that) {
             return Objects.equals(this.language, that.language) &&
                    Objects.equals(this.originThesaurus, that.originThesaurus) &&
                    Objects.equals(this.score, that.score) &&

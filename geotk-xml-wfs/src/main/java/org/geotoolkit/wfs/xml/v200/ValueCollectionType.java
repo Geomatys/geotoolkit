@@ -318,8 +318,7 @@ public class ValueCollectionType implements ValueCollection {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ValueCollectionType) {
-            final ValueCollectionType that = (ValueCollectionType) obj;
+        if (obj instanceof ValueCollectionType that) {
             return Objects.equals(this.member,            that.member) &&
                    Objects.equals(this.additionalValues,  that.additionalValues) &&
                    Objects.equals(this.next,              that.next) &&

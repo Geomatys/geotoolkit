@@ -113,8 +113,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
             return true;
         }
 
-        if (object instanceof EngineeringCRSType) {
-            final EngineeringCRSType that = (EngineeringCRSType) object;
+        if (object instanceof EngineeringCRSType that) {
             return Objects.equals(this.usesCS, that.usesCS) &&
                    Objects.equals(this.usesEngineeringDatum, that.usesEngineeringDatum);
 

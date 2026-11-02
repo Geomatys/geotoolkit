@@ -113,8 +113,7 @@ public class NamedValueType {
         if (object == this) {
             return true;
         }
-        if (object instanceof NamedValueType) {
-            final NamedValueType that = (NamedValueType) object;
+        if (object instanceof NamedValueType that) {
 
             return Objects.equals(this.name,   that.name) &&
                    Objects.equals(this.value,  that.value);

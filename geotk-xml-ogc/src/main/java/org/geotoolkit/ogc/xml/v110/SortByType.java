@@ -95,8 +95,7 @@ public class SortByType implements SortBy {
         if (object == this) {
             return true;
         }
-        if (object instanceof SortByType) {
-            final SortByType that = (SortByType) object;
+        if (object instanceof SortByType that) {
             return Objects.equals(this.sortProperty,  that.sortProperty);
         }
         return false;

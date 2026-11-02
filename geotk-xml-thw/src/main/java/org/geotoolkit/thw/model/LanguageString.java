@@ -83,8 +83,7 @@ public class LanguageString {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof LanguageString) {
-            final LanguageString that = (LanguageString) obj;
+        if (obj instanceof LanguageString that) {
             return Objects.equals(this.language, that.language) &&
                    Objects.equals(this.string,   that.string);
         }

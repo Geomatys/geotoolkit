@@ -297,8 +297,7 @@ public class GeometricUtilities {
      */
     public static List<Line2D> getBorder(final Object geometry) {
         final List<Line2D> result = new ArrayList<Line2D>();
-        if (geometry instanceof GeneralEnvelope) {
-            final GeneralEnvelope env = (GeneralEnvelope) geometry;
+        if (geometry instanceof GeneralEnvelope env) {
             final Line2D heightLeft  = new Line2D.Double(env.getMinimum(0), env.getMaximum(1), env.getMinimum(0), env.getMinimum(1));
             result.add(heightLeft);
             final Line2D widthTop    = new Line2D.Double(env.getMinimum(0), env.getMaximum(1), env.getMaximum(0), env.getMaximum(1));
@@ -321,8 +320,7 @@ public class GeometricUtilities {
      */
     public static List<Point2D> getCorner(final Object geometry) {
         final List<Point2D> result = new ArrayList<Point2D>();
-        if (geometry instanceof GeneralEnvelope) {
-            final GeneralEnvelope env = (GeneralEnvelope) geometry;
+        if (geometry instanceof GeneralEnvelope env) {
             final Point2D upperLeft   = new Point2D.Double(env.getMinimum(0), env.getMaximum(1));
             result.add(upperLeft);
             final Point2D upperRight  = new Point2D.Double(env.getMaximum(0), env.getMaximum(1));
@@ -631,8 +629,7 @@ public class GeometricUtilities {
         final CoordinateReferenceSystem targetCRS = AbstractCRS.castOrCopy(CRS.forCode(targetCRSName)).forConvention(AxesConvention.RIGHT_HANDED);
         final CoordinateReferenceSystem sourceCRS = AbstractCRS.castOrCopy(CRS.forCode(sourceCRSName)).forConvention(AxesConvention.RIGHT_HANDED);
 
-        if (geometry instanceof GeneralEnvelope) {
-            final GeneralEnvelope env = (GeneralEnvelope) geometry;
+        if (geometry instanceof GeneralEnvelope env) {
             if (env.getCoordinateReferenceSystem() == null) {
                 env.setCoordinateReferenceSystem(sourceCRS);
             }
@@ -650,8 +647,7 @@ public class GeometricUtilities {
             mt.transform((GeneralDirectPosition) geometry, (GeneralDirectPosition) geometry);
             return geometry;
 
-        } else if (geometry instanceof Line2D) {
-            final Line2D line = (Line2D) geometry;
+        } else if (geometry instanceof Line2D line) {
             final GeneralDirectPosition pt1 = new GeneralDirectPosition(line.getX1(), line.getY1());
             final GeneralDirectPosition pt2 = new GeneralDirectPosition(line.getX2(), line.getY2());
 

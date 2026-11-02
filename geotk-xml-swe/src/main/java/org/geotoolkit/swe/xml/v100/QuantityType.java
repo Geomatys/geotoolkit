@@ -228,8 +228,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
             return true;
         }
 
-        if (object instanceof QuantityType && super.equals(object, mode)) {
-            final QuantityType that = (QuantityType) object;
+        if (object instanceof QuantityType that && super.equals(object, mode)) {
 
             return Objects.equals(this.axisID, that.axisID)   &&
                    Objects.equals(this.getQuality(), that.getQuality()) &&

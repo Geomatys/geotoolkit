@@ -203,8 +203,7 @@ public final class GeoJSONStore extends DataStore implements WritableFeatureSet 
 
                 CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(obj);
 
-                if (obj instanceof GeoJSONFeatureCollection) {
-                    GeoJSONFeatureCollection jsonFeatureCollection = (GeoJSONFeatureCollection) obj;
+                if (obj instanceof GeoJSONFeatureCollection jsonFeatureCollection) {
                     if (!jsonFeatureCollection.hasNext()) {
                         //empty FeatureCollection error ?
                         throw new DataStoreException("Empty GeoJSON FeatureCollection " + jsonFile);
@@ -217,8 +216,7 @@ public final class GeoJSONStore extends DataStore implements WritableFeatureSet 
                         fillTypeFromFeature(ftb, crs, jsonFeature, false);
                     }
 
-                } else if (obj instanceof GeoJSONFeature) {
-                    GeoJSONFeature jsonFeature = (GeoJSONFeature) obj;
+                } else if (obj instanceof GeoJSONFeature jsonFeature) {
                     fillTypeFromFeature(ftb, crs, jsonFeature, true);
                 } else if (obj instanceof GeoJSONGeometry) {
                     ftb.addAttribute(String.class).setName("fid").addRole(AttributeRole.IDENTIFIER_COMPONENT);

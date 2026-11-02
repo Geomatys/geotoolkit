@@ -65,8 +65,7 @@ public class LinkRef implements AbstractLinkRef {
             return true;
         }
 
-        if (object instanceof LinkRef) {
-            final LinkRef that = (LinkRef) object;
+        if (object instanceof LinkRef that) {
             return Objects.equals(this.ref, that.ref);
 
         }

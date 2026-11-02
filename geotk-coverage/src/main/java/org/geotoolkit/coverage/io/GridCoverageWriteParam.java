@@ -94,8 +94,7 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      */
     public GridCoverageWriteParam(final GridCoverageStoreParam param) {
         super(param);
-        if (param instanceof GridCoverageWriteParam) {
-            final GridCoverageWriteParam wp = (GridCoverageWriteParam) param;
+        if (param instanceof GridCoverageWriteParam wp) {
             formatName         = wp.formatName;
             compressionQuality = wp.compressionQuality;
             backgroundValues   = wp.backgroundValues;

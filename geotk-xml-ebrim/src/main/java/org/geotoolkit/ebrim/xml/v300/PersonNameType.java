@@ -119,8 +119,7 @@ public class PersonNameType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PersonNameType) {
-            final PersonNameType that = (PersonNameType) obj;
+        if (obj instanceof PersonNameType that) {
             return Objects.equals(this.firstName,  that.firstName) &&
                    Objects.equals(this.lastName,   that.lastName) &&
                    Objects.equals(this.middleName, that.middleName);

@@ -114,8 +114,7 @@ public class ExceptionType implements Serializable, org.geotoolkit.ows.xml.Excep
         if (object == this) {
             return true;
         }
-        if (object instanceof ExceptionType) {
-            final ExceptionType that = (ExceptionType) object;
+        if (object instanceof ExceptionType that) {
 
             return Objects.equals(this.exceptionCode, that.exceptionCode)    &&
                    Objects.equals(this.exceptionText, that.exceptionText)  &&

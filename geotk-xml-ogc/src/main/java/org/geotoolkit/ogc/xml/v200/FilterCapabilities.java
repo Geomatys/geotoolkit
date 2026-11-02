@@ -244,8 +244,7 @@ public class FilterCapabilities extends org.geotoolkit.filter.capability.FilterC
         if (object == this) {
             return true;
         }
-       if (object instanceof FilterCapabilities) {
-           final FilterCapabilities that = (FilterCapabilities) object;
+       if (object instanceof FilterCapabilities that) {
             return Objects.equals(this.conformance,          that.conformance)            &&
                    Objects.equals(this.extendedCapabilities, that.extendedCapabilities)   &&
                    Objects.equals(this.functions,            that.functions)              &&

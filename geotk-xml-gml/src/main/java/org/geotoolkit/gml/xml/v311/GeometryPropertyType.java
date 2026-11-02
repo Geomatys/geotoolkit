@@ -513,8 +513,7 @@ public class GeometryPropertyType implements GeometryProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof GeometryPropertyType) {
-            final GeometryPropertyType that = (GeometryPropertyType) object;
+        if (object instanceof GeometryPropertyType that) {
 
             boolean geom = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {

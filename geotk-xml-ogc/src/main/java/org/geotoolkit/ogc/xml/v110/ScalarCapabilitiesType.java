@@ -129,8 +129,7 @@ public class ScalarCapabilitiesType extends ScalarCapabilities {
             return true;
         }
 
-       if (object instanceof ScalarCapabilitiesType) {
-           final ScalarCapabilitiesType that = (ScalarCapabilitiesType) object;
+       if (object instanceof ScalarCapabilitiesType that) {
 
             return Objects.equals(this.logicalOperators, that.logicalOperators) &&
                    Objects.equals(this.arithmeticOperators, that.arithmeticOperators) &&

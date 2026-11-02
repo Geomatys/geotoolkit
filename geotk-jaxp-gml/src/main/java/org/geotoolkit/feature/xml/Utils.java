@@ -977,8 +977,7 @@ public final class Utils {
         String nsuri = NamesExt.getNamespace(type.getName());
         if(nsuri!=null) ns.add(nsuri);
 
-        if(type instanceof FeatureAssociationRole){
-            final FeatureAssociationRole far = (FeatureAssociationRole)type;
+        if(type instanceof FeatureAssociationRole far){
             try {
                 final FeatureType valueType = far.getValueType();
                 listAllNamespaces(valueType, ns, visited);

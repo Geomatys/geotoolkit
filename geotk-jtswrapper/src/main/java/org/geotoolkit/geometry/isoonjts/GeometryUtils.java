@@ -642,8 +642,7 @@ public final class GeometryUtils {
             final List/*<CurveSegments>*/ segments = curve.getSegments();
             for (int j = 0; j < segments.size(); j++) {
                 final CurveSegment curveSegment = (CurveSegment) segments.get(j);
-                if (curveSegment instanceof LineString) {
-                    final LineString lineString = (LineString) curveSegment;
+                if (curveSegment instanceof LineString lineString) {
                     final DirectPosition[] positions = getDirectPositions(lineString);
                     directPositionList.addAll(Arrays.asList(positions));
                     /*final List<Position> positions = lineString.getControlPoints().positions();

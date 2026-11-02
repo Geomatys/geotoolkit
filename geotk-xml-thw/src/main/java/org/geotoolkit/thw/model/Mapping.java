@@ -101,8 +101,7 @@ public class Mapping {
         if (object == this) {
             return true;
         }
-        if (object instanceof Mapping) {
-            final Mapping that = (Mapping) object;
+        if (object instanceof Mapping that) {
 
             return Objects.equals(this.relation, that.relation)   &&
                    Objects.equals(this.source,   that.source)     &&

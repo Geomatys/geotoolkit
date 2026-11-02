@@ -708,9 +708,8 @@ public final class Parameters extends Static {
                     throw new IllegalArgumentException("Illegal value for parameter " + entry.getKey() + ". It's a parameter group, so we should have a nested map as input.");
                 }
 
-            } else if (subDesc instanceof ParameterDescriptor) {
+            } else if (subDesc instanceof ParameterDescriptor pdesc) {
 
-                final ParameterDescriptor pdesc = (ParameterDescriptor) subDesc;
                 try {
                     final ParameterValue param = Parameters.getOrCreate(pdesc, parameter);
                     param.setValue(

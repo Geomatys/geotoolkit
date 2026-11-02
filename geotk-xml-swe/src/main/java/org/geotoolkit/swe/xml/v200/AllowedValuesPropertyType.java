@@ -337,8 +337,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
             return true;
         }
 
-        if (object instanceof AllowedValuesPropertyType) {
-            final AllowedValuesPropertyType that = (AllowedValuesPropertyType) object;
+        if (object instanceof AllowedValuesPropertyType that) {
             return Objects.equals(this.allowedValues,      that.allowedValues)     &&
                    Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

@@ -178,8 +178,7 @@ public class DeleteElementType implements DeleteElement {
             return true;
         }
 
-        if (obj instanceof DeleteElementType) {
-            DeleteElementType that = (DeleteElementType) obj;
+        if (obj instanceof DeleteElementType that) {
             return Objects.equals(this.filter, that.filter) &&
                    Objects.equals(this.typeName, that.typeName) &&
                    Objects.equals(this.handle, that.handle);

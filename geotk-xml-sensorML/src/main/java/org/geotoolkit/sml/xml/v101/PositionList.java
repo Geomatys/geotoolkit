@@ -177,8 +177,7 @@ public class PositionList extends SensorObject implements AbstractPositionList {
             return true;
         }
 
-        if (object instanceof PositionList) {
-            final PositionList that = (PositionList) object;
+        if (object instanceof PositionList that) {
 
             return Objects.equals(this.id,           that.id)       &&
                    Objects.equals(this.position,     that.position)       &&

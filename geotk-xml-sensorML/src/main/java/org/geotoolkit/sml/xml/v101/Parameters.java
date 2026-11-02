@@ -339,8 +339,7 @@ public class Parameters extends SensorObject implements AbstractParameters {
             return true;
         }
 
-        if (object instanceof Parameters) {
-            final Parameters that = (Parameters) object;
+        if (object instanceof Parameters that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

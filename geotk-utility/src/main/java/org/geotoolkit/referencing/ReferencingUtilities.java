@@ -129,8 +129,7 @@ public final class ReferencingUtilities {
                     return new DirectPosition[]{start,end};
                 }
             }
-        }else if(crs instanceof ProjectedCRS){
-            final ProjectedCRS projectedCRS = (ProjectedCRS) crs;
+        }else if(crs instanceof ProjectedCRS projectedCRS){
             final MathTransform trs = projectedCRS.getConversionFromBase().getMathTransform();
 
             //test if the transform can contain a wrap axis
@@ -429,8 +428,7 @@ public final class ReferencingUtilities {
 
         final CoordinateReferenceSystem targetCRS;
 
-        if (originalCRS instanceof CompoundCRS) {
-            final CompoundCRS ccrs = (CompoundCRS) originalCRS;
+        if (originalCRS instanceof CompoundCRS ccrs) {
             final CoordinateReferenceSystem part2D = CRS.getHorizontalComponent(originalCRS);
             final List<CoordinateReferenceSystem> lst = new ArrayList<>();
             for (CoordinateReferenceSystem c : ccrs.getComponents()) {
@@ -485,8 +483,7 @@ public final class ReferencingUtilities {
      */
     @Deprecated
     public static CoordinateReferenceSystem setLongitudeFirst(final CoordinateReferenceSystem crs) throws FactoryException{
-        if (crs instanceof SingleCRS) {
-            final SingleCRS singlecrs = (SingleCRS) crs;
+        if (crs instanceof SingleCRS singlecrs) {
             final CoordinateSystem cs = singlecrs.getCoordinateSystem();
             final int dimension = cs.getDimension();
 
@@ -518,8 +515,7 @@ public final class ReferencingUtilities {
                 throw new FactoryException("Failed to create flipped axis for crs : " + singlecrs);
             }
 
-        } else if (crs instanceof CompoundCRS) {
-            final CompoundCRS compoundcrs = (CompoundCRS) crs;
+        } else if (crs instanceof CompoundCRS compoundcrs) {
 
             final List<CoordinateReferenceSystem> components = compoundcrs.getComponents();
             final int size = components.size();

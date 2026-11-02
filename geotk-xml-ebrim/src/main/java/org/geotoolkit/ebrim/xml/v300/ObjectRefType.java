@@ -85,8 +85,7 @@ public class ObjectRefType extends IdentifiableType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ObjectRefType && super.equals(obj)) {
-            final ObjectRefType that = (ObjectRefType) obj;
+        if (obj instanceof ObjectRefType that && super.equals(obj)) {
             return Objects.equals(this.createReplica, that.createReplica);
         }
         return false;

@@ -131,8 +131,7 @@ public class SolidArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SolidArrayPropertyType) {
-            final SolidArrayPropertyType that = (SolidArrayPropertyType) object;
+        if (object instanceof SolidArrayPropertyType that) {
 
             if (this.abstractSolid != null && that.abstractSolid != null) {
                 for (int i = 0; i < abstractSolid.size(); i++) {

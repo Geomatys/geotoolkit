@@ -91,8 +91,7 @@ public class PointArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof PointArrayPropertyType) {
-            final PointArrayPropertyType that = (PointArrayPropertyType) object;
+        if (object instanceof PointArrayPropertyType that) {
 
             return Objects.equals(this.point,  that.point);
         }

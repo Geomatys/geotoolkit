@@ -376,8 +376,7 @@ public class TimePeriodPropertyType implements Serializable {
         if (object == this) {
             return true;
         }
-        if (object instanceof TimePeriodPropertyType) {
-            final TimePeriodPropertyType that = (TimePeriodPropertyType) object;
+        if (object instanceof TimePeriodPropertyType that) {
 
             return Objects.equals(this.timePeriod,         that.timePeriod)      &&
                    Objects.equals(this.actuate,            that.actuate)          &&

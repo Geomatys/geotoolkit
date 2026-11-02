@@ -304,8 +304,7 @@ public class MultiSurfacePropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiSurfacePropertyType) {
-            final MultiSurfacePropertyType that = (MultiSurfacePropertyType) object;
+        if (object instanceof MultiSurfacePropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

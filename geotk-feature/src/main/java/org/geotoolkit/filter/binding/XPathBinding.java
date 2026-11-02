@@ -90,9 +90,8 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                 v = ((Fake)v).value;
             }
 
-            if(v instanceof Collection){
+            if(v instanceof Collection properties){
                 //several property for this path
-                final Collection properties = (Collection) v;
                 if(target != null && target.isInstance(properties)){
                     return (T) properties;
                 }else{
@@ -107,9 +106,8 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                 v = ((Fake)v).value;
             }
 
-            if(v instanceof Property){
+            if(v instanceof Property prop){
                 //extract value from property if necessary
-                final Property prop = (Property) v;
                 if(target != null && target.isInstance(prop)){
                     return (T) prop;
                 }else{
@@ -139,11 +137,9 @@ public class XPathBinding<C> extends AbstractBinding<C> {
     public void set(final C candidate, final String xpath, final Object value) throws IllegalArgumentException {
         final Object obj = get(candidate,xpath,Property.class);
 
-        if(obj instanceof Attribute){
-            final Attribute prop = (Attribute)obj;
+        if(obj instanceof Attribute prop){
             prop.setValue(value);
-        }else if(obj instanceof FeatureAssociation){
-            final FeatureAssociation prop = (FeatureAssociation)obj;
+        }else if(obj instanceof FeatureAssociation prop){
             prop.setValue((Feature)value);
         }else{
             throw new IllegalArgumentException("Can not set value for xpath : " + xpath);

@@ -50,8 +50,7 @@ final class SubsampledImage extends PlanarImage {
         this.offX   = offX;
         this.offY   = offY;
         final SampleModel sourceModel = source.getSampleModel();
-        if (sourceModel instanceof PixelInterleavedSampleModel) {
-            final PixelInterleavedSampleModel sm = (PixelInterleavedSampleModel) sourceModel;
+        if (sourceModel instanceof PixelInterleavedSampleModel sm) {
             final int   pixelStride    = sm.getPixelStride();
             final int   scanlineStride = sm.getScanlineStride();
             final int   strideOffset   = pixelStride*offX + scanlineStride*offY;
@@ -63,8 +62,7 @@ final class SubsampledImage extends PlanarImage {
                     divExclusive(sm.getWidth(),  subX),
                     divExclusive(sm.getHeight(), subY),
                     pixelStride*subX, scanlineStride*subY, bandOffsets);
-        } else if (sourceModel instanceof MultiPixelPackedSampleModel) {
-            final MultiPixelPackedSampleModel sm = (MultiPixelPackedSampleModel) sourceModel;
+        } else if (sourceModel instanceof MultiPixelPackedSampleModel sm) {
             assertEquals("Subsampling on the X axis is not supported.", 1, subX);
             model = new MultiPixelPackedSampleModel(sm.getDataType(),
                     divExclusive(sm.getWidth(),  subX),
@@ -185,8 +183,7 @@ final class SubsampledImage extends PlanarImage {
 
     @Override
     public boolean equals(final Object object) {
-        if (object instanceof SubsampledImage) {
-            final SubsampledImage other = (SubsampledImage) object;
+        if (object instanceof SubsampledImage other) {
             return source.equals(other.source) &&
                    subX == other.subX &&
                    subY == other.subY &&

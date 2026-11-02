@@ -317,8 +317,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
         if (object == this) {
             return true;
         }
-        if (object instanceof InheritanceRelationImpl) {
-            final InheritanceRelationImpl that = (InheritanceRelationImpl) object;
+        if (object instanceof InheritanceRelationImpl that) {
 
             return Objects.equals(this.description,    that.description) &&
                    Objects.equals(this.id,             that.id)          &&

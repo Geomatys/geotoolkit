@@ -735,8 +735,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             return true;
         }
 
-        if (object instanceof OMObservationType && super.equals(object, mode)) {
-            final OMObservationType that = (OMObservationType) object;
+        if (object instanceof OMObservationType that && super.equals(object, mode)) {
             return Objects.equals(this.featureOfInterest,  that.featureOfInterest)   &&
                    Objects.equals(this.metadata,           that.metadata)   &&
                    Objects.equals(this.observedProperty,   that.observedProperty)   &&
@@ -829,8 +828,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
+            if (obj instanceof org.geotoolkit.swe.xml.Phenomenon that) {
                 return Objects.equals(this.getName(), that.getName());
             }
             return false;
@@ -1007,8 +1005,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof org.geotoolkit.swe.xml.PhenomenonProperty) {
-                final org.geotoolkit.swe.xml.PhenomenonProperty that = (org.geotoolkit.swe.xml.PhenomenonProperty) obj;
+            if (obj instanceof org.geotoolkit.swe.xml.PhenomenonProperty that) {
                 return Objects.equals(this.href, that.getHref());
             }
             return false;

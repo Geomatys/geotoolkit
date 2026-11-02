@@ -168,8 +168,7 @@ public class SectionsType implements Sections {
         if (object == this) {
             return true;
         }
-        if (object instanceof SectionsType) {
-            final SectionsType that = (SectionsType) object;
+        if (object instanceof SectionsType that) {
             return Objects.equals(this.section, that.section);
         }
         return false;

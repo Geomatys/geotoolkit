@@ -167,8 +167,7 @@ public class ServerType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ServerType) {
-            final ServerType that = (ServerType) object;
+        if (object instanceof ServerType that) {
 
             return Objects.equals(this.onlineResource, that.onlineResource) &&
                    Objects.equals(this.service, that.service) &&

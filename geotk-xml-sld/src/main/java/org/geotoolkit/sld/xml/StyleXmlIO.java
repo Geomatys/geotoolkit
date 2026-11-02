@@ -292,8 +292,7 @@ public final class StyleXmlIO {
         switch(version){
             case V_1_0_0:
                 obj = unmarshallV100(source);
-                if (obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) {
-                    final org.geotoolkit.sld.xml.v100.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj;
+                if (obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor tempsld) {
                     if ("1.0.0".equals(tempsld.getVersion())) {
                         return getTransformer100().visit((org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
                     } else {
@@ -304,8 +303,7 @@ public final class StyleXmlIO {
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if (obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) {
-                    final org.geotoolkit.sld.xml.v110.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj;
+                if (obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor tempsld) {
                     if ("1.1.0".equals(tempsld.getVersion())) {
                         return getTransformer110().visit((org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
                     } else {

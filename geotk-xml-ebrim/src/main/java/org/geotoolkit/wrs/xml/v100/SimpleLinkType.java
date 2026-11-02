@@ -201,8 +201,7 @@ public class SimpleLinkType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SimpleLinkType) {
-            final SimpleLinkType that = (SimpleLinkType) obj;
+        if (obj instanceof SimpleLinkType that) {
             return Objects.equals(this.actuate, that.actuate) &&
                    Objects.equals(this.arcrole, that.arcrole) &&
                    Objects.equals(this.href,    that.href) &&

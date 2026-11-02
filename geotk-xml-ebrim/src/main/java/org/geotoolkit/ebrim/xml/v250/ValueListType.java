@@ -98,8 +98,7 @@ public class ValueListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ValueListType) {
-            final ValueListType that = (ValueListType) obj;
+        if (obj instanceof ValueListType that) {
             return Objects.equals(this.value,  that.value);
         }
         return false;

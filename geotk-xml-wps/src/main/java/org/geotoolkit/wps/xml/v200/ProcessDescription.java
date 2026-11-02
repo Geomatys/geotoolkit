@@ -357,8 +357,7 @@ public class ProcessDescription extends Description {
             if (object == this) {
                 return true;
             }
-            if (object instanceof DataInputs) {
-                final DataInputs that = (DataInputs) object;
+            if (object instanceof DataInputs that) {
                 return Objects.equals(this.getInput(), that.getInput());
             }
             return false;
@@ -439,8 +438,7 @@ public class ProcessDescription extends Description {
             if (object == this) {
                 return true;
             }
-            if (object instanceof ProcessOutputs) {
-                final ProcessOutputs that = (ProcessOutputs) object;
+            if (object instanceof ProcessOutputs that) {
                 return Objects.equals(this.getOutput(), that.getOutput());
             }
             return false;

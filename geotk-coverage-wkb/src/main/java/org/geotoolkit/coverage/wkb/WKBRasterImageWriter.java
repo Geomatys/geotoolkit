@@ -79,8 +79,7 @@ public class WKBRasterImageWriter extends ImageWriter {
         final WKBRasterWriter writer = new WKBRasterWriter();
 
         final Object out = getOutput();
-        if (out instanceof ImageOutputStream) {
-            final ImageOutputStream stream = (ImageOutputStream) out;
+        if (out instanceof ImageOutputStream stream) {
             final byte[] data = writer.write(ri, new AffineTransform(), 0);
             stream.write(data);
 
@@ -98,8 +97,7 @@ public class WKBRasterImageWriter extends ImageWriter {
         final WKBRasterWriter writer = new WKBRasterWriter();
 
         final Object out = getOutput();
-        if (out instanceof ImageOutputStream) {
-            final ImageOutputStream stream = (ImageOutputStream) out;
+        if (out instanceof ImageOutputStream stream) {
             final byte[] data = writer.write(ri, new AffineTransform(), 0);
             stream.write(data);
 

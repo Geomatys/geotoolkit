@@ -141,11 +141,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             }
         }
 
-        if (resource instanceof FeatureSet) {
+        if (resource instanceof FeatureSet fs) {
             /*
             Optimise case using envelopes filter and limited propery names.
             */
-            final FeatureSet fs = (FeatureSet) resource;
 
             Set<String> names;
             if (GO2Utilities.mustPreserveAllProperties(getRenderingContext())) {

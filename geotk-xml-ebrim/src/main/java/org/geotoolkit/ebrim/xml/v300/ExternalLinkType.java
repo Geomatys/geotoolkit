@@ -85,8 +85,7 @@ public class ExternalLinkType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ExternalLinkType && super.equals(obj)) {
-            final ExternalLinkType that = (ExternalLinkType) obj;
+        if (obj instanceof ExternalLinkType that && super.equals(obj)) {
             return Objects.equals(this.externalURI, that.externalURI);
         }
         return false;

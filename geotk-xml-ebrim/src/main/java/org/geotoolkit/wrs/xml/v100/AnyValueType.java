@@ -101,8 +101,7 @@ public class AnyValueType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof AnyValueType) {
-            final AnyValueType that = (AnyValueType) obj;
+        if (obj instanceof AnyValueType that) {
             return Objects.equals(this.content,  that.content);
         }
         return false;

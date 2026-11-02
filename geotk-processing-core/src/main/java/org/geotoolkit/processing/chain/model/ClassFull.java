@@ -106,8 +106,7 @@ public class ClassFull {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof ClassFull) {
-            final ClassFull that = (ClassFull) obj;
+        if (obj instanceof ClassFull that) {
             return Objects.equals(this.getClasses(), that.getClasses()) &&
                    Objects.equals(this.name, that.name);
         }

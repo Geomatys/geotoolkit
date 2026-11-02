@@ -284,8 +284,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
                 //this node has no visual representation
                 continue;
             }
-            if(gra instanceof MapItemJ2D){
-                final MapItemJ2D cn = (MapItemJ2D) gra;
+            if(gra instanceof MapItemJ2D cn){
                 colors = extractColors(cn.getUserObject(), colors);
             }else{
                 //can not extract colors

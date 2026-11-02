@@ -90,8 +90,7 @@ public class DescribeFeatureType extends RequestBaseType {
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeFeatureType && super.equals(object)) {
-            final DescribeFeatureType that = (DescribeFeatureType) object;
+        if (object instanceof DescribeFeatureType that && super.equals(object)) {
             return Objects.equals(this.featureId, that.featureId);
         }
         return false;

@@ -120,10 +120,9 @@ public class LuceneOGCWeight extends Weight {
              */
             List<Expression<Object,?>> expressions = filter.getExpressions();
             Expression e2 = (expressions.size() >= 2) ? expressions.get(1) : null;
-            if (filter instanceof DistanceOperator) {
+            if (filter instanceof DistanceOperator sp) {
                 distanceFilter = true;
                 reverse        = filter.getOperatorType() == DistanceOperatorName.BEYOND;
-                final DistanceOperator sp = (DistanceOperator) filter;
                 if (e2 instanceof Literal) {
                     try {
                         final Literal lit = (Literal) e2;
@@ -154,10 +153,8 @@ public class LuceneOGCWeight extends Weight {
                 } else {
                     LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", e2);
                 }
-            } else if (filter instanceof BinarySpatialOperator) {
-                final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
-                if (e2 instanceof Literal) {
-                    final Literal lit = (Literal) e2;
+            } else if (filter instanceof BinarySpatialOperator sp) {
+                if (e2 instanceof Literal lit) {
                     final Envelope boundFilter = getReprojectedEnvelope(lit.getValue(), tree.getCrs());
                     try {
                         if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {

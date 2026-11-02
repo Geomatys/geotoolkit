@@ -222,8 +222,7 @@ public class UserType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof UserType && super.equals(obj)) {
-            final UserType that = (UserType) obj;
+        if (obj instanceof UserType that && super.equals(obj)) {
             return Objects.equals(this.address,         that.address) &&
                    Objects.equals(this.emailAddress,    that.emailAddress) &&
                    Objects.equals(this.personName,      that.personName) &&

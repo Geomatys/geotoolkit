@@ -685,8 +685,7 @@ public final class JTS {
         if (userData instanceof CoordinateReferenceSystem) {
             userData = crs;
         } else {
-            if (userData instanceof Map) {
-                Map values = (Map) userData;
+            if (userData instanceof Map values) {
                 values.put(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY, crs);
                 userData = values;
             }
@@ -726,8 +725,7 @@ public final class JTS {
         final Object userData = geom.getUserData();
         if (userData instanceof CoordinateReferenceSystem) {
             crs = (CoordinateReferenceSystem) userData;
-        } else if (userData instanceof Map) {
-            final Map values = (Map) userData;
+        } else if (userData instanceof Map values) {
             final Object candidate = values.get(org.apache.sis.geometry.wrapper.jts.JTS.CRS_KEY);
             if (candidate instanceof CoordinateReferenceSystem) {
                 crs = (CoordinateReferenceSystem) candidate;
@@ -865,8 +863,7 @@ public final class JTS {
             reversed.setUserData(g.getUserData());
             return (T) reversed;
 
-        } else if (g instanceof LinearRing) {
-            LinearRing lr = (LinearRing) g;
+        } else if (g instanceof LinearRing lr) {
             if (!evaluator.test(lr.getCoordinateSequence())) {
                lr = reverseRing(lr);
             }

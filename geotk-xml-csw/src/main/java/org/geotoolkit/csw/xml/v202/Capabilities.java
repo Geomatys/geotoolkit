@@ -103,8 +103,7 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
         if (object == this) {
             return true;
         }
-        if (object instanceof Capabilities && super.equals(object)) {
-            final Capabilities that = (Capabilities) object;
+        if (object instanceof Capabilities that && super.equals(object)) {
             return Objects.equals(this.filterCapabilities, that.filterCapabilities);
         }
         return false;

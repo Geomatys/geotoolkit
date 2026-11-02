@@ -372,8 +372,7 @@ public class QueryType implements Query {
             return true;
         }
 
-        if (obj instanceof QueryType) {
-            QueryType that = (QueryType) obj;
+        if (obj instanceof QueryType that) {
             return Objects.equals(this.featureVersion, that.featureVersion) &&
                    Objects.equals(this.filter, that.filter) &&
                    Objects.equals(this.handle, that.handle) &&

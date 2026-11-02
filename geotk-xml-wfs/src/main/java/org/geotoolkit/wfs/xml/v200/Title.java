@@ -137,8 +137,7 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
         if (object == this) {
             return true;
         }
-        if (object instanceof Title) {
-            final Title that = (Title) object;
+        if (object instanceof Title that) {
 
             return Objects.equals(this.lang, that.lang) &&
                    Objects.equals(this.value, that.value);

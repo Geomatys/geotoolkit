@@ -135,8 +135,7 @@ public class Appinfo {
         if (object == this) {
             return true;
         }
-        if (object instanceof Appinfo) {
-            final Appinfo that = (Appinfo) object;
+        if (object instanceof Appinfo that) {
             return Objects.equals(this.content,         that.content)         &&
                    Objects.equals(this.otherAttributes, that.otherAttributes) &&
                    Objects.equals(this.source,          that.source);

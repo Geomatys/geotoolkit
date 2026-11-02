@@ -336,8 +336,7 @@ public class ComponentPropertyType implements ComponentProperty {
             return true;
         }
 
-        if (object instanceof ComponentPropertyType) {
-            final ComponentPropertyType that = (ComponentPropertyType) object;
+        if (object instanceof ComponentPropertyType that) {
            boolean absDataArr = false;
             if (this.process != null && that.process != null) {
                 absDataArr = Objects.equals(this.process.getValue(), that.process.getValue());

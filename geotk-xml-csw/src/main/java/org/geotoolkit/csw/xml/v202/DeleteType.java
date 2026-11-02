@@ -129,8 +129,7 @@ public class DeleteType implements Delete {
         if (object == this) {
             return true;
         }
-        if (object instanceof DeleteType) {
-            final DeleteType that = (DeleteType) object;
+        if (object instanceof DeleteType that) {
             return Objects.equals(this.constraint, that.constraint) &&
                    Objects.equals(this.handle,     that.handle)     &&
                    Objects.equals(this.typeName,   that.typeName);

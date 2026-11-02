@@ -180,8 +180,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         // then we look for feature type and groups
         for (OpenAttrs opAtts : schema.getSimpleTypeOrComplexTypeOrGroup()) {
 
-            if (opAtts instanceof TopLevelElement) {
-                final TopLevelElement element = (TopLevelElement) opAtts;
+            if (opAtts instanceof TopLevelElement element) {
                 final QName typeName = element.getType();
                 if (typeName != null) {
                     final ComplexType type = xsdContext.findComplexType(typeName);
@@ -297,8 +296,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             if (map != null) {
                 IdentifiedType mappedType = map.getType();
 
-                if (mappedType instanceof AttributeType) {
-                    AttributeType at = (AttributeType) mappedType;
+                if (mappedType instanceof AttributeType at) {
 
                     AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(at);
                     atb.addCharacteristic(XSDMapping.class)
@@ -601,13 +599,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 particle = ((JAXBElement) particle).getValue();
             }
 
-            if (particle instanceof Element) {
-                final Element ele = (Element) particle;
+            if (particle instanceof Element ele) {
                 final PropertyType att = elementToAttribute(namespaceURI, ele, stack);
                 atts.add(att);
 
-            } else if (particle instanceof Any) {
-                final Any ele = (Any) particle;
+            } else if (particle instanceof Any ele) {
                 final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
                 atb.setName(namespaceURI, Utils.ANY_PROPERTY_NAME);
                 atb.setValueClass(Object.class);
@@ -624,8 +620,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
                 atts.add(atb.build());
 
-            } else if (particle instanceof GroupRef) {
-                final GroupRef ref = (GroupRef) particle;
+            } else if (particle instanceof GroupRef ref) {
                 final QName groupRef = ref.getRef();
                 final NamedGroup ng = xsdContext.findGlobalGroup(groupRef);
 
@@ -645,8 +640,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     atts.add(pt);
                 }
 
-            } else if (particle instanceof ExplicitGroup) {
-                final ExplicitGroup eg = (ExplicitGroup) particle;
+            } else if (particle instanceof ExplicitGroup eg) {
                 atts.addAll(getGroupAttributes(namespaceURI, eg, stack));
             } else {
                 throw new MismatchedFeatureException("Unexpected TYPE : "+particle);
@@ -976,8 +970,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                         String name = ((JAXBElement) facet).getName().getLocalPart();
                         facet = ((JAXBElement) facet).getValue();
 
-                        if (facet instanceof NumFacet) {
-                            final NumFacet nf = (NumFacet) facet;
+                        if (facet instanceof NumFacet nf) {
                             final int length = Integer.valueOf(nf.getValue());
                             if ("maxLength".equalsIgnoreCase(name)) {
                                 atb.setMaximalLength(length);
@@ -1050,8 +1043,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             return;
         }
 
-        if (property instanceof AttributeType) {
-            final AttributeType att = (AttributeType) property;
+        if (property instanceof AttributeType att) {
 ////            final boolean decorated = GMLConvention.isDecoratedProperty(att.getName().tip().toString());
 
             final AttributeTypeBuilder atb = ftb.addAttribute(att);
@@ -1065,8 +1057,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 ////                atb.setDescription(GMLConvention.DECORATED_DESCRIPTION);
 ////            }
 
-        } else if (property instanceof FeatureAssociationRole) {
-            final FeatureAssociationRole far = (FeatureAssociationRole) property;
+        } else if (property instanceof FeatureAssociationRole far) {
 
             //PropertyType field are only decorations used to rename elements
             //this would cause a double association hard to manipulate

@@ -209,8 +209,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         if (object == this) {
             return true;
         }
-        if (object instanceof QuantityRange && super.equals(object, mode)) {
-            final QuantityRange that = (QuantityRange) object;
+        if (object instanceof QuantityRange that && super.equals(object, mode)) {
 
             return Objects.equals(this.axisID,           that.axisID)         &&
                    Objects.equals(this.constraint,       that.constraint)     &&

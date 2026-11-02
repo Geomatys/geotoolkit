@@ -181,8 +181,7 @@ public class OwcXmlIO {
         }
 
 
-        if (item instanceof MapLayer) {
-            final MapLayer layer = (MapLayer) item;
+        if (item instanceof MapLayer layer) {
 
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createVisible(layer.isVisible()));
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));
@@ -204,8 +203,7 @@ public class OwcXmlIO {
                 }
             }
 
-        } else if (item instanceof MapLayers) {
-            final MapLayers mc = (MapLayers) item;
+        } else if (item instanceof MapLayers mc) {
             final ContentType content = OWC_FACTORY.createContentType();
             content.setType(mc.getIdentifier());
             //encode children
@@ -265,15 +263,12 @@ public class OwcXmlIO {
                 o = ((JAXBElement)o).getValue();
             }
 
-            if (o instanceof TextType) {
-                final TextType title = (TextType) o;
+            if (o instanceof TextType title) {
                 title.getContent();
-            } else if(o instanceof WhereType) {
-                final WhereType where = (WhereType) o;
+            } else if(o instanceof WhereType where) {
                 final EnvelopeType envelopeType = where.getEnvelope();
                 context.setAreaOfInterest(envelopeType);
-            } else if(o instanceof EntryType) {
-                final EntryType entry = (EntryType) o;
+            } else if(o instanceof EntryType entry) {
                 final MapItem item = readEntry(entry);
                 //find insert parent
                 final String[] path = item.getIdentifier().split("/");
@@ -317,8 +312,7 @@ public class OwcXmlIO {
 
         for (Object o : entryContent) {
             QName name = null;
-            if (o instanceof JAXBElement) {
-                final JAXBElement jax = (JAXBElement) o;
+            if (o instanceof JAXBElement jax) {
                 name = jax.getName();
                 o = jax.getValue();
 
@@ -331,8 +325,7 @@ public class OwcXmlIO {
                 }
             }
 
-            if (o instanceof OfferingType) {
-                final OfferingType offering = (OfferingType) o;
+            if (o instanceof OfferingType offering) {
                 for (OwcExtension ext : getExtensions()) {
                     if (ext.getCode().equals(offering.getCode())) {
                         mapItem = ext.createLayer(offering);
@@ -344,9 +337,8 @@ public class OwcXmlIO {
                 baseStyle = readStyle(offering,true);
                 selectionStyle = readStyle(offering,false);
 
-            } else if (o instanceof ContentType) {
+            } else if (o instanceof ContentType content) {
                 //decode children
-                final ContentType content = (ContentType) o;
                 final List<Object> contentContent = content.getContent();
                 for (Object co : contentContent) {
                     if (co instanceof JAXBElement) {
@@ -356,12 +348,10 @@ public class OwcXmlIO {
                         children.add(readEntry((EntryType)co));
                     }
                 }
-            } else if (o instanceof IdType) {
-                final IdType idType = (IdType) o;
+            } else if (o instanceof IdType idType) {
                 final String value = idType.getValue();
                 layerName = value;
-            } else if (o instanceof TextType) {
-                final TextType tt = (TextType) o;
+            } else if (o instanceof TextType tt) {
                 if (ATOM_FACTORY._EntryTypeTitle_QNAME.equals(name)) {
                     if (!tt.getContent().isEmpty()) {
                         layerTitle = (String) tt.getContent().get(0);

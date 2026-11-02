@@ -196,8 +196,7 @@ public class BriefRecordType extends AbstractRecordType {
         if (object == this) {
             return true;
         }
-        if (object instanceof BriefRecordType) {
-            final BriefRecordType that = (BriefRecordType) object;
+        if (object instanceof BriefRecordType that) {
 
             boolean bbox = false;
             if (this.boundingBox == null && that.boundingBox == null ) {

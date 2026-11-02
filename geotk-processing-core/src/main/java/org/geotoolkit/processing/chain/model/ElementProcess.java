@@ -72,8 +72,7 @@ public class ElementProcess extends Element {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof ElementProcess) { // no looking for position
-            final ElementProcess that = (ElementProcess) obj;
+        if (obj instanceof ElementProcess that) { // no looking for position
             return Objects.equals(this.id,        that.id)
                 && Objects.equals(this.authority, that.authority)
                 && Objects.equals(this.code,      that.code);

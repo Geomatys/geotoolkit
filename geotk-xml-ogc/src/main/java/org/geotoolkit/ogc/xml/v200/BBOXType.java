@@ -200,8 +200,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
             final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
-                if (element instanceof String) {
-                    String s = (String) element;
+                if (element instanceof String s) {
                     s = s.replace("\n", "");
                     s = s.replace("\t", "");
                     s = s.trim();
@@ -265,8 +264,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof JAXBElement) {
             candidate = ((JAXBElement)candidate).getValue();
         }
-        if (candidate instanceof Envelope) {
-            final Envelope env = (Envelope) candidate;
+        if (candidate instanceof Envelope env) {
             return (env.getSrsName() != null) ? env.getSrsName() : DEFAULT_SRS;
         }
         return null;
@@ -278,8 +276,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof JAXBElement) {
             candidate = ((JAXBElement)candidate).getValue();
         }
-        if (candidate instanceof Envelope) {
-            final Envelope env = (Envelope) candidate;
+        if (candidate instanceof Envelope env) {
             final DirectPosition pos = env.getLowerCorner();
             if (pos != null && pos.getDimension() > 1) {
                 return pos.getCoordinate(0);
@@ -294,8 +291,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof JAXBElement) {
             candidate = ((JAXBElement)candidate).getValue();
         }
-        if (candidate instanceof Envelope) {
-            final Envelope env = (Envelope) candidate;
+        if (candidate instanceof Envelope env) {
             final DirectPosition pos = env.getLowerCorner();
             if (pos != null && pos.getDimension() > 1) {
                 return pos.getCoordinate(1);
@@ -310,8 +306,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof JAXBElement) {
             candidate = ((JAXBElement)candidate).getValue();
         }
-        if (candidate instanceof Envelope) {
-            final Envelope env = (Envelope) candidate;
+        if (candidate instanceof Envelope env) {
             final DirectPosition pos = env.getUpperCorner();
             if (pos != null && pos.getDimension() > 1) {
                 return pos.getCoordinate(0);
@@ -326,8 +321,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (candidate instanceof JAXBElement) {
             candidate = ((JAXBElement)candidate).getValue();
         }
-        if (candidate instanceof Envelope) {
-            final Envelope env = (Envelope) candidate;
+        if (candidate instanceof Envelope env) {
             final DirectPosition pos = env.getUpperCorner();
             if (pos != null && pos.getDimension() > 1) {
                 return pos.getCoordinate(1);
@@ -365,8 +359,7 @@ public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, o
         if (this == obj) {
             return true;
         }
-        if (obj instanceof BBOXType) {
-            final BBOXType that = (BBOXType) obj;
+        if (obj instanceof BBOXType that) {
             boolean prop = false;
             if (this.expression == null && that.expression == null) {
                 prop = true;

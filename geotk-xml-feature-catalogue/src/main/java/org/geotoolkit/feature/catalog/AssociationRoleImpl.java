@@ -265,8 +265,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         if (object == this) {
             return true;
         }
-        if (super.equals(object) && object instanceof AssociationRoleImpl) {
-            final AssociationRoleImpl that = (AssociationRoleImpl) object;
+        if (super.equals(object) && object instanceof AssociationRoleImpl that) {
 
             // to avoid infinite cycle
             boolean association = false;

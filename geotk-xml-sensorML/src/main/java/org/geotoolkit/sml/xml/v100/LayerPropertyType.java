@@ -334,8 +334,7 @@ public class LayerPropertyType implements AbstractLayerProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof LayerPropertyType) {
-            final LayerPropertyType that = (LayerPropertyType) object;
+        if (object instanceof LayerPropertyType that) {
 
             boolean dataRec = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {

@@ -78,8 +78,7 @@ public class Word {
         if (object == this) {
             return true;
         }
-        if (object instanceof Word) {
-            final Word that = (Word) object;
+        if (object instanceof Word that) {
 
             return Objects.equals(this.label,      that.label)     &&
                    Objects.equals(this.thesaurus,  that.thesaurus) &&

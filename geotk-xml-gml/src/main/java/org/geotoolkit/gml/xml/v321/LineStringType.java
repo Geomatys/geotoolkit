@@ -268,8 +268,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         if (object == this) {
             return true;
         }
-        if (object instanceof LineStringType) {
-            final LineStringType that = (LineStringType) object;
+        if (object instanceof LineStringType that) {
 
             boolean jb = false;
             if (this.getPointPropertyOrPointRep().size() == that.getPointPropertyOrPointRep().size()) {

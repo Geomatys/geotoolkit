@@ -129,8 +129,7 @@ public class AdditionalValues {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof AdditionalValues) {
-            final AdditionalValues that = (AdditionalValues) obj;
+        if (obj instanceof AdditionalValues that) {
             boolean spa = false;
             if (this.simpleFeatureCollection != null && that.simpleFeatureCollection != null) {
                 spa = Objects.equals(this.simpleFeatureCollection.getValue(), that.simpleFeatureCollection.getValue());

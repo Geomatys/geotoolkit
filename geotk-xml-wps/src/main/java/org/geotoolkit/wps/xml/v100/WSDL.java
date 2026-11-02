@@ -92,8 +92,7 @@ public class WSDL {
         if (object == this) {
             return true;
         }
-        if (object instanceof WSDL) {
-            final WSDL that = (WSDL) object;
+        if (object instanceof WSDL that) {
             return Objects.equals(this.href, that.href);
         }
         return false;

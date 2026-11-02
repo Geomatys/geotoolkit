@@ -111,8 +111,7 @@ public class FilterType implements Filter, XMLFilter {
             this.featureId.add((FeatureIdType) obj);
 
         // clone
-        } else if (obj instanceof FilterType) {
-            final FilterType that = (FilterType) obj;
+        } else if (obj instanceof FilterType that) {
             if (that.comparisonOps != null) {
                 final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
                 this.comparisonOps = createComparisonOps(comp);

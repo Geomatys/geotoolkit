@@ -302,8 +302,7 @@ public class CountPropertyType implements AbstractElementCount {
             return true;
         }
 
-        if (object instanceof CountPropertyType) {
-            final CountPropertyType that = (CountPropertyType) object;
+        if (object instanceof CountPropertyType that) {
             return Objects.equals(this.count,              that.count)     &&
                    Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

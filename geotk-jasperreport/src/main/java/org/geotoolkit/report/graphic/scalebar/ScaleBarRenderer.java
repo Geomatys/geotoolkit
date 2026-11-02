@@ -33,7 +33,6 @@ import net.sf.jasperreports.renderers.Graphics2DRenderable;
 import net.sf.jasperreports.renderers.Renderable;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
@@ -74,18 +73,14 @@ public class ScaleBarRenderer implements Graphics2DRenderable, Renderable {
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 
-        if(canvas instanceof AbstractCanvas2D){
-            AbstractCanvas2D c2d = (AbstractCanvas2D) canvas;
-
-            try {
-                final double[] center = c2d.getObjectiveCenter().getCoordinates();
-                final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
-                J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
-            } catch ( PortrayalException | NoninvertibleTransformException | TransformException ex) {
-                Logger.getLogger("org.geotoolkit.report.graphic.scalebar").log(Level.WARNING, null, ex);
-            }
-
+        try {
+            final double[] center = canvas.getObjectiveCenter().getCoordinates();
+            final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
+            J2DScaleBarUtilities.paint(canvas.getObjectiveCRS(), canvas.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
+        } catch ( PortrayalException | NoninvertibleTransformException | TransformException ex) {
+            Logger.getLogger("org.geotoolkit.report.graphic.scalebar").log(Level.WARNING, null, ex);
         }
+
     }
 
 }

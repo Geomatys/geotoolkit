@@ -158,8 +158,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeRecordType && super.equals(object)) {
-            final DescribeRecordType that = (DescribeRecordType) object;
+        if (object instanceof DescribeRecordType that && super.equals(object)) {
             return Objects.equals(this.outputFormat,   that.outputFormat)   &&
                    Objects.equals(this.schemaLanguage, that.schemaLanguage) &&
                    Objects.equals(this.typeName,       that.typeName);

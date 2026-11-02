@@ -239,8 +239,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
             Object geomValue = expression.apply(feature);
 
-            if (geomValue instanceof Geometry) {
-                final Geometry geom = (Geometry) geomValue;
+            if (geomValue instanceof Geometry geom) {
                 if (geom.isEmpty()) {
                     return null;
                 }
@@ -534,8 +533,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
         Map<String,Double> values = null;
         final Query query = coverageMapLayer.getQuery();
-        if (query instanceof FeatureQuery) {
-            FeatureQuery sq = (FeatureQuery) query;
+        if (query instanceof FeatureQuery sq) {
             // visit the filter to extract all values
             final DefaultFilterVisitor fv = new DefaultFilterVisitor() {
                 {
@@ -558,8 +556,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource rs) {
 
-        if (rs instanceof BandedCoverageResource) {
-            BandedCoverageResource bcr = (BandedCoverageResource) rs;
+        if (rs instanceof BandedCoverageResource bcr) {
             try {
                 GridCoverage coverage = BandedCoverageResource.sample(bcr, renderingContext.getGridGeometry2D());
                 rs = new InMemoryGridCoverageResource(rs.getIdentifier().orElse(null), coverage);
@@ -571,8 +568,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
         }
 
-        if (rs instanceof GridCoverageResource) {
-            GridCoverageResource ref = (GridCoverageResource) rs;
+        if (rs instanceof GridCoverageResource ref) {
 
             try {
                 final RasterSymbolizer sourceSymbol = symbol.getSource();

@@ -108,8 +108,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
         if (object == this) {
             return true;
         }
-        if (object instanceof Contents) {
-            final Contents that = (Contents) object;
+        if (object instanceof Contents that) {
             return Objects.equals(this.observationOfferingList, that.observationOfferingList);
         }
         return false;
@@ -189,8 +188,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
             if (object == this) {
                 return true;
             }
-            if (object instanceof ObservationOfferingList) {
-                final ObservationOfferingList that = (ObservationOfferingList) object;
+            if (object instanceof ObservationOfferingList that) {
                 return Objects.equals(this.observationOffering, that.observationOffering);
             }
             return false;

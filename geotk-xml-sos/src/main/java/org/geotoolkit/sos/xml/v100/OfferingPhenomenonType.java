@@ -80,8 +80,7 @@ public class OfferingPhenomenonType implements Entry{
         if (object == this) {
             return true;
         }
-        if (object instanceof OfferingPhenomenonType && super.equals(object)) {
-            final OfferingPhenomenonType that = (OfferingPhenomenonType) object;
+        if (object instanceof OfferingPhenomenonType that && super.equals(object)) {
             return Objects.equals(this.idOffering, that.idOffering) &&
                    Objects.equals(this.component,  that.component);
         }

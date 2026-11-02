@@ -142,8 +142,7 @@ public class ProcessStarted {
         if (object == this) {
             return true;
         }
-        if (object instanceof ProcessStarted) {
-            final ProcessStarted that = (ProcessStarted) object;
+        if (object instanceof ProcessStarted that) {
             return Objects.equals(this.percentCompleted, that.percentCompleted) &&
                    Objects.equals(this.value, that.value);
         }

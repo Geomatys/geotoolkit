@@ -65,17 +65,13 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public String getElementNamespaceUri(final Object o) {
-        if(o instanceof Fake){
-            final Fake candidate = (Fake) o;
+        if(o instanceof Fake candidate){
             return getNamespace(candidate.name);
-        }else if(o instanceof Feature){
-            final Feature candidate = (Feature) o;
+        }else if(o instanceof Feature candidate){
             return getNamespace(candidate.getType().getName());
-        }else if(o instanceof Property){
-            final Property candidate = (Property) o;
+        }else if(o instanceof Property candidate){
             return getNamespace(candidate.getName());
-        }else if(o instanceof PropertyType){
-            final PropertyType candidate = (PropertyType) o;
+        }else if(o instanceof PropertyType candidate){
             return getNamespace(candidate.getName());
         }
         return null;
@@ -93,17 +89,13 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public String getElementName(final Object o) {
         String str = null;
-        if(o instanceof Fake){
-            final Fake candidate = (Fake) o;
+        if(o instanceof Fake candidate){
             str = candidate.name.tip().toString();
-        }else if(o instanceof Feature){
-            final Feature candidate = (Feature) o;
+        }else if(o instanceof Feature candidate){
             str = candidate.getType().getName().tip().toString();
-        }else if(o instanceof Property){
-            final Property candidate = (Property) o;
+        }else if(o instanceof Property candidate){
             str = candidate.getName().tip().toString();
-        }else if(o instanceof PropertyType){
-            final PropertyType candidate = (PropertyType) o;
+        }else if(o instanceof PropertyType candidate){
             str = candidate.getName().tip().toString();
         }
         if(str!=null && str.startsWith("@")){
@@ -114,17 +106,13 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public String getElementQName(final Object o) {
-        if(o instanceof Fake){
-            final Fake candidate = (Fake) o;
+        if(o instanceof Fake candidate){
             return NamesExt.toExpandedString(candidate.name);
-        }else if(o instanceof Feature){
-            final Feature candidate = (Feature) o;
+        }else if(o instanceof Feature candidate){
             return NamesExt.toExpandedString(candidate.getType().getName());
-        }else if(o instanceof Property){
-            final Property candidate = (Property) o;
+        }else if(o instanceof Property candidate){
             return NamesExt.toExpandedString(candidate.getName());
-        }else if(o instanceof PropertyType){
-            final PropertyType candidate = (PropertyType) o;
+        }else if(o instanceof PropertyType candidate){
             return NamesExt.toExpandedString(candidate.getName());
         }
         return null;
@@ -138,14 +126,11 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public String getAttributeName(final Object o) {
         String str = null;
-        if(o instanceof Fake){
-            final Fake candidate = (Fake) o;
+        if(o instanceof Fake candidate){
             str = candidate.name.tip().toString();
-        }else if(o instanceof Property){
-            final Property candidate = (Property) o;
+        }else if(o instanceof Property candidate){
             str = candidate.getName().tip().toString();
-        }else if(o instanceof PropertyType){
-            final PropertyType candidate = (PropertyType) o;
+        }else if(o instanceof PropertyType candidate){
             str = candidate.getName().tip().toString();
         }
         if(str!=null && str.startsWith("@")){
@@ -205,8 +190,7 @@ final class JaxenFeatureNavigator implements Navigator{
     public String getElementStringValue(Object o) {
         if(o instanceof Fake) o = ((Fake)o).value;
 
-        if(o instanceof Property){
-            final Property candidate = (Property) o;
+        if(o instanceof Property candidate){
             if(candidate instanceof Attribute && ((Attribute)candidate).getType().getMaximumOccurs()>1){
                 final Collection values = ((Attribute)candidate).getValues();
                 return (values.isEmpty())? EMPTY : values.iterator().next().toString();
@@ -214,8 +198,7 @@ final class JaxenFeatureNavigator implements Navigator{
                 final Object value = candidate.getValue();
                 return (value==null)? EMPTY : value.toString();
             }
-        }else if(o instanceof PropertyType){
-            final PropertyType candidate = (PropertyType) o;
+        }else if(o instanceof PropertyType candidate){
             return NamesExt.toExpandedString(candidate.getName());
         }
         return null;
@@ -267,18 +250,14 @@ final class JaxenFeatureNavigator implements Navigator{
     public Iterator getChildAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
 
-        if(o instanceof Feature){
-            final Feature candidate = (Feature) o;
+        if(o instanceof Feature candidate){
             return new PropIterator(candidate,false);
-        }else if(o instanceof FeatureAssociation){
-            final FeatureAssociation ct = (FeatureAssociation) o;
+        }else if(o instanceof FeatureAssociation ct){
             final Collection<Feature> features = ct.getValues();
             return features.iterator();
-        }else if(o instanceof FeatureType){
-            final FeatureType ct = (FeatureType) o;
+        }else if(o instanceof FeatureType ct){
             return new PropTypeIterator(ct.getProperties(true).iterator(),false);
-        }else if(o instanceof FeatureAssociationRole){
-            final FeatureAssociationRole ct = (FeatureAssociationRole) o;
+        }else if(o instanceof FeatureAssociationRole ct){
             try {
                 return new PropTypeIterator(ct.getValueType().getProperties(true).iterator(),false);
             } catch(IllegalStateException ex) {
@@ -328,19 +307,15 @@ final class JaxenFeatureNavigator implements Navigator{
     public Iterator getAttributeAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
 
-        if(o instanceof Feature){
-            final Feature att = (Feature) o;
+        if(o instanceof Feature att){
             return new PropIterator(att, true);
-        } else if(o instanceof PropertyType){
-            final PropertyType type = (PropertyType) o;
-            if(type instanceof FeatureAssociationRole){
-                final FeatureAssociationRole ct = (FeatureAssociationRole) type;
+        } else if(o instanceof PropertyType type){
+            if(type instanceof FeatureAssociationRole ct){
                 return new PropTypeIterator(ct.getValueType().getProperties(true).iterator(), true);
             }else{
                 return JaxenConstants.EMPTY_ITERATOR;
             }
-        } else if(o instanceof FeatureType){
-            final FeatureType ct = (FeatureType) o;
+        } else if(o instanceof FeatureType ct){
             return new PropTypeIterator(ct.getProperties(true).iterator(), true);
         }
         return JaxenConstants.EMPTY_ITERATOR;
@@ -473,8 +448,7 @@ final class JaxenFeatureNavigator implements Navigator{
 //                    }
 //                }else
                 final String name = gname.toString();
-                if (candidate instanceof FeatureAssociationRole) {
-                    final FeatureAssociationRole far = (FeatureAssociationRole) candidate;
+                if (candidate instanceof FeatureAssociationRole far) {
                     final FeatureAssociation complete = (FeatureAssociation) feature.getProperty(name);
                     if (far.getMaximumOccurs() > 1) {
                         final Collection<? extends Feature> values = complete.getValues();

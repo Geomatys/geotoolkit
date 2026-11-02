@@ -94,8 +94,7 @@ public class Constant extends Positionable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Constant && super.equals(obj)) {
-            final Constant that = (Constant) obj;
+        if (obj instanceof Constant that && super.equals(obj)) {
             return Objects.equals(this.id,    that.id)
                 && Objects.equals(this.value, that.value)
                 && Objects.equals(this.type,  that.type);

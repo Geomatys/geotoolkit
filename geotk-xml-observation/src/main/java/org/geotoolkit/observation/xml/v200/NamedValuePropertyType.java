@@ -321,8 +321,7 @@ public class NamedValuePropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof NamedValuePropertyType) {
-            final NamedValuePropertyType that = (NamedValuePropertyType) object;
+        if (object instanceof NamedValuePropertyType that) {
 
             return Objects.equals(this.namedValue,         that.namedValue)      &&
                    Objects.equals(this.actuate,            that.actuate)          &&

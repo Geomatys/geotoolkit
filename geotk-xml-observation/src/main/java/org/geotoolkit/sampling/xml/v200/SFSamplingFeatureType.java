@@ -313,8 +313,7 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
             return true;
         }
 
-        if (object instanceof SFSamplingFeatureType && super.equals(object, mode)) {
-            final SFSamplingFeatureType that = (SFSamplingFeatureType) object;
+        if (object instanceof SFSamplingFeatureType that && super.equals(object, mode)) {
 
             return Objects.equals(this.lineage,                that.lineage)               &&
                    Objects.equals(this.parameter,              that.parameter)             &&

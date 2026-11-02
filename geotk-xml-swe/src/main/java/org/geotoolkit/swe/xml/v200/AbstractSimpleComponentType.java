@@ -204,8 +204,7 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractSimpleComponentType && super.equals(object)) {
-            final AbstractSimpleComponentType that = (AbstractSimpleComponentType) object;
+        if (object instanceof AbstractSimpleComponentType that && super.equals(object)) {
 
             return Objects.equals(this.axisID,         that.axisID) &&
                    Objects.equals(this.nilValues,      that.nilValues) &&

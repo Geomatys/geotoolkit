@@ -114,8 +114,7 @@ public class ConstraintImpl extends AbstractMetadata implements Constraint {
         if (object == this) {
             return true;
         }
-        if (object instanceof ConstraintImpl) {
-            final ConstraintImpl that = (ConstraintImpl) object;
+        if (object instanceof ConstraintImpl that) {
 
             return Objects.equals(this.description, that.description);
         }

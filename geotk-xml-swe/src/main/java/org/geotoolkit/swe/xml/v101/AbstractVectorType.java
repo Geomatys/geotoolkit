@@ -122,8 +122,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
             return true;
         }
 
-        if (object instanceof AbstractVectorType && super.equals(object, mode)) {
-            final AbstractVectorType that = (AbstractVectorType) object;
+        if (object instanceof AbstractVectorType that && super.equals(object, mode)) {
 
             return Objects.equals(this.localFrame,     that.localFrame) &&
                    Objects.equals(this.referenceFrame, that.referenceFrame);

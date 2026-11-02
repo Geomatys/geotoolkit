@@ -128,8 +128,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
         if (object == this) {
             return true;
         }
-        if (object instanceof ResponsiblePartySubsetType) {
-            final ResponsiblePartySubsetType that = (ResponsiblePartySubsetType) object;
+        if (object instanceof ResponsiblePartySubsetType that) {
 
             return Objects.equals(this.contactInfo,    that.contactInfo)    &&
                    Objects.equals(this.individualName, that.individualName) &&

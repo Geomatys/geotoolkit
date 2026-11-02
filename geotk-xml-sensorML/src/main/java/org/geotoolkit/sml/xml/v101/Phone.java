@@ -127,8 +127,7 @@ public class Phone extends SensorObject implements AbstractPhone {
             return true;
         }
 
-        if (object instanceof Phone) {
-            final Phone that = (Phone) object;
+        if (object instanceof Phone that) {
             return Objects.equals(this.facsimile, that.facsimile)
                     && Objects.equals(this.voice, that.voice);
         }

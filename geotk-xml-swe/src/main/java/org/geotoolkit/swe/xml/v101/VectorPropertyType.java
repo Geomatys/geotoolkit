@@ -326,8 +326,7 @@ public class VectorPropertyType implements AbstractVectorProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof VectorPropertyType) {
-            final VectorPropertyType that = (VectorPropertyType) object;
+        if (object instanceof VectorPropertyType that) {
 
             return Objects.equals(this.vector,             that.vector)           &&
                    Objects.equals(this.actuate,            that.actuate)          &&

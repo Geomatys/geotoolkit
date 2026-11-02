@@ -240,8 +240,7 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
         if (object == this) {
             return true;
         }
-        if (object instanceof TimeType && super.equals(object)) {
-            final TimeType that = (TimeType) object;
+        if (object instanceof TimeType that && super.equals(object)) {
 
             return Objects.equals(this.constraint,    that.constraint) &&
                    Objects.equals(this.localFrame,    that.localFrame) &&

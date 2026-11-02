@@ -52,8 +52,7 @@ public class JTSMultiCurve extends AbstractJTSAggregate<OrientableCurve> impleme
 
     public void applyCRSonChild() {
         for (OrientableCurve child : getElements()) {
-            if (child.getCoordinateReferenceSystem() == null && child instanceof JTSCurve) {
-                JTSCurve childCurve = (JTSCurve) child;
+            if (child.getCoordinateReferenceSystem() == null && child instanceof JTSCurve childCurve) {
                 childCurve.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                 for (CurveSegment cv :childCurve.getSegments()) {
                     if (cv instanceof JTSLineString) {

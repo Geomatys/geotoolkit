@@ -181,8 +181,7 @@ public class InMemoryTiledFeatureSet extends AbstractFeatureSet implements Writa
         private void writeTile(Tile tile) throws DataStoreException {
             Resource r = tile.getResource();
 
-            if (r instanceof FeatureSet) {
-                final FeatureSet imgTile = (FeatureSet) r;
+            if (r instanceof FeatureSet imgTile) {
                 InMemoryFeatureSet imfs = new InMemoryFeatureSet(imgTile.getType());
                 try (Stream<Feature> stream = imgTile.features(false)) {
                     imfs.add(stream.iterator());

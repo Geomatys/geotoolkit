@@ -72,8 +72,7 @@ public class OperationsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof OperationsType) {
-            final OperationsType that = (OperationsType) object;
+        if (object instanceof OperationsType that) {
 
             return Objects.equals(this.operation, that.operation);
             }

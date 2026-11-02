@@ -62,36 +62,32 @@ public final class ConstantUtilities {
         }else if(value instanceof String){
             return (String)value;
 
-        }else if(value instanceof boolean[]){
+        }else if(value instanceof boolean[] candidates){
             final StringBuilder sb = new StringBuilder();
-            final boolean[] candidates = (boolean[])value;
             for(int i=0;i<candidates.length;i++){
                 final String part = valueToString(candidates[i]);
                 sb.append(part.length()).append(':').append(part);
             }
             return sb.toString();
 
-        }else if(value instanceof int[]){
+        }else if(value instanceof int[] candidates){
             final StringBuilder sb = new StringBuilder();
-            final int[] candidates = (int[])value;
             for(int i=0;i<candidates.length;i++){
                 final String part = valueToString(candidates[i]);
                 sb.append(part.length()).append(':').append(part);
             }
             return sb.toString();
 
-        }else if(value instanceof double[]){
+        }else if(value instanceof double[] candidates){
             final StringBuilder sb = new StringBuilder();
-            final double[] candidates = (double[])value;
             for(int i=0;i<candidates.length;i++){
                 final String part = valueToString(candidates[i]);
                 sb.append(part.length()).append(':').append(part);
             }
             return sb.toString();
 
-        }else if(value instanceof String[]){
+        }else if(value instanceof String[] candidates){
             final StringBuilder sb = new StringBuilder();
-            final String[] candidates = (String[])value;
             for(int i=0;i<candidates.length;i++){
                 final String part = valueToString(candidates[i]);
                 sb.append(part.length()).append(':').append(part);
@@ -112,13 +108,11 @@ public final class ConstantUtilities {
         }else if(value instanceof Metadata){
             //TODO
 
-        }else if(value instanceof Filter){
-            final Filter filter = (Filter) value;
+        }else if(value instanceof Filter filter){
             return CQL.write(filter);
 
-        }else if(value instanceof Envelope){
+        }else if(value instanceof Envelope envelope){
             final StringBuilder sb = new StringBuilder();
-            final Envelope envelope = (Envelope) value;
             sb.append(Integer.toString(envelope.getDimension()).length()).append(':').append(envelope.getDimension());
             if (value instanceof GeneralEnvelope generalEnvelope) {
                 for(int i = 0; i<envelope.getDimension(); i++) {

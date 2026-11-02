@@ -273,8 +273,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            final Pyramid p = (Pyramid) template;
+        if (template instanceof Pyramid p) {
             final Pyramid n = newPyramid(p.getCoordinateReferenceSystem());
             Pyramids.copyStructure(p, n);
             return n;

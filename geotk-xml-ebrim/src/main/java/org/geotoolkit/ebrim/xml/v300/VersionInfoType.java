@@ -101,8 +101,7 @@ public class VersionInfoType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof VersionInfoType) {
-            final VersionInfoType that = (VersionInfoType) obj;
+        if (obj instanceof VersionInfoType that) {
             return Objects.equals(this.getVersionName(), that.getVersionName()) &&
                    Objects.equals(this.comment,    that.comment);
         }

@@ -176,8 +176,7 @@ public class CurveArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof CurveArrayPropertyType) {
-            final CurveArrayPropertyType that = (CurveArrayPropertyType) object;
+        if (object instanceof CurveArrayPropertyType that) {
 
             if (this.abstractCurve != null && that.abstractCurve != null) {
                 for (int i = 0; i < abstractCurve.size(); i++) {

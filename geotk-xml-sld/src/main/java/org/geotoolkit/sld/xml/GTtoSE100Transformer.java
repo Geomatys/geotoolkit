@@ -124,16 +124,14 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
         CssParameter css = sld_factory_v100.createCssParameter();
         css.setName(value);
 
-        if(obj instanceof Expression){
-            final Expression exp = (Expression) obj;
+        if(obj instanceof Expression exp){
             JAXBElement<?> ele = extract(exp);
             if(ele == null){
                 css = null;
             }else{
                 css.getContent().add(ele);
             }
-        }else if(obj instanceof float[]){
-            final float[] dashes = (float[]) obj;
+        }else if(obj instanceof float[] dashes){
             final StringBuilder sb = new StringBuilder();
             for(final float f : dashes){
                 sb.append(f);
@@ -534,11 +532,9 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
         final org.geotoolkit.sld.xml.v100.Graphic gt = sld_factory_v100.createGraphic();
 
         for(final GraphicalSymbol gs : graphic.graphicalSymbols()){
-            if(gs instanceof Mark){
-                final Mark mark = (Mark) gs;
+            if(gs instanceof Mark mark){
                 gt.getExternalGraphicOrMark().add( visit(mark,null) );
-            }else if(gs instanceof ExternalMark){
-                final ExternalMark ext = (ExternalMark) gs;
+            }else if(gs instanceof ExternalMark ext){
                 gt.getExternalGraphicOrMark().add( visit(ext,null) );
             }
         }
@@ -645,11 +641,9 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
      */
     public org.geotoolkit.sld.xml.v100.LabelPlacement visit(final LabelPlacement labelPlacement, final Object data) {
         final org.geotoolkit.sld.xml.v100.LabelPlacement lpt = sld_factory_v100.createLabelPlacement();
-        if(labelPlacement instanceof LinePlacement){
-            final LinePlacement lp = (LinePlacement) labelPlacement;
+        if(labelPlacement instanceof LinePlacement lp){
             lpt.setLinePlacement( visit(lp, null) );
-        }else if(labelPlacement instanceof PointPlacement){
-            final PointPlacement pp = (PointPlacement) labelPlacement;
+        }else if(labelPlacement instanceof PointPlacement pp){
             lpt.setPointPlacement( visit(pp, null) );
         }
         return lpt;

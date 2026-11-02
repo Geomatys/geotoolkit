@@ -836,8 +836,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
 
     @Override
     public Literal literal(Object obj) {
-        if (obj instanceof Date) {
-            Date d = (Date) obj;
+        if (obj instanceof Date d) {
             synchronized(DATE_FORMAT) {
                 obj = DATE_FORMAT.format(d);
             }
@@ -935,8 +934,7 @@ public class FilterFactoryImpl extends FilterFactory2 {
      */
     public Object GeometryToGML(final Object geom) {
         Object result = null;
-        if (geom instanceof Polygon) {
-            final Polygon p          = (Polygon) geom;
+        if (geom instanceof Polygon p) {
             final Coordinate[] coord = p.getCoordinates();
 
             // an envelope
@@ -945,13 +943,11 @@ public class FilterFactoryImpl extends FilterFactory2 {
                 final DirectPositionType upperCorner = new DirectPositionType(coord[2].y, coord[2].x);
                 result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
-        } else if (geom instanceof Point){
-            final Point p = (Point) geom;
+        } else if (geom instanceof Point p){
             final Coordinate[] coord = p.getCoordinates();
             result = new PointType(null, new DirectPositionType(coord[0].x, coord[0].y, coord[0].z));
             ((PointType)result).setSrsName("EPSG:4326");
-        } else if (geom instanceof LineString){
-            final LineString ls = (LineString) geom;
+        } else if (geom instanceof LineString ls){
             final Coordinate[] coord = ls.getCoordinates();
             result = new LineStringType(new CoordinatesType(coord[0].x + "," + coord[0].y + " " + coord[1].x + "," + coord[1].y ));
             ((LineStringType)result).setSrsName("EPSG:4326");

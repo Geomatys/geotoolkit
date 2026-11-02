@@ -291,8 +291,7 @@ public class ImageStatistics implements Serializable{
             band.setStd(sd.getStandardDeviation());
             band.setMean(sd.getMeanValue());
 
-            if (sd instanceof DefaultSampleDimensionExt) {
-                final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
+            if (sd instanceof DefaultSampleDimensionExt ext) {
                 band.setHistogram(ext.getHistogram());
             }
 

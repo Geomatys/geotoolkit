@@ -132,8 +132,7 @@ public final class LineReaders extends Static {
         if (reader instanceof LineReader) {
             return ((LineReader) reader);
         }
-        if (reader instanceof BufferedReader) {
-            final BufferedReader input = (BufferedReader) reader;
+        if (reader instanceof BufferedReader input) {
             return new LineReader() {
                 @Override public String readLine() throws IOException {
                     return input.readLine();

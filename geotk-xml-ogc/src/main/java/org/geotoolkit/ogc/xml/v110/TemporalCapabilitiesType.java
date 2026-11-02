@@ -141,8 +141,7 @@ public class TemporalCapabilitiesType extends TemporalCapabilities {
             return true;
         }
 
-       if (object instanceof TemporalCapabilitiesType) {
-           final TemporalCapabilitiesType that = (TemporalCapabilitiesType) object;
+       if (object instanceof TemporalCapabilitiesType that) {
 
             return Objects.equals(this.temporalOperands, that.temporalOperands) &&
                    Objects.equals(this.temporalOperators, that.temporalOperators);

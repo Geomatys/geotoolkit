@@ -111,8 +111,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         if (object == this) {
             return true;
         }
-        if (object instanceof AcceptVersionsType) {
-            final AcceptVersionsType that = (AcceptVersionsType) object;
+        if (object instanceof AcceptVersionsType that) {
             return Objects.equals(this.version, that.version);
         }
         return false;

@@ -210,8 +210,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
         if (object == this) {
             return true;
         }
-        if (object instanceof LineStringSegmentType) {
-            final LineStringSegmentType that = (LineStringSegmentType) object;
+        if (object instanceof LineStringSegmentType that) {
 
             boolean jb = false;
             if (this.getRest().size() == that.getRest().size()) {

@@ -150,8 +150,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         if (object == this) {
             return true;
         }
-        if (object instanceof SimpleLiteral) {
-            final SimpleLiteral that = (SimpleLiteral) object;
+        if (object instanceof SimpleLiteral that) {
             return Objects.equals(this.content,  that.content)   &&
                    Objects.equals(this.scheme ,  that.scheme);
         }

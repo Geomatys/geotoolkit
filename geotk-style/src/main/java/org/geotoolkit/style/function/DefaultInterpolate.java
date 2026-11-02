@@ -243,9 +243,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
             final Object o1 = ObjectConverters.convert(before.getValue().apply(object), c);
             final Object o2 = ObjectConverters.convert(after.getValue().apply(object), c);
-            if(o1 instanceof Color && o2 instanceof Color){
+            if(o1 instanceof Color c1 && o2 instanceof Color){
                 //datas are not numbers, looks like we deal with colors
-                final Color c1 = (Color) o1;
                 final Color c2 = (Color) o2;
                 final Color in = interpolate(c1, c2, pourcent);
                 return ObjectConverters.convert( in , c);

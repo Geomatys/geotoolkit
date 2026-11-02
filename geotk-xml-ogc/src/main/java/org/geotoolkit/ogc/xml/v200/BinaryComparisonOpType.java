@@ -275,8 +275,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements org.geo
         if (obj == this) {
             return true;
         }
-        if (obj instanceof BinaryComparisonOpType) {
-            final BinaryComparisonOpType that = (BinaryComparisonOpType) obj;
+        if (obj instanceof BinaryComparisonOpType that) {
             final boolean exp;
             if (this.expression == null && that.expression == null) {
                 exp = true;

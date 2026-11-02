@@ -293,8 +293,7 @@ public class UnNamedDomainType {
         if (object == this) {
             return true;
         }
-        if (object instanceof UnNamedDomainType) {
-            final UnNamedDomainType that = (UnNamedDomainType) object;
+        if (object instanceof UnNamedDomainType that) {
 
             return Objects.equals(this.allowedValues,   that.allowedValues)   &&
                    Objects.equals(this.anyValue,        that.anyValue)        &&

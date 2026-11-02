@@ -676,8 +676,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         final MetadataNodeAccessor datumAccessor = createNodeWriter(accessor, "Datum", null);
         setName(datum, datumAccessor);
         datumAccessor.setAttribute("type", DataTypes.getType(datum));
-        if (datum instanceof GeodeticDatum) {
-            final GeodeticDatum gd = (GeodeticDatum) datum;
+        if (datum instanceof GeodeticDatum gd) {
             final Ellipsoid ellipsoid = gd.getEllipsoid();
             if (ellipsoid != null) {
                 final MetadataNodeAccessor child = createNodeWriter(datumAccessor, "Ellipsoid", null);

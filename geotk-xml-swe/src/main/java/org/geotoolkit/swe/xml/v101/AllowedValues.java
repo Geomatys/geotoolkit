@@ -263,8 +263,7 @@ public class AllowedValues implements AbstractAllowedValues {
         if (object == this) {
             return true;
         }
-        if (object instanceof AllowedValues) {
-            final AllowedValues that = (AllowedValues) object;
+        if (object instanceof AllowedValues that) {
             boolean intervalOrValue = false;
             if (this.intervalOrValueList != null && that.intervalOrValueList != null) {
                 if (this.intervalOrValueList.size() != that.intervalOrValueList.size()) {

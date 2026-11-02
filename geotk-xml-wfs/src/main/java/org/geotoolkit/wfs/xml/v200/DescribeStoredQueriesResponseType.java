@@ -98,8 +98,7 @@ public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesR
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeStoredQueriesResponseType) {
-            final DescribeStoredQueriesResponseType that = (DescribeStoredQueriesResponseType) object;
+        if (object instanceof DescribeStoredQueriesResponseType that) {
             return Objects.equals(this.storedQueryDescription,   that.storedQueryDescription);
         }
         return false;

@@ -122,8 +122,7 @@ public class ExternalIdentifierType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ExternalIdentifierType && super.equals(obj)) {
-            final ExternalIdentifierType that = (ExternalIdentifierType) obj;
+        if (obj instanceof ExternalIdentifierType that && super.equals(obj)) {
             return Objects.equals(this.identificationScheme, that.identificationScheme) &&
                    Objects.equals(this.registryObject,       that.registryObject) &&
                    Objects.equals(this.value,                that.value);

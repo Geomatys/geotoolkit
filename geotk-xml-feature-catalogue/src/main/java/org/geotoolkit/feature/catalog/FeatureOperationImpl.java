@@ -290,8 +290,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         if (object == this) {
             return true;
         }
-        if (super.equals(object) && object instanceof FeatureOperationImpl) {
-            final FeatureOperationImpl that = (FeatureOperationImpl) object;
+        if (super.equals(object) && object instanceof FeatureOperationImpl that) {
 
             return Objects.equals(this.affectsValuesOf,     that.affectsValuesOf)   &&
                    Objects.equals(this.formalDefinition,   that.formalDefinition) &&

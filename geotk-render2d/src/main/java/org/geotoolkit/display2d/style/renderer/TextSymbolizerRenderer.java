@@ -112,8 +112,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
         final ProjectedGeometry projectedGeometry = new ProjectedGeometry(renderingContext);
         projectedGeometry.setDataGeometry(GO2Utilities.getGeometry(feature, symbol.getSource().getGeometry()), null);
 
-        if (placement instanceof CachedPointPlacement) {
-            final CachedPointPlacement pp = (CachedPointPlacement) placement;
+        if (placement instanceof CachedPointPlacement pp) {
 
             final float[] anchor = pp.getAnchor(feature, null);
             final float[] disp = pp.getDisplacement(feature,null);
@@ -132,8 +131,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
             tp.forGrid(renderingContext);
             tp.labelDesc = descriptor;
             return Stream.of(tp);
-        } else if (placement instanceof CachedLinePlacement) {
-            final CachedLinePlacement lp = (CachedLinePlacement) placement;
+        } else if (placement instanceof CachedLinePlacement lp) {
 
             final LabelDescriptor descriptor = new DefaultLinearLabelDescriptor(
                     label,

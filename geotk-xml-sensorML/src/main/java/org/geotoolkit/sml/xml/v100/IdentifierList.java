@@ -159,8 +159,7 @@ public class IdentifierList implements AbstractIdentifierList {
             return true;
         }
 
-        if (object instanceof IdentifierList) {
-            final IdentifierList that = (IdentifierList) object;
+        if (object instanceof IdentifierList that) {
 
             return Objects.equals(this.identifier, that.identifier) &&
                     Objects.equals(this.id, that.id);

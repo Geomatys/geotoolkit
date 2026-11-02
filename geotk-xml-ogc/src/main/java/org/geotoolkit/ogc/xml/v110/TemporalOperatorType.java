@@ -130,8 +130,7 @@ public class TemporalOperatorType extends TemporalOperator {
         if (object == this) {
             return true;
         }
-       if (object instanceof TemporalOperatorType) {
-           final TemporalOperatorType that = (TemporalOperatorType) object;
+       if (object instanceof TemporalOperatorType that) {
             return Objects.equals(this.temporalOperands, that.temporalOperands) &&
                    Objects.equals(this.name, that.name);
         }

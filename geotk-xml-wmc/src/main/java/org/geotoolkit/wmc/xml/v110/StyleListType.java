@@ -75,8 +75,7 @@ public class StyleListType {
         if (object == this) {
             return true;
         }
-        if (object instanceof StyleListType) {
-            final StyleListType that = (StyleListType) object;
+        if (object instanceof StyleListType that) {
 
             return Objects.equals(this.style, that.style);
             }

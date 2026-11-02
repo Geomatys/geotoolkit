@@ -127,8 +127,7 @@ public class MeasureType {
             return true;
         }
 
-        if (object instanceof MeasureType) {
-            final MeasureType that = (MeasureType) object;
+        if (object instanceof MeasureType that) {
             return Objects.equals(this.uom,    that.uom)   &&
                    Objects.equals(this.value,  that.value);
         }

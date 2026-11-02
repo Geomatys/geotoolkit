@@ -99,8 +99,7 @@ public class TelephoneNumberListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof TelephoneNumberListType) {
-            final TelephoneNumberListType that = (TelephoneNumberListType) obj;
+        if (obj instanceof TelephoneNumberListType that) {
             return Objects.equals(this.telephoneNumber, that.telephoneNumber);
         }
         return false;

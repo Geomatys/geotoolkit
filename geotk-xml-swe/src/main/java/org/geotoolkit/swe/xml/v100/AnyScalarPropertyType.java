@@ -563,8 +563,7 @@ public class AnyScalarPropertyType implements AnyScalar {
             return true;
         }
 
-        if (object instanceof AnyScalarPropertyType) {
-            final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
+        if (object instanceof AnyScalarPropertyType that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

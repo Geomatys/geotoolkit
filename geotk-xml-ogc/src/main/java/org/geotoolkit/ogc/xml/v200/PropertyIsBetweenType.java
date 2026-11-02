@@ -181,8 +181,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Between
         if (this == obj) {
             return true;
         }
-        if (obj instanceof PropertyIsBetweenType) {
-            final PropertyIsBetweenType that = (PropertyIsBetweenType) obj;
+        if (obj instanceof PropertyIsBetweenType that) {
             boolean expEquals;
             if (this.expression != null && that.expression != null) {
                 expEquals = Objects.equals(this.expression.getValue(), that.expression.getValue());

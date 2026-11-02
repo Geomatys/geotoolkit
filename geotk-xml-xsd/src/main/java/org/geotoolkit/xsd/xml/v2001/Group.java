@@ -116,8 +116,7 @@ public abstract class Group extends Annotated {
         List<Element> result = new ArrayList<Element>();
         if (particle != null) {
             for (Object obj : particle) {
-                if (obj instanceof JAXBElement) {
-                    JAXBElement jb = (JAXBElement) obj;
+                if (obj instanceof JAXBElement jb) {
                     if (jb.getValue() instanceof Element) {
                         result.add((Element) jb.getValue());
                     }
@@ -250,8 +249,7 @@ public abstract class Group extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof Group && super.equals(object)) {
-            final Group that = (Group) object;
+        if (object instanceof Group that && super.equals(object)) {
             boolean part = false;
             if (this.particle != null && that.particle != null) {
                 if (this.particle.size() == that.particle.size()) {

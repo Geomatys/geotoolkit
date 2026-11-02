@@ -202,8 +202,7 @@ public class AbstractReferenceBaseType {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractReferenceBaseType) {
-            final AbstractReferenceBaseType that = (AbstractReferenceBaseType) object;
+        if (object instanceof AbstractReferenceBaseType that) {
             return Objects.equals(this.actuate, that.actuate) &&
                    Objects.equals(this.arcrole, that.arcrole) &&
                    Objects.equals(this.href,    that.href)    &&

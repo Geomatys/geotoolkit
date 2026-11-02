@@ -86,8 +86,7 @@ public class InsertObservationResponseType extends ExtensibleResponseType implem
         if (obj == this) {
             return true;
         }
-        if (obj instanceof InsertObservationResponseType && super.equals(obj)) {
-            final InsertObservationResponseType that = (InsertObservationResponseType) obj;
+        if (obj instanceof InsertObservationResponseType that && super.equals(obj)) {
             return Objects.equals(this.observation, that.observation);
         }
         return false;

@@ -113,8 +113,7 @@ public class ResponsiblePartyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ResponsiblePartyType) {
-            final ResponsiblePartyType that = (ResponsiblePartyType) object;
+        if (object instanceof ResponsiblePartyType that) {
             return Objects.equals(this.contactInfo,      that.contactInfo)    &&
                    Objects.equals(this.individualName,   that.individualName) &&
                    Objects.equals(this.positionName,     that.positionName)   &&

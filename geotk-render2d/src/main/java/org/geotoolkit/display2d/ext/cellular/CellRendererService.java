@@ -176,8 +176,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         final Resource resource = layer.getData();
 
         //fake layer
-         if (resource instanceof FeatureSet) {
-            FeatureSet fs = (FeatureSet) resource;
+         if (resource instanceof FeatureSet fs) {
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType( fs.getType(),null);
                 layer = MapBuilder.createLayer(new InMemoryFeatureSet(new NamedIdentifier(sft.getName()), sft, List.of(), false));
@@ -186,8 +185,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
                 //not important
                 LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);
             }
-        } else if (resource instanceof GridCoverageResource) {
-            final GridCoverageResource gcr = (GridCoverageResource) resource;
+        } else if (resource instanceof GridCoverageResource gcr) {
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType(gcr);
                 layer = MapBuilder.createLayer(new InMemoryFeatureSet(new NamedIdentifier(sft.getName()), sft, List.of(), false));

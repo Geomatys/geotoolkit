@@ -142,8 +142,7 @@ public class SchemaComponentType implements SchemaComponent {
         if (object == this) {
             return true;
         }
-        if (object instanceof SchemaComponentType ) {
-            final SchemaComponentType that = (SchemaComponentType) object;
+        if (object instanceof SchemaComponentType that ) {
             return Objects.equals(this.content,         that.content)   &&
                    Objects.equals(this.schemaLanguage,  that.schemaLanguage) &&
                    Objects.equals(this.targetNamespace, that.targetNamespace) &&

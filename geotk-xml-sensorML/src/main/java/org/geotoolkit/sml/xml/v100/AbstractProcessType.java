@@ -666,8 +666,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
             return true;
         }
 
-        if (object instanceof AbstractProcessType && super.equals(object, mode)) {
-            final AbstractProcessType that = (AbstractProcessType) object;
+        if (object instanceof AbstractProcessType that && super.equals(object, mode)) {
             return Objects.equals(this.capabilities,    that.capabilities)       &&
                    Objects.equals(this.characteristics, that.characteristics)    &&
                    Objects.equals(this.classification,  that.classification)     &&

@@ -184,8 +184,7 @@ public class ResourceIdType extends AbstractIdType implements ResourceId {
         if (object == this) {
             return true;
         }
-        if (object instanceof ResourceIdType) {
-            final ResourceIdType that = (ResourceIdType) object;
+        if (object instanceof ResourceIdType that) {
             return Objects.equals(this.endDate,      that.endDate)        &&
                    Objects.equals(this.previousRid,  that.previousRid)   &&
                    Objects.equals(this.rid,          that.rid)   &&

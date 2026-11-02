@@ -321,8 +321,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryObjectType && super.equals(obj)) {
-            final RegistryObjectType that = (RegistryObjectType) obj;
+        if (obj instanceof RegistryObjectType that && super.equals(obj)) {
             return Objects.equals(this.classification,     that.classification) &&
                    Objects.equals(this.description,        that.description) &&
                    Objects.equals(this.externalIdentifier, that.externalIdentifier) &&

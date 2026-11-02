@@ -161,8 +161,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
                     final List<String> props = new ArrayList<>();
                     for (PropertyType desc : baseType.getProperties(true)) {
-                        if (desc instanceof AttributeType) {
-                            final AttributeType att = (AttributeType) desc;
+                        if (desc instanceof AttributeType att) {
                             final Class binding = att.getValueClass();
                             if (Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)) {
                                 props.add(att.getName().toString());

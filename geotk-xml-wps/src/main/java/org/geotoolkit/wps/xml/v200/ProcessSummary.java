@@ -241,8 +241,7 @@ public class ProcessSummary extends Description implements ProcessProperties {
         if (object == this) {
             return true;
         }
-        if (object instanceof ProcessSummary && super.equals(object)) {
-            final ProcessSummary that = (ProcessSummary) object;
+        if (object instanceof ProcessSummary that && super.equals(object)) {
             return Objects.equals(this.jobControlOptions, that.jobControlOptions)
                     && Objects.equals(this.outputTransmission, that.outputTransmission)
                     && Objects.equals(this.processModel, that.processModel)

@@ -398,8 +398,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         if (object == this) {
             return true;
         }
-        if (object instanceof SummaryRecordType) {
-            final SummaryRecordType that = (SummaryRecordType) object;
+        if (object instanceof SummaryRecordType that) {
 
             boolean bbox = false;
             if (this.boundingBox == null && that.boundingBox == null ) {

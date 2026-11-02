@@ -183,8 +183,7 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
             final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
-                if (element instanceof String) {
-                    String s = (String) element;
+                if (element instanceof String s) {
                     s = s.replace("\n", "");
                     s = s.replace("\t", "");
                     s = s.trim();
@@ -272,8 +271,7 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         if (object == this) {
             return true;
         }
-        if (object instanceof DistanceBufferType) {
-            final DistanceBufferType that = (DistanceBufferType) object;
+        if (object instanceof DistanceBufferType that) {
 
             boolean env = false;
             if (this.expression != null && that.expression != null) {

@@ -112,8 +112,7 @@ public class AcceptFormatsType implements AcceptFormats {
         if (object == this) {
             return true;
         }
-        if (object instanceof AcceptFormatsType) {
-            final AcceptFormatsType that = (AcceptFormatsType) object;
+        if (object instanceof AcceptFormatsType that) {
             return Objects.equals(this.outputFormat, that.outputFormat);
         }
         return false;

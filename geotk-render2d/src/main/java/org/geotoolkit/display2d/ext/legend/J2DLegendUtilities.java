@@ -128,8 +128,7 @@ public class J2DLegendUtilities {
      * @param bounds The graphic area to paint into.
      */
     private static void paintNoTemplate(final MapItem item, final Graphics2D g2d, final Rectangle bounds) {
-        if (item instanceof MapLayers) {
-            final MapLayers mc = (MapLayers) item;
+        if (item instanceof MapLayers mc) {
             for (MapItem layer : mc.getComponents()) {
                 if (layer instanceof MapLayer) {
                     DefaultGlyphService.render((Style) ((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
@@ -423,12 +422,10 @@ public class J2DLegendUtilities {
      * @param toSet the dimension used to store estimation result.
      */
     private static void estimateNoTemplate(MapItem source, Dimension toSet) {
-        if (source instanceof MapLayers) {
-            final MapLayers mc = (MapLayers) source;
+        if (source instanceof MapLayers mc) {
             for (MapItem childItem : mc.getComponents()) {
 
-                if (childItem instanceof MapLayer) {
-                    final MapLayer ml = (MapLayer) childItem;
+                if (childItem instanceof MapLayer ml) {
                     final Dimension preferred = new Dimension(0, 0);
                     DefaultGlyphService.glyphPreferredSize((Style) ml.getStyle(), preferred, ml);
                     if (preferred != null) {

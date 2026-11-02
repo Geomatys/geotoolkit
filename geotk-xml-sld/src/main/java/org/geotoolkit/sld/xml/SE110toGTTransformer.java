@@ -446,8 +446,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     public MutableFeatureTypeStyle visitFTS(final Object obj) throws FactoryException{
         if(obj == null) return null;
 
-        if(obj instanceof OnlineResourceType){
-            final  OnlineResourceType ort = (OnlineResourceType) obj;
+        if(obj instanceof OnlineResourceType ort){
             final OnlineResource or = visitOnlineResource(ort);
             if(or != null){
                 try{
@@ -457,9 +456,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 }
                 return null;
             }
-        }else if(obj instanceof CoverageStyleType){
+        }else if(obj instanceof CoverageStyleType cst){
             final MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
-            final CoverageStyleType cst = (CoverageStyleType) obj;
 
             fts.setName(cst.getName());
             fts.setDescription( visitDescription(cst.getDescription()));
@@ -477,9 +475,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             }
 
             return fts;
-        }else if(obj instanceof FeatureTypeStyleType){
+        }else if(obj instanceof FeatureTypeStyleType ftst){
             final MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
-            final FeatureTypeStyleType ftst = (FeatureTypeStyleType) obj;
 
             fts.setName(ftst.getName());
             fts.setDescription( visitDescription(ftst.getDescription()));
@@ -537,11 +534,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      * Trasnform SLD v1.1 rule in GT Rule.
      */
     public MutableRule visitRule(final Object objRule) throws FactoryException {
-        if(objRule instanceof OnlineResourceType){
-            final OnlineResourceType ortRule = (OnlineResourceType) objRule;
+        if(objRule instanceof OnlineResourceType ortRule){
             return visitRule(ortRule);
-        } else if (objRule instanceof RuleType) {
-            final RuleType rt = (RuleType) objRule;
+        } else if (objRule instanceof RuleType rt) {
             return visitRule(rt);
         }
         return null;
@@ -625,20 +620,15 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
     public Symbolizer visit(final SymbolizerType st) {
 
-        if (st instanceof PointSymbolizerType) {
-            final PointSymbolizerType pst = (PointSymbolizerType) st;
+        if (st instanceof PointSymbolizerType pst) {
             return visit(pst);
-        } else if (st instanceof LineSymbolizerType) {
-            final LineSymbolizerType pst = (LineSymbolizerType) st;
+        } else if (st instanceof LineSymbolizerType pst) {
             return visit(pst);
-        } else if (st instanceof PolygonSymbolizerType) {
-            final PolygonSymbolizerType pst = (PolygonSymbolizerType) st;
+        } else if (st instanceof PolygonSymbolizerType pst) {
             return visit(pst);
-        } else if (st instanceof TextSymbolizerType) {
-            final TextSymbolizerType pst = (TextSymbolizerType) st;
+        } else if (st instanceof TextSymbolizerType pst) {
             return visit(pst);
-        } else if (st instanceof RasterSymbolizerType) {
-            final RasterSymbolizerType pst = (RasterSymbolizerType) st;
+        } else if (st instanceof RasterSymbolizerType pst) {
             return visit(pst);
         } else if(st instanceof Symbolizer){
             //jaxbelement is a conform opengis symbolizer

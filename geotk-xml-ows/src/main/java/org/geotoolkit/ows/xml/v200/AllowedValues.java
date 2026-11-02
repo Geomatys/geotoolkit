@@ -145,8 +145,7 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
         if (object == this) {
             return true;
         }
-        if (object instanceof AllowedValues) {
-            final AllowedValues that = (AllowedValues) object;
+        if (object instanceof AllowedValues that) {
             return Objects.equals(this.valueOrRange,   that.valueOrRange);
         }
         return false;

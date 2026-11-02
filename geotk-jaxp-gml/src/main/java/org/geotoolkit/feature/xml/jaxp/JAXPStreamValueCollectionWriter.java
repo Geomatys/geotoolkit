@@ -92,8 +92,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         setOutput(output);
         Integer nbReturned = null;
         Integer nbMatched = null;
-        if (candidate instanceof FeatureSetWrapper) {
-            FeatureSetWrapper fsw = (FeatureSetWrapper) candidate;
+        if (candidate instanceof FeatureSetWrapper fsw) {
             nbReturned = fsw.getNbReturned();
             nbMatched  = fsw.getNbMatched();
             if (fsw.getFeatureSet().size() == 1) {
@@ -213,8 +212,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
-        } else if (value instanceof Attribute) {
-            final Attribute att = (Attribute) value;
+        } else if (value instanceof Attribute att) {
             final Object attValue = att.getValue();
             if (attValue instanceof Collection) {
                 for (Object o : (Collection) attValue) {

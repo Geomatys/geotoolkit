@@ -322,8 +322,7 @@ public class Capabilities implements AbstractCapabilities {
             return true;
         }
 
-        if (object instanceof Capabilities) {
-            final Capabilities that = (Capabilities) object;
+        if (object instanceof Capabilities that) {
             boolean proc = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 proc = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());

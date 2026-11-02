@@ -133,8 +133,7 @@ public class AcknowledgementType implements Acknowledgement {
         if (object == this) {
             return true;
         }
-        if (object instanceof AcknowledgementType) {
-            final AcknowledgementType that = (AcknowledgementType) object;
+        if (object instanceof AcknowledgementType that) {
             return Objects.equals(this.echoedRequest, that.echoedRequest) &&
                    Objects.equals(this.requestId,     that.requestId)     &&
                    Objects.equals(this.timeStamp,     that.timeStamp);

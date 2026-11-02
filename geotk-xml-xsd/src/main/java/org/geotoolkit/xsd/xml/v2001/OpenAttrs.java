@@ -79,8 +79,7 @@ public class OpenAttrs {
         if (object == this) {
             return true;
         }
-        if (object instanceof OpenAttrs) {
-            final OpenAttrs that = (OpenAttrs) object;
+        if (object instanceof OpenAttrs that) {
             return Objects.equals(this.otherAttributes, that.otherAttributes);
         }
         return false;

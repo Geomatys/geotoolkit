@@ -74,8 +74,7 @@ public class ViewMapper extends FeatureSetMapper {
 
             //try to preserve basic operations
             preserve:
-            if (property instanceof Operation) {
-                final Operation op = (Operation) property;
+            if (property instanceof Operation op) {
 
                 String code = op.getParameters().getName().getCode();
                 if ("Envelope".equals(code) || "Link".equals(code)) {

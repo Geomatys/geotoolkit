@@ -97,8 +97,7 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiLineStringType && super.equals(object, mode)) {
-            final MultiLineStringType that = (MultiLineStringType) object;
+        if (object instanceof MultiLineStringType that && super.equals(object, mode)) {
 
             return Objects.equals(this.lineStringMember, that.lineStringMember);
         }

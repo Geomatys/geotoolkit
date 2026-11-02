@@ -115,8 +115,7 @@ public class CrsType {
         if (this == o) {
             return true;
         }
-        if (o instanceof CrsType && super.equals(o)) {
-            final CrsType that = (CrsType) o;
+        if (o instanceof CrsType that && super.equals(o)) {
             return Objects.equals(this.outputCrs, that.outputCrs)
                     && Objects.equals(this.subsettingCrs, that.subsettingCrs);
         }

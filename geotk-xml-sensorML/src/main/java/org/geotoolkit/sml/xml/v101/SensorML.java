@@ -517,8 +517,7 @@ public class SensorML extends SensorObject implements AbstractSensorML {
             return true;
         }
 
-        if (object instanceof SensorML) {
-            final SensorML that = (SensorML) object;
+        if (object instanceof SensorML that) {
             return Objects.equals(this.capabilities,       that.capabilities)       &&
                    Objects.equals(this.characteristics,    that.characteristics)    &&
                    Objects.equals(this.classification,     that.classification)     &&
@@ -1005,8 +1004,7 @@ public class SensorML extends SensorObject implements AbstractSensorML {
                 return true;
             }
 
-            if (object instanceof Member) {
-                final Member that = (Member) object;
+            if (object instanceof Member that) {
                 boolean proc = false;
                 if (this.process != null && that.process != null) {
                     proc = Objects.equals(this.process.getValue(), that.process.getValue());

@@ -153,8 +153,7 @@ public class ClassificationType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ClassificationType && super.equals(obj)) {
-            final ClassificationType that = (ClassificationType) obj;
+        if (obj instanceof ClassificationType that && super.equals(obj)) {
             return Objects.equals(this.classificationNode,   that.classificationNode) &&
                    Objects.equals(this.classificationScheme, that.classificationScheme) &&
                    Objects.equals(this.classifiedObject,     that.classifiedObject) &&

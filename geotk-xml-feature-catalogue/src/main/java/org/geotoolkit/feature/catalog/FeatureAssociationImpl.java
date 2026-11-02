@@ -186,8 +186,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         if (object == this) {
             return true;
         }
-        if (super.equals(object) && object instanceof FeatureAssociationImpl) {
-            final FeatureAssociationImpl that = (FeatureAssociationImpl) object;
+        if (super.equals(object) && object instanceof FeatureAssociationImpl that) {
 
             return Objects.equals(this.role, that.role);
         }

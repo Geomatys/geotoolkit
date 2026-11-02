@@ -137,8 +137,7 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
         if (object == this) {
             return true;
         }
-        if (object instanceof TextType && super.equals(object)) {
-            final TextType that = (TextType) object;
+        if (object instanceof TextType that && super.equals(object)) {
 
             return Objects.equals(this.constraint,  that.constraint) &&
                    Objects.equals(this.value,       that.value);

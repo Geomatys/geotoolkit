@@ -152,8 +152,7 @@ public class LanguageStringType implements LanguageString {
         if (object == this) {
             return true;
         }
-        if (object instanceof LanguageStringType) {
-            final LanguageStringType that = (LanguageStringType) object;
+        if (object instanceof LanguageStringType that) {
             return Objects.equals(this.value, that.value) &&
                    Objects.equals(this.lang, that.lang);
         }

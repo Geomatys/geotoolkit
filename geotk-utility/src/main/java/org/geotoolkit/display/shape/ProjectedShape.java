@@ -345,8 +345,7 @@ public class ProjectedShape implements Shape, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object instanceof ProjectedShape) {
-            final ProjectedShape other = (ProjectedShape) object;
+        if (object instanceof ProjectedShape other) {
             return shape.equals(other.shape) && projection.equals(other.projection);
         }
         return false;

@@ -207,8 +207,7 @@ public abstract class BaseRequestType implements BaseRequest {
         if (object == this) {
             return true;
         }
-        if (object instanceof BaseRequestType) {
-            final BaseRequestType that = (BaseRequestType) object;
+        if (object instanceof BaseRequestType that) {
             return  Objects.equals(this.handle, that.handle) &&
                     Objects.equals(this.service, that.service) &&
                     Objects.equals(this.version, that.version);

@@ -151,8 +151,7 @@ public class KeywordsType implements AbstractKeywords {
         if (object == this) {
             return true;
         }
-        if (object instanceof KeywordsType) {
-            final KeywordsType that = (KeywordsType) object;
+        if (object instanceof KeywordsType that) {
             return Objects.equals(this.keyword, that.keyword) &&
                    Objects.equals(this.type,    that.type);
         }

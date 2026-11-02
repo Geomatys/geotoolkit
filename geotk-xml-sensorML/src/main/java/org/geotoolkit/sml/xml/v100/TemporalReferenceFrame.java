@@ -102,8 +102,7 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
             return true;
         }
 
-        if (object instanceof TemporalReferenceFrame) {
-            final TemporalReferenceFrame that = (TemporalReferenceFrame) object;
+        if (object instanceof TemporalReferenceFrame that) {
 
             return Objects.equals(this.temporalCRS,  that.temporalCRS);
         }

@@ -100,8 +100,7 @@ public class FlowLink {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof FlowLink) {
-            final FlowLink that = (FlowLink) obj;
+        if (obj instanceof FlowLink that) {
             return Utilities.equals(this.sourceId, that.sourceId) && Utilities.equals(this.targetId, that.targetId);
         }
         return false;

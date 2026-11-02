@@ -172,8 +172,7 @@ public class PropertyIsNilType extends ComparisonOpsType implements NilOperator 
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PropertyIsNilType) {
-            final PropertyIsNilType that = (PropertyIsNilType) obj;
+        if (obj instanceof PropertyIsNilType that) {
             final boolean exp;
             if (this.expression == null && that.expression == null) {
                 exp = true;

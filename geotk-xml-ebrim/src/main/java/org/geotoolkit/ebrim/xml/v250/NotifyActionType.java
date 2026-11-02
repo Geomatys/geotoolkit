@@ -116,8 +116,7 @@ public abstract class NotifyActionType extends ActionType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof NotifyActionType) {
-            final NotifyActionType that = (NotifyActionType) obj;
+        if (obj instanceof NotifyActionType that) {
             return Objects.equals(this.endPoint,           that.endPoint) &&
                    Objects.equals(this.notificationOption, that.notificationOption);
         }

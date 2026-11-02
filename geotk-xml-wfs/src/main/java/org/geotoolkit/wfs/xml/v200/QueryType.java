@@ -177,8 +177,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
         if (object == this) {
             return true;
         }
-        if (object instanceof QueryType && super.equals(object)) {
-            final QueryType that = (QueryType) object;
+        if (object instanceof QueryType that && super.equals(object)) {
 
             return Objects.equals(this.featureVersion, that.featureVersion) &&
                    Objects.equals(this.srsName, that.srsName);

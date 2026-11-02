@@ -422,8 +422,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 }
                 // If we arrive here, we've got an empty curve.
                 values = Collections.EMPTY_LIST;
-            } else if (source instanceof ArcByCenterPointType) {
-                final ArcByCenterPointType arc = (ArcByCenterPointType) source;
+            } else if (source instanceof ArcByCenterPointType arc) {
                 org.opengis.geometry.DirectPosition dp = arc.getPos();
                 if (dp == null) {
                     PointPropertyType pp = arc.getPointProperty();
@@ -471,9 +470,8 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 } catch (TransformException ex) {
                     throw new UnconvertibleObjectException("Cannot draw an arc.", ex);
                 }
-            } else if (source instanceof org.geotoolkit.gml.xml.v311.ArcByCenterPointType) {
+            } else if (source instanceof org.geotoolkit.gml.xml.v311.ArcByCenterPointType arc) {
                 // TODO : factorize with above case
-                final org.geotoolkit.gml.xml.v311.ArcByCenterPointType arc = (org.geotoolkit.gml.xml.v311.ArcByCenterPointType) source;
                 org.opengis.geometry.DirectPosition dp = arc.getPos();
                 if (dp == null) {
                     org.geotoolkit.gml.xml.v311.PointPropertyType pp = arc.getPointProperty();
@@ -579,8 +577,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
     protected int getCoordinateDimension() {
         // Special case : if source is a point, we do not need the srsDimension attribute.
         // The point dimension is equal to the number of dimensions in it.
-        if (source instanceof Point) {
-            Point pt = (Point) source;
+        if (source instanceof Point pt) {
             int dim = 0;
             if (pt.getCoordinates() != null)
                 dim = pt.getCoordinates().getValues().size();

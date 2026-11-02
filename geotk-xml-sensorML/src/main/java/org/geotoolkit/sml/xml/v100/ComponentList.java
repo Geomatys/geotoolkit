@@ -146,8 +146,7 @@ public class ComponentList implements AbstractComponentList {
         if (object == this) {
             return true;
         }
-        if (object instanceof ComponentList) {
-            final ComponentList that = (ComponentList) object;
+        if (object instanceof ComponentList that) {
             return Objects.equals(this.component, that.component);
 
         }

@@ -62,11 +62,9 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
         }
 
         for(final Layer layer : sld.layers()){
-            if(layer instanceof NamedLayer){
-                final NamedLayer named = (NamedLayer) layer;
+            if(layer instanceof NamedLayer named){
                 versionned.getNamedLayerOrUserLayer().add( visit(named,null) );
-            }else if(layer instanceof UserLayer){
-                final UserLayer user = (UserLayer) layer;
+            }else if(layer instanceof UserLayer user){
                 versionned.getNamedLayerOrUserLayer().add( visit(user,null) );
             }
         }
@@ -86,11 +84,9 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
 
         for(final LayerStyle style : layer.styles()){
-            if(style instanceof NamedStyle){
-                final NamedStyle ns = (NamedStyle) style;
+            if(style instanceof NamedStyle ns){
                 named.getNamedStyleOrUserStyle().add( visit(ns,null) );
-            }else if(style instanceof Style){
-                final Style us = (Style) style;
+            }else if(style instanceof Style us){
                 named.getNamedStyleOrUserStyle().add( visit(us,null) );
             }
         }

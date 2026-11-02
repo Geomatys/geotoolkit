@@ -144,8 +144,7 @@ public class InterfaceList extends SensorObject implements AbstractInterfaceList
         if (object == this) {
             return true;
         }
-        if (object instanceof InterfaceList) {
-            final InterfaceList that = (InterfaceList) object;
+        if (object instanceof InterfaceList that) {
             return Objects.equals(this._interface, that._interface)
                     && Objects.equals(this.id, that.id);
 

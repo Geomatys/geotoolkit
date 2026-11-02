@@ -341,8 +341,7 @@ public class SolidPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SolidPropertyType) {
-            final SolidPropertyType that = (SolidPropertyType) object;
+        if (object instanceof SolidPropertyType that) {
 
             boolean geom = false;
             if (this.abstractSolid != null && that.abstractSolid != null) {

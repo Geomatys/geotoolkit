@@ -291,8 +291,7 @@ public class FeatureTypeType implements FeatureType {
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureTypeType) {
-            final FeatureTypeType that = (FeatureTypeType) object;
+        if (object instanceof FeatureTypeType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.srs, that.srs) &&

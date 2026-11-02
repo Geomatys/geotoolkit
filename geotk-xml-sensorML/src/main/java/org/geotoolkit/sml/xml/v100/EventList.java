@@ -160,8 +160,7 @@ public class EventList implements AbstractEventList {
             return true;
         }
 
-        if (object instanceof EventList) {
-            final EventList that = (EventList) object;
+        if (object instanceof EventList that) {
 
             return Objects.equals(this.member, that.member)
                     && Objects.equals(this.id, that.id);

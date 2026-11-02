@@ -561,8 +561,7 @@ public class FeatureTypeImpl extends AbstractMetadata implements FeatureType, Re
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureTypeImpl) {
-            final FeatureTypeImpl that = (FeatureTypeImpl) object;
+        if (object instanceof FeatureTypeImpl that) {
 
              //to avoid infinite cycle
              boolean carrier = false;

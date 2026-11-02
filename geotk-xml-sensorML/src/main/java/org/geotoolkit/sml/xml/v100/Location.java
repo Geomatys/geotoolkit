@@ -342,8 +342,7 @@ public class Location implements AbstractLocation {
         }
 
         boolean record = false;
-        if (object instanceof Location) {
-            final Location that = (Location) object;
+        if (object instanceof Location that) {
             if (this.abstractCurve != null && that.abstractCurve != null) {
                 record = Objects.equals(this.abstractCurve.getValue(), that.abstractCurve.getValue());
             } else if (this.abstractCurve == null && that.abstractCurve == null) {

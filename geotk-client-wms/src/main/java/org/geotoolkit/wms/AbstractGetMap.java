@@ -465,8 +465,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                         boolean dimensionSupported = false;
 
                         for (Object capaDim : capaDims) {
-                            if (capaDim instanceof AbstractDimension) {
-                                AbstractDimension absDim = (AbstractDimension) capaDim;
+                            if (capaDim instanceof AbstractDimension absDim) {
                                 if (absDim.getName().equals(axis.getName().getCode())) {
                                     dimensionSupported = true;
                                 }

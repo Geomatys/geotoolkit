@@ -194,8 +194,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
             return null;
         }
         final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
-        if (inData instanceof SpatialMetadata) {
-            final SpatialMetadata sp = (SpatialMetadata) inData;
+        if (inData instanceof SpatialMetadata sp) {
             if (format.equals(sp.format)) {
                 return sp;
             }
@@ -225,8 +224,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
             return null;
         }
         final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
-        if (inData instanceof SpatialMetadata) {
-            final SpatialMetadata sp = (SpatialMetadata) inData;
+        if (inData instanceof SpatialMetadata sp) {
             if (format.equals(sp.format)) {
                 return sp;
             }

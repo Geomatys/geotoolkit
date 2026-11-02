@@ -90,14 +90,12 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
 
         Object value = MIFUtils.getGeometryValue(feature);
 
-        if(value instanceof LineSegment) {
-            LineSegment line = (LineSegment) value;
+        if(value instanceof LineSegment line) {
             Coordinate pt1 =  line.p0;
             Coordinate pt2 =  line.p1;
             builder.append(' ').append(line.p0.x).append(' ').append(line.p0.y)
                     .append(' ').append(line.p1.x).append(' ').append(line.p1.y).append('\n');
-        } else if (value instanceof LineString) {
-            LineString line = (LineString) value;
+        } else if (value instanceof LineString line) {
             Point pt1 =  line.getStartPoint();
             Point pt2 =  line.getEndPoint();
             builder.append(' ').append(pt1.getX()).append(' ').append(pt1.getY())

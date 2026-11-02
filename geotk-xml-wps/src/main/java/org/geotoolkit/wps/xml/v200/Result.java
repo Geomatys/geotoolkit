@@ -200,8 +200,7 @@ public class Result extends DocumentBase  implements WPSResponse{
         if (object == this) {
             return true;
         }
-        if (object instanceof Result) {
-            final Result that = (Result) object;
+        if (object instanceof Result that) {
             return Objects.equals(this.expirationDate, that.expirationDate) &&
                    Objects.equals(this.jobID, that.jobID) &&
                    Objects.equals(this.output, that.output);

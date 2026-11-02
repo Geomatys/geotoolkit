@@ -172,8 +172,7 @@ public abstract class AttributeGroup extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof AttributeGroup && super.equals(object)) {
-            final AttributeGroup that = (AttributeGroup) object;
+        if (object instanceof AttributeGroup that && super.equals(object)) {
             return Objects.equals(this.anyAttribute,              that.anyAttribute) &&
                    Objects.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
                    Objects.equals(this.name,                      that.name) &&

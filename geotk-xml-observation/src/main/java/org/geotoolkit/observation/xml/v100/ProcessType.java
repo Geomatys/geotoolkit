@@ -129,8 +129,7 @@ public class ProcessType implements Process, Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof ProcessType) {
-            final ProcessType that = (ProcessType) object;
+        if (object instanceof ProcessType that) {
             return Objects.equals(this.href, that.href) &&
                    Objects.equals(this.name, that.name) &&
                    Objects.equals(this.description, that.description);

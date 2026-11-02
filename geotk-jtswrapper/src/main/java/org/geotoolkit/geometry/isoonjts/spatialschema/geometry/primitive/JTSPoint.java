@@ -229,8 +229,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof JTSPoint && super.equals(obj)) {
-            final JTSPoint that = (JTSPoint) obj;
+        if (obj instanceof JTSPoint that && super.equals(obj)) {
             return Objects.equals(this.position, that.position);
         }
         return false;

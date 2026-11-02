@@ -102,8 +102,7 @@ public class Import extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof Import && super.equals(object)) {
-            final Import that = (Import) object;
+        if (object instanceof Import that && super.equals(object)) {
             return Objects.equals(this.namespace,      that.namespace)     &&
                    Objects.equals(this.schemaLocation, that.schemaLocation);
         }

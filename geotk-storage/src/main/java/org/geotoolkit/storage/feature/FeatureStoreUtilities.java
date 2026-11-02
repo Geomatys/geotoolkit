@@ -92,8 +92,7 @@ public class FeatureStoreUtilities {
             if (metadata != null) {
                 search:
                 for (ContentInformation ci : metadata.getContentInfo()) {
-                    if (ci instanceof FeatureCatalogueDescription) {
-                        FeatureCatalogueDescription fcd = (FeatureCatalogueDescription) ci;
+                    if (ci instanceof FeatureCatalogueDescription fcd) {
                         for (FeatureTypeInfo fti : fcd.getFeatureTypeInfo()) {
                             Integer nb = fti.getFeatureInstanceCount();
                             if (nb != null) {
@@ -180,8 +179,7 @@ public class FeatureStoreUtilities {
                         throw ex.unwrapOrRethrow(DataStoreException.class);
                     }
                 }
-            } else if (dataset instanceof GridCoverageResource) {
-                final GridCoverageResource gcr = (GridCoverageResource) dataset;
+            } else if (dataset instanceof GridCoverageResource gcr) {
                 final GridGeometry gridGeometry = gcr.getGridGeometry();
                 if (gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
                     return gridGeometry.getEnvelope();

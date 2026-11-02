@@ -286,8 +286,7 @@ public class WebProcessingClient extends AbstractClient {
             WPSMarshallerPool.getInstance().recycle(unmarshaller);
             if (response instanceof ProcessOfferings) {
                 description = (ProcessOfferings) response;
-            } else if (response instanceof ExceptionResponse) {
-                ExceptionResponse report = (ExceptionResponse) response;
+            } else if (response instanceof ExceptionResponse report) {
                 throw report.toException();
             } else {
                 throw new Exception("Unexpected response type from the WPS server: "+(response == null? "null" : response.getClass()));

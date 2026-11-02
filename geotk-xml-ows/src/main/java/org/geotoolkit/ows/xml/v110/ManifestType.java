@@ -75,8 +75,7 @@ public class ManifestType extends BasicIdentificationType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ManifestType && super.equals(object)) {
-            final ManifestType that = (ManifestType) object;
+        if (object instanceof ManifestType that && super.equals(object)) {
             return Objects.equals(this.referenceGroup, that.referenceGroup);
         }
         return false;

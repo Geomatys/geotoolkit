@@ -158,8 +158,7 @@ public class StoredQueryListItemType {
         if (object == this) {
             return true;
         }
-        if (object instanceof StoredQueryListItemType) {
-            final StoredQueryListItemType that = (StoredQueryListItemType) object;
+        if (object instanceof StoredQueryListItemType that) {
             return Objects.equals(this.id,                that.id) &&
                    Objects.equals(this.returnFeatureType, that.returnFeatureType) &&
                    Objects.equals(this.title,             that.title);

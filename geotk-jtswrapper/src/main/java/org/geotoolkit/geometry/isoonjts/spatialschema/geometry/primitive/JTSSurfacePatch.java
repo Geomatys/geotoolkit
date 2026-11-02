@@ -142,8 +142,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         if (object == this)
             return true;
 
-        if (object instanceof JTSSurfacePatch) {
-            JTSSurfacePatch that = (JTSSurfacePatch) object;
+        if (object instanceof JTSSurfacePatch that) {
             return Objects.equals(this.boundary,      that.boundary)      &&
                    Objects.equals(this.interpolation, that.interpolation) &&
                    Objects.equals(this.surface,       that.surface);

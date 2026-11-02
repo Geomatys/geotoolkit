@@ -93,8 +93,7 @@ public class CrsMetadataType {
         if (this == o) {
             return true;
         }
-        if (o instanceof CrsMetadataType && super.equals(o)) {
-            final CrsMetadataType that = (CrsMetadataType) o;
+        if (o instanceof CrsMetadataType that && super.equals(o)) {
             return Objects.equals(this.crsSupported, that.crsSupported);
         }
         return false;

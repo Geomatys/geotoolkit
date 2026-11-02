@@ -57,8 +57,7 @@ public class InputDeSerializer extends StdDeserializer<InputBase> {
             if (crsNode instanceof TextNode) {
                 crs = crsNode.asText();
             }
-            if (bboxNode instanceof ArrayNode) {
-                ArrayNode an = (ArrayNode) bboxNode;
+            if (bboxNode instanceof ArrayNode an) {
                 Iterator<JsonNode> it = an.elements();
                 while (it.hasNext()) {
                     JsonNode n = it.next();

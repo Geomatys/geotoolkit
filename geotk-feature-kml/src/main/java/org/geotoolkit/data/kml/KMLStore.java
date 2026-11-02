@@ -406,8 +406,7 @@ public final class KMLStore extends DataStore implements Aggregate {
     private static void extractKmlFeatures(Object candidate, List<AbstractFeatureType> list) {
         if (candidate instanceof JAXBElement) candidate = ((JAXBElement)candidate).getValue();
 
-        if (candidate instanceof AbstractContainerType) {
-            final AbstractContainerType ct = (AbstractContainerType) candidate;
+        if (candidate instanceof AbstractContainerType ct) {
             final List<JAXBElement<? extends AbstractFeatureType>> children = ct.getAbstractFeatureGroup();
             if (children != null) {
                 for  (Object o : children){
@@ -579,18 +578,15 @@ public final class KMLStore extends DataStore implements Aggregate {
         if(geomType instanceof JAXBElement) geomType = ((JAXBElement)geomType).getValue();
 
         Geometry geom = null;
-        if (geomType instanceof ModelType) {
-            final ModelType modelType = (ModelType) geomType;
+        if (geomType instanceof ModelType modelType) {
             final LocationType location = modelType.getLocation();
             geom = GF.createPoint(new Coordinate(location.getLongitude(), location.getLatitude()));
 
-        } else if (geomType instanceof PointType) {
-            final PointType pointType = (PointType) geomType;
+        } else if (geomType instanceof PointType pointType) {
             final List<String> coordinates = pointType.getCoordinates();
             geom = GF.createPoint(toCoordinates(coordinates, 1, false));
 
-        } else if (geomType instanceof PolygonType) {
-            final PolygonType polygonType = (PolygonType) geomType;
+        } else if (geomType instanceof PolygonType polygonType) {
             final CoordinateSequence outter = toCoordinates(polygonType.getOuterBoundaryIs().getLinearRing().getCoordinates(), 3, true);
             final List<BoundaryType> inners = polygonType.getInnerBoundaryIs();
             final LinearRing[] holes = new LinearRing[inners.size()];
@@ -599,12 +595,10 @@ public final class KMLStore extends DataStore implements Aggregate {
             }
             geom = GF.createPolygon(GF.createLinearRing(outter), holes);
 
-        } else if (geomType instanceof LinearRingType) {
-            final LinearRingType linearRingType = (LinearRingType) geomType;
+        } else if (geomType instanceof LinearRingType linearRingType) {
             geom = GF.createLineString(toCoordinates(linearRingType.getCoordinates(), 3, true));
 
-        } else if (geomType instanceof MultiGeometryType) {
-            final MultiGeometryType multigeometryType = (MultiGeometryType) geomType;
+        } else if (geomType instanceof MultiGeometryType multigeometryType) {
             final List<JAXBElement<? extends AbstractGeometryType>> children = multigeometryType.getAbstractGeometryGroup();
             final Geometry[] childs = new Geometry[children.size()];
             for (int i=0;i<childs.length;i++) {
@@ -612,8 +606,7 @@ public final class KMLStore extends DataStore implements Aggregate {
             }
             geom = GF.createGeometryCollection(childs);
 
-        } else if (geomType instanceof LineStringType) {
-            final LineStringType lineStringType = (LineStringType) geomType;
+        } else if (geomType instanceof LineStringType lineStringType) {
             geom = GF.createLineString(toCoordinates(lineStringType.getCoordinates(), 2, false));
 
         }

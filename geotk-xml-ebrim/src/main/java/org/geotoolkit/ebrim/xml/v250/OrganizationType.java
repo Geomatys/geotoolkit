@@ -206,8 +206,7 @@ public class OrganizationType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof OrganizationType && super.equals(obj)) {
-            final OrganizationType that = (OrganizationType) obj;
+        if (obj instanceof OrganizationType that && super.equals(obj)) {
             return Objects.equals(this.address,         that.address) &&
                    Objects.equals(this.emailAddress,    that.emailAddress) &&
                    Objects.equals(this.parent,          that.parent) &&

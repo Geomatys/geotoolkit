@@ -175,8 +175,7 @@ public class BoundFeatureAttributeImpl extends AbstractMetadata implements Bound
         if (object == this) {
             return true;
         }
-        if (object instanceof BoundFeatureAttributeImpl) {
-            final BoundFeatureAttributeImpl that = (BoundFeatureAttributeImpl) object;
+        if (object instanceof BoundFeatureAttributeImpl that) {
 
             return Objects.equals(this.attribute,   that.attribute) &&
                    Objects.equals(this.featureType, that.featureType);

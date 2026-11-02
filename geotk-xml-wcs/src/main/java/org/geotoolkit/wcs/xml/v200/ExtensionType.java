@@ -103,8 +103,7 @@ public class ExtensionType {
         if (this == o) {
             return true;
         }
-        if (o instanceof ExtensionType) {
-            final ExtensionType that = (ExtensionType) o;
+        if (o instanceof ExtensionType that) {
             if (this.any != null && that.any != null) {
                 if (this.any.size() == that.any.size()) {
                     for (int i = 0; i < this.any.size(); i++) {

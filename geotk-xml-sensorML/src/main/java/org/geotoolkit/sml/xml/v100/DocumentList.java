@@ -159,8 +159,7 @@ public class DocumentList implements AbstractDocumentList {
             return true;
         }
 
-        if (object instanceof DocumentList) {
-            final DocumentList that = (DocumentList) object;
+        if (object instanceof DocumentList that) {
             return Objects.equals(this.id,          that.id)          &&
                    Objects.equals(this.member,      that.member)      &&
                    Objects.equals(this.description, that.description);
@@ -425,8 +424,7 @@ public class DocumentList implements AbstractDocumentList {
             return true;
         }
 
-        if (object instanceof Member) {
-            final Member that = (Member) object;
+        if (object instanceof Member that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

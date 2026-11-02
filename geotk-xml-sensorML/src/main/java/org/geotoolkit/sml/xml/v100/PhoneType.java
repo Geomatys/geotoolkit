@@ -164,8 +164,7 @@ public class PhoneType implements AbstractPhone {
             return true;
         }
 
-        if (object instanceof PhoneType) {
-            final PhoneType that = (PhoneType) object;
+        if (object instanceof PhoneType that) {
             return Objects.equals(this.facsimile, that.facsimile) &&
                    Objects.equals(this.voice,     that.voice);
         }

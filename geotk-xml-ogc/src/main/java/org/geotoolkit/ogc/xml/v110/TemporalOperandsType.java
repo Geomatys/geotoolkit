@@ -113,8 +113,7 @@ public class TemporalOperandsType {
         if (object == this) {
             return true;
         }
-       if (object instanceof TemporalOperandsType) {
-           final TemporalOperandsType that = (TemporalOperandsType) object;
+       if (object instanceof TemporalOperandsType that) {
 
             return Objects.equals(this.temporalOperand, that.temporalOperand);
         }

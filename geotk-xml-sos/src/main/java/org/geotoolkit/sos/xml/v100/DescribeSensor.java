@@ -119,8 +119,7 @@ public class DescribeSensor extends RequestBaseType implements org.geotoolkit.sw
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeSensor && super.equals(object)) {
-            final DescribeSensor that = (DescribeSensor) object;
+        if (object instanceof DescribeSensor that && super.equals(object)) {
             return Objects.equals(this.outputFormat, that.outputFormat) &&
                    Objects.equals(this.procedure,   that.procedure);
         }

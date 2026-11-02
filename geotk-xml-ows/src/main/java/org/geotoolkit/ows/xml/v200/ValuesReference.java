@@ -155,8 +155,7 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
         if (object == this) {
             return true;
         }
-        if (object instanceof ValuesReference) {
-            final ValuesReference that = (ValuesReference) object;
+        if (object instanceof ValuesReference that) {
             return Objects.equals(this.reference, that.reference) &&
                    Objects.equals(this.value, that.value);
         }

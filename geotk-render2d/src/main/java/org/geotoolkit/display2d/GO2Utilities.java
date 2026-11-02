@@ -313,8 +313,7 @@ public final class GO2Utilities {
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
             g2d.drawRenderedImage(RenderingWorkaround.wrap(img), (AffineTransform)gridToCRS);
             return true;
-        }else if (gridToCRS instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) gridToCRS;
+        }else if (gridToCRS instanceof LinearTransform lt) {
             final int col = lt.getMatrix().getNumCol();
             final int row = lt.getMatrix().getNumRow();
             //TODO using only the first parameters of the linear transform
@@ -513,8 +512,7 @@ public final class GO2Utilities {
     }
 
     public static Shape toJava2D(final org.opengis.geometry.Geometry geom){
-        if(geom instanceof JTSGeometry){
-            final JTSGeometry geo = (JTSGeometry) geom;
+        if(geom instanceof JTSGeometry geo){
             return toJava2D(geo.getJTSGeometry());
         }else{
             return new ISOGeometryJ2D(geom);
@@ -933,8 +931,7 @@ public final class GO2Utilities {
     public static boolean isNullorEmpty(Expression exp){
         if (exp == null) {
             return true;
-        }else if(exp instanceof ValueReference){
-            final ValueReference pn = (ValueReference) exp;
+        }else if(exp instanceof ValueReference pn){
             final String str = pn.getXPath();
             if(str==null || str.trim().isEmpty()){
                 return true;

@@ -606,8 +606,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             numBands = getNumBands(imageIndex);
         }
         List<? extends SampleDomain> bands = null;
-        if (parameters instanceof SpatialImageReadParam) {
-            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
+        if (parameters instanceof SpatialImageReadParam geoparam) {
             paletteName = geoparam.getNonNullPaletteName();
             visibleBand = geoparam.getVisibleBand();
             bands       = geoparam.getSampleDomains();
@@ -644,8 +643,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         boolean replaceFillValues = false;
         int dataType = (userType != null) ? userType.getSampleModel().getDataType() : getRawDataType(imageIndex);
-        if (userType == null && parameters instanceof SpatialImageReadParam) {
-            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
+        if (userType == null && parameters instanceof SpatialImageReadParam geoparam) {
             switch (dataType) {
                 case DataBuffer.TYPE_SHORT: {
                     if (geoparam.isSampleConversionAllowed(SHIFT_SIGNED_INTEGERS)) {

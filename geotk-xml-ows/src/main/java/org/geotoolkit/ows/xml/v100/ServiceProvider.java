@@ -111,8 +111,7 @@ public class ServiceProvider implements AbstractServiceProvider {
         if (object == this) {
             return true;
         }
-        if (object instanceof ServiceProvider) {
-            final ServiceProvider that = (ServiceProvider) object;
+        if (object instanceof ServiceProvider that) {
             return Objects.equals(this.providerName,   that.providerName) &&
                    Objects.equals(this.providerSite,   that.providerSite) &&
                    Objects.equals(this.serviceContact, that.serviceContact);

@@ -248,8 +248,7 @@ public class VectorType extends AbstractVectorType implements Vector {
             return true;
         }
 
-        if (object instanceof VectorType && super.equals(object, mode)) {
-            final VectorType  that = (VectorType ) object;
+        if (object instanceof VectorType that && super.equals(object, mode)) {
             return Objects.equals(this.coordinate, that.coordinate);
 
         }

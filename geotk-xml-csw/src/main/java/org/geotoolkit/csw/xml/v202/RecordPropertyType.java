@@ -164,8 +164,7 @@ public class RecordPropertyType implements RecordProperty{
         if (object == this) {
             return true;
         }
-        if (object instanceof RecordPropertyType) {
-            final RecordPropertyType that = (RecordPropertyType) object;
+        if (object instanceof RecordPropertyType that) {
             boolean valueEq;
             if (this.value instanceof Node && that.value instanceof Node) {
                 CswNodeComparator comparator = new CswNodeComparator((Node)this.value, (Node)that.value);

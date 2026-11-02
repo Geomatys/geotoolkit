@@ -104,8 +104,7 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeRecordResponseType) {
-            final DescribeRecordResponseType that = (DescribeRecordResponseType) object;
+        if (object instanceof DescribeRecordResponseType that) {
             return Objects.equals(this.schemaComponent,   that.schemaComponent);
         }
         return false;

@@ -276,8 +276,7 @@ public class AllowedTimesPropertyType {
             return true;
         }
 
-        if (object instanceof AllowedTimesPropertyType) {
-            final AllowedTimesPropertyType that = (AllowedTimesPropertyType) object;
+        if (object instanceof AllowedTimesPropertyType that) {
             return Objects.equals(this.allowedTimes,       that.allowedTimes)     &&
                    Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

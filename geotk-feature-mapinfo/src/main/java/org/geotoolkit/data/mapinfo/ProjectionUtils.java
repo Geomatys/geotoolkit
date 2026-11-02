@@ -395,8 +395,7 @@ public class ProjectionUtils {
         if(crs instanceof GeographicCRS) {
             builder.append('1').append(", ").append(mifDatum);
 
-        } else if (crs instanceof ProjectedCRS) {
-            final ProjectedCRS pCRS = (ProjectedCRS) crs;
+        } else if (crs instanceof ProjectedCRS pCRS) {
             Conversion proj = pCRS.getConversionFromBase();
             String projCode = IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(proj.getMethod(), Citations.MAP_INFO));
             if(projCode == null) {

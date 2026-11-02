@@ -139,8 +139,7 @@ public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
         if (object == this) {
             return true;
         }
-        if (object instanceof Abstract) {
-            final Abstract that = (Abstract) object;
+        if (object instanceof Abstract that) {
 
             return Objects.equals(this.lang, that.lang) &&
                    Objects.equals(this.value, that.value);

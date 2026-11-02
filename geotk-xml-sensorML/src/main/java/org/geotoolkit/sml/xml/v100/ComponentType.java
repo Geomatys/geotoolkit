@@ -88,8 +88,7 @@ public class ComponentType extends AbstractComponentType implements Component {
             return true;
         }
 
-        if (object instanceof ComponentType && super.equals(object, mode)) {
-            final ComponentType that = (ComponentType) object;
+        if (object instanceof ComponentType that && super.equals(object, mode)) {
             return Objects.equals(this.method,     that.method);
         }
         return false;

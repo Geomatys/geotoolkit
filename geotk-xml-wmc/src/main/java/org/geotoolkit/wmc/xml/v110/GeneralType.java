@@ -309,8 +309,7 @@ public class GeneralType {
         if (object == this) {
             return true;
         }
-        if (object instanceof GeneralType) {
-            final GeneralType that = (GeneralType) object;
+        if (object instanceof GeneralType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.boundingBox, that.boundingBox) &&

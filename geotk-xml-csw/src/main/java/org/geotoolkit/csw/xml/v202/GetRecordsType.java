@@ -367,8 +367,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         if (object == this) {
             return true;
         }
-        if (object instanceof GetRecordsType && super.equals(object)) {
-            final GetRecordsType that = (GetRecordsType) object;
+        if (object instanceof GetRecordsType that && super.equals(object)) {
             return Objects.equals(this.abstractQuery,  that.abstractQuery)   &&
                    Objects.equals(this.distributedSearch,  that.distributedSearch)   &&
                    Objects.equals(this.getMaxRecords(),  that.getMaxRecords())   &&

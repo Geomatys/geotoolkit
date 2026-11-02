@@ -168,26 +168,22 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     protected void appendMIFEnvelope(final StringBuilder toAppendInto, Object sourceEnvelope) throws DataStoreException, NullPointerException {
         if (sourceEnvelope instanceof Geometry)
             sourceEnvelope = ((Geometry) sourceEnvelope).getEnvelopeInternal();
-        if (sourceEnvelope instanceof com.esri.core.geometry.Envelope) {
-            final com.esri.core.geometry.Envelope env = (com.esri.core.geometry.Envelope) sourceEnvelope;
+        if (sourceEnvelope instanceof com.esri.core.geometry.Envelope env) {
             toAppendInto.append(env.getXMin()).append(' ')
                     .append(env.getYMin()).append(' ')
                     .append(env.getXMax()).append(' ')
                     .append(env.getYMax());
-        } else if (sourceEnvelope instanceof Envelope) {
-            Envelope env = (Envelope) sourceEnvelope;
+        } else if (sourceEnvelope instanceof Envelope env) {
             toAppendInto.append(env.getMinX()).append(' ')
                     .append(env.getMinY()).append(' ')
                     .append(env.getMaxX()).append(' ')
                     .append(env.getMaxY());
-        } else if (sourceEnvelope instanceof Rectangle2D) {
-            Rectangle2D rect = (Rectangle2D) sourceEnvelope;
+        } else if (sourceEnvelope instanceof Rectangle2D rect) {
             toAppendInto.append(rect.getMinX()).append(' ')
                     .append(rect.getMinY()).append(' ')
                     .append(rect.getMaxX()).append(' ')
                     .append(rect.getMaxY());
-        } else if (sourceEnvelope instanceof Envelope2D) {
-            Envelope2D env = (Envelope2D) sourceEnvelope;
+        } else if (sourceEnvelope instanceof Envelope2D env) {
             toAppendInto.append(env.getMinX()).append(' ')
                     .append(env.getMinY()).append(' ')
                     .append(env.getMaxX()).append(' ')

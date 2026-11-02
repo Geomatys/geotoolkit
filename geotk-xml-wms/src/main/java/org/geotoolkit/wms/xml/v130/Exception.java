@@ -99,8 +99,7 @@ public class Exception {
         if (object == this) {
             return true;
         }
-        if (object instanceof Exception) {
-            final Exception that = (Exception) object;
+        if (object instanceof Exception that) {
 
             return Objects.equals(this.format, that.format);
         }

@@ -129,8 +129,7 @@ public class LowerBoundaryType extends AbstractExpression implements Boundary, L
         if (this == obj) {
             return true;
         }
-        if (obj instanceof LowerBoundaryType) {
-            final LowerBoundaryType that = (LowerBoundaryType) obj;
+        if (obj instanceof LowerBoundaryType that) {
             if (this.expression != null && that.expression != null) {
                 return Objects.equals(this.expression.getValue(), that.expression.getValue());
             }

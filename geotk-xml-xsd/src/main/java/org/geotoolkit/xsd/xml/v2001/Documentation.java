@@ -143,8 +143,7 @@ public class Documentation {
         if (object == this) {
             return true;
         }
-        if (object instanceof Documentation) {
-            final Documentation that = (Documentation) object;
+        if (object instanceof Documentation that) {
             return Objects.equals(this.content,         that.content)         &&
                    Objects.equals(this.lang,            that.lang)            &&
                    Objects.equals(this.otherAttributes, that.otherAttributes) &&

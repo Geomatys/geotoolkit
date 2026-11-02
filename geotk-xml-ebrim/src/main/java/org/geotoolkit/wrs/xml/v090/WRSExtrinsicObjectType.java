@@ -93,8 +93,7 @@ public class WRSExtrinsicObjectType extends ExtrinsicObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof WRSExtrinsicObjectType && super.equals(obj)) {
-            final WRSExtrinsicObjectType that = (WRSExtrinsicObjectType) obj;
+        if (obj instanceof WRSExtrinsicObjectType that && super.equals(obj)) {
             return Objects.equals(this.content, that.content);
         }
         return false;

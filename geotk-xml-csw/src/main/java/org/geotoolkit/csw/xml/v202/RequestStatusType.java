@@ -136,8 +136,7 @@ public class RequestStatusType implements RequestStatus {
         if (object == this) {
             return true;
         }
-        if (object instanceof RequestStatusType) {
-            RequestStatusType that = (RequestStatusType) object;
+        if (object instanceof RequestStatusType that) {
             return Objects.equals(this.timestamp, that.timestamp);
         }
         return false;

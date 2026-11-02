@@ -88,8 +88,7 @@ public class TransactionResultsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionResultsType) {
-            final TransactionResultsType that = (TransactionResultsType) object;
+        if (object instanceof TransactionResultsType that) {
             return Objects.equals(this.action,   that.action);
         }
         return false;

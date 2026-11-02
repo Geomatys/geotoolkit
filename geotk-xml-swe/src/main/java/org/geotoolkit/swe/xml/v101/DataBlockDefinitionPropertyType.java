@@ -232,8 +232,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
         if (object == this) {
             return true;
         }
-        if (object instanceof DataBlockDefinitionPropertyType) {
-            final DataBlockDefinitionPropertyType that = (DataBlockDefinitionPropertyType) object;
+        if (object instanceof DataBlockDefinitionPropertyType that) {
 
             return Objects.equals(this.dataBlockDefinition, that.dataBlockDefinition)             &&
                    Objects.equals(this.actuate,            that.actuate)          &&

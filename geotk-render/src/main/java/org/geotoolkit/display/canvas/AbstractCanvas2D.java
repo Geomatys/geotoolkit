@@ -1141,8 +1141,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     private CoordinateReferenceSystem appendCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toAdd) throws FactoryException{
-        if(crs instanceof CompoundCRS){
-            final CompoundCRS orig = (CompoundCRS) crs;
+        if(crs instanceof CompoundCRS orig){
             final List<CoordinateReferenceSystem> lst = new ArrayList<>(orig.getComponents());
             lst.add(toAdd);
             return new GeodeticObjectBuilder().addName(orig.getName().getCode())
@@ -1155,8 +1154,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     private CoordinateReferenceSystem removeCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toRemove) throws FactoryException{
-        if(crs instanceof CompoundCRS){
-            final CompoundCRS orig = (CompoundCRS) crs;
+        if(crs instanceof CompoundCRS orig){
             final List<CoordinateReferenceSystem> lst = new ArrayList<>(orig.getComponents());
             lst.remove(toRemove);
             if(lst.size() == 1){

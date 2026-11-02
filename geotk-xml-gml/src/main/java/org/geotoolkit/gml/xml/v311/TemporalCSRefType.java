@@ -267,8 +267,7 @@ public class TemporalCSRefType {
             return true;
         }
 
-        if (object instanceof TemporalCSRefType) {
-            final TemporalCSRefType that = (TemporalCSRefType) object;
+        if (object instanceof TemporalCSRefType that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

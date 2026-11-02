@@ -174,8 +174,7 @@ public class MetadataURLType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MetadataURLType) {
-            final MetadataURLType that = (MetadataURLType) object;
+        if (object instanceof MetadataURLType that) {
 
             return Objects.equals(this.format,  that.format) &&
                    Objects.equals(this.type,    that.type)   &&

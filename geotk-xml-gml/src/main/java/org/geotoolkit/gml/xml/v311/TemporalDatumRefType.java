@@ -273,8 +273,7 @@ public class TemporalDatumRefType {
             return true;
         }
 
-        if (object instanceof TemporalDatumRefType) {
-            final TemporalDatumRefType that = (TemporalDatumRefType) object;
+        if (object instanceof TemporalDatumRefType that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

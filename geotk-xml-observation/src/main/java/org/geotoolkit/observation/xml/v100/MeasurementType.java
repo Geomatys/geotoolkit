@@ -171,8 +171,7 @@ public class MeasurementType extends ObservationType implements Measurement {
         if (object == this) {
             return true;
         }
-        if (object instanceof MeasurementType && super.equals(object)) {
-            final MeasurementType that = (MeasurementType) object;
+        if (object instanceof MeasurementType that && super.equals(object)) {
             return this.getResult().equals(that.getResult());
         }
         return false;

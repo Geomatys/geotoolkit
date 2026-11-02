@@ -123,8 +123,7 @@ public class Identifier implements AbstractIdentifier {
             return true;
         }
 
-        if (object instanceof Identifier) {
-            final Identifier that = (Identifier) object;
+        if (object instanceof Identifier that) {
 
             return Objects.equals(this.name, that.name) &&
                     Objects.equals(this.term, that.term);

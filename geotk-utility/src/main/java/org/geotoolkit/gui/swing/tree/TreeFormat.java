@@ -346,8 +346,7 @@ final class TreeFormat {
                     ? (isLast ? treeBlank : treeLine)
                     : (isLast ? treeEnd   : treeCross));
         }
-        if ((node instanceof TreeTableNode) && (toAppendTo instanceof TableAppender)) {
-            final TreeTableNode tableNode = (TreeTableNode) node;
+        if ((node instanceof TreeTableNode tableNode) && (toAppendTo instanceof TableAppender)) {
             final int columnCount = tableNode.getColumnCount();
             for (int i=0; i<columnCount; i++) {
                 if (i != 0) {

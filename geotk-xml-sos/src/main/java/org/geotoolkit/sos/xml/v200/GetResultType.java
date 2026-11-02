@@ -248,8 +248,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     @Override
     public String getResponseFormat() {
         for (Object ext : getExtension()) {
-            if (ext instanceof String) {
-                String outputFormat = (String) ext;
+            if (ext instanceof String outputFormat) {
                 if (outputFormat.startsWith("responseFormat=")) {
                     return outputFormat.substring(15);
                 }

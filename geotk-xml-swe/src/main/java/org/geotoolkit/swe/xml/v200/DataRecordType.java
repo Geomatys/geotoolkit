@@ -111,8 +111,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         if (object == this) {
             return true;
         }
-        if (object instanceof DataRecordType && super.equals(object)) {
-            final DataRecordType that = (DataRecordType) object;
+        if (object instanceof DataRecordType that && super.equals(object)) {
 
             return Objects.equals(this.field, that.field);
         }

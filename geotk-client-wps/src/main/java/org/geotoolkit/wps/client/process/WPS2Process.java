@@ -230,8 +230,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
         req.setClientSecurity(security);
         final Object response = req.getResponse();
 
-        if (response instanceof ExceptionResponse) {
-            final ExceptionResponse report = (ExceptionResponse) response;
+        if (response instanceof ExceptionResponse report) {
             throw new ProcessException("Exception when executing the process.", this, report.toException());
 
         } else if (response instanceof StatusInfo) {
@@ -326,12 +325,10 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
      * @param response The execute response given by service.
      */
     private Result checkResult(Object response) throws IOException, JAXBException, InterruptedException, ProcessException {
-        if (response instanceof ExceptionResponse) {
-            final ExceptionResponse report = (ExceptionResponse) response;
+        if (response instanceof ExceptionResponse report) {
             throw new ProcessException("Exception when executing the process.", this, report.toException());
 
-        } else if (response instanceof StatusInfo) {
-            final StatusInfo statusInfo = (StatusInfo) response;
+        } else if (response instanceof StatusInfo statusInfo) {
             Status status = statusInfo.getStatus();
             jobId = statusInfo.getJobID();
 
@@ -385,8 +382,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
                     }
                 }
 
-                if (tmpResponse instanceof StatusInfo) {
-                    final StatusInfo statInfo = (StatusInfo) tmpResponse;
+                if (tmpResponse instanceof StatusInfo statInfo) {
                     status = statInfo.getStatus();
 
                     if (Status.SUCCEEDED.equals(status)) {
@@ -410,8 +406,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
                         fireProgressing(lastMessage, lastProgress, false);
                     }
 
-                } else if (tmpResponse instanceof ExceptionResponse) {
-                    final ExceptionResponse report = (ExceptionResponse) tmpResponse;
+                } else if (tmpResponse instanceof ExceptionResponse report) {
                     throw new ProcessException("Exception when executing the process.", this, report.toException());
                 }
             }
@@ -510,14 +505,12 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
                 response = request.getResponse();
             }
 
-            if (response instanceof Result) {
-                final Result result = (Result) response;
+            if (response instanceof Result result) {
                 for (DataOutput out : result.getOutput()) {
                     fillOutputs(outputParameters, out);
                 }
 
-            } else if (response instanceof ExceptionResponse) {
-                final ExceptionResponse report = (ExceptionResponse) response;
+            } else if (response instanceof ExceptionResponse report) {
                 throw new ProcessException("Exception when getting process result.", this, report.toException());
             }
 
@@ -573,8 +566,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
 
             for (final GeneralParameterValue inputValue : inputs.values()) {
                 GeneralParameterDescriptor inputGeneDesc = inputValue.getDescriptor();
-                if (inputGeneDesc instanceof ParameterDescriptor) {
-                    final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
+                if (inputGeneDesc instanceof ParameterDescriptor inputDesc) {
                     final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)inputDesc).getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
                     final Object value = ((ParameterValue)inputValue).getValue();
@@ -595,16 +587,14 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
              * OUTPUTS
              */
             for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
-                if (outputGeneDesc instanceof ParameterDescriptor) {
-                    final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
+                if (outputGeneDesc instanceof ParameterDescriptor outputDesc) {
                     final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)outputDesc).getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
                     final String outputIdentifier = outputDesc.getName().getCode();
                     String mime     = null;
                     String encoding = null;
                     String schema   = null;
-                    if (adaptor instanceof ComplexAdaptor) {
-                        final ComplexAdaptor cadaptor = (ComplexAdaptor) adaptor;
+                    if (adaptor instanceof ComplexAdaptor cadaptor) {
                         mime     = cadaptor.getMimeType();
                         encoding = cadaptor.getEncoding();
                         schema   = cadaptor.getSchema();
@@ -615,8 +605,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
                     out.setMimeType(mime);
                     out.setSchema(schema);
                     wpsOUT.add(out);
-                } else if(outputGeneDesc instanceof ParameterDescriptorGroup) {
-                    final ParameterDescriptorGroup outputDesc = (ParameterDescriptorGroup) outputGeneDesc;
+                } else if(outputGeneDesc instanceof ParameterDescriptorGroup outputDesc) {
                     final OutputDefinition out = new OutputDefinition(outputDesc.getName().getCode(), asReference);
                     wpsOUT.add(out);
                 }

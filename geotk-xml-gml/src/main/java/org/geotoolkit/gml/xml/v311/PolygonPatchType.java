@@ -266,8 +266,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
         if (object == this) {
             return true;
         }
-        if (object instanceof PolygonPatchType) {
-            final PolygonPatchType that = (PolygonPatchType) object;
+        if (object instanceof PolygonPatchType that) {
 
             return Objects.equals(this.getExterior(),    that.getExterior()) &&
                    Objects.equals(this.getInterior(),    that.getInterior()) &&

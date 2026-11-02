@@ -373,8 +373,7 @@ public final class FeatureExt {
                         cp.setPropertyValue(name, deepCopy(val));
                     }
                 } else {
-                    if(val instanceof Collection){
-                        final Collection col = (Collection) val;
+                    if(val instanceof Collection col){
                         final Collection cpCol = new ArrayList(col.size());
                         for(Iterator ite=col.iterator();ite.hasNext();){
                             cpCol.add(copy((Feature)ite.next()));
@@ -419,23 +418,20 @@ public final class FeatureExt {
             return ((Date)candidate).clone();
         }else if(candidate instanceof Date){
             return ((Date)candidate).clone();
-        }else if(candidate instanceof Object[]){
-            final Object[] array = (Object[])candidate;
+        }else if(candidate instanceof Object[] array){
             final Object[] copy = Arrays.copyOf(array, array.length);
             for (int i = 0; i < array.length; i++) {
                 copy[i] = deepCopy(array[i]);
             }
             return copy;
-        }else if(candidate instanceof List){
-            final List list = (List)candidate;
+        }else if(candidate instanceof List list){
             final int size = list.size();
             final List cp = new ArrayList(size);
             for(int i=0;i<size;i++){
                 cp.add(deepCopy(list.get(i)));
             }
             return cp;
-        }else if (candidate instanceof Map) {
-            final Map map = (Map)candidate;
+        }else if (candidate instanceof Map map) {
             final Map cp = new HashMap(map.size());
             for(final Iterator<Map.Entry> ite=map.entrySet().iterator(); ite.hasNext();) {
                 final Map.Entry entry = ite.next();
@@ -579,9 +575,8 @@ public final class FeatureExt {
             }
         }
 
-        if (geometry instanceof Geometry) {
+        if (geometry instanceof Geometry g) {
             //fix for bad readers who do not have crs set on geometries
-            Geometry g = (Geometry) geometry;
             CoordinateReferenceSystem crs = Geometries.wrap(geometry).get().getCoordinateReferenceSystem();
             if (crs == null) {
                 if (geomType == null) {
@@ -658,11 +653,10 @@ public final class FeatureExt {
 
         for(GenericName name : propertyNames){
             final PropertyType pt = type.getProperty(name.toString());
-            if(pt instanceof AttributeType && Geometry.class.isAssignableFrom(((AttributeType)pt).getValueClass()) ){
+            if(pt instanceof AttributeType at && Geometry.class.isAssignableFrom(((AttributeType)pt).getValueClass()) ){
                 final AttributeType qualifier = new DefaultAttributeType(
                     Collections.singletonMap(NAME_KEY, AttributeConvention.CRS_CHARACTERISTIC),
                     CoordinateReferenceSystem.class,1,1,crs);
-                AttributeType at = (AttributeType) pt;
                 at = new DefaultAttributeType(extractIdentification(pt), at.getValueClass(),
                         at.getMinimumOccurs(), at.getMaximumOccurs(), at.getDefaultValue(), qualifier);
                 ftb.addProperty(at);
@@ -689,11 +683,10 @@ public final class FeatureExt {
         ftb.setSuperTypes(type.getSuperTypes().toArray(new FeatureType[0]));
 
         for(PropertyType pt : type.getProperties(false)){
-            if(pt instanceof AttributeType && Geometry.class.isAssignableFrom(((AttributeType)pt).getValueClass()) ){
+            if(pt instanceof AttributeType at && Geometry.class.isAssignableFrom(((AttributeType)pt).getValueClass()) ){
                 final AttributeType qualifier = new DefaultAttributeType(
                     Collections.singletonMap(NAME_KEY, AttributeConvention.CRS_CHARACTERISTIC),
                     CoordinateReferenceSystem.class,1,1,crs);
-                AttributeType at = (AttributeType) pt;
                 at = new DefaultAttributeType(extractIdentification(pt), at.getValueClass(),
                         at.getMinimumOccurs(), at.getMaximumOccurs(), at.getDefaultValue(), qualifier);
                 ftb.addProperty(at);
@@ -838,8 +831,7 @@ public final class FeatureExt {
 
         for(final PropertyType desc : target.getType().getProperties(true)){
 
-            if(desc instanceof FeatureAssociationRole){
-                final FeatureAssociationRole assRole = (FeatureAssociationRole) desc;
+            if(desc instanceof FeatureAssociationRole assRole){
                 try{
                     final List<ParameterValueGroup> groups = source.groups(desc.getName().tip().toString());
                     if(groups != null){
@@ -855,8 +847,7 @@ public final class FeatureExt {
                     //parameter might not exist of might be a group
                 }
 
-            }else if(desc instanceof AttributeType){
-                final AttributeType at = (AttributeType) desc;
+            }else if(desc instanceof AttributeType at){
                 final String code = desc.getName().tip().toString();
                 final GeneralParameterValue gpv = searchParameter(source, code);
 
@@ -875,14 +866,12 @@ public final class FeatureExt {
 
             final Property property = source.getProperty(gpd.getName().getCode());
 
-            if(gpd instanceof ParameterDescriptor){
-                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
+            if(gpd instanceof ParameterDescriptor desc){
 
                 for(final Object v : ((Attribute)property).getValues()){
                     target.getOrCreate(desc).setValue(v);
                 }
-            }else if(gpd instanceof ParameterDescriptorGroup){
-                final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
+            }else if(gpd instanceof ParameterDescriptorGroup desc){
 
                 final FeatureAssociation asso = (FeatureAssociation) property;
                 for(Feature prop : asso.getValues()){
@@ -913,13 +902,11 @@ public final class FeatureExt {
     public static GeneralParameterValue searchParameter(final ParameterValueGroup group, final String code){
         ensureNonNull("group", group);
         for(GeneralParameterValue param : group.values()){
-            if(param instanceof ParameterValue){
-                final ParameterValue pv = (ParameterValue) param;
+            if(param instanceof ParameterValue pv){
                 if(pv.getDescriptor().getName().getCode().equals(code)){
                     return pv;
                 }
-            }else if(param instanceof ParameterValueGroup){
-                final ParameterValueGroup pvg = (ParameterValueGroup) param;
+            }else if(param instanceof ParameterValueGroup pvg){
                 if(pvg.getDescriptor().getName().getCode().equals(code)){
                     return pvg;
                 }

@@ -68,8 +68,7 @@ public final class StorageListener {
             if (source != null && !sources.contains(source)) {
                 // register in the new source
                 this.sources.add(source);
-                if (source instanceof Resource) {
-                    Resource res = (Resource) source;
+                if (source instanceof Resource res) {
                     res.addListener(StoreEvent.class, this);
                 }
             }
@@ -93,8 +92,7 @@ public final class StorageListener {
         }
 
         private synchronized void remove(final Object source) {
-            if (source instanceof Resource) {
-                Resource res = (Resource) source;
+            if (source instanceof Resource res) {
                 res.removeListener(StoreEvent.class, this);
             }
         }

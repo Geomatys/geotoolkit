@@ -112,8 +112,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             this.id.add(createIdOps((AbstractIdType) obj));
 
         // clone
-        } else if (obj instanceof FilterType) {
-            final FilterType that = (FilterType) obj;
+        } else if (obj instanceof FilterType that) {
             if (that.comparisonOps != null) {
                 final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
                 this.comparisonOps = createComparisonOps(comp);
@@ -128,8 +127,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                 this.id = new ArrayList<>();
                 for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                     AbstractIdType aid = jb.getValue();
-                    if (aid instanceof ResourceIdType) {
-                        final ResourceIdType raid = (ResourceIdType) aid;
+                    if (aid instanceof ResourceIdType raid) {
                         this.id.add(FACTORY.createResourceId(new ResourceIdType(raid)));
                     } else if (aid != null) {
                         throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
@@ -611,8 +609,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         if (object == this) {
             return true;
         }
-        if (object instanceof FilterType) {
-            final FilterType that = (FilterType) object;
+        if (object instanceof FilterType that) {
 
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {

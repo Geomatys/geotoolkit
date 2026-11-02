@@ -121,8 +121,7 @@ public class MIFStore extends DataStore implements WritableAggregate {
 
     @Override
     public synchronized void remove(Resource resource) throws DataStoreException {
-        if (resource instanceof MIFFeatureSet) {
-            final MIFFeatureSet fs = (MIFFeatureSet) resource;
+        if (resource instanceof MIFFeatureSet fs) {
             final GenericName name = fs.getType().getName();
             manager.deleteSchema(name.toString());
             fs.removeIf(Filter.include()::test);

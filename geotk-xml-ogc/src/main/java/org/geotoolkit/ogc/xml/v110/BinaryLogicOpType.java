@@ -327,8 +327,7 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements org.geot
         if (obj == this) {
             return true;
         }
-        if (obj instanceof BinaryLogicOpType) {
-            BinaryLogicOpType that = (BinaryLogicOpType) obj;
+        if (obj instanceof BinaryLogicOpType that) {
             boolean logic = false;
             if (this.logicOps == null && that.logicOps == null) {
                 logic = true;

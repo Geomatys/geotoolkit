@@ -235,8 +235,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
             return true;
         }
 
-        if (object instanceof CodeSpacePropertyType) {
-            final CodeSpacePropertyType that = (CodeSpacePropertyType) object;
+        if (object instanceof CodeSpacePropertyType that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

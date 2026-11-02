@@ -234,8 +234,7 @@ public class SurfacePatchArrayPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SurfacePatchArrayPropertyType) {
-            final SurfacePatchArrayPropertyType that = (SurfacePatchArrayPropertyType) object;
+        if (object instanceof SurfacePatchArrayPropertyType that) {
 
             return Objects.equals(this.getAbstractSurfacePatch(), that.getAbstractSurfacePatch());
         }

@@ -121,8 +121,7 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExceptionReport) {
-            final ExceptionReport that = (ExceptionReport) object;
+        if (object instanceof ExceptionReport that) {
 
             return Objects.equals(this.exception, that.exception)    &&
                    Objects.equals(this.version,   that.version);

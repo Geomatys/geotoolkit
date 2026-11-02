@@ -146,8 +146,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         if (object == this) {
             return true;
         }
-        if (object instanceof GetResult && super.equals(object)) {
-            final GetResult that = (GetResult) object;
+        if (object instanceof GetResult that && super.equals(object)) {
             return Objects.equals(this.eventTime, that.eventTime) &&
                    Objects.equals(this.observationTemplateId,   that.observationTemplateId);
         }

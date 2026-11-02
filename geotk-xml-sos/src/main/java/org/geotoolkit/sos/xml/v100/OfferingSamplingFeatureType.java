@@ -87,8 +87,7 @@ public class OfferingSamplingFeatureType implements Entry{
         if (object == this) {
             return true;
         }
-        if (object instanceof OfferingSamplingFeatureType && super.equals(object)) {
-            final OfferingSamplingFeatureType that = (OfferingSamplingFeatureType) object;
+        if (object instanceof OfferingSamplingFeatureType that && super.equals(object)) {
             return Objects.equals(this.idOffering, that.idOffering) &&
                    Objects.equals(this.component,  that.component);
         }

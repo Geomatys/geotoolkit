@@ -457,8 +457,7 @@ public class Execute extends RequestBase {
             if (object == this) {
                 return true;
             }
-            if (object instanceof DataInputs) {
-                final DataInputs that = (DataInputs) object;
+            if (object instanceof DataInputs that) {
                 return Objects.equals(this.getInput(), that.getInput());
             }
             return false;

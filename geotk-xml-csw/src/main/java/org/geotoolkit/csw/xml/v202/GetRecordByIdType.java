@@ -160,8 +160,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         if (object == this) {
             return true;
         }
-        if (object instanceof GetRecordByIdType && super.equals(object)) {
-            final GetRecordByIdType that = (GetRecordByIdType) object;
+        if (object instanceof GetRecordByIdType that && super.equals(object)) {
             return Objects.equals(this.elementSetName, that.elementSetName) &&
                    Objects.equals(this.outputFormat,   that.outputFormat)   &&
                    Objects.equals(this.outputSchema,   that.outputSchema)   &&

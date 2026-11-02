@@ -379,8 +379,7 @@ public class FeaturePropertyType implements FeatureProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof FeaturePropertyType) {
-            final FeaturePropertyType that = (FeaturePropertyType) object;
+        if (object instanceof FeaturePropertyType that) {
 
             boolean feat = false;
             if (this.abstractFeature == null && that.abstractFeature == null) {

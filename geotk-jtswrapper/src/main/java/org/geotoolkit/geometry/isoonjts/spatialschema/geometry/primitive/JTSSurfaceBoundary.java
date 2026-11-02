@@ -75,8 +75,7 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
         if (object == this)
             return true;
 
-        if (object instanceof JTSSurfaceBoundary && super.equals(object)) {
-            JTSSurfaceBoundary that = (JTSSurfaceBoundary) object;
+        if (object instanceof JTSSurfaceBoundary that && super.equals(object)) {
             return Objects.equals(this.exterior, that.exterior) &&
                    Objects.equals(this.interior, that.interior);
         }

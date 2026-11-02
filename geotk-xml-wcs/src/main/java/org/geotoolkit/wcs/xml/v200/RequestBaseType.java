@@ -148,8 +148,7 @@ public abstract class RequestBaseType implements RequestBase {
         if (this == o) {
             return true;
         }
-        if (o instanceof RequestBaseType) {
-            final RequestBaseType that = (RequestBaseType) o;
+        if (o instanceof RequestBaseType that) {
 
             return Objects.equals(this.extension, that.extension) &&
                    Objects.equals(this.service,   that.service) &&

@@ -221,8 +221,7 @@ public class OnlineResource implements AbstractOnlineResource {
             return true;
         }
 
-        if (object instanceof OnlineResource) {
-            final OnlineResource that = (OnlineResource) object;
+        if (object instanceof OnlineResource that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

@@ -438,8 +438,7 @@ public class PDFFixGraphics2D extends Graphics2D {
 
         final Composite composite = this.getComposite();
 
-        if(composite instanceof AlphaComposite){
-            final AlphaComposite alphaComposite = (AlphaComposite) composite;
+        if(composite instanceof AlphaComposite alphaComposite){
             if(alphaComposite.getAlpha() != 1){
                 final BufferedImage buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 final Graphics2D g = buffer.createGraphics();

@@ -99,8 +99,7 @@ public class AdditionalParametersType extends AdditionalParametersBaseType imple
         if (object == this) {
             return true;
         }
-        if (object instanceof  AdditionalParametersType) {
-            final AdditionalParametersType that = (AdditionalParametersType) object;
+        if (object instanceof  AdditionalParametersType that) {
             return Objects.equals(this.additionalParameter, that.additionalParameter);
         }
         return false;

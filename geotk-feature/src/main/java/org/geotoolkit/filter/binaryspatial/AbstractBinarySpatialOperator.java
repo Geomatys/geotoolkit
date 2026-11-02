@@ -106,13 +106,11 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             value = exp.apply(object);
         }
         Geometry candidate;
-        if(value instanceof GridCoverage){
+        if(value instanceof GridCoverage coverage){
             //use the coverage envelope
-            final GridCoverage coverage = (GridCoverage) value;
             candidate = JTS.toGeometry(coverage.getGridGeometry().getEnvelope());
-        }else if(value instanceof GridCoverageResource){
+        }else if(value instanceof GridCoverageResource resource){
             //use the coverage envelope
-            final GridCoverageResource resource = (GridCoverageResource) value;
             try{
                 GridGeometry gg = resource.getGridGeometry();
                 candidate = JTS.toGeometry(gg.getEnvelope());
@@ -121,8 +119,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 LOGGER.log(Level.INFO, "Could not convert expression : "+exp+" to geometry for object : "+object+"\n"+ex.getMessage(), ex);
                 candidate = null;
             }
-        }else if(value instanceof org.opengis.geometry.Geometry){
-            final org.opengis.geometry.Geometry geo = (org.opengis.geometry.Geometry) value;
+        }else if(value instanceof org.opengis.geometry.Geometry geo){
             if(geo instanceof AbstractJTSGeometry) {
                 candidate = ((AbstractJTSGeometry)geo).getJTSGeometry();
             }else{

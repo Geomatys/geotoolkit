@@ -74,8 +74,7 @@ public class LayerListType {
         if (object == this) {
             return true;
         }
-        if (object instanceof LayerListType) {
-            final LayerListType that = (LayerListType) object;
+        if (object instanceof LayerListType that) {
 
             return Objects.equals(this.layer, that.layer);
             }

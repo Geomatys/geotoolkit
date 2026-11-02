@@ -178,8 +178,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             return null;
         }
         final CodeList<?> type = filter.getOperatorType();
-        if (filter instanceof BetweenComparisonOperator) {
-            final BetweenComparisonOperator pib = (BetweenComparisonOperator) filter;
+        if (filter instanceof BetweenComparisonOperator pib) {
             final PropertyIsBetweenType bot = ogc_factory.createPropertyIsBetweenType();
             final LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
@@ -219,8 +218,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             bot.getExpression().add(extract(pit.getOperand1()));
             bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
-        } else if (filter instanceof LikeOperator) {
-            final LikeOperator pis = (LikeOperator) filter;
+        } else if (filter instanceof LikeOperator pis) {
             final List<Expression> expressions = filter.getExpressions();
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
             bot.setEscape(String.valueOf(pis.getEscapeChar()));
@@ -242,8 +240,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             bot.getExpression().add(extract(pit.getOperand1()));
             bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsNotEqualTo(bot);
-        } else if (filter instanceof NullOperator) {
-            final NullOperator pis = (NullOperator) filter;
+        } else if (filter instanceof NullOperator pis) {
             final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
             final Object obj = extract((Expression) pis.getExpressions().get(0)).getValue();
             if (obj instanceof LiteralType) {
@@ -330,8 +327,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
         }
         final BoxType bType = new BoxType();
         CoordinateReferenceSystem boxCrs = null;
-        if (val instanceof Envelope) {
-            final Envelope env = (Envelope) val;
+        if (val instanceof Envelope env) {
             boxCrs = env.getCoordinateReferenceSystem();
             final int xAxis;
             if (env.getDimension() == 2) {
@@ -354,8 +350,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             final int yAxis = xAxis + 1;
             bType.getCoord().add(new CoordType(env.getMinimum(xAxis), env.getMinimum(yAxis)));
             bType.getCoord().add(new CoordType(env.getMaximum(xAxis), env.getMaximum(yAxis)));
-        } else if (val instanceof GeographicBoundingBox) {
-            final GeographicBoundingBox e = (GeographicBoundingBox) val;
+        } else if (val instanceof GeographicBoundingBox e) {
             bType.getCoord().add(new CoordType(e.getWestBoundLongitude(), e.getSouthBoundLatitude()));
             bType.getCoord().add(new CoordType(e.getEastBoundLongitude(), e.getNorthBoundLatitude()));
             boxCrs = CommonCRS.defaultGeographic();

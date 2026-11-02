@@ -135,8 +135,7 @@ public class ListOfValuesType implements ListOfValues {
         if (object == this) {
             return true;
         }
-        if (object instanceof ListOfValuesType) {
-            final ListOfValuesType that = (ListOfValuesType) object;
+        if (object instanceof ListOfValuesType that) {
 
             return  Objects.equals(this.value, that.value);
         }
@@ -347,8 +346,7 @@ public class ListOfValuesType implements ListOfValues {
             if (object == this) {
                 return true;
             }
-            if (object instanceof Value) {
-                final Value that = (Value) object;
+            if (object instanceof Value that) {
 
                 return  Objects.equals(this.any, that.any);
             }

@@ -171,8 +171,7 @@ public class WMCUtilities {
 
             try {
                 Resource resource = server.findResource(layerName.toString());
-                if (resource instanceof FeatureSet) {
-                    final FeatureSet featureSet = (FeatureSet) resource;
+                if (resource instanceof FeatureSet featureSet) {
                     final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(featureSet.getType());
                     final MapLayer layer = MapBuilder.createLayer(featureSet);
                     layer.setStyle(style);

@@ -204,8 +204,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractFeatureCollectionType && super.equals(object, mode)) {
-            final AbstractFeatureCollectionType that = (AbstractFeatureCollectionType) object;
+        if (object instanceof AbstractFeatureCollectionType that && super.equals(object, mode)) {
 
             return Objects.equals(this.featureMember,  that.featureMember) &&
                    Objects.equals(this.featureMembers, that.featureMembers);

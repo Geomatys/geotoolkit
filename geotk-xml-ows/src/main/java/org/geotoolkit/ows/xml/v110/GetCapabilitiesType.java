@@ -234,8 +234,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetCapabilitiesType) {
-        final GetCapabilitiesType that = (GetCapabilitiesType) object;
+        if (object instanceof GetCapabilitiesType that) {
         return Objects.equals(this.acceptFormats,  that.acceptFormats)  &&
                Objects.equals(this.acceptVersions, that.acceptVersions) &&
                Objects.equals(this.sections,       that.sections)       &&

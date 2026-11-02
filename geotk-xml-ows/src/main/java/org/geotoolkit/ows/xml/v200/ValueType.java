@@ -102,8 +102,7 @@ public class ValueType implements Value {
         if (object == this) {
             return true;
         }
-        if (object instanceof ValueType) {
-            final ValueType that = (ValueType) object;
+        if (object instanceof ValueType that) {
             return Objects.equals(this.value, that.value);
         }
         return false;

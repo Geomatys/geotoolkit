@@ -98,8 +98,7 @@ public class ObjectRefListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ObjectRefListType) {
-            final ObjectRefListType that = (ObjectRefListType) obj;
+        if (obj instanceof ObjectRefListType that) {
             return Objects.equals(this.objectRef, that.objectRef);
         }
         return false;

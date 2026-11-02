@@ -108,8 +108,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetRecordByIdResponseType) {
-            final GetRecordByIdResponseType that = (GetRecordByIdResponseType) object;
+        if (object instanceof GetRecordByIdResponseType that) {
             return Objects.equals(this.any,            that.any);
         }
         return false;

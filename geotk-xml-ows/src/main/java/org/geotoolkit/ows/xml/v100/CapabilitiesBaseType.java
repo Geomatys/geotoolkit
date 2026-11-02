@@ -175,8 +175,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         if (object == this) {
             return true;
         }
-        if (object instanceof CapabilitiesBaseType) {
-            final CapabilitiesBaseType that = (CapabilitiesBaseType) object;
+        if (object instanceof CapabilitiesBaseType that) {
             return Objects.equals(this.operationsMetadata,    that.operationsMetadata)    &&
                    Objects.equals(this.serviceIdentification, that.serviceIdentification) &&
                    Objects.equals(this.serviceProvider,       that.serviceProvider)       &&

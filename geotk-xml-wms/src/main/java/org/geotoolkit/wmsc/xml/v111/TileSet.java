@@ -253,8 +253,7 @@ public class TileSet {
         if (object == this) {
             return true;
         }
-        if (object instanceof TileSet) {
-            final TileSet that = (TileSet) object;
+        if (object instanceof TileSet that) {
             return Objects.equals(this.boundingBox, that.boundingBox) &&
                    Objects.equals(this.format,     that.format)     &&
                    Objects.equals(this.height,   that.height)   &&

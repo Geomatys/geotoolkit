@@ -94,8 +94,7 @@ public class MultiDatastream extends Datastream implements STSResponse {
 
     @Override
     public boolean equals(Object o, float delta) {
-        if (o instanceof MultiDatastream && super.equals(o, delta)) {
-            MultiDatastream that = (MultiDatastream) o;
+        if (o instanceof MultiDatastream that && super.equals(o, delta)) {
             return Objects.equals(this.multiObservationDataTypes, that.multiObservationDataTypes) &&
                    DeltaComparable.equals(this.observedProperties, that.observedProperties, delta);
         }

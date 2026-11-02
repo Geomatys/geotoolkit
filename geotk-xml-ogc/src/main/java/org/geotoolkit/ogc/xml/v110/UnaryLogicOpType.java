@@ -86,8 +86,7 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
              this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
 
          // clone
-         } else if (obj instanceof UnaryLogicOpType) {
-             final UnaryLogicOpType that = (UnaryLogicOpType) obj;
+         } else if (obj instanceof UnaryLogicOpType that) {
              if (that.comparisonOps != null) {
                  final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
                  this.comparisonOps = FilterType.createComparisonOps(comp);
@@ -207,8 +206,7 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
         if (object == this) {
             return true;
         }
-        if (object instanceof UnaryLogicOpType) {
-            final UnaryLogicOpType that = (UnaryLogicOpType) object;
+        if (object instanceof UnaryLogicOpType that) {
 
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {

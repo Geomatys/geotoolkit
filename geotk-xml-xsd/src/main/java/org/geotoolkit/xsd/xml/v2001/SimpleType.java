@@ -213,8 +213,7 @@ public abstract class SimpleType extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof SimpleType && super.equals(object)) {
-            final SimpleType that = (SimpleType) object;
+        if (object instanceof SimpleType that && super.equals(object)) {
             return Objects.equals(this.list,                      that.list) &&
                    Objects.equals(this._final,                    that._final) &&
                    Objects.equals(this.name,                      that.name) &&

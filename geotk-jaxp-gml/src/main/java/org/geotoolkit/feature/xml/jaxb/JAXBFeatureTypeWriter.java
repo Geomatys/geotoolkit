@@ -337,9 +337,8 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
                 }
             }
 
-        } else if (pType instanceof FeatureAssociationRole) {
+        } else if (pType instanceof FeatureAssociationRole role) {
 
-            final FeatureAssociationRole role = (FeatureAssociationRole) pType;
             final FeatureType valueType = role.getValueType();
             final String name = role.getName().tip().toString();
             final int minOccurs = role.getMinimumOccurs();

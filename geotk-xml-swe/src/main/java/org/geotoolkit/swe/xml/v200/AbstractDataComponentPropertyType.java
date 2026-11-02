@@ -533,8 +533,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
             return true;
         }
 
-        if (object instanceof AbstractDataComponentPropertyType) {
-            final AbstractDataComponentPropertyType that = (AbstractDataComponentPropertyType) object;
+        if (object instanceof AbstractDataComponentPropertyType that) {
             boolean compo = false;
             if (this.abstractDataComponent == null && that.abstractDataComponent == null) {
                 compo = true;

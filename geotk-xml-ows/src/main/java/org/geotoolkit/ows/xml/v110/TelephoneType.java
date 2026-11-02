@@ -117,8 +117,7 @@ public class TelephoneType implements AbstractTelephone {
         if (object == this) {
             return true;
         }
-        if (object instanceof TelephoneType) {
-            final TelephoneType that = (TelephoneType) object;
+        if (object instanceof TelephoneType that) {
 
             return Objects.equals(this.facsimile, that.facsimile) &&
                    Objects.equals(this.voice,     that.voice);

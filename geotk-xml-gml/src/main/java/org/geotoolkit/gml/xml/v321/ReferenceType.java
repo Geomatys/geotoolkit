@@ -358,8 +358,7 @@ public class ReferenceType implements Reference {
         if (object == this) {
             return true;
         }
-        if (object instanceof ReferenceType) {
-            final ReferenceType that = (ReferenceType) object;
+        if (object instanceof ReferenceType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

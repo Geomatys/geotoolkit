@@ -127,8 +127,7 @@ public class QueryExpressionType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof QueryExpressionType) {
-            final QueryExpressionType that = (QueryExpressionType) obj;
+        if (obj instanceof QueryExpressionType that) {
             boolean eq = false;
             if (this.content == null && that.content == null) {
                 eq = true;

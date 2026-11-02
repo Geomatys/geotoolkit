@@ -312,8 +312,7 @@ public class Components implements AbstractComponents {
         if (object == this) {
             return true;
         }
-        if (object instanceof Components) {
-            final Components that = (Components) object;
+        if (object instanceof Components that) {
 
             return Objects.equals(this.actuate, that.actuate)             &&
                    Objects.equals(this.href, that.href)                   &&

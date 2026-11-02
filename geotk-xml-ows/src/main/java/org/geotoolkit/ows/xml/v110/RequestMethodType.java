@@ -118,8 +118,7 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
         if (object == this) {
             return true;
         }
-        if (object instanceof RequestMethodType && super.equals(object)) {
-            final RequestMethodType that = (RequestMethodType) object;
+        if (object instanceof RequestMethodType that && super.equals(object)) {
             return Objects.equals(this.constraint, that.constraint);
         }
         return false;

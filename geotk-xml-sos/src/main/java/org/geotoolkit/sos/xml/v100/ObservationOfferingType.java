@@ -387,8 +387,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         if (object == this) {
             return true;
         }
-        if (object instanceof ObservationOfferingType && super.equals(object, mode)) {
-            final ObservationOfferingType that = (ObservationOfferingType) object;
+        if (object instanceof ObservationOfferingType that && super.equals(object, mode)) {
             return Objects.equals(this.time,                that.time)                &&
                    Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
                    Objects.equals(this.intendedApplication, that.intendedApplication) &&

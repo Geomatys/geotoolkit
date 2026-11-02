@@ -553,8 +553,7 @@ public class XMLMosaic implements WritableTileMatrix, ImageTileMatrix {
             tiles.parallel().forEach((Tile tile) -> {
                 try {
                     final Resource resource = tile.getResource();
-                    if (resource instanceof GridCoverageResource) {
-                        final GridCoverageResource gcr = (GridCoverageResource) resource;
+                    if (resource instanceof GridCoverageResource gcr) {
                         writeTile(tile.getIndices(), gcr.read(null).render(null));
                     } else {
                         throw new BackingStoreException(new DataStoreException("Only ImageTile are supported."));

@@ -39,8 +39,7 @@ public final class WCSUtilities extends Static {
         obj = unmarshal.unmarshal(stream);
         WCSMarshallerPool.getInstance().recycle(unmarshal);
 
-        if(obj instanceof JAXBElement){
-            final JAXBElement ele = (JAXBElement) obj;
+        if(obj instanceof JAXBElement ele){
             obj = ele.getValue();
         }
 

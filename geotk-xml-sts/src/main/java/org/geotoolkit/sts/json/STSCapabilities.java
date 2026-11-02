@@ -67,8 +67,7 @@ public class STSCapabilities implements STSResponse {
         if (this == o) {
             return true;
         }
-        if (o instanceof STSCapabilities) {
-            STSCapabilities that = (STSCapabilities) o;
+        if (o instanceof STSCapabilities that) {
             return Objects.equals(this.value,          that.value) &&
                    Objects.equals(this.serverSettings, that.serverSettings);
         }
@@ -100,13 +99,11 @@ public class STSCapabilities implements STSResponse {
     }
 
     private static void print(StringBuilder sb, Object o, String tab) {
-        if (o instanceof List) {
-            List l = (List) o;
+        if (o instanceof List l) {
             for (Object lo : l) {
                 print(sb, lo, tab + "\t");
             }
-        } else if (o instanceof Map) {
-            Map m = (Map) o;
+        } else if (o instanceof Map m) {
             for (Object key : m.keySet()) {
                 sb.append(tab).append(key).append(":\n");
                 Object mo = m.get(key);
@@ -172,8 +169,7 @@ public class STSCapabilities implements STSResponse {
             if (this == o) {
                 return true;
             }
-            if (o instanceof Link) {
-                Link that = (Link) o;
+            if (o instanceof Link that) {
                 return Objects.equals(this.name, that.name) &&
                        Objects.equals(this.url, that.url);
             }

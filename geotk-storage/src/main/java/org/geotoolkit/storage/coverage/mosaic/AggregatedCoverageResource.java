@@ -364,8 +364,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      */
     @Override
     public synchronized Resource add(Resource resource) throws DataStoreException {
-        if (resource instanceof GridCoverageResource) {
-            final GridCoverageResource gcr = (GridCoverageResource) resource;
+        if (resource instanceof GridCoverageResource gcr) {
             if (bands.isEmpty()) {
                 //first resource in the aggregation
                 bands.addAll(toMapping(Arrays.asList(gcr)));

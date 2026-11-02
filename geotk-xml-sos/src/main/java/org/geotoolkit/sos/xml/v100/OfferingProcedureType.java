@@ -86,8 +86,7 @@ public class OfferingProcedureType implements Entry{
         if (object == this) {
             return true;
         }
-        if (object instanceof OfferingProcedureType && super.equals(object)) {
-            final OfferingProcedureType that = (OfferingProcedureType) object;
+        if (object instanceof OfferingProcedureType that && super.equals(object)) {
             return Objects.equals(this.idOffering, that.idOffering) &&
                    Objects.equals(this.component,  that.component);
         }

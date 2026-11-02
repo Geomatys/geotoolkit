@@ -338,8 +338,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         if (object == this) {
             return true;
         }
-        if (object instanceof PropertyTypeImpl) {
-            final PropertyTypeImpl that = (PropertyTypeImpl) object;
+        if (object instanceof PropertyTypeImpl that) {
 
             return Objects.equals(this.cardinality,         that.cardinality)         &&
                    Objects.equals(this.constrainedBy,       that.constrainedBy)       &&

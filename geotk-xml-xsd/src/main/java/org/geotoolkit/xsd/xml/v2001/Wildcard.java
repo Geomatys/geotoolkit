@@ -118,8 +118,7 @@ public class Wildcard extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof Wildcard && super.equals(object)) {
-            final Wildcard that = (Wildcard) object;
+        if (object instanceof Wildcard that && super.equals(object)) {
             return Objects.equals(this.namespace,   that.namespace) &&
                    Objects.equals(this.processContents, that.processContents);
         }

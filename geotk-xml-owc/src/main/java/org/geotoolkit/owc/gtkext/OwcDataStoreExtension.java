@@ -73,8 +73,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 o = ((JAXBElement)o).getValue();
             }
 
-            if (o instanceof ParameterType) {
-                final ParameterType param = (ParameterType) o;
+            if (o instanceof ParameterType param) {
                 final String key = param.getKey();
                 final Class valClass;
                 try {

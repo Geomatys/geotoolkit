@@ -125,8 +125,7 @@ public class InsertElementType implements InsertElement {
             return true;
         }
 
-        if (obj instanceof InsertElementType) {
-            InsertElementType that = (InsertElementType) obj;
+        if (obj instanceof InsertElementType that) {
             return Objects.equals(this.feature, that.feature) &&
                    Objects.equals(this.handle, that.handle);
         }

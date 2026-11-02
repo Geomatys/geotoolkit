@@ -402,8 +402,7 @@ public final class ConvertersTestUtils {
         final GeoJSONObject geoJsonObject = GeoJSONParser.parse(path);
         GeoJSONGeometry geoJsonGeometry = null;
 
-        if (geoJsonObject instanceof GeoJSONFeature) {
-            GeoJSONFeature jsonFeature = (GeoJSONFeature) geoJsonObject;
+        if (geoJsonObject instanceof GeoJSONFeature jsonFeature) {
             geoJsonGeometry = jsonFeature.getGeometry();
         } else if (geoJsonObject instanceof GeoJSONGeometry)
             geoJsonGeometry = (GeoJSONGeometry) geoJsonObject;

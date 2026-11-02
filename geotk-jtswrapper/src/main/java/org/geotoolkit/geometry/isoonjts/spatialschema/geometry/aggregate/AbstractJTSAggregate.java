@@ -48,8 +48,7 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
     protected org.locationtech.jts.geom.Geometry computeJTSPeer() {
         final List<org.locationtech.jts.geom.Geometry> childParts = new ArrayList<org.locationtech.jts.geom.Geometry>();
         for(Geometry prim : elements) {
-            if(prim instanceof JTSGeometry){
-                final JTSGeometry jtsGeom = (JTSGeometry) prim;
+            if(prim instanceof JTSGeometry jtsGeom){
                 final org.locationtech.jts.geom.Geometry geom = jtsGeom.getJTSGeometry();
                 if (geom != null) {
                     childParts.add(geom);
@@ -109,8 +108,7 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
     public boolean equals(final Object object) {
         if (this == object)
             return true;
-        if (object instanceof AbstractJTSAggregate && super.equals(object)) {
-            AbstractJTSAggregate that = (AbstractJTSAggregate) object;
+        if (object instanceof AbstractJTSAggregate that && super.equals(object)) {
             return Objects.equals(this.elements, that.elements);
         }
         return false;

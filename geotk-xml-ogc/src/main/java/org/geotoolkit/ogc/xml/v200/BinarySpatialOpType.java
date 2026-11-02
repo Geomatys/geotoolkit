@@ -187,8 +187,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
             final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
-                if (element instanceof String) {
-                    String s = (String) element;
+                if (element instanceof String s) {
                     s = s.replace("\n", "");
                     s = s.replace("\t", "");
                     s = s.trim();
@@ -245,8 +244,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
         if (object == this) {
             return true;
         }
-        if (object instanceof BinarySpatialOpType) {
-            final BinarySpatialOpType that = (BinarySpatialOpType) object;
+        if (object instanceof BinarySpatialOpType that) {
 
 
             boolean env = false;

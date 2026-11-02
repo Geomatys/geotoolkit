@@ -258,8 +258,7 @@ public class Inputs implements AbstractInputs {
             return true;
         }
 
-        if (object instanceof Inputs) {
-            final Inputs that = (Inputs) object;
+        if (object instanceof Inputs that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

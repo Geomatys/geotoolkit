@@ -125,8 +125,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractDataArrayType && super.equals(object, mode)) {
-            final AbstractDataArrayType that = (AbstractDataArrayType) object;
+        if (object instanceof AbstractDataArrayType that && super.equals(object, mode)) {
             return Objects.equals(this.elementCount, that.elementCount);
         }
         return false;

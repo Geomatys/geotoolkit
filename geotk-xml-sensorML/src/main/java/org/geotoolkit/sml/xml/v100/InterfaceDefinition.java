@@ -343,8 +343,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
         if (object == this) {
             return true;
         }
-        if (object instanceof InterfaceDefinition) {
-            final InterfaceDefinition that = (InterfaceDefinition) object;
+        if (object instanceof InterfaceDefinition that) {
 
             return Objects.equals(this.applicationLayer,  that.applicationLayer) &&
                    Objects.equals(this.dataLinkLayer,     that.dataLinkLayer)    &&

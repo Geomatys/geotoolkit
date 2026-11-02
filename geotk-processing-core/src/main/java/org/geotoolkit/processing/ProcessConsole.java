@@ -454,8 +454,7 @@ public final class ProcessConsole {
             print(BOLD,(input)?"-":"",code,RESET,"\t");
             print("(",minOcc,",",maxOcc,")\t");
 
-            if (pdesc instanceof ParameterDescriptor) {
-                final ParameterDescriptor d = (ParameterDescriptor) pdesc;
+            if (pdesc instanceof ParameterDescriptor d) {
                 final Class clazz = d.getValueClass();
                 final Set validValues = d.getValidValues();
                 final Unit unit = d.getUnit();

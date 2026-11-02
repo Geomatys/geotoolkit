@@ -153,8 +153,7 @@ public class IdentifiableType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof IdentifiableType) {
-            final IdentifiableType that = (IdentifiableType) obj;
+        if (obj instanceof IdentifiableType that) {
             return Objects.equals(this.home, that.home) &&
                    Objects.equals(this.id,   that.id)   &&
                    Objects.equals(this.slot, that.slot);

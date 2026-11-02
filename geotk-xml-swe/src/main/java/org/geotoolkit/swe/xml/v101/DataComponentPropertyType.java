@@ -457,9 +457,8 @@ public class DataComponentPropertyType implements DataComponentProperty {
             return true;
         }
 
-        if (object instanceof DataComponentPropertyType) {
+        if (object instanceof DataComponentPropertyType that) {
             boolean eq;
-            final DataComponentPropertyType that = (DataComponentPropertyType) object;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 eq = Objects.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
             } else {

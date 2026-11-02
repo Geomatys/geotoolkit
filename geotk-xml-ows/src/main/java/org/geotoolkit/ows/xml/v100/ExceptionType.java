@@ -116,8 +116,7 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExceptionType) {
-            final ExceptionType that = (ExceptionType) object;
+        if (object instanceof ExceptionType that) {
             return Objects.equals(this.exceptionCode, that.exceptionCode) &&
                    Objects.equals(this.exceptionText, that.exceptionText) &&
                    Objects.equals(this.locator,       that.locator);

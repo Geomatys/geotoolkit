@@ -73,8 +73,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
         if (propertyName != null) {
             this.propertyName = new PropertyNameType(propertyName);
         }
-        if (geometry instanceof AbstractGeometryType) {
-            final AbstractGeometryType geom = (AbstractGeometryType) geometry;
+        if (geometry instanceof AbstractGeometryType geom) {
             this.geometry = geom.getXmlElement();
         } else if (geometry instanceof BoxType) {
             this.box = (BoxType) geometry;

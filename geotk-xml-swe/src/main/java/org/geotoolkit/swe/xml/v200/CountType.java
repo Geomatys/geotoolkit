@@ -129,8 +129,7 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
             return true;
         }
 
-        if (object instanceof CountType && super.equals(object)) {
-            final CountType that = (CountType) object;
+        if (object instanceof CountType that && super.equals(object)) {
             return Objects.equals(this.constraint, that.constraint)     &&
                    Objects.equals(this.value,      that.value);
         }

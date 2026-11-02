@@ -274,8 +274,7 @@ public class Documentation implements AbstractDocumentation {
             return true;
         }
 
-        if (object instanceof Documentation) {
-            final Documentation that = (Documentation) object;
+        if (object instanceof Documentation that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

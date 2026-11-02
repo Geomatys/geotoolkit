@@ -49,8 +49,7 @@ public final class FeatureLoop {
 
     public static void loop(Feature feature, PropertyType pt, BiFunction<PropertyType,Object,Object> function){
         final String attName = pt.getName().toString();
-        if(pt instanceof AttributeType){
-            final AttributeType at = (AttributeType) pt;
+        if(pt instanceof AttributeType at){
             Object val = feature.getPropertyValue(attName);
             if(at.getMaximumOccurs()>1){
                 //value is a collection

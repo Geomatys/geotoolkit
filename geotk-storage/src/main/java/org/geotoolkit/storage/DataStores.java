@@ -127,8 +127,7 @@ public final class DataStores {
             case SKIP:
                 return VisitOption.CONTINUE;
             case CONTINUE:
-                if (root instanceof Aggregate) {
-                    Aggregate agg = (Aggregate) root;
+                if (root instanceof Aggregate agg) {
                     try {
                         for (Resource r : agg.components()) {
                             final VisitOption copt = walkInternal(r, walker);
@@ -196,8 +195,7 @@ public final class DataStores {
     }
 
     private static <T extends Resource> void list(Resource resource, Collection<T> list, Class<T> resourceClass, boolean ignoreErrors) throws DataStoreException {
-        if (resource instanceof Aggregate) {
-            final Aggregate ds = (Aggregate) resource;
+        if (resource instanceof Aggregate ds) {
             try {
                 for (Resource rs : ds.components()) {
                     if (resourceClass.isInstance(rs)) list.add((T) rs);

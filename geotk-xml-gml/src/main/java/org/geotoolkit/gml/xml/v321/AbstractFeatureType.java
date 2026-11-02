@@ -150,8 +150,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
             return;
         }
         // for now, only point are handled
-        if (newGeom instanceof Point) {
-            Point pt = (Point) newGeom;
+        if (newGeom instanceof Point pt) {
             if (boundedBy != null && boundedBy.getEnvelope() != null) {
                 final GeneralEnvelope gEnv = new GeneralEnvelope(boundedBy.getEnvelope());
                 gEnv.add(pt.getPos());
@@ -228,8 +227,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
             return true;
         }
 
-        if (object instanceof AbstractFeatureType && super.equals(object, mode)) {
-            final AbstractFeatureType that = (AbstractFeatureType) object;
+        if (object instanceof AbstractFeatureType that && super.equals(object, mode)) {
 
             boolean loc = false;
             if (this.location != null && that.location != null) {

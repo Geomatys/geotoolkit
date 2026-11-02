@@ -139,8 +139,7 @@ public class AllowedTimes {
         if (object == this) {
             return true;
         }
-        if (object instanceof AllowedTimes) {
-            final AllowedTimes that = (AllowedTimes) object;
+        if (object instanceof AllowedTimes that) {
             boolean intervalOrValue = false;
             if (this.intervalOrValueList != null && that.intervalOrValueList != null) {
                 if (this.intervalOrValueList.size() != that.intervalOrValueList.size()) {

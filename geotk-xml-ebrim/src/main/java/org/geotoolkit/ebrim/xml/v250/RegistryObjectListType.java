@@ -138,8 +138,7 @@ public class RegistryObjectListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryObjectListType) {
-            final RegistryObjectListType that = (RegistryObjectListType) obj;
+        if (obj instanceof RegistryObjectListType that) {
             return Objects.equals(this.objectRef,      that.objectRef) &&
                    Objects.equals(this.registryObject, that.registryObject) ;
         }

@@ -206,8 +206,7 @@ public class ArrayLink implements AbstractArrayLink {
             return true;
         }
 
-        if (object instanceof ArrayLink) {
-            final ArrayLink that = (ArrayLink) object;
+        if (object instanceof ArrayLink that) {
             return Objects.equals(this.connection, that.connection)             &&
                    Objects.equals(this.destinationArray, that.destinationArray) &&
                    Objects.equals(this.sourceArray, that.sourceArray)           &&

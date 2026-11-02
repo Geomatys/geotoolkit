@@ -299,8 +299,7 @@ public class EventListMember implements AbstractEventListMember {
             return true;
         }
 
-        if (object instanceof EventListMember) {
-            final EventListMember that = (EventListMember) object;
+        if (object instanceof EventListMember that) {
 
             return Objects.equals(this.actuate, that.actuate)
                     && Objects.equals(this.href, that.href)

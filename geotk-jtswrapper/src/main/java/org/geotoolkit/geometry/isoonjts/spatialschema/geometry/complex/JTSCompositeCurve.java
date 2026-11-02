@@ -171,8 +171,7 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
     public boolean equals(final Object object) {
         if (object == this)
             return true;
-        if (object instanceof JTSCompositeCurve && super.equals(object)) {
-            JTSCompositeCurve that = (JTSCompositeCurve) object;
+        if (object instanceof JTSCompositeCurve that && super.equals(object)) {
             return Objects.equals(this.parent, that.parent);
         }
         return false;

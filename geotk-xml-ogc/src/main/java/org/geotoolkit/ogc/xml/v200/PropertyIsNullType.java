@@ -159,8 +159,7 @@ public class PropertyIsNullType extends ComparisonOpsType implements NullOperato
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PropertyIsNullType) {
-            final PropertyIsNullType that = (PropertyIsNullType) obj;
+        if (obj instanceof PropertyIsNullType that) {
             if (this.expression == null && that.expression == null) {
                 return true;
             } else if (this.expression != null && that.expression != null) {

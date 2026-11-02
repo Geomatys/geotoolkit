@@ -833,8 +833,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                     }
                 }
 
-            } else if (resource instanceof FeatureSet) {
-                final FeatureSet fs = (FeatureSet) resource;
+            } else if (resource instanceof FeatureSet fs) {
 
                 //calculate max symbol size, to expand search envelope.
                 double symbolsMargin = 0.0;

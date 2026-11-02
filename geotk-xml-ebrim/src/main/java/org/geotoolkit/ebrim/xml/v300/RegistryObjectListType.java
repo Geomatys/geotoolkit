@@ -170,8 +170,7 @@ public class RegistryObjectListType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryObjectListType) {
-            final RegistryObjectListType that = (RegistryObjectListType) obj;
+        if (obj instanceof RegistryObjectListType that) {
 
             if (this.identifiable == null && that.identifiable == null) {
                 return true;

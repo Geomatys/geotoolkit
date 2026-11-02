@@ -113,8 +113,7 @@ public class TranslatedCapabilitiesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof TranslatedCapabilitiesType) {
-            final TranslatedCapabilitiesType that = (TranslatedCapabilitiesType) object;
+        if (object instanceof TranslatedCapabilitiesType that) {
             return Objects.equals(this.document, that.document);
         }
         return false;

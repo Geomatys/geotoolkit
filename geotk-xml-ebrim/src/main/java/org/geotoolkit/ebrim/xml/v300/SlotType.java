@@ -132,8 +132,7 @@ public class SlotType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SlotType) {
-            final SlotType that = (SlotType) obj;
+        if (obj instanceof SlotType that) {
 
             boolean vl = false;
             if (this.valueList == null && that.valueList == null) {

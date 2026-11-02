@@ -144,8 +144,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
         if (object == this) {
             return true;
         }
-        if (object instanceof DefinitionReferenceImpl) {
-            final DefinitionReferenceImpl that = (DefinitionReferenceImpl) object;
+        if (object instanceof DefinitionReferenceImpl that) {
 
             return Objects.equals(this.definitionSource, that.definitionSource) &&
                    Objects.equals(this.sourceIdentifier, that.sourceIdentifier);

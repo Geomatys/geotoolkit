@@ -220,8 +220,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         if (object == this) {
             return true;
         }
-        if (object instanceof GetFeatureOfInterest && super.equals(object)) {
-            final GetFeatureOfInterest that = (GetFeatureOfInterest) object;
+        if (object instanceof GetFeatureOfInterest that && super.equals(object)) {
             return Objects.equals(this.eventTime,           that.eventTime)           &&
                    Objects.equals(this.featureOfInterestId, that.featureOfInterestId) &&
                    Objects.equals(this.location,            that.location);
@@ -312,8 +311,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             if (object == this) {
                 return true;
             }
-            if (object instanceof Location) {
-                final  Location that = ( Location) object;
+            if (object instanceof Location that) {
                 return Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             }
             return false;

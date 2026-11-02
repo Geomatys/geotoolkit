@@ -108,8 +108,7 @@ public class DefinitionType extends DefinitionBaseType {
         if (object == this) {
             return true;
         }
-        if (object instanceof DefinitionType && super.equals(object, mode)) {
-            final DefinitionType that = (DefinitionType) object;
+        if (object instanceof DefinitionType that && super.equals(object, mode)) {
             return Objects.equals(this.remarks, that.remarks);
         }
         return false;

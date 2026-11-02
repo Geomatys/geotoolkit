@@ -62,8 +62,7 @@ final class WarpKey extends Rectangle {
      */
     @Override
     public boolean equals(final Object value) {
-        if (value instanceof WarpKey) {
-            final WarpKey other = (WarpKey) value;
+        if (value instanceof WarpKey other) {
             return super.equals(other) && transform.equals(other.transform);
         }
         return false;

@@ -189,8 +189,7 @@ public class MetadataType implements AbstractMetadata {
         if (object == this) {
             return true;
         }
-        if (object instanceof MetadataType) {
-            final MetadataType that = (MetadataType) object;
+        if (object instanceof MetadataType that) {
             return Objects.equals(this.about,            that.about)            &&
                    Objects.equals(this.abstractMetaData, that.abstractMetaData) &&
                    Objects.equals(this.actuate,          that.actuate)          &&

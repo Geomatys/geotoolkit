@@ -125,8 +125,7 @@ public class SortPropertyType implements SortProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof SortPropertyType) {
-            final SortPropertyType that = (SortPropertyType) object;
+        if (object instanceof SortPropertyType that) {
             return Objects.equals(this.propertyName,  that.propertyName)   &&
                    Objects.equals(this.sortOrder,  that.sortOrder);
         }

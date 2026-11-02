@@ -121,8 +121,7 @@ public class ObservationContextType {
             return true;
         }
 
-        if (object instanceof ObservationContextType && super.equals(object)) {
-            final ObservationContextType that = (ObservationContextType) object;
+        if (object instanceof ObservationContextType that && super.equals(object)) {
             return Objects.equals(this.relatedObservation,  that.relatedObservation) &&
                    Objects.equals(this.role,                that.role);
         }

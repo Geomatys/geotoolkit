@@ -63,8 +63,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D {
         this.item = item;
 
         //build children nodes
-        if (item instanceof MapLayers) {
-            final MapLayers mc = (MapLayers) item;
+        if (item instanceof MapLayers mc) {
             final List<MapItem> childs = mc.getComponents();
             for (int i = 0, n = childs.size(); i < n; i++) {
                 final MapItem child = childs.get(i);

@@ -81,8 +81,7 @@ public class OfferingResponseModeType implements Entry {
         if (object == this) {
             return true;
         }
-        if (object instanceof OfferingResponseModeType && super.equals(object)) {
-            final OfferingResponseModeType that = (OfferingResponseModeType) object;
+        if (object instanceof OfferingResponseModeType that && super.equals(object)) {
             return Objects.equals(this.idOffering, that.idOffering) &&
                    Objects.equals(this.mode,       that.mode);
         }

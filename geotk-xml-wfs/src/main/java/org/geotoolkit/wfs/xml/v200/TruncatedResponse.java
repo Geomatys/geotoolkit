@@ -95,8 +95,7 @@ public class TruncatedResponse {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof TruncatedResponse) {
-            final TruncatedResponse that = (TruncatedResponse) obj;
+        if (obj instanceof TruncatedResponse that) {
             return Objects.equals(this.exceptionReport, that.exceptionReport);
         }
         return false;

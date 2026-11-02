@@ -1602,8 +1602,7 @@ public class TiffImageReader extends SpatialImageReader {
             }
             if (currentInput instanceof FileInputStream) {
                 fileChannelPositionBegin = ((FileInputStream)currentInput).getChannel().position();
-            } else if (currentInput instanceof InputStream) {
-                InputStream stream = (InputStream) currentInput;
+            } else if (currentInput instanceof InputStream stream) {
                 if (stream.markSupported()) {
                     try {
                         stream.reset();
@@ -1613,8 +1612,7 @@ public class TiffImageReader extends SpatialImageReader {
                 } else {
                     throw new IllegalStateException("Given input stream does not support rewinding.");
                 }
-            } else if (currentInput instanceof ImageInputStream) {
-                ImageInputStream stream = (ImageInputStream) currentInput;
+            } else if (currentInput instanceof ImageInputStream stream) {
                 try {
                     stream.reset();
                 } catch (IOException ex) {
@@ -3757,8 +3755,7 @@ public class TiffImageReader extends SpatialImageReader {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            if (source instanceof InputStream) {
-                final InputStream stream = (InputStream) source;
+            if (source instanceof InputStream stream) {
                 stream.mark(16);
             } else if (source instanceof ImageInputStream) {
                 ((ImageInputStream) source).mark();

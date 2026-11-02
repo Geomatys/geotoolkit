@@ -182,8 +182,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
             return true;
         }
 
-        if (object instanceof DataRecordType && super.equals(object, mode)) {
-            final DataRecordType that = (DataRecordType) object;
+        if (object instanceof DataRecordType that && super.equals(object, mode)) {
             return Objects.equals(this.field, that.field);
         }
         return false;

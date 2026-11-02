@@ -266,8 +266,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
             final String name = propType.getName().tip().toString();
             final Object value = edited.getPropertyValue(propType.getName().toString());
 
-            if (propType instanceof AttributeType) {
-                final AttributeType attType = (AttributeType) propType;
+            if (propType instanceof AttributeType attType) {
                 if (attType.getMaximumOccurs() > 1) {
                     writer.writeArrayFieldStart(name);
                     for (Object v : (Collection) value) {
@@ -277,8 +276,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
                 } else {
                     writeProperty(name, value, true, alreadyWritten);
                 }
-            } else if (propType instanceof FeatureAssociationRole) {
-                final FeatureAssociationRole asso = (FeatureAssociationRole) propType;
+            } else if (propType instanceof FeatureAssociationRole asso) {
                 if (asso.getMaximumOccurs() > 1) {
                     writer.writeFieldName(name);
                     writeFeatureCollection((List<Feature>) value, asso.getValueType());
@@ -302,8 +300,7 @@ final class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      */
     private void writeProperty(String name, Object value, boolean writeFieldName, Set<Feature> alreadyWritten) throws IOException, IllegalArgumentException {
-        if (value instanceof Feature) {
-            Feature feat = (Feature)value;
+        if (value instanceof Feature feat) {
             // avoid infinite loop
             if (!alreadyWritten.contains(feat)) {
                 writer.writeFieldName(name);

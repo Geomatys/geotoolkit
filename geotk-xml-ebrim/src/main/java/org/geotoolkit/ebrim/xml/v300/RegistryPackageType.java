@@ -87,8 +87,7 @@ public class RegistryPackageType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryPackageType && super.equals(obj)) {
-            final RegistryPackageType that = (RegistryPackageType) obj;
+        if (obj instanceof RegistryPackageType that && super.equals(obj)) {
             return Objects.equals(this.registryObjectList, that.registryObjectList);
         }
         return false;

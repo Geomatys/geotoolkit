@@ -281,8 +281,7 @@ class FeatureProcessor {
                     value[ZONE] = offset;
                 }
             }
-            if (newInfo instanceof HeadingSentence) {
-                HeadingSentence heading = (HeadingSentence) newInfo;
+            if (newInfo instanceof HeadingSentence heading) {
                 value[HEADING] = heading.getHeading();
                 isTrueNorth = heading.isTrue();
             } else {

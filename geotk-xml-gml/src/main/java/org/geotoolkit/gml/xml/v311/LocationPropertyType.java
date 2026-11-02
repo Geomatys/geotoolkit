@@ -475,8 +475,7 @@ public class LocationPropertyType implements LocationProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof LocationPropertyType) {
-            final LocationPropertyType that = (LocationPropertyType) object;
+        if (object instanceof LocationPropertyType that) {
 
             boolean geom = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {

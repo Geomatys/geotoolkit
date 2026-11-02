@@ -188,8 +188,7 @@ public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOpe
             final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
-                if (element instanceof String) {
-                    String s = (String) element;
+                if (element instanceof String s) {
                     s = s.replace("\n", "");
                     s = s.replace("\t", "");
                     s = s.trim();
@@ -247,8 +246,7 @@ public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOpe
         if (object == this) {
             return true;
         }
-        if (object instanceof BinaryTemporalOpType) {
-            final BinaryTemporalOpType that = (BinaryTemporalOpType) object;
+        if (object instanceof BinaryTemporalOpType that) {
 
             boolean env = false;
             if (this.expression != null && that.expression != null) {

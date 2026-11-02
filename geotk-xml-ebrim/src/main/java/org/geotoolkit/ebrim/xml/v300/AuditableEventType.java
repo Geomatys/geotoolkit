@@ -166,8 +166,7 @@ public class AuditableEventType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof AuditableEventType && super.equals(obj)) {
-            final AuditableEventType that = (AuditableEventType) obj;
+        if (obj instanceof AuditableEventType that && super.equals(obj)) {
             return Objects.equals(this.affectedObjects, that.affectedObjects) &&
                    Objects.equals(this.eventType,       that.eventType) &&
                    Objects.equals(this.requestId,       that.requestId) &&

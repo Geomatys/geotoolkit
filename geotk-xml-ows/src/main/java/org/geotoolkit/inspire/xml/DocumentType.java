@@ -91,8 +91,7 @@ public class DocumentType extends OnlineResourceType {
         if (object == this) {
             return true;
         }
-        if (object instanceof DocumentType && super.equals(object)) {
-            final DocumentType that = (DocumentType) object;
+        if (object instanceof DocumentType that && super.equals(object)) {
             return Objects.equals(this.language, that.language);
         }
         return false;

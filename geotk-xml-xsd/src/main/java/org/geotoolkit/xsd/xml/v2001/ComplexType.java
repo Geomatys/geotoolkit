@@ -423,8 +423,7 @@ public abstract class ComplexType extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof ComplexType && super.equals(object)) {
-            final ComplexType that = (ComplexType) object;
+        if (object instanceof ComplexType that && super.equals(object)) {
             return Objects.equals(this._abstract,                 that._abstract) &&
                    Objects.equals(this._final,                    that._final) &&
                    Objects.equals(this.all,                       that.all) &&

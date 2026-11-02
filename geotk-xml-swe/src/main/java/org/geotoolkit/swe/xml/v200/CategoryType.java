@@ -157,8 +157,7 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
         if (object == this) {
             return true;
         }
-        if (object instanceof CategoryType && super.equals(object)) {
-            final CategoryType that = (CategoryType) object;
+        if (object instanceof CategoryType that && super.equals(object)) {
 
             return Objects.equals(this.constraint,  that.constraint) &&
                    Objects.equals(this.codeSpace,   that.codeSpace) &&

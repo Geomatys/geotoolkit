@@ -151,8 +151,7 @@ public class SystemType extends AbstractComponentType implements System {
             return true;
         }
 
-        if (object instanceof SystemType && super.equals(object, mode)) {
-            final SystemType that = (SystemType) object;
+        if (object instanceof SystemType that && super.equals(object, mode)) {
             return Objects.equals(this.components,  that.components)  &&
                    Objects.equals(this.connections, that.connections) &&
                    Objects.equals(this.positions,   that.positions);

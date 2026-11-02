@@ -218,8 +218,7 @@ public class CoordinatesType implements Coordinates {
         if (object == this) {
             return true;
         }
-        if (object instanceof CoordinatesType) {
-            final CoordinatesType that = (CoordinatesType) object;
+        if (object instanceof CoordinatesType that) {
 
 
             return Objects.equals(this.cs,      that.cs) &&

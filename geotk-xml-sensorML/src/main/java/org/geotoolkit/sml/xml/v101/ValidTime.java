@@ -159,8 +159,7 @@ public class ValidTime extends SensorObject implements AbstractValidTime {
             return true;
         }
 
-        if (object instanceof ValidTime) {
-            final ValidTime that = (ValidTime) object;
+        if (object instanceof ValidTime that) {
 
             return Objects.equals(this.timeInstant, that.timeInstant) &&
                    Objects.equals(this.timePeriod,  that.timePeriod);

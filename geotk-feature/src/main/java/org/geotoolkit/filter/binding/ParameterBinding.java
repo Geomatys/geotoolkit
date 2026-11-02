@@ -66,8 +66,7 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
 
         try{
             GeneralParameterValue param = Parameters.getParameterOrGroup(candidate, xpath);
-            if(param instanceof ParameterValue){
-                final ParameterValue pm = (ParameterValue) param;
+            if(param instanceof ParameterValue pm){
                 pm.setValue(ObjectConverters.convert(value, pm.getDescriptor().getValueClass()));
             }else if(param instanceof ParameterValueGroup){
                 //how to map this ?

@@ -201,8 +201,7 @@ public class GeometryMapping implements XSDMapping {
             Unmarshaller unmarshaller = pool.acquireUnmarshaller();
             final Geometry jtsGeom;
             final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
-            if (geometry instanceof JTSGeometry) {
-                final JTSGeometry isoGeom = (JTSGeometry) geometry;
+            if (geometry instanceof JTSGeometry isoGeom) {
                 if (isoGeom instanceof JTSMultiCurve) {
                     ((JTSMultiCurve)isoGeom).applyCRSonChild();
                 }

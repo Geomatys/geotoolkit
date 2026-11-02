@@ -348,8 +348,7 @@ public class Positions implements AbstractPositions {
             return true;
         }
 
-        if (object instanceof Positions) {
-            final Positions that = (Positions) object;
+        if (object instanceof Positions that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

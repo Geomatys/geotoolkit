@@ -121,8 +121,7 @@ public class SlotType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SlotType) {
-            final SlotType that = (SlotType) obj;
+        if (obj instanceof SlotType that) {
             return Objects.equals(this.slotType,  that.slotType) &&
                    Objects.equals(this.name,      that.name) &&
                    Objects.equals(this.valueList, that.valueList);

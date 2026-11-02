@@ -302,8 +302,7 @@ public class FilterFactory2 extends DefaultFilterFactory<Object,Object,Object> {
          * Apache SIS is not aware of the SRIDGenerator convention, which adds a (1 << 28) bitmask if
          * the authority is CRS. For avoiding a "no such EPSG code error", resolve the CRS in advance.
          */
-        if (obj instanceof org.locationtech.jts.geom.Geometry) {
-            final org.locationtech.jts.geom.Geometry g = (org.locationtech.jts.geom.Geometry) obj;
+        if (obj instanceof org.locationtech.jts.geom.Geometry g) {
             if (g.getUserData() == null) {
                 int srid = g.getSRID();
                 if (srid != 0) try {

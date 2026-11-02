@@ -316,8 +316,7 @@ public class EventTime {
         if (object == this) {
             return true;
         }
-        if (object instanceof EventTime) {
-            final EventTime that = (EventTime) object;
+        if (object instanceof EventTime that) {
             return Objects.equals(this.tAfter, that.tAfter) &&
                     Objects.equals(this.tBefore, that.tBefore) &&
                     Objects.equals(this.tBegins, that.tBegins) &&

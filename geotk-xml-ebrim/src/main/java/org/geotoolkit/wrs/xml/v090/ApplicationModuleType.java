@@ -110,8 +110,7 @@ public class ApplicationModuleType extends RegistryPackageType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ApplicationModuleType && super.equals(obj)) {
-            final ApplicationModuleType that = (ApplicationModuleType) obj;
+        if (obj instanceof ApplicationModuleType that && super.equals(obj)) {
             return Objects.equals(this.abstractQuery, that.abstractQuery);
         }
         return false;

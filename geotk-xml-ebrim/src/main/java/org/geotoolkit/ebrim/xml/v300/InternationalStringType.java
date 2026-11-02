@@ -119,8 +119,7 @@ public class InternationalStringType implements EbrimInternationalString {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof InternationalStringType) {
-            final InternationalStringType that = (InternationalStringType) obj;
+        if (obj instanceof InternationalStringType that) {
             return Objects.equals(this.localizedString, that.localizedString);
         }
         return false;

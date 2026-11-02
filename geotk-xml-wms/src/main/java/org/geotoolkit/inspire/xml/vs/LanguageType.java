@@ -81,8 +81,7 @@ public class LanguageType {
         if (object == this) {
             return true;
         }
-        if (object instanceof LanguageType) {
-            final LanguageType that = (LanguageType) object;
+        if (object instanceof LanguageType that) {
             return Objects.equals(this.default_, that.default_) &&
                    Objects.equals(this.value,    that.value) ;
         }

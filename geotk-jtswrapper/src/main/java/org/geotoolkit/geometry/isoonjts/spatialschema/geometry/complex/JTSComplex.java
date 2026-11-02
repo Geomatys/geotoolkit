@@ -176,8 +176,7 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
         if (this == object)
             return true;
 
-        if (object instanceof JTSComplex && super.equals(object)) {
-            JTSComplex that = (JTSComplex) object;
+        if (object instanceof JTSComplex that && super.equals(object)) {
             return Objects.equals(this.elements, that.elements);
         }
         return false;

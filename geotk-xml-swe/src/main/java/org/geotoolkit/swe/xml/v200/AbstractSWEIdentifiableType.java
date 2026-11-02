@@ -184,8 +184,7 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractSWEIdentifiableType && super.equals(object)) {
-            final AbstractSWEIdentifiableType that = (AbstractSWEIdentifiableType) object;
+        if (object instanceof AbstractSWEIdentifiableType that && super.equals(object)) {
 
             return Objects.equals(this.description, that.description) &&
                    Objects.equals(this.label,       that.label) &&

@@ -262,8 +262,7 @@ public class DescriptionType implements AbstractDescription {
         if (object == this) {
             return true;
         }
-        if (object instanceof DescriptionType) {
-        final DescriptionType that = (DescriptionType) object;
+        if (object instanceof DescriptionType that) {
 
         return Objects.equals(this._abstract, that._abstract) &&
                Objects.equals(this.keywords, that.keywords) &&

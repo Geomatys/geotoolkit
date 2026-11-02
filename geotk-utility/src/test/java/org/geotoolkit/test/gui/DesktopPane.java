@@ -357,8 +357,7 @@ final class DesktopPane extends JDesktopPane {
         for (int i=0; i<components.length; i++) {
             Component c = components[i];
             String title = String.valueOf(c.getName());
-            if (c instanceof JInternalFrame) {
-                final JInternalFrame ci = (JInternalFrame) c;
+            if (c instanceof JInternalFrame ci) {
                 title = String.valueOf(ci.getTitle());
                 c = ci.getRootPane().getComponent(0);
             }

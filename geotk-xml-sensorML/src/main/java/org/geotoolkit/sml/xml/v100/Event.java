@@ -480,8 +480,7 @@ public class Event implements AbstractEvent {
             return true;
         }
 
-        if (object instanceof Event) {
-            final Event that = (Event) object;
+        if (object instanceof Event that) {
 
             return Objects.equals(this.classification, that.classification)
                     && Objects.equals(this.contact, that.contact)

@@ -355,8 +355,7 @@ public class PositionType extends AbstractVectorType implements Position {
             return true;
         }
 
-        if (object instanceof PositionType && super.equals(object, mode)) {
-            final PositionType  that = (PositionType ) object;
+        if (object instanceof PositionType that && super.equals(object, mode)) {
             return Objects.equals(this.acceleration,        that.acceleration)        &&
                    Objects.equals(this.angularAcceleration, that.angularAcceleration) &&
                    Objects.equals(this.angularVelocity,     that.angularVelocity)     &&

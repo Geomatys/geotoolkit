@@ -102,8 +102,7 @@ public class CurveType extends AbstractCurveType implements Curve {
         if (object == this) {
             return true;
         }
-        if (object instanceof CurveType && super.equals(object,mode)) {
-            final CurveType that = (CurveType) object;
+        if (object instanceof CurveType that && super.equals(object,mode)) {
             return Objects.equals(this.segments, that.segments);
         }
         return false;

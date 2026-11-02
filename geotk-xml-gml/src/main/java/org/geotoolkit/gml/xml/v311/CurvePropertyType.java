@@ -381,8 +381,7 @@ public class CurvePropertyType implements CurveProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof CurvePropertyType) {
-            final CurvePropertyType that = (CurvePropertyType) object;
+        if (object instanceof CurvePropertyType that) {
 
             boolean geom = false;
             if (this.abstractCurve != null && that.abstractCurve != null) {

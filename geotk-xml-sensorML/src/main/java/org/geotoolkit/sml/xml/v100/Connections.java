@@ -100,8 +100,7 @@ public class Connections implements AbstractConnections {
             return true;
         }
 
-        if (object instanceof Connections) {
-            final Connections that = (Connections) object;
+        if (object instanceof Connections that) {
             return Objects.equals(this.connectionList, that.connectionList)  ;
         }
         return false;

@@ -136,8 +136,7 @@ public class InsertedFeatureType {
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertedFeatureType) {
-            final InsertedFeatureType that = (InsertedFeatureType) object;
+        if (object instanceof InsertedFeatureType that) {
             return Objects.equals(this.featureId,  that.featureId) &&
                    Objects.equals(this.handle,     that.handle);
         }

@@ -358,20 +358,15 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
                 if (st == null) {
                     continue;
                 }
-                if (st instanceof org.geotoolkit.sld.xml.v100.PointSymbolizer) {
-                    final org.geotoolkit.sld.xml.v100.PointSymbolizer pst = (org.geotoolkit.sld.xml.v100.PointSymbolizer) st;
+                if (st instanceof org.geotoolkit.sld.xml.v100.PointSymbolizer pst) {
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.sld.xml.v100.LineSymbolizer) {
-                    final org.geotoolkit.sld.xml.v100.LineSymbolizer pst = (org.geotoolkit.sld.xml.v100.LineSymbolizer) st;
+                } else if (st instanceof org.geotoolkit.sld.xml.v100.LineSymbolizer pst) {
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.sld.xml.v100.PolygonSymbolizer) {
-                    final org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst = (org.geotoolkit.sld.xml.v100.PolygonSymbolizer) st;
+                } else if (st instanceof org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst) {
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.sld.xml.v100.TextSymbolizer) {
-                    final org.geotoolkit.sld.xml.v100.TextSymbolizer pst = (org.geotoolkit.sld.xml.v100.TextSymbolizer) st;
+                } else if (st instanceof org.geotoolkit.sld.xml.v100.TextSymbolizer pst) {
                     rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.sld.xml.v100.RasterSymbolizer) {
-                    final org.geotoolkit.sld.xml.v100.RasterSymbolizer pst = (org.geotoolkit.sld.xml.v100.RasterSymbolizer) st;
+                } else if (st instanceof org.geotoolkit.sld.xml.v100.RasterSymbolizer pst) {
                     rule.symbolizers().add(visit(pst));
                 }
             }

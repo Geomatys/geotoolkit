@@ -295,8 +295,7 @@ public class Data {
         if (object == this) {
             return true;
         }
-        if (object instanceof Data) {
-            final Data that = (Data) object;
+        if (object instanceof Data that) {
             return Objects.equals(this.content, that.content) &&
                    Objects.equals(this.encoding, that.encoding) &&
                    Objects.equals(this.mimeType, that.mimeType) &&

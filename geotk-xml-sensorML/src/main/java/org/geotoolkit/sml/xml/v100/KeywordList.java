@@ -184,8 +184,7 @@ public class KeywordList implements AbstractKeywordList {
             return true;
         }
 
-        if (object instanceof KeywordList) {
-            final KeywordList that = (KeywordList) object;
+        if (object instanceof KeywordList that) {
             return Objects.equals(this.codeSpace, that.codeSpace) &&
                     Objects.equals(this.id, that.id) &&
                     Objects.equals(this.getKeyword(), that.getKeyword());

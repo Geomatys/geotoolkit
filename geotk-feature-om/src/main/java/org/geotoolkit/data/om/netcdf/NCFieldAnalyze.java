@@ -112,8 +112,7 @@ public class NCFieldAnalyze {
             if (obj == this) {
                 return true;
             }
-            if (obj instanceof NCFieldAnalyze) {
-                final NCFieldAnalyze that = (NCFieldAnalyze) obj;
+            if (obj instanceof NCFieldAnalyze that) {
                 return Objects.equals(this.mainField,      that.mainField) &&
                        Objects.equals(this.phenfields,     that.phenfields) &&
                        Objects.equals(this.separatorField, that.separatorField) &&

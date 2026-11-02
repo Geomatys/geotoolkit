@@ -267,8 +267,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractAdhocQueryExpressionType && super.equals(object)) {
-            final AbstractAdhocQueryExpressionType that = (AbstractAdhocQueryExpressionType) object;
+        if (object instanceof AbstractAdhocQueryExpressionType that && super.equals(object)) {
 
             final boolean selection;
             if (this.abstractSelectionClause == null && that.abstractSelectionClause == null) {

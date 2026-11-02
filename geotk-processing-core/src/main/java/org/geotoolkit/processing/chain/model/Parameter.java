@@ -215,8 +215,7 @@ public class Parameter {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Parameter) {
-            final Parameter that = (Parameter) obj;
+        if (obj instanceof Parameter that) {
             return Objects  .equals(this.code, that.code) &&
                    Objects  .equals(this.defaultValue, that.defaultValue) &&
                    Utilities.equals(this.maxOccurs, that.maxOccurs) &&

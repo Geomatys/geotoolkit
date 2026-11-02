@@ -216,8 +216,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureAttributeImpl && super.equals(object, mode)) {
-            final FeatureAttributeImpl that = (FeatureAttributeImpl) object;
+        if (object instanceof FeatureAttributeImpl that && super.equals(object, mode)) {
 
             return Objects.equals(this.code,        that.code)        &&
                    Objects.equals(this.listedValue, that.listedValue) &&

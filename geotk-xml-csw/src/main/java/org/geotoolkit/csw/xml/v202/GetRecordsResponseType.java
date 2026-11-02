@@ -155,8 +155,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetRecordsResponseType) {
-            final GetRecordsResponseType that = (GetRecordsResponseType) object;
+        if (object instanceof GetRecordsResponseType that) {
             return Objects.equals(this.requestId,     that.requestId)     &&
                    Objects.equals(this.searchResults, that.searchResults) &&
                    Objects.equals(this.searchStatus,  that.searchStatus)  &&

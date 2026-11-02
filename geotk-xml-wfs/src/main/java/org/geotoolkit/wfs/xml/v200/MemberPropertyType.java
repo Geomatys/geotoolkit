@@ -116,8 +116,7 @@ public class MemberPropertyType {
             final List<Object> toRemove = new ArrayList<Object>();
             int i = 0;
             for (Object element : content) {
-                if (element instanceof String) {
-                    String s = (String) element;
+                if (element instanceof String s) {
                     s = s.replace("\n", "");
                     s = s.replace("\t", "");
                     s = s.trim();
@@ -374,8 +373,7 @@ public class MemberPropertyType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof MemberPropertyType) {
-            final MemberPropertyType that = (MemberPropertyType) obj;
+        if (obj instanceof MemberPropertyType that) {
             boolean anyEq = false;
             if (this.content == null && that.content == null) {
                 anyEq = true;

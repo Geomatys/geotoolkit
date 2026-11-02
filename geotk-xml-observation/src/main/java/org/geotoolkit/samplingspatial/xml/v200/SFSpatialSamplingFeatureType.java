@@ -195,8 +195,7 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
             return true;
         }
 
-        if (object instanceof SFSpatialSamplingFeatureType && super.equals(object, mode)) {
-            final SFSpatialSamplingFeatureType that = (SFSpatialSamplingFeatureType) object;
+        if (object instanceof SFSpatialSamplingFeatureType that && super.equals(object, mode)) {
 
             return Objects.equals(this.hostedProcedure,    that.hostedProcedure)    &&
                    Objects.equals(this.positionalAccuracy, that.positionalAccuracy) &&

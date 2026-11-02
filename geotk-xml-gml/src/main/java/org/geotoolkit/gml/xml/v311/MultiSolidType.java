@@ -118,8 +118,7 @@ public class MultiSolidType extends AbstractGeometricAggregateType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiSolidType && super.equals(object, mode)) {
-            final MultiSolidType that = (MultiSolidType) object;
+        if (object instanceof MultiSolidType that && super.equals(object, mode)) {
             return  Objects.equals(this.solidMember,  that.solidMember) &&
                     Objects.equals(this.solidMembers, that.solidMembers);
         }

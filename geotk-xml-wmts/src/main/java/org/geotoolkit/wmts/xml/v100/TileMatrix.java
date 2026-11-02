@@ -275,8 +275,7 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
         if (object == this) {
             return true;
         }
-        if (object instanceof TileMatrix) {
-            final TileMatrix that = (TileMatrix) object;
+        if (object instanceof TileMatrix that) {
             return  Objects.equals(this.identifier, that.identifier)     &&
                     Objects.equals(this.matrixHeight, that.matrixHeight) &&
                     Objects.equals(this.matrixWidth, that.matrixWidth)   &&

@@ -119,8 +119,7 @@ public class DomainMetadataType implements DomainMetadata {
         if (object == this) {
             return true;
         }
-        if (object instanceof DomainMetadataType) {
-        final DomainMetadataType that = (DomainMetadataType) object;
+        if (object instanceof DomainMetadataType that) {
         return Objects.equals(this.reference, that.reference) &&
                Objects.equals(this.value,     that.value);
         }

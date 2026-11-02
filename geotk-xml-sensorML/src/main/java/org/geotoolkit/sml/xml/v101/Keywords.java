@@ -343,8 +343,7 @@ public class Keywords extends SensorObject implements AbstractKeywords {
             return true;
         }
 
-        if (object instanceof Keywords) {
-            final Keywords that = (Keywords) object;
+        if (object instanceof Keywords that) {
             return Objects.equals(this.actuate,      that.actuate)      &&
                    Objects.equals(this.arcrole,      that.arcrole)      &&
                    Objects.equals(this.href,         that.href)         &&

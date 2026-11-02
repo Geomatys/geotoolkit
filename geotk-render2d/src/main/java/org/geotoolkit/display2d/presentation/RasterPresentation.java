@@ -274,8 +274,7 @@ public class RasterPresentation extends Grid2DPresentation {
                     monitor.exceptionOccured(ex, Level.WARNING);
                 }
             }
-        } else if (trs2D instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) trs2D;
+        } else if (trs2D instanceof LinearTransform lt) {
             final int col = lt.getMatrix().getNumCol();
             final int row = lt.getMatrix().getNumRow();
             //TODO using only the first parameters of the linear transform

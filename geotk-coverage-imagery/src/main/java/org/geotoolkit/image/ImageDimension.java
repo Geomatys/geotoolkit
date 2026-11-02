@@ -104,8 +104,7 @@ public class ImageDimension extends Dimension {
         if (!super.equals(object)) {
             return false;
         }
-        if (object instanceof ImageDimension) {
-            final ImageDimension that = (ImageDimension) object;
+        if (object instanceof ImageDimension that) {
             return this.numBands == that.numBands && this.dataType == that.dataType;
         }
         return true; // For preserving reflexivity.

@@ -146,8 +146,7 @@ public class Annotated extends OpenAttrs {
         if (object == this) {
             return true;
         }
-        if (object instanceof Annotated && super.equals(object)) {
-            final Annotated that = (Annotated) object;
+        if (object instanceof Annotated that && super.equals(object)) {
             return Objects.equals(this.annotation, that.annotation) &&
                    Objects.equals(this.id        , that.id);
         }

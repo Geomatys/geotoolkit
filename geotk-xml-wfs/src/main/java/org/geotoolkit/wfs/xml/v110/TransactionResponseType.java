@@ -186,8 +186,7 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionResponseType) {
-            final TransactionResponseType that = (TransactionResponseType) object;
+        if (object instanceof TransactionResponseType that) {
             return Objects.equals(this.insertResults,      that.insertResults)        &&
                    Objects.equals(this.transactionResults, that.transactionResults)   &&
                    Objects.equals(this.transactionSummary, that.transactionSummary)   &&

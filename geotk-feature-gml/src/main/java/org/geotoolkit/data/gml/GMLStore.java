@@ -335,8 +335,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, FeatureCa
         if (!isCollectionType) {
             Collection<? extends PropertyType> properties = featureType.getProperties(true);
             for (PropertyType property : properties) {
-                if (property instanceof FeatureAssociationRole) {
-                    final FeatureAssociationRole far = (FeatureAssociationRole) property;
+                if (property instanceof FeatureAssociationRole far) {
                     final FeatureType valueType = far.getValueType();
                     if (isGmlCollectionMemberType(valueType)) {
                         subType = valueType;

@@ -195,8 +195,7 @@ public class TransactionSummaryType {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionSummaryType) {
-            final TransactionSummaryType that = (TransactionSummaryType) object;
+        if (object instanceof TransactionSummaryType that) {
             return Objects.equals(this.totalDeleted,   that.totalDeleted)  &&
                    Objects.equals(this.totalInserted,  that.totalInserted) &&
                    Objects.equals(this.totalUpdated,   that.totalUpdated);

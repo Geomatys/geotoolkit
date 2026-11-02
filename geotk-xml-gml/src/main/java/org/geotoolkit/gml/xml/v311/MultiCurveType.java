@@ -108,8 +108,7 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiCurveType && super.equals(object, mode)) {
-            final MultiCurveType that = (MultiCurveType) object;
+        if (object instanceof MultiCurveType that && super.equals(object, mode)) {
 
             return Objects.equals(this.curveMember,  that.curveMember) &&
                    Objects.equals(this.curveMembers, that.curveMembers) ;

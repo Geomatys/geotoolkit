@@ -418,8 +418,7 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         if (object == this) {
             return true;
         }
-        if (object instanceof OMProcessPropertyType) {
-            final OMProcessPropertyType that = (OMProcessPropertyType) object;
+        if (object instanceof OMProcessPropertyType that) {
 
             return Objects.equals(this.any,                that.any)              &&
                    Objects.equals(this.actuate,            that.actuate)          &&

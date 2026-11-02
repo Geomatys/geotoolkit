@@ -107,8 +107,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
             // we don't use ObjectConverters to convert Path into a String because
             // there is an already existing converter that doesn't return full path
             // with protocol (URI scheme)
-            if (value instanceof Path) {
-                Path path = (Path) value;
+            if (value instanceof Path path) {
                 writer.writeCharacters(path.toAbsolutePath().toUri().toString());
             } else {
                 writer.writeCharacters(ObjectConverters.convert(value, String.class));

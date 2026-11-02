@@ -148,8 +148,7 @@ public class LiteralData extends DataDescription {
         if (object == this) {
             return true;
         }
-        if (object instanceof LiteralData && super.equals(object)) {
-            final LiteralData that = (LiteralData) object;
+        if (object instanceof LiteralData that && super.equals(object)) {
             return Objects.equals(this.literalDataDomain, that.literalDataDomain);
         }
         return false;

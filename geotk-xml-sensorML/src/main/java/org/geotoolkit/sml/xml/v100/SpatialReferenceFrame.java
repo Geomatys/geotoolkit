@@ -100,8 +100,7 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
             return true;
         }
 
-        if (object instanceof SpatialReferenceFrame) {
-            final SpatialReferenceFrame that = (SpatialReferenceFrame) object;
+        if (object instanceof SpatialReferenceFrame that) {
             return Objects.equals(this.engineeringCRS, that.engineeringCRS);
 
         }

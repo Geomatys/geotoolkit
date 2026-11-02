@@ -72,38 +72,32 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
     public synchronized Resource add(Resource resource) throws DataStoreException {
 
         Resource newr;
-        if (resource instanceof FeatureSet) {
-            final FeatureSet fs = (FeatureSet) resource;
+        if (resource instanceof FeatureSet fs) {
             final InMemoryFeatureSet newres = new InMemoryFeatureSet(fs.getType());
             try (Stream<Feature> stream = fs.features(false)) {
                 newres.add(stream.iterator());
             }
             newr = newres;
 
-        } else if (resource instanceof DefiningTiledGridCoverageResource) {
-            final DefiningTiledGridCoverageResource cr = (DefiningTiledGridCoverageResource) resource;
+        } else if (resource instanceof DefiningTiledGridCoverageResource cr) {
             final GenericName name = cr.getIdentifier().orElse(null);
             newr = new InMemoryTiledGridCoverageResource(name);
 
-        } else if (resource instanceof GridCoverageResource && resource instanceof TiledResource) {
-            final GridCoverageResource cr = (GridCoverageResource) resource;
+        } else if (resource instanceof GridCoverageResource cr && resource instanceof TiledResource) {
             final GenericName name = cr.getIdentifier().orElse(null);
             newr = new InMemoryTiledGridCoverageResource(name);
 
-        } else if (resource instanceof GridCoverageResource) {
-            final GridCoverageResource cr = (GridCoverageResource) resource;
+        } else if (resource instanceof GridCoverageResource cr) {
             final GenericName name = cr.getIdentifier().orElse(null);
             final InMemoryGridCoverageResource newres = new InMemoryGridCoverageResource(name);
             newres.write(cr.read(null));
             newr = newres;
 
-        } else if (resource instanceof DefiningGridCoverageResource) {
-            final DefiningGridCoverageResource cr = (DefiningGridCoverageResource) resource;
+        } else if (resource instanceof DefiningGridCoverageResource cr) {
             final GenericName name = cr.getIdentifier().orElse(null);
             newr = new InMemoryGridCoverageResource(name);
 
-        } else if (resource instanceof Aggregate) {
-            final Aggregate agg = (Aggregate) resource;
+        } else if (resource instanceof Aggregate agg) {
             final InMemoryAggregate newres = new InMemoryAggregate(agg.getIdentifier().orElse(null));
             for (Resource r : agg.components()) {
                 newres.add(r);

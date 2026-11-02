@@ -232,8 +232,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
         if (object == this) {
             return true;
         }
-        if (object instanceof BinarySpatialOpType) {
-            final BinarySpatialOpType that = (BinarySpatialOpType) object;
+        if (object instanceof BinarySpatialOpType that) {
 
             boolean pname = false;
             if (this.propertyName != null && that.propertyName != null) {

@@ -131,14 +131,13 @@ public class PGEPSGWriter implements EPSGWriter {
         final Integer show_crs = 1;
         final Integer deprecated = 0;
 
-        if(candidate instanceof CompoundCRS){
+        if(candidate instanceof CompoundCRS compound){
             coord_ref_sys_kind = "compound";
             coord_sys_code = null;
             datum_code = null;
             source_geogcrs_code = null;
             projection_conv_code = null;
 
-            final CompoundCRS compound = (CompoundCRS) candidate;
             final List<CoordinateReferenceSystem> parts = compound.getComponents();
 
             cmpd_horizcrs_code = getOrCreateCoordinateReferenceSystem(parts.get(0));
@@ -162,36 +161,31 @@ public class PGEPSGWriter implements EPSGWriter {
             final CoordinateSystem cs = candidate.getCoordinateSystem();
             coord_sys_code = getOrCreateCoordinateSystem(cs);
 
-            if(candidate instanceof GeographicCRS){
-                final GeographicCRS geocrs = (GeographicCRS) candidate;
+            if(candidate instanceof GeographicCRS geocrs){
                 coord_ref_sys_kind = "geographic 2D";
                 datum_code = getOrCreateDatum(geocrs.getDatum());
                 source_geogcrs_code = null; //TODO this can be non-null, when ?
                 projection_conv_code = null; //TODO this can be non-null, when ?
 
-            }else if(candidate instanceof ProjectedCRS){
-                final ProjectedCRS projcrs = (ProjectedCRS) candidate;
+            }else if(candidate instanceof ProjectedCRS projcrs){
                 coord_ref_sys_kind = "projected";
                 datum_code = null;
                 source_geogcrs_code = getOrCreateCoordinateReferenceSystem(projcrs.getBaseCRS());
                 projection_conv_code = getOrCreateProjection(projcrs.getConversionFromBase());
 
-            }else if(candidate instanceof TemporalCRS){
-                final TemporalCRS tempcrs = (TemporalCRS) candidate;
+            }else if(candidate instanceof TemporalCRS tempcrs){
                 coord_ref_sys_kind = "temporal";
                 datum_code = getOrCreateDatum(tempcrs.getDatum());
                 source_geogcrs_code = null;
                 projection_conv_code = null;
 
-            }else if(candidate instanceof VerticalCRS){
-                final VerticalCRS vertcrs = (VerticalCRS) candidate;
+            }else if(candidate instanceof VerticalCRS vertcrs){
                 coord_ref_sys_kind = "vertical";
                 datum_code = getOrCreateDatum(vertcrs.getDatum());
                 source_geogcrs_code = null;
                 projection_conv_code = null;
 
-            }else if(candidate instanceof SingleCRS){
-                final SingleCRS singlecrs = (SingleCRS) candidate;
+            }else if(candidate instanceof SingleCRS singlecrs){
                 coord_ref_sys_kind = "single";
                 datum_code = getOrCreateDatum(singlecrs.getDatum());
                 source_geogcrs_code = null;
@@ -430,28 +424,24 @@ public class PGEPSGWriter implements EPSGWriter {
             realization_epoch = c.get(Calendar.YEAR);
         }
 
-        if(candidate instanceof GeodeticDatum){
-            final GeodeticDatum gd = (GeodeticDatum) candidate;
+        if(candidate instanceof GeodeticDatum gd){
             origin_description = "";
             datum_type = "geodetic";
             ellipsoid_code = getOrCreateEllipsoid(gd.getEllipsoid());
             prime_meridian_code = getOrCreatePrimeMeridian(gd.getPrimeMeridian());
 
-        }else if(candidate instanceof VerticalDatum){
-            final VerticalDatum vd = (VerticalDatum) candidate;
+        }else if(candidate instanceof VerticalDatum vd){
             origin_description = "";
             datum_type = "vertical";
             ellipsoid_code = null;
             prime_meridian_code = null;
 
-        }else if(candidate instanceof TemporalDatum){
-            final TemporalDatum td = (TemporalDatum) candidate;
+        }else if(candidate instanceof TemporalDatum td){
             origin_description = td.toString();
             datum_type = "temporal";
             ellipsoid_code = null;
             prime_meridian_code = null;
-        }else if(candidate instanceof AbstractDatum){
-            final AbstractDatum td = (AbstractDatum) candidate;
+        }else if(candidate instanceof AbstractDatum td){
             origin_description = "";
             datum_type = "abstract";
             ellipsoid_code = null;
@@ -587,8 +577,7 @@ public class PGEPSGWriter implements EPSGWriter {
             return 1262;
         }
 
-        if(candidate instanceof IdentifiedObject){
-            final IdentifiedObject ie = (IdentifiedObject) candidate;
+        if(candidate instanceof IdentifiedObject ie){
             final String code = searchSimilar(ie.getClass(), ie);
             if(code != null){
                 return codeToID(code);

@@ -97,8 +97,7 @@ public class RecolorFunction extends AbstractExpression {
         final Image img = (Image) object;
 
         final BufferedImage buffer;
-        if(img instanceof BufferedImage ){
-            BufferedImage candidate = (BufferedImage) img;
+        if(img instanceof BufferedImage candidate ){
             if(candidate.getColorModel() instanceof ComponentColorModel &&
                     candidate.getColorModel().getTransparency() == ColorModel.TRANSLUCENT){
                 //valid buffered image

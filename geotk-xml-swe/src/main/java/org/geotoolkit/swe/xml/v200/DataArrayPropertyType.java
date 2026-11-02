@@ -314,8 +314,7 @@ public class DataArrayPropertyType implements DataArrayProperty {
             return true;
         }
 
-        if (object instanceof DataArrayPropertyType) {
-            final DataArrayPropertyType that = (DataArrayPropertyType) object;
+        if (object instanceof DataArrayPropertyType that) {
             boolean enc = false;
             if (this.dataArray == null && that.dataArray == null) {
                 enc = true;

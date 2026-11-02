@@ -103,8 +103,7 @@ public class HarvestResponseType implements HarvestResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof HarvestResponseType) {
-            final HarvestResponseType that = (HarvestResponseType) object;
+        if (object instanceof HarvestResponseType that) {
             return Objects.equals(this.acknowledgement,      that.acknowledgement)   &&
                    Objects.equals(this.transactionResponse,  that.transactionResponse);
         }

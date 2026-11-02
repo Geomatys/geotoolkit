@@ -392,8 +392,7 @@ public class DataDefinition extends SensorObject implements AbstractDataDefiniti
             return true;
         }
 
-        if (object instanceof DataDefinition) {
-            final DataDefinition that = (DataDefinition) object;
+        if (object instanceof DataDefinition that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

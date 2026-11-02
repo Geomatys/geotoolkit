@@ -98,8 +98,7 @@ public class InsertResultsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertResultsType) {
-            final InsertResultsType that = (InsertResultsType) object;
+        if (object instanceof InsertResultsType that) {
             return Objects.equals(this.feature,   that.feature);
         }
         return false;

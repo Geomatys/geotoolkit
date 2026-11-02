@@ -73,8 +73,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiLingualCapabilities) {
-            final MultiLingualCapabilities that = (MultiLingualCapabilities) object;
+        if (object instanceof MultiLingualCapabilities that) {
             return Objects.equals(this.multiLingualCapabilities, that.multiLingualCapabilities);
         }
         return false;

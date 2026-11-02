@@ -57,8 +57,7 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
 
     @Override
     public Object apply(final Object object) {
-        if(object instanceof Number){
-            final Number num = (Number) object;
+        if(object instanceof Number num){
             if(num.doubleValue() == data){
                 return value;
             }

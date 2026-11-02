@@ -126,8 +126,7 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiPointType && super.equals(object, mode)) {
-            final MultiPointType that = (MultiPointType) object;
+        if (object instanceof MultiPointType that && super.equals(object, mode)) {
 
             return Objects.equals(this.pointMember,  that.pointMember) &&
                    Objects.equals(this.pointMembers, that.pointMembers) ;

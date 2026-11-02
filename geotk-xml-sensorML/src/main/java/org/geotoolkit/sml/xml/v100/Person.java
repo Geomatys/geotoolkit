@@ -213,8 +213,7 @@ public class Person implements AbstractPerson {
             return true;
         }
 
-        if (object instanceof Person && super.equals(object)) {
-            final Person that = (Person) object;
+        if (object instanceof Person that && super.equals(object)) {
             return Objects.equals(this.affiliation,     that.affiliation)       &&
                    Objects.equals(this.email,           that.email)             &&
                    Objects.equals(this.id,              that.id)                &&

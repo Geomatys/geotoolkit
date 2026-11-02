@@ -309,8 +309,7 @@ public class Interface implements AbstractInterface {
         if (object == this) {
             return true;
         }
-        if (object instanceof Interface) {
-            final Interface that = (Interface) object;
+        if (object instanceof Interface that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

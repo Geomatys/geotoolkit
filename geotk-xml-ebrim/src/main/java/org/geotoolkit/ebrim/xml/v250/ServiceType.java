@@ -100,8 +100,7 @@ public class ServiceType extends RegistryEntryType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ServiceType && super.equals(obj)) {
-            final ServiceType that = (ServiceType) obj;
+        if (obj instanceof ServiceType that && super.equals(obj)) {
             return Objects.equals(this.serviceBinding, that.serviceBinding);
         }
         return false;

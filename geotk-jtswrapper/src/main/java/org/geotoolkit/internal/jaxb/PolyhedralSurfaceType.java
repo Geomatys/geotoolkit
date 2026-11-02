@@ -92,12 +92,10 @@ public class PolyhedralSurfaceType {
             s.setCoordinateReferenceSystem(coordinateReferenceSystem);
             ((JTSRing)s.getExterior()).setCoordinateReferenceSystem(coordinateReferenceSystem);
             for (Primitive p : s.getExterior().getElements()) {
-                if (p instanceof JTSCurve) {
-                    JTSCurve curve = (JTSCurve) p;
+                if (p instanceof JTSCurve curve) {
                     curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
                     for (CurveSegment cv :curve.getSegments()) {
-                        if (cv instanceof JTSLineString) {
-                            JTSLineString line = (JTSLineString) cv;
+                        if (cv instanceof JTSLineString line) {
                             PointArray pa = line.getControlPoints();
                             var newPositions = new ArrayList<DirectPosition>();
                             for (DirectPosition pos : pa) {
@@ -117,12 +115,10 @@ public class PolyhedralSurfaceType {
                 for (Ring ring : s.getInteriors()) {
                     ((JTSRing)ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
                     for (Primitive p : ring.getElements()) {
-                        if (p instanceof JTSCurve) {
-                            JTSCurve curve = (JTSCurve) p;
+                        if (p instanceof JTSCurve curve) {
                             curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
                             for (CurveSegment cv :curve.getSegments()) {
-                                if (cv instanceof JTSLineString) {
-                                    JTSLineString line = (JTSLineString) cv;
+                                if (cv instanceof JTSLineString line) {
                                     PointArray pa = line.getControlPoints();
                                     var newPositions = new ArrayList<DirectPosition>();
                                     for (DirectPosition pos : pa) {

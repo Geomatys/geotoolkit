@@ -120,8 +120,7 @@ public class InspireCapabilitiesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof InspireCapabilitiesType) {
-            final InspireCapabilitiesType that = (InspireCapabilitiesType) object;
+        if (object instanceof InspireCapabilitiesType that) {
             return Objects.equals(this.languages, that.languages) &&
                    Objects.equals(this.translatedCapabilities, that.translatedCapabilities);
         }

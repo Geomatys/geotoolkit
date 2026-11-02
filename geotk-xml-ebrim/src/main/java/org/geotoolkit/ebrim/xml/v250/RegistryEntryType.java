@@ -187,8 +187,7 @@ public class RegistryEntryType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryEntryType && super.equals(obj)) {
-            final RegistryEntryType that = (RegistryEntryType) obj;
+        if (obj instanceof RegistryEntryType that && super.equals(obj)) {
             return Objects.equals(this.expiration,         that.expiration) &&
                    Objects.equals(this.majorVersion,    that.majorVersion) &&
                    Objects.equals(this.minorVersion,          that.minorVersion) &&

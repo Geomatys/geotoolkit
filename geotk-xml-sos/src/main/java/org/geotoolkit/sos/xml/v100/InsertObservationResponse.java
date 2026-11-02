@@ -87,8 +87,7 @@ public class InsertObservationResponse extends ResponseBaseType implements org.g
         if (object == this) {
             return true;
         }
-        if (object instanceof InsertObservationResponse) {
-            final InsertObservationResponse that = (InsertObservationResponse) object;
+        if (object instanceof InsertObservationResponse that) {
             return Objects.equals(this.assignedObservationId, that.assignedObservationId);
         }
         return false;

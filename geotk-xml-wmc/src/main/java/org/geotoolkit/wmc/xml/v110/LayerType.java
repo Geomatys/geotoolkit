@@ -517,8 +517,7 @@ public class LayerType {
         if (object == this) {
             return true;
         }
-        if (object instanceof LayerType) {
-            final LayerType that = (LayerType) object;
+        if (object instanceof LayerType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.dataURL, that.dataURL) &&

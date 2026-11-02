@@ -160,8 +160,7 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractCurveSegmentType) {
-            final AbstractCurveSegmentType that = (AbstractCurveSegmentType) object;
+        if (object instanceof AbstractCurveSegmentType that) {
             return  Objects.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
                     Objects.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
                     Objects.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);

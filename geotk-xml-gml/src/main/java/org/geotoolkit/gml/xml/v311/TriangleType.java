@@ -151,8 +151,7 @@ public class TriangleType extends AbstractSurfacePatchType {
         if (object == this) {
             return true;
         }
-        if (object instanceof TriangleType) {
-            final TriangleType that = (TriangleType) object;
+        if (object instanceof TriangleType that) {
 
             return Objects.equals(this.getExterior(),    that.getExterior()) &&
                    Objects.equals(this.interpolation,    that.interpolation);

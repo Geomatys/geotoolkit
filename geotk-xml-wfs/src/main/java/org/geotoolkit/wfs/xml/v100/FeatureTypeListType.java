@@ -122,8 +122,7 @@ public class FeatureTypeListType implements FeatureTypeList {
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureTypeListType) {
-            final FeatureTypeListType that = (FeatureTypeListType) object;
+        if (object instanceof FeatureTypeListType that) {
 
             return Objects.equals(this.featureType, that.featureType) &&
                    Objects.equals(this.operations,  that.operations);

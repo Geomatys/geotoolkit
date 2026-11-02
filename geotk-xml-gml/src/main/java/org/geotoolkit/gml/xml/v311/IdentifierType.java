@@ -97,8 +97,7 @@ public class IdentifierType {
         if (object == this) {
             return true;
         }
-        if (object instanceof IdentifierType) {
-            IdentifierType that = (IdentifierType) object;
+        if (object instanceof IdentifierType that) {
             boolean proc = false;
             if (this.name != null && that.name != null) {
                 proc = Objects.equals(this.name.getValue(), that.name.getValue());

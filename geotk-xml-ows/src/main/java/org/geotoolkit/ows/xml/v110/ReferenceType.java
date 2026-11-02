@@ -134,8 +134,7 @@ public class ReferenceType extends AbstractReferenceBaseType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ReferenceType && super.equals(object)) {
-            final ReferenceType that = (ReferenceType) object;
+        if (object instanceof ReferenceType that && super.equals(object)) {
             return Objects.equals(this._abstract,  that._abstract)  &&
                    Objects.equals(this.format,     that.format)     &&
                    Objects.equals(this.identifier, that.identifier) &&

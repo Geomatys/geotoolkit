@@ -232,11 +232,9 @@ public class DCPTypeType implements AbstractDCP {
         public void updateURL(final String url) {
             if (this.getOrPost != null) {
                 for (Object prot : getOrPost) {
-                    if (prot instanceof Get) {
-                        Get get = (Get) prot;
+                    if (prot instanceof Get get) {
                         get.onlineResource.setHref(url);
-                    } else if (prot instanceof Post) {
-                        Post post = (Post) prot;
+                    } else if (prot instanceof Post post) {
                         post.onlineResource.setHref(url);
                     }
                 }

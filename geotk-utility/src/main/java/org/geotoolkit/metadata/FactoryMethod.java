@@ -186,8 +186,7 @@ final class FactoryMethod {
      */
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof FactoryMethod) {
-            final FactoryMethod that = (FactoryMethod) other;
+        if (other instanceof FactoryMethod that) {
             return method.equals(that.method) && factory == that.factory;
         }
         return false;

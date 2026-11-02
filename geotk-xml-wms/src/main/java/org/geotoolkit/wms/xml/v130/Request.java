@@ -193,8 +193,7 @@ public class Request implements AbstractRequest {
         if (object == this) {
             return true;
         }
-        if (object instanceof Request) {
-            final Request that = (Request) object;
+        if (object instanceof Request that) {
 
             boolean ext = true;
             if (this.extendedOperation != null && that.extendedOperation != null &&

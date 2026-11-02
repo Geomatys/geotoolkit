@@ -165,8 +165,7 @@ public class ServiceBindingType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ServiceBindingType && super.equals(obj)) {
-            final ServiceBindingType that = (ServiceBindingType) obj;
+        if (obj instanceof ServiceBindingType that && super.equals(obj)) {
             return Objects.equals(this.accessURI,         that.accessURI) &&
                    Objects.equals(this.service,           that.service) &&
                    Objects.equals(this.specificationLink, that.specificationLink) &&

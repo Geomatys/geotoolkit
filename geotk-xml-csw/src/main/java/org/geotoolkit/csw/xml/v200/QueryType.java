@@ -212,8 +212,7 @@ public class QueryType extends AbstractQueryType implements Query{
         if (object == this) {
             return true;
         }
-        if (object instanceof QueryType) {
-            final QueryType that = (QueryType) object;
+        if (object instanceof QueryType that) {
             return Objects.equals(this.constraint,  that.constraint)   &&
                    Objects.equals(this.elementName,  that.elementName)   &&
                    Objects.equals(this.elementSetName,  that.elementSetName)   &&

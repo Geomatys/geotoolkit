@@ -175,8 +175,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
             return true;
         }
 
-        if (object instanceof AbstractDerivableComponentType && super.equals(object, mode)) {
-            final AbstractDerivableComponentType that = (AbstractDerivableComponentType) object;
+        if (object instanceof AbstractDerivableComponentType that && super.equals(object, mode)) {
             return Objects.equals(this.interfaces,             that.interfaces) &&
                    Objects.equals(this.temporalReferenceFrame, that.temporalReferenceFrame) &&
                    Objects.equals(this.timePosition,           that.timePosition) &&

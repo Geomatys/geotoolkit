@@ -310,8 +310,7 @@ public class MultiLineStringPropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiLineStringPropertyType) {
-            final MultiLineStringPropertyType that = (MultiLineStringPropertyType) object;
+        if (object instanceof MultiLineStringPropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

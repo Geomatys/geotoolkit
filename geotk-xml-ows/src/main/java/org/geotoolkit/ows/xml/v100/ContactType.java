@@ -147,8 +147,7 @@ public class ContactType implements AbstractContact {
         if (object == this) {
             return true;
         }
-        if (object instanceof ContactType) {
-            final ContactType that = (ContactType) object;
+        if (object instanceof ContactType that) {
             return Objects.equals(this.address,             that.address)             &&
                    Objects.equals(this.contactInstructions, that.contactInstructions) &&
                    Objects.equals(this.hoursOfService,      that.hoursOfService)      &&

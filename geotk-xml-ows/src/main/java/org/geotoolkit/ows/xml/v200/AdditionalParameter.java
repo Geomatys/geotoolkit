@@ -105,8 +105,7 @@ public class AdditionalParameter implements AbstractAdditionalParameter {
         }
         List<Object> cleanValues = new ArrayList<>();
         for (Object val : value) {
-            if (val instanceof Node) {
-                Node n = (Node) val;
+            if (val instanceof Node n) {
                 if (n.getLocalName().equals("Value") && n.hasChildNodes()) {
                     Node child = n.getChildNodes().item(0);
                     if (child instanceof Text) {
@@ -125,8 +124,7 @@ public class AdditionalParameter implements AbstractAdditionalParameter {
         if (object == this) {
             return true;
         }
-        if (object instanceof  AdditionalParameter) {
-            final AdditionalParameter that = (AdditionalParameter) object;
+        if (object instanceof  AdditionalParameter that) {
             return Objects.equals(this.name, that.name) &&
                    Objects.equals(this.getValue(), that.getValue());
         }

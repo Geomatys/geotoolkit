@@ -75,8 +75,7 @@ public class BindingImpl extends AbstractMetadata implements Binding {
         if (object == this) {
             return true;
         }
-        if (object instanceof BindingImpl) {
-            final BindingImpl that = (BindingImpl) object;
+        if (object instanceof BindingImpl that) {
 
             return Objects.equals(this.description, that.description);
         }

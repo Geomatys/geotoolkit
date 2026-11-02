@@ -135,8 +135,7 @@ public class OutputList extends SensorObject implements AbstractOutputList {
             return true;
         }
 
-        if (object instanceof OutputList) {
-            final OutputList that = (OutputList) object;
+        if (object instanceof OutputList that) {
 
             return Objects.equals(this.output, that.output)
                     && Objects.equals(this.id, that.id);

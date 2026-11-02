@@ -336,8 +336,7 @@ public class Reference {
         if (object == this) {
             return true;
         }
-        if (object instanceof Reference) {
-            final Reference that = (Reference) object;
+        if (object instanceof Reference that) {
             return Objects.equals(this.body, that.body) &&
                    Objects.equals(this.bodyReference, that.bodyReference) &&
                    Objects.equals(this.encoding, that.encoding) &&
@@ -425,8 +424,7 @@ public class Reference {
             if (object == this) {
                 return true;
             }
-            if (object instanceof BodyReference) {
-                final BodyReference that = (BodyReference) object;
+            if (object instanceof BodyReference that) {
                 return Objects.equals(this.href, that.href);
             }
             return false;
@@ -537,8 +535,7 @@ public class Reference {
             if (object == this) {
                 return true;
             }
-            if (object instanceof Header) {
-                final Header that = (Header) object;
+            if (object instanceof Header that) {
                 return Objects.equals(this.key, that.key) &&
                        Objects.equals(this.value, that.value);
             }

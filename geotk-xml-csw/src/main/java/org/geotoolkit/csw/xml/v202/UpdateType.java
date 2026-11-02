@@ -175,8 +175,7 @@ public class UpdateType implements Update {
         if (object == this) {
             return true;
         }
-        if (object instanceof UpdateType) {
-            final UpdateType that = (UpdateType) object;
+        if (object instanceof UpdateType that) {
             return Objects.equals(this.constraint,     that.constraint) &&
                    Objects.equals(this.handle,         that.handle)     &&
                    Objects.equals(this.any,            that.any)        &&

@@ -136,8 +136,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         if (object == this) {
             return true;
         }
-        if (object instanceof RequestBaseType) {
-            final RequestBaseType that = (RequestBaseType) object;
+        if (object instanceof RequestBaseType that) {
             return Objects.equals(this.service,  that.service) &&
                    Objects.equals(this.version,  that.version);
         }

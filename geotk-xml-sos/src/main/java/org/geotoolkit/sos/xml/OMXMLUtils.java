@@ -65,8 +65,7 @@ public class OMXMLUtils {
             results.add(phenProp.getHref());
         } else if (phenProp.getPhenomenon() instanceof org.opengis.observation.CompositePhenomenon comp) {
             for (org.opengis.observation.Phenomenon phen : comp.getComponent()) {
-                if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                    final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;
+                if (phen instanceof org.geotoolkit.swe.xml.Phenomenon p) {
                     results.add((p.getName() != null) ? p.getName().getCode() : "");
                 }
             }

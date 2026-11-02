@@ -126,9 +126,8 @@ public class ElementFeatureWriter {
             return writeFeature((Feature) candidate, null, fragment);
         } else if (candidate instanceof FeatureSet) {
             return writeFeatureCollection((FeatureSet) candidate, null, fragment, true, nbMatched, true);
-        } else if (candidate instanceof List) {
+        } else if (candidate instanceof List collections) {
             // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
-            List collections = (List) candidate;
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             // then we have to create document-loader:
@@ -357,8 +356,7 @@ public class ElementFeatureWriter {
                         }
 
                         final Geometry isoGeometry;
-                        if (valueA instanceof org.locationtech.jts.geom.Geometry) {
-                            org.locationtech.jts.geom.Geometry geomValue = (org.locationtech.jts.geom.Geometry) valueA;
+                        if (valueA instanceof org.locationtech.jts.geom.Geometry geomValue) {
                         CoordinateReferenceSystem crs = null;
                             try {
                                 crs = JTS.findCoordinateReferenceSystem(geomValue);

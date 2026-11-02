@@ -213,8 +213,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
         if (object == this) {
             return true;
         }
-        if (object instanceof HarvestType && super.equals(object)) {
-            final HarvestType that = (HarvestType) object;
+        if (object instanceof HarvestType that && super.equals(object)) {
             return Objects.equals(this.harvestInterval,  that.harvestInterval) &&
                    Objects.equals(this.resourceFormat,   that.resourceFormat)  &&
                    Objects.equals(this.resourceType,     that.resourceType)    &&

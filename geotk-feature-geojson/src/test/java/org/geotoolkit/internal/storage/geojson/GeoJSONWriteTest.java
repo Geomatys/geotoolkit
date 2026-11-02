@@ -750,8 +750,7 @@ public class GeoJSONWriteTest {
                         cp.setPropertyValue(name, deepCopy(val));
                     }
                 } else {
-                    if(val instanceof Collection){
-                        final Collection col = (Collection) val;
+                    if(val instanceof Collection col){
                         final Collection cpCol = new ArrayList(col.size());
                         for(Iterator ite=col.iterator();ite.hasNext();){
                             cpCol.add(copy((Feature)ite.next()));
@@ -804,23 +803,20 @@ public class GeoJSONWriteTest {
             return ((Date)candidate).clone();
         }else if(candidate instanceof Date){
             return ((Date)candidate).clone();
-        }else if(candidate instanceof Object[]){
-            final Object[] array = (Object[])candidate;
+        }else if(candidate instanceof Object[] array){
             final Object[] copy = new Object[array.length];
             for (int i = 0; i < array.length; i++) {
                 copy[i] = deepCopy(array[i]);
             }
             return copy;
-        }else if(candidate instanceof List){
-            final List list = (List)candidate;
+        }else if(candidate instanceof List list){
             final int size = list.size();
             final List cp = new ArrayList(size);
             for(int i=0;i<size;i++){
                 cp.add(deepCopy(list.get(i)));
             }
             return cp;
-        }else if (candidate instanceof Map) {
-            final Map map = (Map) candidate;
+        }else if (candidate instanceof Map map) {
             final Map cp = new HashMap(map.size());
             for(final Iterator<Map.Entry> ite=map.entrySet().iterator(); ite.hasNext();) {
                 final Map.Entry entry = ite.next();

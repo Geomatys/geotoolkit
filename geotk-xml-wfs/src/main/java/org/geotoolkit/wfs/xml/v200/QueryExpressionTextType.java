@@ -213,8 +213,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
         if (object == this) {
             return true;
         }
-        if (object instanceof QueryExpressionTextType) {
-            final QueryExpressionTextType that = (QueryExpressionTextType) object;
+        if (object instanceof QueryExpressionTextType that) {
             boolean contentE;
             if (this.getContent() == null && that.getContent() == null) {
                 contentE = true;
@@ -224,8 +223,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
                     for (int i = 0; i < 0; i++) {
                         final Object thiso = this.getContent().get(i);
                         final Object thato = that.getContent().get(i);
-                        if (thiso instanceof JAXBElement && thato instanceof JAXBElement) {
-                            final JAXBElement thisjb = (JAXBElement)thiso;
+                        if (thiso instanceof JAXBElement thisjb && thato instanceof JAXBElement) {
                             final JAXBElement thatjb = (JAXBElement)thato;
                             if (!Objects.equals(thisjb.getValue(), thatjb.getValue())) {
                                 return false;

@@ -314,8 +314,7 @@ public class PointPropertyType implements PointProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof PointPropertyType) {
-            final PointPropertyType that = (PointPropertyType) object;
+        if (object instanceof PointPropertyType that) {
 
             return Objects.equals(this.point,              that.point)            &&
                    Objects.equals(this.actuate,            that.actuate)          &&

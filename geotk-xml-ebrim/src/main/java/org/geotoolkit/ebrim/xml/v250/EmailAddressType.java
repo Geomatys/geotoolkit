@@ -143,8 +143,7 @@ public class EmailAddressType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof EmailAddressType) {
-            final EmailAddressType that = (EmailAddressType) obj;
+        if (obj instanceof EmailAddressType that) {
             return Objects.equals(this.address, that.address) &&
                    Objects.equals(this.type,    that.type) &&
                    Objects.equals(this.slot,    that.slot);

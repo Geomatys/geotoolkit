@@ -106,8 +106,7 @@ public class OperationsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof OperationsType) {
-            final OperationsType that = (OperationsType) object;
+        if (object instanceof OperationsType that) {
 
             if (this.insertOrUpdateOrDelete.size() == that.insertOrUpdateOrDelete.size()) {
                 for (int i = 0; i < insertOrUpdateOrDelete.size(); i++) {

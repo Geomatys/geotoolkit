@@ -555,8 +555,7 @@ public class EventChain extends Chain {
         final List<FlowLink> execLinks = getFlowLinkFromId(startId, true);
         for (FlowLink exec : execLinks) {
             final Object sourceElement = getElementFromId(exec.getSourceId());
-            if (sourceElement instanceof ElementProcess){
-                final ElementProcess chainElement = (ElementProcess) sourceElement;
+            if (sourceElement instanceof ElementProcess chainElement){
                 if (!chainElement.getCode().equals("begin")) {
                     searchForConditionalParent(chainElement.getId(), conditionalIdentifiers);
                 }
@@ -573,14 +572,11 @@ public class EventChain extends Chain {
      * @return Class or ClassFull for Parameter.
      */
     private Object getDataType(final Object obj, final boolean in, final String code){
-        if(obj instanceof Parameter){
-            final Parameter dto = (Parameter) obj;
+        if(obj instanceof Parameter dto){
             return dto.getType();
-        }else if(obj instanceof Constant){
-            final Constant dto = (Constant) obj;
+        }else if(obj instanceof Constant dto){
             return dto.getType();
-        }else if(obj instanceof ElementProcess){
-            final ElementProcess dto = (ElementProcess) obj;
+        }else if(obj instanceof ElementProcess dto){
 
             try {
                 final ProcessDescriptor pd = ProcessFinder.getProcessDescriptor(

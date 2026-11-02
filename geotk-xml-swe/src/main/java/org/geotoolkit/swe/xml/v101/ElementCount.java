@@ -107,8 +107,7 @@ public class ElementCount implements AbstractElementCount {
         if (object == this) {
             return true;
         }
-        if (object instanceof ElementCount) {
-            final ElementCount that = (ElementCount) object;
+        if (object instanceof ElementCount that) {
             return Objects.equals(this.count, that.count)
                     && Objects.equals(this.ref, that.ref);
         }

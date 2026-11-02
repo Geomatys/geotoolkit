@@ -50,8 +50,7 @@ final class WarpCache extends Cache<WarpKey, Warp> {
     @Override
     protected int cost(final Warp value) {
         int cost = 4;
-        if (value instanceof WarpGrid) {
-            final WarpGrid grid = (WarpGrid) value;
+        if (value instanceof WarpGrid grid) {
             cost += grid.getXNumCells() * grid.getYNumCells();
         }
         return cost;

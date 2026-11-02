@@ -77,13 +77,11 @@ public class J2DPainter {
     }
 
     public void paint(RenderingContext2D renderingContext, Presentation presentation) throws PortrayalException {
-        if (presentation instanceof Grid2DPresentation) {
-            final Grid2DPresentation gp = (Grid2DPresentation) presentation;
+        if (presentation instanceof Grid2DPresentation gp) {
             gp.paint(renderingContext);
         }
 
-        if (presentation instanceof GroupPresentation) {
-            GroupPresentation gp = (GroupPresentation) presentation;
+        if (presentation instanceof GroupPresentation gp) {
             for (Presentation p : gp.elements()) {
                 paint(renderingContext, p);
             }
@@ -93,13 +91,11 @@ public class J2DPainter {
     }
 
     public boolean hit(RenderingContext2D renderingContext, final SearchAreaJ2D search, Presentation presentation) {
-        if (presentation instanceof Grid2DPresentation) {
-            final Grid2DPresentation gp = (Grid2DPresentation) presentation;
+        if (presentation instanceof Grid2DPresentation gp) {
             return gp.hit(renderingContext, search);
         }
 
-        if (presentation instanceof GroupPresentation) {
-            GroupPresentation gp = (GroupPresentation) presentation;
+        if (presentation instanceof GroupPresentation gp) {
             for (Presentation p : gp.elements()) {
                 if (hit(renderingContext, search, p)) {
                     return true;
@@ -113,8 +109,7 @@ public class J2DPainter {
     }
 
     private static void logIfError(Presentation presentation) {
-        if (presentation instanceof ExceptionPresentation) {
-            ExceptionPresentation exP = (ExceptionPresentation) presentation;
+        if (presentation instanceof ExceptionPresentation exP) {
             Exception ex = exP.getException();
             if (ex != null) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);

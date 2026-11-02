@@ -108,8 +108,7 @@ public class GeometryTestOperation {
             if (expectedResult == null && result == null) {
                 return true;
             }
-            if (expectedResult instanceof TransfiniteSet) {
-                TransfiniteSet expect = (TransfiniteSet)expectedResult;
+            if (expectedResult instanceof TransfiniteSet expect) {
                 return result.equals(expect);
             } else {
                 return false;
@@ -117,8 +116,7 @@ public class GeometryTestOperation {
         }
 
         protected boolean compareDirectPositionResult(final DirectPosition result) {
-            if (expectedResult instanceof DirectPosition) {
-                DirectPosition expect = (DirectPosition)expectedResult;
+            if (expectedResult instanceof DirectPosition expect) {
                 return result.equals(expect);
             } else {
                 return false;

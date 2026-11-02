@@ -321,9 +321,8 @@ public class DataComponentPropertyType implements DataComponentProperty {
             if (d instanceof AbstractBoolean) {
                 this._boolean = new BooleanType((AbstractBoolean)d);
             }
-            if (d instanceof AbstractDataRecord) {
+            if (d instanceof AbstractDataRecord record) {
                 ObjectFactory sweFactory = new ObjectFactory();
-                AbstractDataRecord record = (AbstractDataRecord) d;
                 if (record instanceof SimpleDataRecord) {
                     record = new SimpleDataRecordType((SimpleDataRecord)record);
                     this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType) record);
@@ -814,8 +813,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             return true;
         }
 
-        if (object instanceof DataComponentPropertyType) {
-            final DataComponentPropertyType that = (DataComponentPropertyType) object;
+        if (object instanceof DataComponentPropertyType that) {
             boolean absDataRec = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 absDataRec = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());

@@ -211,8 +211,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                         List parameters = exp1.getParameters();
                         if(!properties.contains(parameters.get(0))) return false;
                         if(!properties.contains(parameters.get(1))) return false;
-                    } else if (exp1 instanceof ValueReference) {
-                        ValueReference name = (ValueReference) exp1;
+                    } else if (exp1 instanceof ValueReference name) {
                         if(!properties.contains(name)) return false;
                     } else {
                         return false;
@@ -459,21 +458,18 @@ public class IntervalStyleBuilder extends AbstractTableModel{
      */
     private Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
 
-        if(symbol instanceof PolygonSymbolizer){
-            PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
+        if(symbol instanceof PolygonSymbolizer ps){
             Fill fill = sf.fill(sf.literal(color),ps.getFill().getOpacity());
             return sf.polygonSymbolizer(ps.getName(), ps.getGeometryPropertyName(),
                     ps.getDescription(), ps.getUnitOfMeasure(),
                     ps.getStroke(),fill,ps.getDisplacement(),ps.getPerpendicularOffset());
-        }else if(symbol instanceof LineSymbolizer){
-            LineSymbolizer ls = (LineSymbolizer) symbol;
+        }else if(symbol instanceof LineSymbolizer ls){
             Stroke oldStroke = ls.getStroke();
             Stroke stroke = sf.stroke(sf.literal(color),oldStroke.getOpacity(),oldStroke.getWidth(),
                     oldStroke.getLineJoin(),oldStroke.getLineCap(),oldStroke.getDashArray(),oldStroke.getDashOffset());
             return sf.lineSymbolizer(ls.getName(), ls.getGeometryPropertyName(),
                     ls.getDescription(), ls.getUnitOfMeasure(), stroke, ls.getPerpendicularOffset());
-        }else if(symbol instanceof PointSymbolizer){
-            PointSymbolizer ps = (PointSymbolizer) symbol;
+        }else if(symbol instanceof PointSymbolizer ps){
             Graphic oldGraphic = ps.getGraphic();
             Mark oldMark = (Mark) oldGraphic.graphicalSymbols().get(0);
             Fill fill = sf.fill(sf.literal(color),oldMark.getFill().getOpacity());

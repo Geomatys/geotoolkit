@@ -100,8 +100,7 @@ public class Text extends AbstractDataComponentType implements AbstractText {
         if (object == this) {
             return true;
         }
-        if (object instanceof Text && super.equals(object, mode)) {
-            final Text that = (Text) object;
+        if (object instanceof Text that && super.equals(object, mode)) {
 
             return Objects.equals(this.value, that.value);
         }

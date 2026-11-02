@@ -159,8 +159,7 @@ public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabili
         if (object == this) {
             return true;
         }
-        if (object instanceof FilterCapabilities) {
-            final FilterCapabilities that = (FilterCapabilities) object;
+        if (object instanceof FilterCapabilities that) {
             return Objects.equals(this.idCapabilities,       that.idCapabilities)      &&
                    Objects.equals(this.scalarCapabilities,   that.scalarCapabilities)  &&
                    Objects.equals(this.spatialCapabilities,  that.spatialCapabilities) &&

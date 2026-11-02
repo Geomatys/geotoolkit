@@ -201,8 +201,7 @@ public class DataOutput {
         if (object == this) {
             return true;
         }
-        if (object instanceof DataOutput) {
-            final DataOutput that = (DataOutput) object;
+        if (object instanceof DataOutput that) {
             return Objects.equals(this.data,      that.data) &&
                    Objects.equals(this.id,        that.id) &&
                    Objects.equals(this.reference, that.reference) &&

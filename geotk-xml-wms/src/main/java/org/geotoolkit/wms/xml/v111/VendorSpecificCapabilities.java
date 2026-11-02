@@ -56,8 +56,7 @@ public class VendorSpecificCapabilities {
         if (object == this) {
             return true;
         }
-        if (object instanceof VendorSpecificCapabilities) {
-            final VendorSpecificCapabilities that = (VendorSpecificCapabilities) object;
+        if (object instanceof VendorSpecificCapabilities that) {
 
             return Objects.equals(this.tileSet, that.tileSet);
         }

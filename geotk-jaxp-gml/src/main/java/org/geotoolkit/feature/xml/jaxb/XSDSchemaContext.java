@@ -267,8 +267,7 @@ public class XSDSchemaContext {
                 schema = unmarshaller.unmarshal(((URL) candidate).openStream());
                 // we build the base url to retrieve imported xsd
                 location = ((URL) candidate).toString();
-            } else if (candidate instanceof URLConnection) {
-                final URLConnection conn = (URLConnection) candidate;
+            } else if (candidate instanceof URLConnection conn) {
                 try (final InputStream stream = conn.getInputStream()) {
                     schema = unmarshaller.unmarshal(stream);
                 }
@@ -360,8 +359,7 @@ public class XSDSchemaContext {
      */
     private void fillAllSubstitution(Schema schema){
         for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {
-            if (att instanceof TopLevelElement) {
-                final TopLevelElement ele = (TopLevelElement) att;
+            if (att instanceof TopLevelElement ele) {
                 final QName parent = ele.getSubstitutionGroup();
                 if (parent != null) {
                     Set<QName> subList = substitutionGroups.get(parent);
@@ -407,8 +405,7 @@ public class XSDSchemaContext {
     public Attribute findGlobalAttribute(final QName typeName) {
         return extractForNamespace(typeName.getNamespaceURI(), schema -> {
             for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {
-                if (att instanceof Attribute) {
-                    final Attribute candidate = (Attribute) att;
+                if (att instanceof Attribute candidate) {
                     if (candidate.getName().equals(typeName.getLocalPart())) {
                         return candidate;
                     }

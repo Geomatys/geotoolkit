@@ -214,8 +214,7 @@ public class ParameterExpressionType implements ParameterExpression {
         if (object == this) {
             return true;
         }
-        if (object instanceof ParameterExpressionType) {
-            final ParameterExpressionType that = (ParameterExpressionType) object;
+        if (object instanceof ParameterExpressionType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.name, that.name) &&

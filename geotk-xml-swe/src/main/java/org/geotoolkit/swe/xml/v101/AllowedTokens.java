@@ -154,8 +154,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
         if (object == this) {
             return true;
         }
-        if (object instanceof AllowedTokens) {
-            final AllowedTokens that = (AllowedTokens) object;
+        if (object instanceof AllowedTokens that) {
             boolean valueL = false;
             if (this.valueList != null && that.valueList != null) {
                 if (this.valueList.size() != that.valueList.size()) {

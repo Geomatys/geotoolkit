@@ -139,8 +139,7 @@ public abstract class AbstractReferenceSystemType extends AbstractReferenceSyste
             return true;
         }
 
-        if (object instanceof AbstractReferenceSystemType && super.equals(object, mode)) {
-            final AbstractReferenceSystemType that = (AbstractReferenceSystemType) object;
+        if (object instanceof AbstractReferenceSystemType that && super.equals(object, mode)) {
 
             return Objects.equals(this.scope,     that.scope) &&
                    Objects.equals(this.srsID,     that.srsID) &&

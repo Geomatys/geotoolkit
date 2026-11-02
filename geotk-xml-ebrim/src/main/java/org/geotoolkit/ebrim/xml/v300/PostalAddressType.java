@@ -179,8 +179,7 @@ public class PostalAddressType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PostalAddressType) {
-            final PostalAddressType that = (PostalAddressType) obj;
+        if (obj instanceof PostalAddressType that) {
             return Objects.equals(this.city,             that.city) &&
                     Objects.equals(this.country,         that.country) &&
                     Objects.equals(this.postalCode,      that.postalCode) &&

@@ -343,8 +343,7 @@ public class LegacyStatus {
         if (object == this) {
             return true;
         }
-        if (object instanceof LegacyStatus) {
-            final LegacyStatus that = (LegacyStatus) object;
+        if (object instanceof LegacyStatus that) {
             return Objects.equals(this.creationTime, that.creationTime) &&
                    Objects.equals(this.processAccepted, that.processAccepted) &&
                    Objects.equals(this.processFailed, that.processFailed) &&

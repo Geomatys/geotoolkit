@@ -53,8 +53,7 @@ public class InputDescriptionDeserializer extends StdDeserializer<InputDescripti
 
         if (bboxNode != null) {
             List<SupportedCrs> crss = new ArrayList<>();
-            if (bboxNode instanceof ArrayNode) {
-                ArrayNode an = (ArrayNode) bboxNode;
+            if (bboxNode instanceof ArrayNode an) {
                 Iterator<JsonNode> it = an.elements();
                 while (it.hasNext()) {
                     JsonNode n = it.next();
@@ -73,8 +72,7 @@ public class InputDescriptionDeserializer extends StdDeserializer<InputDescripti
             return new BoundingBoxInputDescription(crss);
         } else if (formNode != null) {
             List<FormatDescription> formats = new ArrayList<>();
-            if (formNode instanceof ArrayNode) {
-                ArrayNode an = (ArrayNode) formNode;
+            if (formNode instanceof ArrayNode an) {
                 Iterator<JsonNode> it = an.elements();
                 while (it.hasNext()) {
                     JsonNode n = it.next();
@@ -105,8 +103,7 @@ public class InputDescriptionDeserializer extends StdDeserializer<InputDescripti
             return new ComplexInputDescription(formats);
         } else {
             List<LiteralDataDomain> litDomains = new ArrayList<>();
-            if (litNode instanceof ArrayNode) {
-                ArrayNode an = (ArrayNode) litNode;
+            if (litNode instanceof ArrayNode an) {
                 Iterator<JsonNode> it = an.elements();
                 while (it.hasNext()) {
                     JsonNode n = it.next();

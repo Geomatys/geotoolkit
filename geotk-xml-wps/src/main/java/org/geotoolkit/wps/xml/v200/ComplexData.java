@@ -128,8 +128,7 @@ public class ComplexData extends DataDescription {
         if (object == this) {
             return true;
         }
-        if (object instanceof ComplexData && super.equals(object)) {
-            final ComplexData that = (ComplexData) object;
+        if (object instanceof ComplexData that && super.equals(object)) {
             return Objects.equals(this.any, that.any);
         }
         return false;

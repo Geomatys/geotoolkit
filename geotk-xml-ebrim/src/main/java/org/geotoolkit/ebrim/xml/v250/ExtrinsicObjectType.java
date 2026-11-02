@@ -116,8 +116,7 @@ public class ExtrinsicObjectType extends RegistryEntryType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
-            final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
+        if (obj instanceof ExtrinsicObjectType that && super.equals(obj)) {
             return Objects.equals(this.isOpaque, that.isOpaque) &&
                    Objects.equals(this.getMimeType(), that.getMimeType());
         }

@@ -101,8 +101,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             return null;
         }
         final CodeList<?> type = filter.getOperatorType();
-        if (filter instanceof BetweenComparisonOperator) {
-            final BetweenComparisonOperator pib = (BetweenComparisonOperator) filter;
+        if (filter instanceof BetweenComparisonOperator pib) {
             final LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
             final UpperBoundaryType ubt = ogc_factory.createUpperBoundaryType();
@@ -143,8 +142,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             bot.getExpression().add(extract(pit.getOperand1()));
             bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
-        } else if (filter instanceof LikeOperator) {
-            final LikeOperator pis = (LikeOperator) filter;
+        } else if (filter instanceof LikeOperator pis) {
             final List<Expression> expressions = filter.getExpressions();
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
             bot.setEscape(String.valueOf(pis.getEscapeChar()));
@@ -165,8 +163,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             bot.getExpression().add(extract(pit.getOperand1()));
             bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsNotEqualTo(bot);
-        } else if (filter instanceof NullOperator) {
-            final NullOperator pis = (NullOperator) filter;
+        } else if (filter instanceof NullOperator pis) {
             final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
             bot.setExpression(extract((Expression) pis.getExpressions().get(0)));
             return ogc_factory.createPropertyIsNull(bot);
@@ -210,8 +207,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             if (left instanceof ValueReference) {
                 property = ((ValueReference) left).getXPath();
                 final Object objGeom = ((Literal) right).getValue();
-                if (objGeom instanceof org.opengis.geometry.Envelope) {
-                    final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
+                if (objGeom instanceof org.opengis.geometry.Envelope env) {
                     minx = env.getMinimum(0);
                     maxx = env.getMaximum(0);
                     miny = env.getMinimum(1);
@@ -224,8 +220,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalid bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
-                } else if (objGeom instanceof Geometry) {
-                    final Geometry geom = (Geometry) objGeom;
+                } else if (objGeom instanceof Geometry geom) {
                     final Envelope env = geom.getEnvelopeInternal();
                     minx = env.getMinX();
                     maxx = env.getMaxX();
@@ -238,8 +233,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             } else if (right instanceof ValueReference) {
                 property = ((ValueReference) right).getXPath();
                 final Object objGeom = ((Literal) left).getValue();
-                if (objGeom instanceof org.opengis.geometry.Envelope) {
-                    final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
+                if (objGeom instanceof org.opengis.geometry.Envelope env) {
                     minx = env.getMinimum(0);
                     maxx = env.getMaximum(0);
                     miny = env.getMinimum(1);
@@ -252,8 +246,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalid bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
-                } else if (objGeom instanceof Geometry) {
-                    final Geometry geom = (Geometry) objGeom;
+                } else if (objGeom instanceof Geometry geom) {
                     final Envelope env = geom.getEnvelopeInternal();
                     minx = env.getMinX();
                     maxx = env.getMaxX();
@@ -268,15 +261,13 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             }
             final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
             return ogc_factory.createBBOX(bbtype);
-        } else if (filter instanceof ResourceId) {
+        } else if (filter instanceof ResourceId idFilter) {
             final ValueReference n = FF.property(AttributeConvention.IDENTIFIER);
-            ResourceId idFilter = (ResourceId) filter;
             final String id = idFilter.getIdentifier();
             final ResourceIdType rId = ogc_factory.createResourceIdType();
             rId.setRid(id);
             return ogc_factory.createResourceId(rId);
-        } else if (filter instanceof BinarySpatialOperator) {
-            final BinarySpatialOperator spatialOp = (BinarySpatialOperator) filter;
+        } else if (filter instanceof BinarySpatialOperator spatialOp) {
             Expression exp1 = spatialOp.getOperand1();
             Expression exp2 = spatialOp.getOperand2();
             if (!(exp1 instanceof ValueReference)) {
@@ -300,8 +291,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             }
             final JAXBElement<?> geometryExpression;
             final Object geom = ((Literal) exp2).getValue();
-            if (geom instanceof Geometry) {
-                final Geometry jts = (Geometry) geom;
+            if (geom instanceof Geometry jts) {
                 final String srid = SRIDGenerator.toSRS(jts.getSRID(), SRIDGenerator.Version.V1);
                 CoordinateReferenceSystem crs;
                 try {
@@ -340,8 +330,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                 }
             } else if (geom instanceof org.opengis.geometry.Geometry) {
                 throw new UnsupportedOperationException("No valid ISO implementation avaiable for now.");
-            } else if (geom instanceof org.opengis.geometry.Envelope) {
-                final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope) geom;
+            } else if (geom instanceof org.opengis.geometry.Envelope genv) {
                 EnvelopeType ee = gml_factory.createEnvelopeType();
                 ee.setSrsDimension(genv.getDimension());
                 if (genv.getCoordinateReferenceSystem() != null) {

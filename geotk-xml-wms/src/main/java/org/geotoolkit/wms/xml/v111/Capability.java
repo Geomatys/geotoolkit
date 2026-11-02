@@ -156,8 +156,7 @@ public class Capability implements AbstractCapability {
         if (object == this) {
             return true;
         }
-        if (object instanceof Capability) {
-            final Capability that = (Capability) object;
+        if (object instanceof Capability that) {
 
             return Objects.equals(this.exception, that.exception) &&
                    Objects.equals(this.layer,     that.layer)     &&

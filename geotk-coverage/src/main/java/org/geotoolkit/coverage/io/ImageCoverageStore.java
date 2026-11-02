@@ -122,8 +122,7 @@ class ImageCoverageStore extends GridCoverageStore {
          * In the particular where the input is an array, we assume that each array element
          * is for an image at the corresponding index. This is what MosaicImageReader does.
          */
-        if (stream instanceof Object[]) {
-            final Object[] array = (Object[]) stream;
+        if (stream instanceof Object[] array) {
             if (imageIndex < array.length) {
                 stream = array[imageIndex];
             }

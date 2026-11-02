@@ -548,12 +548,10 @@ public class XmlFeatureTypeTest {
                     if (!resProp.equals(expProp)) {
                         String resatt = "";
                         String expatt = "";
-                        if (resProp instanceof AttributeType) {
-                            AttributeType att = (AttributeType)resProp;
+                        if (resProp instanceof AttributeType att) {
                             resatt = " characteristics:" + att.characteristics().toString();
                         }
-                        if (expProp instanceof AttributeType) {
-                            AttributeType att = (AttributeType)expProp;
+                        if (expProp instanceof AttributeType att) {
                             expatt = " characteristics:" + att.characteristics().toString();
                         }
                         sb.append("expected:").append(expProp).append(expatt).append(" but was:").append(resProp).append(resatt).append("\n");

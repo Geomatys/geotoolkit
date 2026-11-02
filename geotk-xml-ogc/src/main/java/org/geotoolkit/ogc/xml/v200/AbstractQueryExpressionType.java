@@ -87,8 +87,7 @@ public abstract class AbstractQueryExpressionType {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractQueryExpressionType) {
-            final AbstractQueryExpressionType that = (AbstractQueryExpressionType) object;
+        if (object instanceof AbstractQueryExpressionType that) {
 
             return Objects.equals(this.handle, that.handle);
             }

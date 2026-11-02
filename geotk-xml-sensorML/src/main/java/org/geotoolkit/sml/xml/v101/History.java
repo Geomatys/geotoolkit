@@ -357,8 +357,7 @@ public class History extends SensorObject implements AbstractHistory {
             return true;
         }
 
-        if (object instanceof History) {
-            final History that = (History) object;
+        if (object instanceof History that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

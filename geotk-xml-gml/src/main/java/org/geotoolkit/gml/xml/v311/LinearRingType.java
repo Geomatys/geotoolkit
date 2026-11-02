@@ -167,8 +167,7 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
         if (object == this) {
             return true;
         }
-        if (object instanceof LinearRingType) {
-            final LinearRingType that = (LinearRingType) object;
+        if (object instanceof LinearRingType that) {
 
             boolean jb = false;
             if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {

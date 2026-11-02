@@ -379,8 +379,7 @@ public class SensorML implements AbstractSensorML {
             return true;
         }
 
-        if (object instanceof SensorML) {
-            final SensorML that = (SensorML) object;
+        if (object instanceof SensorML that) {
             return Objects.equals(this.capabilities,       that.capabilities)       &&
                    Objects.equals(this.characteristics,    that.characteristics)    &&
                    Objects.equals(this.classification,     that.classification)     &&

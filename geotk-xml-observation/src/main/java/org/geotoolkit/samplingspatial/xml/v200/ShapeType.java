@@ -483,8 +483,7 @@ public class ShapeType {
             return true;
         }
 
-        if (object instanceof ShapeType) {
-            final ShapeType that = (ShapeType) object;
+        if (object instanceof ShapeType that) {
 
             AbstractGeometryType thatgeom = null;
             if (that.abstractGeometry != null) {

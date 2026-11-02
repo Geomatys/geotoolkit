@@ -167,9 +167,8 @@ public class BoundingShapeType implements BoundingShape {
         if (object == this) {
             return true;
         }
-        if (object instanceof BoundingShapeType) {
+        if (object instanceof BoundingShapeType that) {
 
-            final BoundingShapeType that = (BoundingShapeType) object;
 
             return Objects.equals(this.getNull(),              that.getNull())              &&
                    Objects.equals(this.envelope,               that.envelope)               &&

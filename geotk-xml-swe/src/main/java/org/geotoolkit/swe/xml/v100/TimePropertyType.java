@@ -92,8 +92,7 @@ public class TimePropertyType implements AbstractTimeProperty {
             return true;
         }
 
-        if (object instanceof TimePropertyType && super.equals(object)) {
-            final TimePropertyType  that = (TimePropertyType) object;
+        if (object instanceof TimePropertyType that && super.equals(object)) {
             return Objects.equals(this.time, that.time);
         }
         return false;

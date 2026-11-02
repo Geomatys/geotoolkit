@@ -137,8 +137,7 @@ public class RecordType extends DCMIRecordType implements Record {
         if (object == this) {
             return true;
         }
-        if (object instanceof RecordType && super.equals(object)) {
-            final RecordType that = (RecordType) object;
+        if (object instanceof RecordType that && super.equals(object)) {
 
             if (this.boundingBox != null && that.boundingBox != null) {
                 return Objects.equals(this.boundingBox.getValue(),   that.boundingBox.getValue());

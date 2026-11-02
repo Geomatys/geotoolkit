@@ -132,8 +132,7 @@ public class SpatialCapabilitiesType extends SpatialCapabilities {
             return true;
         }
 
-       if (object instanceof SpatialCapabilitiesType) {
-           final SpatialCapabilitiesType that = (SpatialCapabilitiesType) object;
+       if (object instanceof SpatialCapabilitiesType that) {
 
             return Objects.equals(this.geometryOperands, that.geometryOperands) &&
                    Objects.equals(this.spatialOperators, that.spatialOperators);

@@ -133,8 +133,7 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiGeometryType && super.equals(object, mode)) {
-            final MultiGeometryType that = (MultiGeometryType) object;
+        if (object instanceof MultiGeometryType that && super.equals(object, mode)) {
             return  Objects.equals(this.geometryMember,  that.geometryMember) &&
                     Objects.equals(this.geometryMembers, that.geometryMembers);
         }

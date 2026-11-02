@@ -224,8 +224,7 @@ public class Capability implements AbstractCapability {
         if (object == this) {
             return true;
         }
-        if (object instanceof Capability) {
-            final Capability that = (Capability) object;
+        if (object instanceof Capability that) {
 
             boolean ext = true;
             if (this.extendedCapabilities != null && that.extendedCapabilities != null &&

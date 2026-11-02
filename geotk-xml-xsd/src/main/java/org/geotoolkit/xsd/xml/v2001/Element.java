@@ -583,8 +583,7 @@ public abstract class Element extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof Element && super.equals(object)) {
-            final Element that = (Element) object;
+        if (object instanceof Element that && super.equals(object)) {
             return Objects.equals(this._abstract,          that._abstract)          &&
                    Objects.equals(this._default,           that._default)           &&
                    Objects.equals(this._final,             that._final)             &&

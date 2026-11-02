@@ -82,8 +82,7 @@ public class FederationType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof FederationType && super.equals(obj)) {
-            final FederationType that = (FederationType) obj;
+        if (obj instanceof FederationType that && super.equals(obj)) {
             return Objects.equals(this.replicationSyncLatency, that.replicationSyncLatency);
         }
         return false;

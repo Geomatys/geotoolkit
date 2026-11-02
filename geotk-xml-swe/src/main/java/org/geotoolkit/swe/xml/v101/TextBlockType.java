@@ -115,8 +115,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
         if (object == this) {
             return true;
         }
-        if (object instanceof TextBlockType && super.equals(object)) {
-            final TextBlockType that = (TextBlockType) object;
+        if (object instanceof TextBlockType that && super.equals(object)) {
             return Objects.equals(this.tokenSeparator,          that.tokenSeparator)   &&
                    Objects.equals(this.blockSeparator,    that.blockSeparator)   &&
                    Objects.equals(this.decimalSeparator,   that.decimalSeparator) ;

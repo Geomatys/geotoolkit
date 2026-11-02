@@ -127,8 +127,7 @@ public class WebCoverageClient extends AbstractClient implements Client, Aggrega
             final Unmarshaller unmarshaller = WCSMarshallerPool.getInstance().acquireUnmarshaller();
             Object lastCapa = unmarshaller.unmarshal(getCaps.getResponseStream());
             WCSMarshallerPool.getInstance().recycle(unmarshaller);
-            if (lastCapa instanceof ServiceExceptionReport) {
-                ServiceExceptionReport report = (ServiceExceptionReport) lastCapa;
+            if (lastCapa instanceof ServiceExceptionReport report) {
                 if (!report.getException().isEmpty() && "CurrentUpdateSequence".equalsIgnoreCase(report.getException().get(0).getExceptionCode())) {
                     newUpdateSequence = currentUpdateSequence;
                     changed = false;
@@ -136,8 +135,7 @@ public class WebCoverageClient extends AbstractClient implements Client, Aggrega
                      throw report.toException();
                 }
 
-            } else if (lastCapa instanceof WCSCapabilitiesType) {
-                WCSCapabilitiesType lc = (WCSCapabilitiesType) lastCapa;
+            } else if (lastCapa instanceof WCSCapabilitiesType lc) {
                 newUpdateSequence = lc.getUpdateSequence();
             }
             changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);

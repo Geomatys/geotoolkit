@@ -286,8 +286,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
             return true;
         }
 
-        if (object instanceof LegalConstraint) {
-            final LegalConstraint that = (LegalConstraint) object;
+        if (object instanceof LegalConstraint that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

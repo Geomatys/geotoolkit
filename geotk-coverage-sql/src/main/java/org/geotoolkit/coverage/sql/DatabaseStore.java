@@ -632,8 +632,7 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     public List<Path> remove(Resource resource, Envelope areaOfInterest) throws DataStoreException {
         ArgumentChecks.ensureNonNull("areaOfInterest", areaOfInterest);
 
-        if(resource instanceof ProductResource) {
-            final ProductResource pr = (ProductResource) resource;
+        if(resource instanceof ProductResource pr) {
             return accessLock.doLocked((Stamp stamp) ->  remove(areaOfInterest, pr, stamp), false);
         }
 

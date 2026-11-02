@@ -185,8 +185,7 @@ public class CoordinateType implements Coordinate {
         if (object == this) {
             return true;
         }
-        if (object instanceof CoordinateType) {
-            final CoordinateType  that = (CoordinateType) object;
+        if (object instanceof CoordinateType that) {
             return Objects.equals(this.count,    that.count)    &&
                    Objects.equals(this.name,     that.name)     &&
                    Objects.equals(this.quantity, that.quantity) &&

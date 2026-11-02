@@ -206,8 +206,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         if (object == this) {
             return true;
         }
-        if (object instanceof WFSCapabilitiesType && super.equals(object)) {
-            final WFSCapabilitiesType that = (WFSCapabilitiesType) object;
+        if (object instanceof WFSCapabilitiesType that && super.equals(object)) {
 
             return Objects.equals(this.featureTypeList,           that.featureTypeList)           &&
                    Objects.equals(this.filterCapabilities,        that.filterCapabilities)        &&

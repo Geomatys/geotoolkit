@@ -168,8 +168,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ClassificationSchemeType && super.equals(obj)) {
-            final ClassificationSchemeType that = (ClassificationSchemeType) obj;
+        if (obj instanceof ClassificationSchemeType that && super.equals(obj)) {
             return Objects.equals(this.classificationNode, that.classificationNode) &&
                    Objects.equals(this.isInternal,         that.isInternal) &&
                    Objects.equals(this.nodeType,           that.nodeType);

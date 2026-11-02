@@ -148,8 +148,7 @@ public class SurfaceType extends AbstractSurfaceType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SurfaceType && super.equals(object, mode)) {
-            final SurfaceType that = (SurfaceType) object;
+        if (object instanceof SurfaceType that && super.equals(object, mode)) {
 
             return Objects.equals(this.getPatches(), that.getPatches());
         }

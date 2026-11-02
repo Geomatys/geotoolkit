@@ -257,8 +257,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
                 if (value instanceof String) {
                 return (String) value;
             }
-            if (value instanceof QName) {
-                    QName content = (QName) value;
+            if (value instanceof QName content) {
                     if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
                     return content.getNamespaceURI() + ':' + content.getLocalPart();
                     }
@@ -311,8 +310,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         if (obj == this) {
             return true;
         }
-        if (obj instanceof BinaryComparisonOpType) {
-            BinaryComparisonOpType that = (BinaryComparisonOpType) obj;
+        if (obj instanceof BinaryComparisonOpType that) {
             return Objects.equals(this.matchCase, that.matchCase) &&
                    Objects.equals(this.getLiteral(), that.getLiteral()) &&
                    Objects.equals(this.getPropertyName(), that.getPropertyName()) &&

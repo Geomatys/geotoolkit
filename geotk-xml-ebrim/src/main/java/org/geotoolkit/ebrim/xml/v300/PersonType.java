@@ -201,8 +201,7 @@ public class PersonType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof PersonType && super.equals(obj)) {
-            final PersonType that = (PersonType) obj;
+        if (obj instanceof PersonType that && super.equals(obj)) {
             return Objects.equals(this.address,         that.address) &&
                    Objects.equals(this.emailAddress,    that.emailAddress) &&
                    Objects.equals(this.personName,      that.personName) &&

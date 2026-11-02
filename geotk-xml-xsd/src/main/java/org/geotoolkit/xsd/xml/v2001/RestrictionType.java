@@ -350,8 +350,7 @@ public class RestrictionType extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof RestrictionType && super.equals(object)) {
-            final RestrictionType that = (RestrictionType) object;
+        if (object instanceof RestrictionType that && super.equals(object)) {
                    return
                    Objects.equals(this.all,                       that.all) &&
                    Objects.equals(this.anyAttribute,              that.anyAttribute) &&

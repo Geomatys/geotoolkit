@@ -119,9 +119,8 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     @Override
     public Object evaluate(Object object, Class context) {
 
-        if (object instanceof RenderedImage) {
+        if (object instanceof RenderedImage image) {
 
-            final RenderedImage image = (RenderedImage) object;
             final int dataType = image.getSampleModel().getDataType();
             final Raster data = image.getData();
             int classes = (Integer) this.classNumber.getValue();
@@ -253,8 +252,7 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
 
         @Override
         public Object apply(Object object) {
-            if (object instanceof Number) {
-                Number value = (Number) object;
+            if (object instanceof Number value) {
                 return values.headMap(value.doubleValue(),false).lastEntry().getValue();
             }
             return null;

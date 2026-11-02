@@ -67,8 +67,7 @@ public class ElementManual extends Element {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof ElementManual) {
-            final ElementManual that = (ElementManual) obj;
+        if (obj instanceof ElementManual that) {
             return Objects.equals(this.id,          that.id) &&
                    Objects.equals(this.description, that.description);
         }

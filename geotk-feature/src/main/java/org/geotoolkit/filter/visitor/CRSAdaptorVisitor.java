@@ -42,8 +42,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                         + "second expression should have been a literal with a boundingBox value: \n" + filter);
             } else {
                 CoordinateReferenceSystem targetCrs = null;
-                if (exp1 instanceof ValueReference) {
-                    final ValueReference pn = (ValueReference)exp1;
+                if (exp1 instanceof ValueReference pn) {
                     try{
                         final PropertyType desc = dataType.getProperty(pn.getXPath());
                         if(desc instanceof AttributeType){
@@ -56,8 +55,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                     Object lo = l.getValue();
                     try {
                         out:
-                        if (lo instanceof Geometry) {
-                            Geometry geom = (Geometry)lo;
+                        if (lo instanceof Geometry geom) {
                             final CoordinateReferenceSystem sourceCRS = JTS.findCoordinateReferenceSystem(geom);
                             if (CRS.equivalent(sourceCRS, targetCrs)) break out;
                             final MathTransform trs = CRS.findOperation(sourceCRS, targetCrs, null).getMathTransform();

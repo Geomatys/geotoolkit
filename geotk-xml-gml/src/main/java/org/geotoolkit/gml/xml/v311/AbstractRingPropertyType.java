@@ -149,8 +149,7 @@ public class AbstractRingPropertyType implements AbstractRingProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractRingPropertyType) {
-            final AbstractRingPropertyType that = (AbstractRingPropertyType) object;
+        if (object instanceof AbstractRingPropertyType that) {
 
             return Objects.equals(this.getAbstractRing(), that.getAbstractRing());
         }

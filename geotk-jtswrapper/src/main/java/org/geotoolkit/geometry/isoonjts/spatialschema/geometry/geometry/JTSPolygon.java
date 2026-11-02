@@ -134,8 +134,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
         if (object == this)
             return true;
 
-        if (object instanceof JTSPolygon && super.equals(object)) {
-            JTSPolygon that = (JTSPolygon) object;
+        if (object instanceof JTSPolygon that && super.equals(object)) {
             return Objects.equals(this.spanningSurface, that.spanningSurface);
         }
         return false;

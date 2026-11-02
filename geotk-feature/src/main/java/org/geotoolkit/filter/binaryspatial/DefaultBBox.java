@@ -102,9 +102,8 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, L
         }catch(FactoryException ex){
             LOGGER.log(Level.WARNING, null, ex);
         }
-        if(crs == null && base instanceof Feature){
+        if(crs == null && base instanceof Feature att){
             //try to find it on the base
-            final Feature att = (Feature) base;
             final String propertyName = left.getXPath();
             if (propertyName.isEmpty()) {
                 crs = FeatureExt.getCRS(att.getType());

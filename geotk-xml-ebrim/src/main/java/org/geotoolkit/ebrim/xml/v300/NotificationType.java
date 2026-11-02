@@ -106,8 +106,7 @@ public class NotificationType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof NotificationType && super.equals(obj)) {
-            final NotificationType that = (NotificationType) obj;
+        if (obj instanceof NotificationType that && super.equals(obj)) {
             return Objects.equals(this.registryObjectList, that.registryObjectList) &&
                    Objects.equals(this.subscription,       that.subscription);
         }

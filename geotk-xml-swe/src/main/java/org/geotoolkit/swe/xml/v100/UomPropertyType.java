@@ -373,8 +373,7 @@ public class UomPropertyType implements UomProperty {
             return true;
         }
 
-        if (object instanceof UomPropertyType) {
-            final UomPropertyType that = (UomPropertyType) object;
+        if (object instanceof UomPropertyType that) {
             boolean unitDef = false;
             if (this.unitDefinition != null && that.unitDefinition != null) {
                 unitDef = Objects.equals(this.unitDefinition.getValue(), that.unitDefinition.getValue());

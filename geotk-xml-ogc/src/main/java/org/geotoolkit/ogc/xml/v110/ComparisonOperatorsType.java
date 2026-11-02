@@ -131,8 +131,7 @@ public class ComparisonOperatorsType extends ComparisonOperators {
         if (object == this) {
             return true;
         }
-        if (object instanceof ComparisonOperatorsType) {
-            final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
+        if (object instanceof ComparisonOperatorsType that) {
 
             return Objects.equals(this.comparisonOperator, that.comparisonOperator);
         }

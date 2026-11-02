@@ -358,8 +358,7 @@ public class MethodPropertyType extends SensorObject implements AbstractMethodPr
             return true;
         }
 
-        if (object instanceof MethodPropertyType) {
-            final MethodPropertyType that = (MethodPropertyType) object;
+        if (object instanceof MethodPropertyType that) {
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

@@ -166,8 +166,7 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
         if (object == this) {
             return true;
         }
-        if (object instanceof QuantityRangeType && super.equals(object)) {
-            final QuantityRangeType that = (QuantityRangeType) object;
+        if (object instanceof QuantityRangeType that && super.equals(object)) {
 
             return Objects.equals(this.constraint,  that.constraint) &&
                    Objects.equals(this.uom,         that.uom) &&

@@ -103,8 +103,7 @@ public class DistributedSearchType implements DistributedSearch {
         if (object == this) {
             return true;
         }
-        if (object instanceof DistributedSearchType) {
-            DistributedSearchType that = (DistributedSearchType) object;
+        if (object instanceof DistributedSearchType that) {
             return Objects.equals(this.hopCount,  that.hopCount);
         }
         return false;

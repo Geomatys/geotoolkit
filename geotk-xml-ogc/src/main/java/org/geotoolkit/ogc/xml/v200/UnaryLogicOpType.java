@@ -103,8 +103,7 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
              this.temporalOps = FilterType.createTemporalOps((TemporalOpsType) obj);
 
          // clone
-         } else if (obj instanceof UnaryLogicOpType) {
-             final UnaryLogicOpType that = (UnaryLogicOpType) obj;
+         } else if (obj instanceof UnaryLogicOpType that) {
              final ObjectFactory factory = new ObjectFactory();
              if (that.comparisonOps != null) {
                  final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
@@ -120,8 +119,7 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
                  this.id = new ArrayList<>();
                  for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                      AbstractIdType aid = jb.getValue();
-                     if (aid instanceof ResourceIdType) {
-                         final ResourceIdType raid = (ResourceIdType) aid;
+                     if (aid instanceof ResourceIdType raid) {
                          this.id.add(factory.createResourceId(new ResourceIdType(raid)));
                      } else {
                          throw new IllegalArgumentException("exexpected ID type in filter:" + aid.getClass().getName());

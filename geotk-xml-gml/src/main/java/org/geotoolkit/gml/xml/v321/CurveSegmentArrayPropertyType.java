@@ -165,8 +165,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
         if (object == this) {
             return true;
         }
-        if (object instanceof CurveSegmentArrayPropertyType) {
-            final CurveSegmentArrayPropertyType that = (CurveSegmentArrayPropertyType) object;
+        if (object instanceof CurveSegmentArrayPropertyType that) {
 
             if (this.abstractCurveSegment != null && that.abstractCurveSegment != null) {
                 for (int i = 0; i < abstractCurveSegment.size(); i++) {

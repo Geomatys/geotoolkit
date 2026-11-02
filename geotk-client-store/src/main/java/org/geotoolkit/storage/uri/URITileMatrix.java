@@ -238,8 +238,7 @@ public class URITileMatrix extends AbstractTileMatrix implements WritableTileMat
 
                 if (tileData instanceof Assets) {
                     final Assets source = (Assets) tile;
-                    if (store instanceof Assets) {
-                        final Assets target = (Assets) store;
+                    if (store instanceof Assets target) {
                         for (Data data : source.getDatas()) {
                             target.addData(data);
                         }

@@ -98,8 +98,7 @@ public class BasicIdentificationType extends DescriptionType {
         if (object == this) {
             return true;
         }
-        if (object instanceof BasicIdentificationType && super.equals(object)) {
-             final BasicIdentificationType that = (BasicIdentificationType) object;
+        if (object instanceof BasicIdentificationType that && super.equals(object)) {
             return Objects.equals(this.identifier, that.identifier) &&
                    Objects.equals(this.metadata,   that.metadata);
         }

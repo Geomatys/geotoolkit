@@ -128,16 +128,14 @@ public final class WKBRasterImageReader extends ImageReader {
         @Override
         public boolean canDecodeInput(Object source) throws IOException {
 
-            if (source instanceof ImageInputStream) {
-                final ImageInputStream is = (ImageInputStream) source;
+            if (source instanceof ImageInputStream is) {
                 is.mark();
                 source = new byte[5];
                 is.readFully((byte[])source);
                 is.reset();
             }
 
-            if (source instanceof byte[]) {
-                byte[] buffer = (byte[]) source;
+            if (source instanceof byte[] buffer) {
                 //check endianess and version
                 boolean valid = (buffer[0] == 0 || buffer[0] == 1)
                         && buffer[1] == 0

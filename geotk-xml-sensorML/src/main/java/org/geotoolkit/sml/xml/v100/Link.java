@@ -152,8 +152,7 @@ public class Link implements AbstractLink {
         if (object == this) {
             return true;
         }
-        if (object instanceof Link) {
-            final Link that = (Link) object;
+        if (object instanceof Link that) {
             return Objects.equals(this.destination, that.destination) &&
                    Objects.equals(this.source, that.source)           &&
                    Objects.equals(this.type, that.type);

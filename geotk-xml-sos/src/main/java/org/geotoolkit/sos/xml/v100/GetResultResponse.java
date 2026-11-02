@@ -96,8 +96,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
         if (object == this) {
             return true;
         }
-        if (object instanceof GetResultResponse) {
-            final GetResultResponse that = (GetResultResponse) object;
+        if (object instanceof GetResultResponse that) {
             return Objects.equals(this.result, that.result);
         }
         return false;
@@ -176,8 +175,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
             if (object == this) {
                 return true;
             }
-            if (object instanceof Result) {
-                final Result that = (Result) object;
+            if (object instanceof Result that) {
                 return Objects.equals(this.rs,    that.rs) &&
                        Objects.equals(this.value, that.value);
             }

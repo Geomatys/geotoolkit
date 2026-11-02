@@ -468,8 +468,7 @@ public class SurfacePropertyType implements SurfaceProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof SurfacePropertyType) {
-            final SurfacePropertyType that = (SurfacePropertyType) object;
+        if (object instanceof SurfacePropertyType that) {
 
             return Objects.equals(this.actuate,              that.actuate)          &&
                    Objects.equals(this.arcrole,              that.arcrole)          &&

@@ -86,15 +86,13 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             final Collection<MutableLayer> sldLayers = new ArrayList<MutableLayer>();
 
             for(final Object obj : layers){
-                if(obj instanceof NamedLayer){
-                    final NamedLayer nl = (NamedLayer) obj;
+                if(obj instanceof NamedLayer nl){
                     final MutableNamedLayer mnl = sldFactory.createNamedLayer();
                     mnl.setName(nl.getName());
                     mnl.getConstraints().constraints().addAll(visitFeatureConstraints(nl.getLayerFeatureConstraints()));
                     mnl.styles().addAll( visitStyles(nl.getNamedStyleOrUserStyle()) );
                     sldLayers.add(mnl);
-                }else if( obj instanceof UserLayer){
-                    final UserLayer ul = (UserLayer) obj;
+                }else if( obj instanceof UserLayer ul){
                     final MutableUserLayer mul = sldFactory.createUserLayer();
                     mul.setName(ul.getName());
                     mul.styles().addAll( visitUserStyles(ul.getUserStyle()) );
@@ -187,13 +185,11 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
 
             for(final Object obj : styles){
 
-                if(obj instanceof org.geotoolkit.sld.xml.v100.NamedStyle){
-                    final org.geotoolkit.sld.xml.v100.NamedStyle ns = (org.geotoolkit.sld.xml.v100.NamedStyle) obj;
+                if(obj instanceof org.geotoolkit.sld.xml.v100.NamedStyle ns){
                     final MutableNamedStyle mns = sldFactory.createNamedStyle();
                     mns.setName(ns.getName());
                     mStyles.add(mns);
-                }else if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle){
-                    final org.geotoolkit.sld.xml.v100.UserStyle us = (org.geotoolkit.sld.xml.v100.UserStyle) obj;
+                }else if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle us){
                     //we call SE transformer for this part
                     mStyles.add(visitUserStyle(us));
                 }

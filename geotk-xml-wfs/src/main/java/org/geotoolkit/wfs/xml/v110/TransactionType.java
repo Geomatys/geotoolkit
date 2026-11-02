@@ -221,8 +221,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionType && super.equals(object)) {
-            final TransactionType that = (TransactionType) object;
+        if (object instanceof TransactionType that && super.equals(object)) {
             return  Objects.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
                     Objects.equals(this.lockId, that.lockId) &&
                     Objects.equals(this.releaseAction, that.releaseAction);

@@ -111,8 +111,7 @@ public class SimulatedAnnealing {
 
         for(Candidate c : candidates.keySet()){
             Point p = candidates.get(c);
-            if(c instanceof PointCandidate){
-                PointCandidate pc = (PointCandidate) c;
+            if(c instanceof PointCandidate pc){
                 pc.correctionX = p.x;
                 pc.correctionY = p.y;
             }

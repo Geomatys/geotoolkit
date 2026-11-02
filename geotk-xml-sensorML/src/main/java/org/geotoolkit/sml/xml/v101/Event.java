@@ -517,8 +517,7 @@ public class Event extends SensorObject implements AbstractEvent {
             return true;
         }
 
-        if (object instanceof Event) {
-            final Event that = (Event) object;
+        if (object instanceof Event that) {
 
             return Objects.equals(this.getClassification(), that.getClassification())
                     && Objects.equals(this.getContact(), that.getContact())

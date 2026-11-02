@@ -118,8 +118,7 @@ public class IdCapabilitiesType extends DefaultIdCapabilities {
         if (object == this) {
             return true;
         }
-       if (object instanceof IdCapabilitiesType) {
-           final IdCapabilitiesType that = (IdCapabilitiesType) object;
+       if (object instanceof IdCapabilitiesType that) {
 
             return Objects.equals(this.eid, that.eid) &&
                    Objects.equals(this.fid, that.fid);

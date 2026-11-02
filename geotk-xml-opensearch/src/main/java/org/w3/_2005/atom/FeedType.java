@@ -193,8 +193,7 @@ public class FeedType implements OpenSearchResponse {
 
     public IdType getId() {
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeId_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof IdType) {
                     return (IdType) elem.getValue();
@@ -212,8 +211,7 @@ public class FeedType implements OpenSearchResponse {
 
     public TextType getTitle() {
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeTitle_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof TextType) {
                     return (TextType) elem.getValue();
@@ -232,8 +230,7 @@ public class FeedType implements OpenSearchResponse {
     public List<PersonType> getAuthor() {
         List<PersonType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeAuthor_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof PersonType) {
                    results.add((PersonType) elem.getValue());
@@ -252,8 +249,7 @@ public class FeedType implements OpenSearchResponse {
     public List<PersonType> getContributor() {
         List<PersonType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeContributor_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof PersonType) {
                    results.add((PersonType) elem.getValue());
@@ -273,8 +269,7 @@ public class FeedType implements OpenSearchResponse {
     public List<DateTimeType> getUpdated() {
         List<DateTimeType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeUpdated_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof DateTimeType) {
                    results.add((DateTimeType) elem.getValue());
@@ -293,8 +288,7 @@ public class FeedType implements OpenSearchResponse {
     public List<WhereType> getWhere() {
         List<WhereType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (org.geotoolkit.georss.xml.v100.ObjectFactory._WhereType_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof WhereType) {
                    results.add((WhereType) elem.getValue());
@@ -323,8 +317,7 @@ public class FeedType implements OpenSearchResponse {
     public List<LinkType> getLinks() {
         List<LinkType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof LinkType) {
                    results.add((LinkType) elem.getValue());
@@ -337,8 +330,7 @@ public class FeedType implements OpenSearchResponse {
     public List<LinkType> getLinksByRel(String rel) {
         List<LinkType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeLink_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof LinkType) {
                     LinkType l = (LinkType) elem.getValue();
@@ -360,8 +352,7 @@ public class FeedType implements OpenSearchResponse {
     public List<TextType> getRight() {
         List<TextType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeRights_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof TextType) {
                    results.add((TextType) elem.getValue());
@@ -380,8 +371,7 @@ public class FeedType implements OpenSearchResponse {
     public List<CategoryType> getCategory() {
         List<CategoryType> results = new ArrayList<>();
         for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (ObjectFactory._EntryTypeCategory_QNAME.equals(elem.getName()) &&
                     elem.getValue() instanceof ContentType) {
                    results.add((CategoryType) elem.getValue());
@@ -461,8 +451,7 @@ public class FeedType implements OpenSearchResponse {
         List<EntryType> results = new ArrayList<>();
         if (entries != null) {
             for (Object obj : entries) {
-                if (obj instanceof JAXBElement) {
-                    JAXBElement elem = (JAXBElement) obj;
+                if (obj instanceof JAXBElement elem) {
                     results.add((EntryType) elem.getValue());
                 }
             }
@@ -471,8 +460,7 @@ public class FeedType implements OpenSearchResponse {
     }
     public Integer getTotalResults() {
         for (Object obj : getPagingAttributes()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._TotalResults_QNAME.equals(elem.getName())) {
                     return Integer.valueOf(elem.getValue().toString());
                 }
@@ -483,8 +471,7 @@ public class FeedType implements OpenSearchResponse {
 
     public Integer getStartIndex() {
         for (Object obj : getPagingAttributes()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._StartIndex_QNAME.equals(elem.getName())) {
                     return Integer.valueOf(elem.getValue().toString());
                 }
@@ -495,8 +482,7 @@ public class FeedType implements OpenSearchResponse {
 
     public Integer getItemsPerPage() {
         for (Object obj : getPagingAttributes()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
+            if (obj instanceof JAXBElement elem) {
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._ItemsPerPage_QNAME.equals(elem.getName())) {
                     return Integer.valueOf(elem.getValue().toString());
                 }

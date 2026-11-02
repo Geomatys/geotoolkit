@@ -180,8 +180,7 @@ public class Schema extends OpenAttrs {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
-                    if (element instanceof TopLevelElement) {
-                        TopLevelElement tLElement = (TopLevelElement) element;
+                    if (element instanceof TopLevelElement tLElement) {
                         if (tLElement.getName().equals(name)) {
                             return tLElement;
                         }
@@ -212,8 +211,7 @@ public class Schema extends OpenAttrs {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
-                    if (element instanceof ComplexType) {
-                        ComplexType tLElement = (ComplexType) element;
+                    if (element instanceof ComplexType tLElement) {
                         if (tLElement.getName().equals(name)) {
                             return tLElement;
                         }
@@ -228,8 +226,7 @@ public class Schema extends OpenAttrs {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
-                    if (element instanceof SimpleType) {
-                        final SimpleType tLElement = (SimpleType) element;
+                    if (element instanceof SimpleType tLElement) {
                         if (tLElement.getName().equals(name)) {
                             return tLElement;
                         }
@@ -450,8 +447,7 @@ public class Schema extends OpenAttrs {
         if (object == this) {
             return true;
         }
-        if (object instanceof Schema && super.equals(object)) {
-            final Schema that = (Schema) object;
+        if (object instanceof Schema that && super.equals(object)) {
             return Objects.equals(this.attributeFormDefault,           that.attributeFormDefault)           &&
                    Objects.equals(this.blockDefault,                   that.blockDefault)                   &&
                    Objects.equals(this.elementFormDefault,             that.elementFormDefault)             &&

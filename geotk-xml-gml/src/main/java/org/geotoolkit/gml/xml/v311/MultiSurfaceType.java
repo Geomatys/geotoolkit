@@ -109,8 +109,7 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiSurfaceType && super.equals(object, mode)) {
-            final MultiSurfaceType that = (MultiSurfaceType) object;
+        if (object instanceof MultiSurfaceType that && super.equals(object, mode)) {
 
             return Objects.equals(this.surfaceMember,  that.surfaceMember) &&
                    Objects.equals(this.surfaceMembers, that.surfaceMembers);

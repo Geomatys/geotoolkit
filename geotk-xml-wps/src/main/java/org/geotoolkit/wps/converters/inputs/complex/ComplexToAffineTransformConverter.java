@@ -61,8 +61,7 @@ public class ComplexToAffineTransformConverter  extends AbstractComplexInputConv
 
         final Object data = datas.get(0);
 
-        if (data != null && data instanceof org.geotoolkit.mathml.xml.Math) {
-            final org.geotoolkit.mathml.xml.Math math = (org.geotoolkit.mathml.xml.Math) data;
+        if (data != null && data instanceof org.geotoolkit.mathml.xml.Math math) {
             final List<Object> mathExp = math.getMathExpression();
             if (mathExp != null && !mathExp.isEmpty()) {
                 final Mtable mtable = WPSConvertersUtils.findMtable(mathExp);

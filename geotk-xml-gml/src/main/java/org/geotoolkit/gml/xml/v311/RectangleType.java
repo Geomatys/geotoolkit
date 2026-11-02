@@ -151,8 +151,7 @@ public class RectangleType extends AbstractSurfacePatchType {
         if (object == this) {
             return true;
         }
-        if (object instanceof RectangleType) {
-            final RectangleType that = (RectangleType) object;
+        if (object instanceof RectangleType that) {
 
             return Objects.equals(this.getExterior(),    that.getExterior()) &&
                    Objects.equals(this.interpolation,    that.interpolation);

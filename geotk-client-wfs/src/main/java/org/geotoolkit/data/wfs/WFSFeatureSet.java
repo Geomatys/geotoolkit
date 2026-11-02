@@ -274,8 +274,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
                 obj = ((JAXBElement)obj).getValue();
             }
 
-            if(obj instanceof TransactionResponse){
-                final TransactionResponse tr = (TransactionResponse) obj;
+            if(obj instanceof TransactionResponse tr){
                 // TODO send event
                 //tr.getInsertedFID();
             }else{

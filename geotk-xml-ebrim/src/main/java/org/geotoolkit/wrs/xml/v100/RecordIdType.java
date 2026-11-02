@@ -78,8 +78,7 @@ public class RecordIdType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RecordIdType) {
-            final RecordIdType that = (RecordIdType) obj;
+        if (obj instanceof RecordIdType that) {
             return Objects.equals(this.content,  that.content);
         }
         return false;

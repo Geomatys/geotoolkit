@@ -85,8 +85,7 @@ public class DescribeObservationType extends RequestBaseType {
         if (object == this) {
             return true;
         }
-        if (object instanceof DescribeObservationType && super.equals(object)) {
-            final DescribeObservationType that = (DescribeObservationType) object;
+        if (object instanceof DescribeObservationType that && super.equals(object)) {
             return Objects.equals(this.observedProperty, that.observedProperty);
         }
         return false;

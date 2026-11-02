@@ -307,8 +307,7 @@ public class Identification implements AbstractIdentification {
             return true;
         }
 
-        if (object instanceof Identification) {
-            final Identification that = (Identification) object;
+        if (object instanceof Identification that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

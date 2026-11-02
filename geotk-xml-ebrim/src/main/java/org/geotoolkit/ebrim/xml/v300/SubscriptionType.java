@@ -194,8 +194,7 @@ public class SubscriptionType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SubscriptionType && super.equals(obj)) {
-            final SubscriptionType that = (SubscriptionType) obj;
+        if (obj instanceof SubscriptionType that && super.equals(obj)) {
             boolean eq = false;
             if (this.action == null && that.action == null) {
                 eq = true;

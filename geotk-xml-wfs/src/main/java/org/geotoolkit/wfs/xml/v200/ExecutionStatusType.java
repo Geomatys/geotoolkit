@@ -107,8 +107,7 @@ public class ExecutionStatusType implements ExecutionStatus {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExecutionStatusType) {
-            final ExecutionStatusType that = (ExecutionStatusType) object;
+        if (object instanceof ExecutionStatusType that) {
             return Objects.equals(this.status, that.status);
         }
         return false;

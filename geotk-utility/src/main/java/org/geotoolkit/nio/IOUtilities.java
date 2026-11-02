@@ -249,8 +249,7 @@ public final class IOUtilities extends Static {
             throw (IOException) new MalformedURLException(e.getMessage()).initCause(e);
         } else if (candidate instanceof File) {
             return ((File) candidate).toPath();
-        } else if (candidate instanceof URI) {
-            final URI uri = (URI) candidate;
+        } else if (candidate instanceof URI uri) {
             try {
                 if (uri.getScheme() == null) {
                     //scheme null, consider as Path on default FileSystem
@@ -722,8 +721,7 @@ public final class IOUtilities extends Static {
                 url = (URL) resource;
             }
 
-            if (resource instanceof URI) {
-                URI uri = (URI) resource;
+            if (resource instanceof URI uri) {
                 try {
                     url = uri.toURL();
                 } catch (MalformedURLException e2) {
@@ -809,8 +807,7 @@ public final class IOUtilities extends Static {
                 url = (URL) resource;
             }
 
-            if (resource instanceof URI) {
-                URI uri = (URI) resource;
+            if (resource instanceof URI uri) {
                 try {
                     url = uri.toURL();
                 } catch (MalformedURLException e2) {

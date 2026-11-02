@@ -74,8 +74,7 @@ public class ExistenceCapabilitiesType {
             return true;
         }
 
-       if (object instanceof ExistenceCapabilitiesType) {
-           final ExistenceCapabilitiesType that = (ExistenceCapabilitiesType) object;
+       if (object instanceof ExistenceCapabilitiesType that) {
 
             return Objects.equals(this.existenceOperators, that.existenceOperators);
         }

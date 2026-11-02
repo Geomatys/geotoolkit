@@ -169,8 +169,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
         if (object == this) {
             return true;
         }
-        if (object instanceof SimpleDataRecordType && super.equals(object, mode)) {
-            final SimpleDataRecordType that = (SimpleDataRecordType) object;
+        if (object instanceof SimpleDataRecordType that && super.equals(object, mode)) {
             if (this.getField().size() != that.getField().size()) {
                 return false;
             }

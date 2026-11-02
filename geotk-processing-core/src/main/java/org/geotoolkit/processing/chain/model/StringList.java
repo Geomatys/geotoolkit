@@ -71,8 +71,7 @@ public class StringList {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof StringList) {
-            final StringList that = (StringList) obj;
+        if (obj instanceof StringList that) {
             return Objects.equals(this.list, that.list);
         }
         return false;

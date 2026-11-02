@@ -171,8 +171,7 @@ public class ClassifierList implements AbstractClassifierList {
             return true;
         }
 
-        if (object instanceof ClassifierList) {
-            final ClassifierList that = (ClassifierList) object;
+        if (object instanceof ClassifierList that) {
 
             return Objects.equals(this.classifier, that.classifier) &&
                     Objects.equals(this.id, that.id);

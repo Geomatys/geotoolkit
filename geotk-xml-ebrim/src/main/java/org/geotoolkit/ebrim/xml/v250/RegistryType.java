@@ -241,8 +241,7 @@ public class RegistryType extends RegistryEntryType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RegistryType && super.equals(obj)) {
-            final RegistryType that = (RegistryType) obj;
+        if (obj instanceof RegistryType that && super.equals(obj)) {
             return Objects.equals(this.catalogingLatency,          that.catalogingLatency) &&
                    Objects.equals(this.eventNotificationSupported, that.eventNotificationSupported) &&
                    Objects.equals(this.objectRelocationSupported,  that.objectRelocationSupported) &&

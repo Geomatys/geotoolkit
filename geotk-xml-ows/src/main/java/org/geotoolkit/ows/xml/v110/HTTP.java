@@ -150,8 +150,7 @@ public class HTTP implements AbstractHTTP {
         if (object == this) {
             return true;
         }
-        if (object instanceof HTTP) {
-            final HTTP that = (HTTP) object;
+        if (object instanceof HTTP that) {
             if (this.getRealGetOrPost().size() == that.getRealGetOrPost().size()) {
                 for (int i = 0; i < this.getOrPost.size(); i++) {
                     if (!Objects.equals(this.getOrPost.get(i).getValue(), that.getOrPost.get(i).getValue()))

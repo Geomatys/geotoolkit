@@ -112,8 +112,7 @@ public class SimpleContent extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof SimpleContent && super.equals(object)) {
-            final SimpleContent that = (SimpleContent) object;
+        if (object instanceof SimpleContent that && super.equals(object)) {
             return Objects.equals(this.extension,   that.extension) &&
                    Objects.equals(this.restriction, that.restriction);
         }

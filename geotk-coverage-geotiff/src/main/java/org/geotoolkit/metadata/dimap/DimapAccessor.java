@@ -216,8 +216,7 @@ public final class DimapAccessor {
                     dests.toArray(new Point2D[dests.size()]), 1);
 
             final Warp warp = warptrs.getWarp();
-            if (warp instanceof WarpAffine) {
-                final WarpAffine wa = (WarpAffine) warp;
+            if (warp instanceof WarpAffine wa) {
                 return wa.getTransform();
             } else {
                 throw new TransformException("Wrap transform is not affine.");

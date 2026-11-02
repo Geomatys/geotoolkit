@@ -277,8 +277,7 @@ public class DomainValuesType implements DomainValues {
         if (object == this) {
             return true;
         }
-        if (object instanceof DomainValuesType) {
-            final DomainValuesType that = (DomainValuesType) object;
+        if (object instanceof DomainValuesType that) {
 
             return  Objects.equals(this.conceptualScheme, that.conceptualScheme) &&
                     Objects.equals(this.listOfValues,     that.listOfValues) &&

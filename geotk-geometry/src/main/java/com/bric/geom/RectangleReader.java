@@ -77,8 +77,7 @@ public class RectangleReader {
         if(shape instanceof Rectangle && transform==null)
             return (Rectangle)shape;
 
-        if(shape instanceof Rectangle2D && transform==null) {
-            Rectangle2D rect = (Rectangle2D)shape;
+        if(shape instanceof Rectangle2D rect && transform==null) {
             return getRectangle( rect );
         }
 

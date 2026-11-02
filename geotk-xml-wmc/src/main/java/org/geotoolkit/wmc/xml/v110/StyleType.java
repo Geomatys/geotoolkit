@@ -249,8 +249,7 @@ public class StyleType {
         if (object == this) {
             return true;
         }
-        if (object instanceof StyleType) {
-            final StyleType that = (StyleType) object;
+        if (object instanceof StyleType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.current, that.current) &&

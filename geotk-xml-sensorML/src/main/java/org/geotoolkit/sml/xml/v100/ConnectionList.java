@@ -116,8 +116,7 @@ public class ConnectionList implements AbstractConnectionList {
             return true;
         }
 
-        if (object instanceof ConnectionList) {
-            final ConnectionList that = (ConnectionList) object;
+        if (object instanceof ConnectionList that) {
             return Objects.equals(this.connection, that.connection)  ;
         }
         return false;

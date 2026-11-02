@@ -384,8 +384,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         if (object == this) {
             return true;
         }
-        if (object instanceof DirectPositionType) {
-            final DirectPositionType that = (DirectPositionType) object;
+        if (object instanceof DirectPositionType that) {
             return  listNullEquals(this.axisLabels,      that.axisLabels)      &&
                     Objects.equals(this.srsDimension,    that.srsDimension)    &&
                     Objects.equals(this.srsName,         that.srsName)         &&

@@ -119,9 +119,8 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 /*
                  * Linear ring does not exist in GeoJson spec, so we transform polygon geometry during conversion
                  */
-                if (geom instanceof Polygon && LinearRing.class.equals(expectedClass)) {
+                if (geom instanceof Polygon poly && LinearRing.class.equals(expectedClass)) {
                     CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(geom);
-                    Polygon poly = (Polygon) geom;
                     LinearRing lr = GF.createLinearRing(poly.getExteriorRing().getCoordinateSequence());
                     JTS.setCRS(lr, crs);
                     return lr;
@@ -130,8 +129,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 return geom;
             } else if (WPSMimeType.APP_EWKT.val().equalsIgnoreCase(mimeType)) {
                 Object value = data.get(0);
-                if (value instanceof String) {
-                    String wkt = (String) value;
+                if (value instanceof String wkt) {
                     int idx = wkt.indexOf(';');
                     CoordinateReferenceSystem crs = null;
                     if (idx > 0) {

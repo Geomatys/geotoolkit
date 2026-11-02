@@ -269,8 +269,7 @@ public class ExtensionType extends Annotated {
         if (object == this) {
             return true;
         }
-        if (object instanceof ExtensionType && super.equals(object)) {
-            final ExtensionType that = (ExtensionType) object;
+        if (object instanceof ExtensionType that && super.equals(object)) {
                    return
                    Objects.equals(this.all,                       that.all) &&
                    Objects.equals(this.anyAttribute,              that.anyAttribute) &&

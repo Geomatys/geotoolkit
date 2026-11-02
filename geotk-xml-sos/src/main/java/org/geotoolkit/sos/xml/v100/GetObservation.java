@@ -311,8 +311,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         if (object == this) {
             return true;
         }
-        if (object instanceof GetObservation && super.equals(object)) {
-            final GetObservation that = (GetObservation) object;
+        if (object instanceof GetObservation that && super.equals(object)) {
             return Objects.equals(this.eventTime,         that.eventTime)         &&
                    Objects.equals(this.featureOfInterest, that.featureOfInterest) &&
                    Objects.equals(this.observedProperty,  that.observedProperty)  &&
@@ -600,8 +599,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         if (object == this) {
             return true;
         }
-        if (object instanceof FeatureOfInterest) {
-        final FeatureOfInterest that = (FeatureOfInterest) object;
+        if (object instanceof FeatureOfInterest that) {
             return Objects.equals(this.bbox,       that.bbox)       &&
                    Objects.equals(this.beyond,     that.beyond)     &&
                    Objects.equals(this.contains,   that.contains)   &&
@@ -837,8 +835,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
             if (object == this) {
                 return true;
             }
-            if (object instanceof Result) {
-                final Result that = (Result) object;
+            if (object instanceof Result that) {
                 return Objects.equals(this.comparisonOps,                  that.comparisonOps)                  &&
                        Objects.equals(this.propertyIsBetween,              that.propertyIsBetween)              &&
                        Objects.equals(this.propertyIsEqualTo,              that.propertyIsEqualTo)              &&

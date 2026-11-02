@@ -133,8 +133,7 @@ public class SpatialOperatorType extends SpatialOperator {
             return true;
         }
 
-       if (object instanceof SpatialOperatorType) {
-           final SpatialOperatorType that = (SpatialOperatorType) object;
+       if (object instanceof SpatialOperatorType that) {
 
             return Objects.equals(this.geometryOperands, that.geometryOperands) &&
                    Objects.equals(this.name, that.name);

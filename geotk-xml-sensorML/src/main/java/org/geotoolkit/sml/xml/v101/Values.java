@@ -96,8 +96,7 @@ public class Values extends SensorObject implements AbstractValues {
         if (object == this) {
             return true;
         }
-        if (object instanceof Values) {
-            final Values that = (Values) object;
+        if (object instanceof Values that) {
             return Objects.equals(this.any,          that.any)   &&
                    Objects.equals(this.otherAttributes,    that.otherAttributes) ;
         }

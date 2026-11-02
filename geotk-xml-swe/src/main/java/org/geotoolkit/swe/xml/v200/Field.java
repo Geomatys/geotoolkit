@@ -98,8 +98,7 @@ public class Field extends AbstractDataComponentPropertyType implements AnyScala
         if (object == this) {
             return true;
         }
-        if (object instanceof Field && super.equals(object)) {
-            final Field that = (Field) object;
+        if (object instanceof Field that && super.equals(object)) {
             return Objects.equals(this.name, that.name);
         }
         return false;

@@ -216,8 +216,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
     }
 
     private void visitHit(RenderingContext2D context2D, J2DPainter painter, SearchAreaJ2D searchMask, GraphicVisitor visitor, Presentation presentation) {
-        if (presentation instanceof GroupPresentation) {
-            GroupPresentation gp = (GroupPresentation) presentation;
+        if (presentation instanceof GroupPresentation gp) {
             for (Presentation p : gp.elements()) {
                 visitHit(context2D, painter, searchMask, visitor, p);
             }

@@ -363,8 +363,7 @@ public class ImageUtils {
      */
     public static short getPlanarConfiguration(final SampleModel sm) {
         final int numband  = sm.getNumBands();
-        if (numband > 1 && sm instanceof ComponentSampleModel) {
-            final ComponentSampleModel csm = (ComponentSampleModel) sm;
+        if (numband > 1 && sm instanceof ComponentSampleModel csm) {
             final int[] bankIndice = csm.getBankIndices();
             if (csm.getPixelStride() != 1 || bankIndice.length == 1) return PLANAR_INTERLEAVED;
             int b = 0;

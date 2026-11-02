@@ -69,8 +69,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     @Override
     public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
-        if (resource instanceof BandedCoverageResource) {
-            BandedCoverageResource bcr = (BandedCoverageResource) resource;
+        if (resource instanceof BandedCoverageResource bcr) {
             try {
                 GridCoverage coverage = BandedCoverageResource.sample(bcr, renderingContext.getGridGeometry2D());
                 resource = new InMemoryGridCoverageResource(resource.getIdentifier().orElse(null), coverage);
@@ -157,8 +156,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                                     stats.put(DynamicRangeSymbolizer.PROPERTY_MAX, sd.getMaxValue());
                                     stats.put(DynamicRangeSymbolizer.PROPERTY_MEAN, sd.getMeanValue());
                                     stats.put(DynamicRangeSymbolizer.PROPERTY_STD, sd.getStandardDeviation());
-                                    if(sd instanceof DefaultSampleDimensionExt){
-                                        final DefaultSampleDimensionExt dsd = (DefaultSampleDimensionExt) sd;
+                                    if(sd instanceof DefaultSampleDimensionExt dsd){
                                         stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO, dsd.getHistogram());
                                         stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN, dsd.getHistogramMin());
                                         stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX, dsd.getHistogramMax());

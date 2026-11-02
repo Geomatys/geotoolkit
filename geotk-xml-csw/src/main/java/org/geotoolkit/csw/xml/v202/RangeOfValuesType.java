@@ -90,8 +90,7 @@ public class RangeOfValuesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof RangeOfValuesType) {
-            final RangeOfValuesType that = (RangeOfValuesType) object;
+        if (object instanceof RangeOfValuesType that) {
 
             return  Objects.equals(this.minValue, that.minValue) &&
                     Objects.equals(this.maxValue, that.maxValue);

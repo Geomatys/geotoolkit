@@ -316,8 +316,7 @@ public class LineStringPropertyType implements LineStringProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof LineStringPropertyType) {
-            final LineStringPropertyType that = (LineStringPropertyType) object;
+        if (object instanceof LineStringPropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

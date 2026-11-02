@@ -329,8 +329,7 @@ public class UnitReference implements UomProperty {
             return true;
         }
 
-        if (object instanceof UnitReference) {
-            final UnitReference that = (UnitReference) object;
+        if (object instanceof UnitReference that) {
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&
                    Objects.equals(this.type,               that.type)             &&

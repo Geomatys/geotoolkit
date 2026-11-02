@@ -103,13 +103,11 @@ public final class JTSUtils {
         final var pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
         final var gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
-        if (jtsGeom instanceof org.locationtech.jts.geom.Point) {
-            org.locationtech.jts.geom.Point candidate = (org.locationtech.jts.geom.Point) jtsGeom;
+        if (jtsGeom instanceof org.locationtech.jts.geom.Point candidate) {
             DirectPosition dp = pointToDirectPosition(candidate, crs);
             return pf.createPoint(dp);
 
-        } else if (jtsGeom instanceof org.locationtech.jts.geom.LineString) {
-            org.locationtech.jts.geom.LineString candidate = (org.locationtech.jts.geom.LineString) jtsGeom;
+        } else if (jtsGeom instanceof org.locationtech.jts.geom.LineString candidate) {
             LineString ls = gf.createLineString(new ArrayList<DirectPosition>());
             PointArray pointList = ls.getControlPoints();
             for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
@@ -120,8 +118,7 @@ public final class JTSUtils {
         } else if (jtsGeom instanceof org.locationtech.jts.geom.LinearRing) {
             return linearRingToRing((org.locationtech.jts.geom.LinearRing) jtsGeom, crs);
 
-        } else if (jtsGeom instanceof org.locationtech.jts.geom.Polygon) {
-            org.locationtech.jts.geom.Polygon jtsPolygon = (org.locationtech.jts.geom.Polygon) jtsGeom;
+        } else if (jtsGeom instanceof org.locationtech.jts.geom.Polygon jtsPolygon) {
             Ring externalRing = linearRingToRing(
                     (org.locationtech.jts.geom.LinearRing) jtsPolygon.getExteriorRing(),
                     crs);
@@ -372,10 +369,8 @@ public final class JTSUtils {
      */
     public static double distance(final org.locationtech.jts.geom.Geometry g1,
             final org.locationtech.jts.geom.Geometry g2) {
-        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection) {
+        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection gc1) {
             double minDistance = Double.POSITIVE_INFINITY;
-            org.locationtech.jts.geom.GeometryCollection gc1 =
-                    (org.locationtech.jts.geom.GeometryCollection) g1;
             int n = gc1.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 double d = distance(gc1.getGeometryN(i), g2);
@@ -384,10 +379,8 @@ public final class JTSUtils {
                 }
             }
             return minDistance;
-        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection) {
+        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection gc2) {
             double minDistance = Double.POSITIVE_INFINITY;
-            org.locationtech.jts.geom.GeometryCollection gc2 =
-                    (org.locationtech.jts.geom.GeometryCollection) g2;
             int n = gc2.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 // This call will result in a redundant check of
@@ -454,9 +447,7 @@ public final class JTSUtils {
     public static boolean intersects(
             final org.locationtech.jts.geom.Geometry g1,
             final org.locationtech.jts.geom.Geometry g2) {
-        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection) {
-            org.locationtech.jts.geom.GeometryCollection gc1 =
-                    (org.locationtech.jts.geom.GeometryCollection) g1;
+        if (g1 instanceof org.locationtech.jts.geom.GeometryCollection gc1) {
             int n = gc1.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 org.locationtech.jts.geom.Geometry g = gc1.getGeometryN(i);
@@ -465,9 +456,7 @@ public final class JTSUtils {
                 }
             }
             return false;
-        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection) {
-            org.locationtech.jts.geom.GeometryCollection gc2 =
-                    (org.locationtech.jts.geom.GeometryCollection) g2;
+        } else if (g2 instanceof org.locationtech.jts.geom.GeometryCollection gc2) {
             int n = gc2.getNumGeometries();
             for (int i = 0; i < n; i++) {
                 org.locationtech.jts.geom.Geometry g = gc2.getGeometryN(i);

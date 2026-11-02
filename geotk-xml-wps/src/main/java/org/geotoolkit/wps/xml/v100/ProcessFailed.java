@@ -105,8 +105,7 @@ public class ProcessFailed {
         if (object == this) {
             return true;
         }
-        if (object instanceof ProcessFailed) {
-            final ProcessFailed that = (ProcessFailed) object;
+        if (object instanceof ProcessFailed that) {
             return Objects.equals(this.exceptionReport, that.exceptionReport);
         }
         return false;

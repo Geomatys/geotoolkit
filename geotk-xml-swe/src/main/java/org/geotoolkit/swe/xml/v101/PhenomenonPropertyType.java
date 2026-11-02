@@ -239,8 +239,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
         if (object == this) {
             return true;
         }
-        if (object instanceof PhenomenonPropertyType) {
-            final PhenomenonPropertyType that = (PhenomenonPropertyType) object;
+        if (object instanceof PhenomenonPropertyType that) {
 
             return Objects.equals(this.hiddenPhenomenon,    that.hiddenPhenomenon)    &&
                    Objects.equals(this.phenomenon,          that.phenomenon)          &&

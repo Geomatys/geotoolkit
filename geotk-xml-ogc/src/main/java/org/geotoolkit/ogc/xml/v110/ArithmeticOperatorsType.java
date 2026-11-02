@@ -118,8 +118,7 @@ public class ArithmeticOperatorsType extends ArithmeticOperators {
             return true;
         }
 
-       if (object instanceof ArithmeticOperatorsType) {
-           final ArithmeticOperatorsType that = (ArithmeticOperatorsType) object;
+       if (object instanceof ArithmeticOperatorsType that) {
 
             return Objects.equals(this.functions, that.functions) &&
                    Objects.equals(this.simpleArithmetic, that.simpleArithmetic);

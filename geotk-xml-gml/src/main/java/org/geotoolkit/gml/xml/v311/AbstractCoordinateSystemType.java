@@ -110,8 +110,7 @@ public abstract class AbstractCoordinateSystemType extends AbstractCoordinateSys
             return true;
         }
 
-        if (object instanceof AbstractCoordinateSystemType) {
-            final AbstractCoordinateSystemType that = (AbstractCoordinateSystemType) object;
+        if (object instanceof AbstractCoordinateSystemType that) {
             return Objects.equals(this.csID, that.csID) &&
                    Objects.equals(this.usesAxis, that.usesAxis);
 

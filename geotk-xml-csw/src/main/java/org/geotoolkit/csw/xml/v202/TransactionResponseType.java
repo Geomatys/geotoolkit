@@ -122,8 +122,7 @@ public class TransactionResponseType implements TransactionResponse {
         if (object == this) {
             return true;
         }
-        if (object instanceof TransactionResponseType) {
-            final TransactionResponseType that = (TransactionResponseType) object;
+        if (object instanceof TransactionResponseType that) {
             return Objects.equals(this.insertResult,       that.insertResult)       &&
                    Objects.equals(this.transactionSummary, that.transactionSummary) &&
                    Objects.equals(this.version,            that.version);

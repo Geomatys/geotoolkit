@@ -306,8 +306,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         if (object == this) {
             return true;
         }
-        if (object instanceof DataArrayType && super.equals(object)) {
-            final DataArrayType that = (DataArrayType) object;
+        if (object instanceof DataArrayType that && super.equals(object)) {
             return Objects.equals(this.elementCount,   that.elementCount)   &&
                    Objects.equals(this.elementType,    that.elementType)   &&
                    Objects.equals(this.encoding,       that.encoding)    &&
@@ -411,8 +410,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             if (object == this) {
                 return true;
             }
-            if (object instanceof ElementType && super.equals(object)) {
-                final ElementType that = (ElementType) object;
+            if (object instanceof ElementType that && super.equals(object)) {
                 return Objects.equals(this.name, that.name);
             }
             return false;
@@ -529,8 +527,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             if (object == this) {
                 return true;
             }
-            if (object instanceof Encoding) {
-                final Encoding that = (Encoding) object;
+            if (object instanceof Encoding that) {
                 if (this.abstractEncoding == null && that.abstractEncoding == null) {
                     return true;
                 } else if (this.abstractEncoding != null && that.abstractEncoding != null) {

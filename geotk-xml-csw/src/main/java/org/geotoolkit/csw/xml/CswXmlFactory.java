@@ -370,8 +370,7 @@ public class CswXmlFactory {
         if ("2.0.2".equals(version) || "2.0.0".equals(version)) {
             // before 3.0 version, federated results are aggregated with normal results
             for (FederatedSearchResultBase federated : federatedResults) {
-                if (federated instanceof FederatedSearchResult) {
-                    FederatedSearchResult federatedResult = (FederatedSearchResult) federated;
+                if (federated instanceof FederatedSearchResult federatedResult) {
                     if (federatedResult.getSearchResult() != null) {
                         records.addAll(federatedResult.getSearchResult().getAny());
                     }

@@ -84,8 +84,7 @@ public class LuceneOGCSpatialQuery extends org.apache.lucene.search.Query implem
         if (obj == this) {
             return true;
         }
-        if (obj instanceof LuceneOGCSpatialQuery) {
-            LuceneOGCSpatialQuery that = (LuceneOGCSpatialQuery) obj;
+        if (obj instanceof LuceneOGCSpatialQuery that) {
             return Objects.equals(this.filter, that.filter) &&
                    Objects.equals(this.filterType, that.filterType);
         }

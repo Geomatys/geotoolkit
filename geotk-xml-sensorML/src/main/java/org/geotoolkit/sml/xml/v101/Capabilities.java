@@ -343,8 +343,7 @@ public class Capabilities extends SensorObject implements AbstractCapabilities {
         }
 
         boolean record = false;
-        if (object instanceof Capabilities) {
-            final Capabilities that = (Capabilities) object;
+        if (object instanceof Capabilities that) {
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 record = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {

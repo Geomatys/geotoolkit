@@ -190,8 +190,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
         if (object == this)
             return true;
 
-        if (object instanceof JTSPolyhedralSurface && super.equals(object)) {
-            JTSPolyhedralSurface that = (JTSPolyhedralSurface) object;
+        if (object instanceof JTSPolyhedralSurface that && super.equals(object)) {
             return Objects.equals(this.patches, that.patches);
         }
         return false;

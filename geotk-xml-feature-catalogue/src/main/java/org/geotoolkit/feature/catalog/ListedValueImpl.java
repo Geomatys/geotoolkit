@@ -191,8 +191,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
         if (object == this) {
             return true;
         }
-        if (object instanceof ListedValueImpl) {
-            final ListedValueImpl that = (ListedValueImpl) object;
+        if (object instanceof ListedValueImpl that) {
 
            return Objects.equals(this.code,                that.code)                &&
                    Objects.equals(this.definition,          that.definition)          &&

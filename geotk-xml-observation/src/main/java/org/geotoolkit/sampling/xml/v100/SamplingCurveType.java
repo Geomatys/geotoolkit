@@ -142,8 +142,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
             return true;
         }
 
-        if (object instanceof SamplingCurveType && super.equals(object, mode)) {
-            final SamplingCurveType that = (SamplingCurveType) object;
+        if (object instanceof SamplingCurveType that && super.equals(object, mode)) {
             return Objects.equals(this.length, that.length)   &&
                    Objects.equals(this.shape,  that.shape);
         }

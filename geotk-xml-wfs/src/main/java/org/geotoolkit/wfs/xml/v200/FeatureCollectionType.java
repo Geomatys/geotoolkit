@@ -319,8 +319,7 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
         if (obj == this) {
             return true;
         }
-        if (obj instanceof FeatureCollectionType && super.equals(obj)) {
-            final FeatureCollectionType that = (FeatureCollectionType) obj;
+        if (obj instanceof FeatureCollectionType that && super.equals(obj)) {
             return Objects.equals(this.additionalObjects, that.additionalObjects) &&
                    Objects.equals(this.lockId,            that.lockId) &&
                    Objects.equals(this.next,              that.next) &&

@@ -673,8 +673,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         if (object == this)
             return true;
 
-        if (object instanceof AbstractJTSGeometry) {
-            AbstractJTSGeometry that = (AbstractJTSGeometry) object;
+        if (object instanceof AbstractJTSGeometry that) {
             return Objects.equals(this.coordinateReferenceSystem, that.coordinateReferenceSystem) &&
                    Objects.equals(this.parent,                    that.parent);
         }

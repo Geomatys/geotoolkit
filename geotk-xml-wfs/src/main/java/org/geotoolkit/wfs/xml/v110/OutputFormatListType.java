@@ -72,8 +72,7 @@ public class OutputFormatListType {
         if (object == this) {
             return true;
         }
-        if (object instanceof OutputFormatListType) {
-            final OutputFormatListType that = (OutputFormatListType) object;
+        if (object instanceof OutputFormatListType that) {
 
             return Objects.equals(this.format, that.format);
             }

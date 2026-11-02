@@ -276,8 +276,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
             return true;
         }
 
-        if (object instanceof EngineeringDatumRefType) {
-            final EngineeringDatumRefType that = (EngineeringDatumRefType) object;
+        if (object instanceof EngineeringDatumRefType that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

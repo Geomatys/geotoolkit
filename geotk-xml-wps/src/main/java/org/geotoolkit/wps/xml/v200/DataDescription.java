@@ -157,8 +157,7 @@ public abstract class DataDescription {
         if (object == this) {
             return true;
         }
-        if (object instanceof DataDescription) {
-            final DataDescription that = (DataDescription) object;
+        if (object instanceof DataDescription that) {
             return Objects.equals(this.format, that.format);
         }
         return false;

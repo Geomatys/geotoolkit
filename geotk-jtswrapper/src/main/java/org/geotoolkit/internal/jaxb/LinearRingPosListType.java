@@ -56,8 +56,7 @@ public class LinearRingPosListType {
 
         if (ring.getElements().size() == 1) {
             Object curveObj = ring.getElements().iterator().next();
-            if (curveObj instanceof Curve) {
-                Curve curve = (Curve) curveObj;
+            if (curveObj instanceof Curve curve) {
 
                 List<Double> value = new ArrayList<Double>();
                 for (CurveSegment cv : curve.getSegments()) {

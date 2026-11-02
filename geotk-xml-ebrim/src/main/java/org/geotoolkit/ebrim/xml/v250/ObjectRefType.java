@@ -130,8 +130,7 @@ public class ObjectRefType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ObjectRefType) {
-            final ObjectRefType that = (ObjectRefType) obj;
+        if (obj instanceof ObjectRefType that) {
             return Objects.equals(this.createReplica, that.createReplica) &&
                    Objects.equals(this.id,            that.id) &&
                    Objects.equals(this.home,          that.home) ;

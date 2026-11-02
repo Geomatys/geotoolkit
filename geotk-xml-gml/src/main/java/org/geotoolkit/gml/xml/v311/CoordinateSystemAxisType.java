@@ -137,8 +137,7 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
             return true;
         }
 
-        if (object instanceof CoordinateSystemAxisType) {
-            final CoordinateSystemAxisType that = (CoordinateSystemAxisType) object;
+        if (object instanceof CoordinateSystemAxisType that) {
             return Objects.equals(this.axisAbbrev, that.axisAbbrev) &&
                    Objects.equals(this.axisDirection, that.axisDirection) &&
                    Objects.equals(this.axisID, that.axisID) &&

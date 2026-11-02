@@ -135,8 +135,7 @@ public class InputList extends SensorObject implements AbstractInputList {
             return true;
         }
 
-        if (object instanceof InputList) {
-            final InputList that = (InputList) object;
+        if (object instanceof InputList that) {
 
             return Objects.equals(this.input, that.input)
                     && Objects.equals(this.id, that.id);

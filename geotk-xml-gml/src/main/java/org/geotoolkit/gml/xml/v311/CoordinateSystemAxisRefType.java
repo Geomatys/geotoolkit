@@ -263,8 +263,7 @@ public class CoordinateSystemAxisRefType {
             return true;
         }
 
-        if (object instanceof CoordinateSystemAxisRefType) {
-            final CoordinateSystemAxisRefType that = (CoordinateSystemAxisRefType) object;
+        if (object instanceof CoordinateSystemAxisRefType that) {
 
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&

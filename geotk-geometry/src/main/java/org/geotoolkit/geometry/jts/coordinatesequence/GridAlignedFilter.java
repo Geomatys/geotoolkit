@@ -158,13 +158,11 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
         final Object userData = geometry.getUserData();
 
         Geometry result;
-        if (geometry instanceof Point) {
-            final Point cdt = (Point) geometry;
+        if (geometry instanceof Point cdt) {
             final Coordinate coord = cdt.getCoordinate().copy();
             filter(coord);
             result = gf.createPoint(coord);
-        } else if (geometry instanceof LinearRing) {
-            final LinearRing cdt = (LinearRing) geometry;
+        } else if (geometry instanceof LinearRing cdt) {
             CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 3, true);
             if (removeSpikes) coordinates = removeSpikes(gf.getCoordinateSequenceFactory(), coordinates, createEmpty ? 0 : 3, true);
             if (coordinates.size() < 3) {
@@ -172,8 +170,7 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             } else {
                 result = gf.createLinearRing(coordinates);
             }
-        } else if (geometry instanceof LineString) {
-            final LineString cdt = (LineString) geometry;
+        } else if (geometry instanceof LineString cdt) {
             CoordinateSequence coordinates = filterAndReduce(gf.getCoordinateSequenceFactory(), cdt.getCoordinateSequence(), createEmpty ? 0 : 2, false);
             if (removeSpikes) coordinates = removeSpikes(gf.getCoordinateSequenceFactory(), coordinates, createEmpty ? 0 : 2, false);
             if (coordinates.size() < 2) {
@@ -181,8 +178,7 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             } else {
                 result = gf.createLineString(coordinates);
             }
-        } else if (geometry instanceof Polygon) {
-            final Polygon cdt = (Polygon) geometry;
+        } else if (geometry instanceof Polygon cdt) {
             final LinearRing exteriorRing = (LinearRing) alignAndSimplify(cdt.getExteriorRing(), createEmpty);
             if (createEmpty && exteriorRing.isEmpty()) {
                 result = gf.createPolygon(exteriorRing);
@@ -204,13 +200,11 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             //we use the buffer operation to clean holes who touch borders and polygons which touch at a single point.
             result = result.buffer(0);
 
-        } else if (geometry instanceof MultiPoint) {
-            final MultiPoint cdt = (MultiPoint) geometry;
+        } else if (geometry instanceof MultiPoint cdt) {
             final Coordinate[] coordinates = filterAndReduce(cdt.getCoordinates(), 1);
             result = gf.createMultiPointFromCoords(coordinates);
 
-        } else if (geometry instanceof MultiLineString) {
-            final MultiLineString cdt = (MultiLineString) geometry;
+        } else if (geometry instanceof MultiLineString cdt) {
             final int nb = cdt.getNumGeometries();
             final List<LineString> geoms = new ArrayList<>(nb);
             for (int i = 0; i < nb; i++) {
@@ -221,8 +215,7 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
                 }
             }
             result = gf.createMultiLineString(geoms.toArray(new LineString[geoms.size()]));
-        } else if (geometry instanceof MultiPolygon) {
-            final MultiPolygon cdt = (MultiPolygon) geometry;
+        } else if (geometry instanceof MultiPolygon cdt) {
             final int nb = cdt.getNumGeometries();
             final List<Geometry> geoms = new ArrayList<>(nb);
             boolean allPolygons = true;
@@ -230,8 +223,7 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
                 //ensure we have at least one geometry not empty if it is requested
                 Geometry ls = alignAndSimplify((Polygon) cdt.getGeometryN(i), createEmpty ? true : !geoms.isEmpty());
                 if (!ls.isEmpty()) {
-                    if (ls instanceof GeometryCollection) {
-                        final GeometryCollection gc = (GeometryCollection) ls;
+                    if (ls instanceof GeometryCollection gc) {
                         for (int k = 0, n = gc.getNumGeometries(); k < n; k++) {
                             final Geometry cd = gc.getGeometryN(k);
                             geoms.add(cd);
@@ -248,8 +240,7 @@ public final class GridAlignedFilter implements CoordinateSequenceFilter {
             } else {
                 result = gf.createGeometryCollection(geoms.toArray(new Geometry[geoms.size()]));
             }
-        } else if (geometry instanceof GeometryCollection) {
-            final GeometryCollection cdt = (GeometryCollection) geometry;
+        } else if (geometry instanceof GeometryCollection cdt) {
             final int nb = cdt.getNumGeometries();
             final List<Geometry> geoms = new ArrayList<>(nb);
             for (int i = 0; i < nb; i++) {

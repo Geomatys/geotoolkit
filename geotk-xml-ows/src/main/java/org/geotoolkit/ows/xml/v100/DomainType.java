@@ -179,8 +179,7 @@ public class DomainType implements AbstractDomain {
         if (object == this) {
             return true;
         }
-        if (object instanceof DomainType) {
-            final DomainType that = (DomainType) object;
+        if (object instanceof DomainType that) {
             return Objects.equals(this.defaultValue, that.defaultValue) &&
                    Objects.equals(this.metadata,     that.metadata)     &&
                    Objects.equals(this.name,         that.name)         &&

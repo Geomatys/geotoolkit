@@ -124,8 +124,7 @@ public class AssociationType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof AssociationType && super.equals(obj)) {
-            final AssociationType that = (AssociationType) obj;
+        if (obj instanceof AssociationType that && super.equals(obj)) {
             return Objects.equals(this.associationType, that.associationType) &&
                    Objects.equals(this.sourceObject, that.sourceObject) &&
                    Objects.equals(this.targetObject, that.targetObject);

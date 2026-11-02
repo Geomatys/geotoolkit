@@ -83,8 +83,7 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
         ArgumentChecks.ensureNonNull("object", object);
 
         AffineTransform affineTransform = null;
-        if (object instanceof org.geotoolkit.mathml.xml.Math) {
-            final org.geotoolkit.mathml.xml.Math math = (org.geotoolkit.mathml.xml.Math) object;
+        if (object instanceof org.geotoolkit.mathml.xml.Math math) {
             final List<Object> mathExp = math.getMathExpression();
             if (mathExp != null && !mathExp.isEmpty()) {
                 final Mtable mtable = WPSConvertersUtils.findMtable(mathExp);

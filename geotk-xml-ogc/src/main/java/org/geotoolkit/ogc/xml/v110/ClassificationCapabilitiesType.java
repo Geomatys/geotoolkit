@@ -74,8 +74,7 @@ public class ClassificationCapabilitiesType {
             return true;
         }
 
-       if (object instanceof ClassificationCapabilitiesType) {
-           final ClassificationCapabilitiesType that = (ClassificationCapabilitiesType) object;
+       if (object instanceof ClassificationCapabilitiesType that) {
 
             return Objects.equals(this.classificationOperators, that.classificationOperators);
         }

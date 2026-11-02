@@ -118,8 +118,7 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
         if (object == this) {
             return true;
         }
-        if (object instanceof VectorOrSquareMatrixPropertyType) {
-            final VectorOrSquareMatrixPropertyType that = (VectorOrSquareMatrixPropertyType) object;
+        if (object instanceof VectorOrSquareMatrixPropertyType that) {
             return Objects.equals(this.squareMatrix, that.squareMatrix) &&
                    Objects.equals(this.vector,       that.vector);
 

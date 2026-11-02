@@ -217,8 +217,7 @@ abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage im
         final int x = Math.toIntExact(img.getMinX() + dx);
         final int y = Math.toIntExact(img.getMinY() + dy);
 
-        if (img instanceof BufferedImage) {
-            final BufferedImage bimg = (BufferedImage) img;
+        if (img instanceof BufferedImage bimg) {
             return bimg.getSubimage(x, y, width, height);
         } else {
             final BufferedImage bimg = new ImageBuilder().copyFrom(img).setSize(width, height).createBufferedImage();

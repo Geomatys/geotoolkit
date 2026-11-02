@@ -165,8 +165,7 @@ public class SpecificationLinkType extends RegistryObjectType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SpecificationLinkType) {
-            final SpecificationLinkType that = (SpecificationLinkType) obj;
+        if (obj instanceof SpecificationLinkType that) {
             return Objects.equals(this.serviceBinding,      that.serviceBinding) &&
                    Objects.equals(this.specificationObject, that.specificationObject) &&
                    Objects.equals(this.usageDescription,    that.usageDescription) &&

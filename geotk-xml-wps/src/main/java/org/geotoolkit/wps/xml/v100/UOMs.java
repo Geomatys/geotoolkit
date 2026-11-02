@@ -101,8 +101,7 @@ public class UOMs {
         if (object == this) {
             return true;
         }
-        if (object instanceof UOMs) {
-            final UOMs that = (UOMs) object;
+        if (object instanceof UOMs that) {
             return Objects.equals(this.uom, that.uom);
         }
         return false;

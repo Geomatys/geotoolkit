@@ -193,8 +193,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                         if (symbolizer instanceof RasterSymbolizer ||
                             symbolizer instanceof DynamicRangeSymbolizer) {
                             //ok
-                        } else if (symbolizer instanceof PolygonSymbolizer) {
-                            PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+                        } else if (symbolizer instanceof PolygonSymbolizer ps) {
 
                             //check if we have a plain fill
                             Displacement displacement = ps.getDisplacement();

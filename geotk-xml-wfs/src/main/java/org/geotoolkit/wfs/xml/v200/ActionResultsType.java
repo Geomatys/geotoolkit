@@ -95,8 +95,7 @@ public class ActionResultsType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ActionResultsType) {
-            final ActionResultsType that = (ActionResultsType) object;
+        if (object instanceof ActionResultsType that) {
             return Objects.equals(this.feature,   that.feature);
         }
         return false;

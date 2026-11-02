@@ -288,8 +288,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             return true;
         }
 
-        if (object instanceof AbstractEncodingPropertyType) {
-            final AbstractEncodingPropertyType that = (AbstractEncodingPropertyType) object;
+        if (object instanceof AbstractEncodingPropertyType that) {
             final boolean enc;
             if (this.encoding != null && that.encoding != null) {
                 enc = Objects.equals(this.encoding.getValue(), that.encoding.getValue());

@@ -266,8 +266,7 @@ public class UpdateElementType implements UpdateElement {
         if (object == this) {
             return true;
         }
-        if (object instanceof UpdateElementType) {
-            final UpdateElementType that = (UpdateElementType) object;
+        if (object instanceof UpdateElementType that) {
             return  Objects.equals(this.handle, that.handle) &&
                     Objects.equals(this.filter, that.filter) &&
                     Objects.equals(this.inputFormat, that.inputFormat) &&

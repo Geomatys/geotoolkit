@@ -453,8 +453,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         if (source instanceof EmptyTile) {
             try {
                 Object result = baseRendering.get(5, TimeUnit.MINUTES);
-                if (result instanceof RenderedImage) {
-                    final RenderedImage base = (RenderedImage) result;
+                if (result instanceof RenderedImage base) {
                     final BufferedImage image = new ImageBuilder().copyFrom(base).setSize((int) tileSize[0], (int) tileSize[1]).createBufferedImage();
                     BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
                     return new DefaultImageTile(matrix, image, source.getIndices());

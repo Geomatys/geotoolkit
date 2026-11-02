@@ -57,14 +57,12 @@ class XmlFeatureReader implements Iterator<Feature> {
     XmlFeatureReader(Path source, final FeatureType type) throws JAXBException, IOException {
         this.type = type;
         final Object fileObject = XmlObservationStore.unmarshallObservationFile(source);
-        if (fileObject instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation) fileObject;
+        if (fileObject instanceof AbstractObservation obs) {
             final Feature feat = getFeatureFromFOI(obs.getFeatureOfInterest());
             if (feat != null) {
                 features.add(feat);
             }
-        } else if (fileObject instanceof ObservationCollection) {
-            final ObservationCollection coll = (ObservationCollection) fileObject;
+        } else if (fileObject instanceof ObservationCollection coll) {
             for (Observation obs : coll.getMember()) {
                 final Feature feat = getFeatureFromFOI(obs.getFeatureOfInterest());
                 if (feat != null) {
@@ -91,8 +89,7 @@ class XmlFeatureReader implements Iterator<Feature> {
     }
 
     protected final Feature getFeatureFromFOI(final AnyFeature foi) {
-        if (foi instanceof SamplingFeature) {
-            final SamplingFeature feature = (SamplingFeature) foi;
+        if (foi instanceof SamplingFeature feature) {
             final Feature f = type.newInstance();
             f.setPropertyValue(AttributeConvention.IDENTIFIER, feature.getId());
 

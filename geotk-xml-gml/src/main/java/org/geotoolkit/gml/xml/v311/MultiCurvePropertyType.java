@@ -305,8 +305,7 @@ public class MultiCurvePropertyType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiCurvePropertyType) {
-            final MultiCurvePropertyType that = (MultiCurvePropertyType) object;
+        if (object instanceof MultiCurvePropertyType that) {
 
             return Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&

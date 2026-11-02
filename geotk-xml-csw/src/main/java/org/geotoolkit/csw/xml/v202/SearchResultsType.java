@@ -297,8 +297,7 @@ public class SearchResultsType implements SearchResults {
         if (object == this) {
             return true;
         }
-        if (object instanceof SearchResultsType) {
-            final SearchResultsType that  = (SearchResultsType) object;
+        if (object instanceof SearchResultsType that) {
             return Objects.equals(this.any,                     that.any)                     &&
                    Objects.equals(this.elementSet,              that.elementSet)              &&
                    Objects.equals(this.expires,                 that.expires)                 &&

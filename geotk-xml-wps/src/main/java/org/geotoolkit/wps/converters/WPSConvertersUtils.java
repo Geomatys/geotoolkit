@@ -320,8 +320,7 @@ public class WPSConvertersUtils {
             final CoordinateReferenceSystem outCRS = CommonCRS.WGS84.geographic();
             Envelope env =null;
             Integer crsCode = null;
-            if (object instanceof GridCoverage) {
-                final GridCoverage coverage = (GridCoverage) object;
+            if (object instanceof GridCoverage coverage) {
                 try (GeoTiffStore store = (GeoTiffStore) org.apache.sis.storage.DataStores.openWritable(coverageFile, "GeoTIFF")) {
                     store.append(coverage, null);
                 }
@@ -519,8 +518,7 @@ public class WPSConvertersUtils {
     public static Mtable findMtable(List<Object> mathExp){
 
         for (Object object : mathExp) {
-            if (object instanceof JAXBElement) {
-                final JAXBElement element = (JAXBElement) object;
+            if (object instanceof JAXBElement element) {
                 if (element.getValue() instanceof Mtable) {
                     return (Mtable) element.getValue();
                 } else if(element.getValue() instanceof Mrow) {
@@ -600,8 +598,7 @@ public class WPSConvertersUtils {
 
         for(int i = 0 ; i < properties.size(); i++) {
             final PropertyTypeBuilder desc = properties.get(i);
-            if(desc instanceof AttributeTypeBuilder){
-                final AttributeTypeBuilder atb = (AttributeTypeBuilder) desc;
+            if(desc instanceof AttributeTypeBuilder atb){
                 Class binded = atb.getValueClass();
                 if(RenderedImage.class.isAssignableFrom(binded) ||
                         GridCoverage.class.isAssignableFrom(binded) ||
@@ -631,12 +628,11 @@ public class WPSConvertersUtils {
         final Parameters toFill2 = Parameters.castOrWrap(toFill);
         for (final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()) {
 
-            if (gpd instanceof ParameterDescriptor) {
+            if (gpd instanceof ParameterDescriptor desc) {
                 final Property prop = toConvert.getProperty(gpd.getName().getCode());
                 if (prop == null && gpd.getMinimumOccurs() > 0) {
                     throw new UnconvertibleObjectException("A mandatory attribute can't be found");
                 }
-                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
                 if (prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {
                     toFill2.getOrCreate(desc).setValue(prop.getValue());
                 } else {

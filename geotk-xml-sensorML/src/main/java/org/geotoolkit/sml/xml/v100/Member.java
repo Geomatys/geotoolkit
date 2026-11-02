@@ -493,8 +493,7 @@ public class Member implements SMLMember {
             return true;
         }
 
-        if (object instanceof Member) {
-            final Member that = (Member) object;
+        if (object instanceof Member that) {
             boolean proc = false;
             if (this.process != null && that.process != null) {
                 proc = Objects.equals(this.process.getValue(), that.process.getValue());

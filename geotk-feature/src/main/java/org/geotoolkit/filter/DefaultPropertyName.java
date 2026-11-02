@@ -98,8 +98,7 @@ public class DefaultPropertyName extends AbstractExpression implements ValueRefe
          * Apache SIS is not aware of the SRIDGenerator convention, which adds a (1 << 28) bitmask if
          * the authority is CRS. For avoiding a "no such EPSG code error", resolve the CRS in advance.
          */
-        if (value instanceof org.locationtech.jts.geom.Geometry) {
-            final org.locationtech.jts.geom.Geometry g = (org.locationtech.jts.geom.Geometry) value;
+        if (value instanceof org.locationtech.jts.geom.Geometry g) {
             if (g.getUserData() == null) {
                 int srid = g.getSRID();
                 if (srid != 0) try {

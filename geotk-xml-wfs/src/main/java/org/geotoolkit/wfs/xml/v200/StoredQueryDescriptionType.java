@@ -275,8 +275,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         if (object == this) {
             return true;
         }
-        if (object instanceof StoredQueryDescriptionType) {
-            final StoredQueryDescriptionType that = (StoredQueryDescriptionType) object;
+        if (object instanceof StoredQueryDescriptionType that) {
 
             return Objects.equals(this._abstract, that._abstract) &&
                    Objects.equals(this.id, that.id) &&
