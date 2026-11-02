@@ -216,7 +216,7 @@ public final class HealpixZone extends AbstractZone<HealpixDggrs> {
     public DirectPosition getPosition() {
         final VerticesAndPathComputer nested = Healpix.getNested(level).newVerticesAndPathComputer();
         final double[] center = nested.center(npixel);
-        return Vectors.asDirectPostion(toLonLat(center));
+        return toLonLat(center).asDirectPostion(null);
     }
 
     @Override

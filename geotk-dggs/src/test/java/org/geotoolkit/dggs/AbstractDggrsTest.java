@@ -203,15 +203,15 @@ public abstract class AbstractDggrsTest {
                     final Vector corner = ps.getPosition(i);
 
                     calculator.setStartPoint(center);
-                    calculator.setEndPoint(Vectors.asDirectPostion(corner));
+                    calculator.setEndPoint(corner.asDirectPostion(null));
                     double distance = calculator.getGeodesicDistance();
                     calculator.setGeodesicDistance(distance * 0.99);
                     final Vector2D.Double candidateInside = new Vector2D.Double(calculator.getEndPoint().getCoordinates());
                     calculator.setGeodesicDistance(distance * 1.01);
                     final Vector2D.Double candidateOutside = new Vector2D.Double(calculator.getEndPoint().getCoordinates());
 
-                    final String candidateInsideHash = coder.encode(Vectors.asDirectPostion(candidateInside));
-                    final String candidateOutsideHash = coder.encode(Vectors.asDirectPostion(candidateOutside));
+                    final String candidateInsideHash = coder.encode(candidateInside.asDirectPostion(null));
+                    final String candidateOutsideHash = coder.encode(candidateOutside.asDirectPostion(null));
                     System.out.println(z.getGeographicExtent().toString());
                     System.out.println(candidateInside + " " +candidateOutside);
                     System.out.println(candidateInsideHash + " " +candidateOutsideHash);
