@@ -35,6 +35,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.tiling.Tile;
 import org.apache.sis.storage.tiling.WritableTileMatrix;
 import org.apache.sis.storage.tiling.WritableTileMatrixSet;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.FeatureExt;
@@ -66,6 +67,10 @@ import org.opengis.util.GenericName;
  *   <li>simplified to the mosaic resolution</li>
  *   <li>clipped to the tile bounds</li>
  * </ul>
+ * <p>
+ * Features too small to be seen at the resolution of a tile can be skipped,
+ * see {@link #setMinimumFootprint(double)}.
+ * </p>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -75,6 +80,8 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
     private static final FilterFactory FF = DefaultFilterFactory.forFeatures();
     private final Resource source;
     private final Collection<FeatureSet> sets;
+    /** Smallest size of the features kept in a tile, in pixels, 0 to keep all of them. */
+    private double minimumFootprint;
 
     /**
      *
@@ -88,6 +95,29 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
         if (sets.isEmpty()) {
             throw new DataStoreException("At least one Featureset in the source must be provided");
         }
+    }
+
+    /**
+     * Set the smallest size of the features kept in a tile, in pixels of the tile.
+     * A feature whose envelope is smaller than this size in both directions,
+     * at the resolution of the tile, is not added to the tile : at coarse levels
+     * the small features, which would cover less than a few pixels, are skipped.
+     * The envelope is the one of the whole geometry, before it is clipped to the tile.
+     * Points are always kept.
+     *
+     * @param pixels minimum width or height in pixels, 0 (the default) to keep all features
+     */
+    public void setMinimumFootprint(double pixels) {
+        ArgumentChecks.ensurePositive("pixels", pixels);
+        ArgumentChecks.ensureFinite("pixels", pixels);
+        this.minimumFootprint = pixels;
+    }
+
+    /**
+     * @return smallest size of the features kept in a tile, in pixels, 0 if all features are kept
+     */
+    public double getMinimumFootprint() {
+        return minimumFootprint;
     }
 
     @Override
@@ -170,11 +200,18 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final FeatureSet subset = source.subset(query);
         final List<Feature> features = new ArrayList<>();
+        //smallest feature size kept, in tile CRS units
+        final double[] resolution = tileGrid.getResolution(true);
+        final double minWidth = minimumFootprint * resolution[0];
+        final double minHeight = minimumFootprint * resolution[1];
 
         try (Stream<Feature> stream = subset.features(false)) {
             final Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 Feature feature = iterator.next();
+                if (minimumFootprint > 0 && isTooSmall((Geometry) feature.getPropertyValue(AttributeConvention.GEOMETRY), minWidth, minHeight)) {
+                    continue;
+                }
                 feature = FeatureExt.deepCopy(feature);
 
                 Geometry geometry = (Geometry) feature.getPropertyValue(AttributeConvention.GEOMETRY);
@@ -202,6 +239,15 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
 
         final FeatureSet fs = new InMemoryFeatureSet(subset.getType(), features);
         return postSimplify(tileGrid, fs);
+    }
+
+    /**
+     * @return true if the geometry is smaller than the given sizes in both directions, false for points
+     */
+    private static boolean isTooSmall(Geometry geometry, double minWidth, double minHeight) {
+        if (geometry == null || geometry.getDimension() == 0) return false;
+        final org.locationtech.jts.geom.Envelope env = geometry.getEnvelopeInternal();
+        return env.getWidth() < minWidth && env.getHeight() < minHeight;
     }
 
     private Filter buildFilter(FeatureSet fs, Envelope env) throws DataStoreException, TransformException {
